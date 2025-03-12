@@ -2,7 +2,7 @@
 """
 Created on Tue Apr 26 21:07:37 2022
 
-@author: oiseth
+@author: oiseth test
 """
 #%%
 import numpy as np
