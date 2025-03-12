@@ -143,5 +143,3 @@ static_coeff_single.to_excel(section_name, sheet_name='Single' ,section_width=18
 
 
 
-
-# %%
