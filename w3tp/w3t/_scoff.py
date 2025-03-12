@@ -138,7 +138,7 @@ class StaticCoeff:
                 
         return cls(drag_coeff,lift_coeff,pitch_coeff,pitch_motion,filtered_wind)
     
-     #Plot limits
+    #Plot limits
     ymin_drag = 0
     ymax_drag = 2.5
 
@@ -148,7 +148,7 @@ class StaticCoeff:
     ymin_pitch = -1
     ymax_pitch = 1
     
-    def to_excel(self,section_name, sheet_name='Test #' ,section_width=0,section_height=0,section_length_in_rig = 0, section_length_on_wall=0, upwind_in_rig=True):
+    def to_excel(self,section_name, sheet_name='Test' ,section_width=0,section_height=0,section_length_in_rig = 0, section_length_on_wall=0, upwind_in_rig=True):
         """
         
         Parameters
@@ -225,7 +225,7 @@ class StaticCoeff:
                 static_coeff.to_excel(writer, sheet_name=sheet_name)
                
             
-    def plot_drag(self,mode="total"):
+    def plot_drag(self,mode="decks"):
         """ plots the drag coefficient
         
         parameters:
@@ -268,10 +268,9 @@ class StaticCoeff:
             plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "single": #single deck
-            drag_coeff = self.drag_coeff[:, :2]  # Bruk kun aktive lastceller
 
             plt.figure()
-            plt.plot(self.pitch_motion*360/2/np.pi,drag_coeff[:,0]+drag_coeff[:,1],label=("Single deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Single deck"))
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
@@ -281,7 +280,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
                  
-    def plot_lift(self,mode="total"):
+    def plot_lift(self,mode="decks"):
         """ plots the lift coefficient
         
         parameters:
@@ -326,10 +325,9 @@ class StaticCoeff:
             plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
 
         elif mode == "single": #single deck
-            lift_coeff = self.lift_coeff[:, :2]  # Bruk kun aktive lastceller
 
             plt.figure()
-            plt.plot(self.pitch_motion*360/2/np.pi,lift_coeff[:,0]+lift_coeff[:,1],label=("Single deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Single deck"))
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
@@ -339,7 +337,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
         
-    def plot_pitch(self,mode="total"):
+    def plot_pitch(self,mode="decks"):
         """ plots the pitch coefficient
         
         parameters:
@@ -382,10 +380,9 @@ class StaticCoeff:
             plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "single": #single deck
-            pitch_coeff = self.plot_pitch_coeff[:, :2]  # Bruk kun aktive lastceller
 
             plt.figure()
-            plt.plot(self.pitch_motion*360/2/np.pi,pitch_coeff[:,0]+pitch_coeff[:,1],label=("Single deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Single deck"))
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
@@ -395,7 +392,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
     
-    def plot_drag_mean_Line(self,mode="total"):
+    def plot_drag_mean(self,mode="total"):
         """ plots the drag coefficient mean
         
         parameters:
@@ -451,9 +448,8 @@ class StaticCoeff:
             plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "single": #single deck
-            drag_coeff = self.drag_coeff[:, :2]  # Bruk kun aktive lastceller
 
-            cd_single_mean = np.array([np.mean(drag_coeff[:,0][alpha == val]) + np.mean(drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cd_single_mean = np.array([np.mean(self.drag_coeff[:,0][alpha == val]) + np.mean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
             
             plt.figure()
             plt.plot(unique_alphas,cd_single_mean,label=("Single deck"))
@@ -466,7 +462,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
                  
-    def plot_lift_mean_Line(self,mode="total"):
+    def plot_lift_mean(self,mode="total"):
         """ plots the lift coefficient mean
         
         parameters:
@@ -522,9 +518,8 @@ class StaticCoeff:
             plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "single": #single deck
-            lift_coeff = self.lift_coeff[:, :2]  # Bruk kun aktive lastceller
 
-            cl_single_mean = np.array([np.mean(lift_coeff[:,0][alpha == val]) + np.mean(lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cl_single_mean = np.array([np.mean(self.lift_coeff[:,0][alpha == val]) + np.mean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
             
             plt.figure()
             plt.plot(unique_alphas,cl_single_mean,label=("Single deck"))
@@ -537,7 +532,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
         
-    def plot_pitch_mean_Line(self,mode="total"):
+    def plot_pitch_mean(self,mode="total"):
         """ plots the pitch coefficient mean 
         
         parameters:
