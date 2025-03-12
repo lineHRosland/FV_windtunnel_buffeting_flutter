@@ -7,7 +7,7 @@ Created on Thu Nov 17 11:47:47 2022
 #%%
 import numpy as np
 import sys
-sys.path.append(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Python\Ole_sin_kode\w3tp")
+sys.path.append(r"C:\Users\liner\Documents\Github\Masteroppgave\w3tp")
 import w3t as w3t
 print(w3t.__file__)
 import os
@@ -107,6 +107,10 @@ w3t._scoff.plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff
 
 plt.show()
 
+
+static_coeff_down.to_excel(static_coeff_down,section_name = "2D", sheet_name="MUS #" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_up.to_excel(static_coeff_down,section_name = "2D", sheet_name='MDS #' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_up.to_excel(static_coeff_down,section_name = "2D", sheet_name='Single #' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
 
