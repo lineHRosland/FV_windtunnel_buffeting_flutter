@@ -77,7 +77,7 @@ class StaticCoeff:
         
     @classmethod
     def fromWTT(cls,experiment_in_still_air,experiment_in_wind,section_width,section_height,section_length_in_rig, section_length_on_wall, upwind_in_rig=True):  
-        """ fromWTT obtains an instance of the class StaticCoeff from two eksperimenter
+        """ fromWTT obtains an instance of the class StaticCoeff from two experiments
         
         parameters:
         ----------
@@ -85,8 +85,11 @@ class StaticCoeff:
         experiment_in_wind : instance of the class experiment
         section_width : width of the bridge deck section model
         section_height : height of the bridge deck section model
-        section_length_in_rig : length of the bridge deck section model
-        
+        section_length_in_rig : length of the bridge deck section model in the wind tunnel rig
+        section_length_on_wall : length of the bridge deck section model on the wall
+        upwind_in_rig : boolean, optional
+            True if the upwind deck is in the rig, False if the downwind deck is in the rig. The default is True.
+                
         returns:
         -------
         instance of the class StaticCoeff
@@ -106,25 +109,48 @@ class StaticCoeff:
         #need a representative mean wind velocity U for the calculation of the coefficients
 
         # drag_coeff = forces * 2 / (rho * U^2 * h * L)
-        drag_coeff = experiment_in_wind_still_air_forces_removed.forces_global_center[:,0:24:6]*2/experiment_in_wind_still_air_forces_removed.air_density/filtered_wind**2/section_height/section_length
-        #0:24:6 - horisontal dir: kolonne 0, 6, 12, 18 (from load cell nr. 1, 2, 3, 4)
+        drag_coeff_rig = experiment_in_wind_still_air_forces_removed.forces_global_center[:,0:12:6]*2/experiment_in_wind_still_air_forces_removed.air_density/filtered_wind**2/section_height/section_length_in_rig
+        drag_coeff_wall = experiment_in_wind_still_air_forces_removed.forces_global_center[:,12:24:6]*2/experiment_in_wind_still_air_forces_removed.air_density/filtered_wind**2/section_height/section_length_on_wall
+        #0:12:6 - horisontal dir: kolonne 0, 6 (from load cell nr. 1, 2)
+        #12:24:6 - horisontal dir: kolonne 12, 18 (from load cell nr. 3, 4)
 
         # lift_coeff = forces * 2 / (rho * U^2 * b * L)
-        lift_coeff = experiment_in_wind_still_air_forces_removed.forces_global_center[:,2:24:6]*2/experiment_in_wind_still_air_forces_removed.air_density/filtered_wind**2/section_width/section_length
+        lift_coeff_rig = experiment_in_wind_still_air_forces_removed.forces_global_center[:,2:12:6]*2/experiment_in_wind_still_air_forces_removed.air_density/filtered_wind**2/section_width/section_length_in_rig
+        lift_coeff_wall = experiment_in_wind_still_air_forces_removed.forces_global_center[:,14:24:6]*2/experiment_in_wind_still_air_forces_removed.air_density/filtered_wind**2/section_width/section_length_on_wall
         #2:24:6 - vertical dir
 
         # pitch_coeff = moments * 2 / (rho * U^2 * b^2 * L)
-        pitch_coeff = experiment_in_wind_still_air_forces_removed.forces_global_center[:,4:24:6]*2/experiment_in_wind_still_air_forces_removed.air_density/filtered_wind**2/section_width**2/section_length
+        pitch_coeff_rig = experiment_in_wind_still_air_forces_removed.forces_global_center[:,4:12:6]*2/experiment_in_wind_still_air_forces_removed.air_density/filtered_wind**2/section_width**2/section_length_in_rig
+        pitch_coeff_wall = experiment_in_wind_still_air_forces_removed.forces_global_center[:,16:24:6]*2/experiment_in_wind_still_air_forces_removed.air_density/filtered_wind**2/section_width**2/section_length_on_wall
         #4:24:6 - rotation dir
 
         pitch_motion = experiment_in_wind_still_air_forces_removed.motion[:,2]
+
+        if upwind_in_rig == True:
+            drag_coeff = np.concatenate((drag_coeff_rig,drag_coeff_wall),axis=1)
+            lift_coeff = np.concatenate((lift_coeff_rig,lift_coeff_wall),axis=1)
+            pitch_coeff = np.concatenate((pitch_coeff_rig,pitch_coeff_wall),axis=1)
+
+        elif upwind_in_rig == False:
+            drag_coeff = np.concatenate((drag_coeff_wall,drag_coeff_rig),axis=1)
+            lift_coeff = np.concatenate((lift_coeff_wall,lift_coeff_rig),axis=1)
+            pitch_coeff = np.concatenate((pitch_coeff_wall,pitch_coeff_rig),axis=1)
                 
         return cls(drag_coeff,lift_coeff,pitch_coeff,pitch_motion,filtered_wind)
+    
+     #Plot limits
+    ymin_drag = 0
+    ymax_drag = 2.5
+
+    ymin_lift = -1.5
+    ymax_lift = 1.5
+
+    ymin_pitch = -1
+    ymax_pitch = 1
     
     def to_excel(self,section_name, sheet_name='Test #' ,section_width=0,section_height=0,section_length_in_rig = 0, section_length_on_wall=0, upwind_in_rig=True):
         """
         
-
         Parameters
         ----------
         section_name : string
@@ -220,6 +246,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "decks": #upwind and downwind deck + total sum
             plt.figure()
@@ -230,6 +257,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "total": #only total sum
             plt.figure()
@@ -237,6 +265,7 @@ class StaticCoeff:
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
+            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "single": #single deck
             drag_coeff = self.drag_coeff[:, :2]  # Bruk kun aktive lastceller
@@ -247,6 +276,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -274,6 +304,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "decks":
             plt.figure()
@@ -284,6 +315,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "total":
             plt.figure()
@@ -291,6 +323,7 @@ class StaticCoeff:
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
+            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
 
         elif mode == "single": #single deck
             lift_coeff = self.lift_coeff[:, :2]  # Bruk kun aktive lastceller
@@ -301,6 +334,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -326,6 +360,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "decks":
             plt.figure()
@@ -336,6 +371,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "total":
             plt.figure()
@@ -343,6 +379,7 @@ class StaticCoeff:
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
+            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "single": #single deck
             pitch_coeff = self.plot_pitch_coeff[:, :2]  # Bruk kun aktive lastceller
@@ -353,6 +390,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -386,6 +424,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "decks": #upwind and downwind deck + total sum
             plt.figure()
@@ -400,6 +439,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "total": #only total sum
             plt.figure()
@@ -408,6 +448,7 @@ class StaticCoeff:
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
+            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "single": #single deck
             drag_coeff = self.drag_coeff[:, :2]  # Bruk kun aktive lastceller
@@ -420,6 +461,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -452,6 +494,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "decks":
             plt.figure()
@@ -467,6 +510,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "total":
             plt.figure()
@@ -475,6 +519,7 @@ class StaticCoeff:
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
+            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "single": #single deck
             lift_coeff = self.lift_coeff[:, :2]  # Bruk kun aktive lastceller
@@ -487,6 +532,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -517,6 +563,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "decks":
             plt.figure()
@@ -533,6 +580,7 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "total":
             plt.figure()
@@ -541,6 +589,7 @@ class StaticCoeff:
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
+            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
 
         elif mode == "single": #single deck
             pitch_coeff = self.pitch_coeff[:, :2]  # Bruk kun aktive lastceller
@@ -553,14 +602,46 @@ class StaticCoeff:
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
             plt.legend()
+            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
-    
-    
-         
 
+    def save_mean_static_coeff(self, filename, path=".", mode="decks"):
+        """
+        Saves the static coefficients in a .npz file
+        
+        parameters:
+        ----------
+        filename : str
+            name of the file
+        path : str, optional
+            path to the file. The default is ".".
+        """
+
+        alpha = np.round(self.pitch_motion*360/2/np.pi,1)
+        unique_alphas = np.unique(alpha)
+
+        os.makedirs(path, exist_ok=True)
+        filepath = os.path.join(path, filename)
+
+        if mode == "decks":
+            cd_upwind_mean = np.array([np.mean(self.drag_coeff[:,0][alpha == val]) + np.mean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cd_downwind_mean = np.array([np.mean(self.drag_coeff[:,2][alpha == val]) + np.mean(self.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
+            cl_upwind_mean = np.array([np.mean(self.lift_coeff[:,0][alpha == val]) + np.mean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cl_downwind_mean = np.array([np.mean(self.lift_coeff[:,2][alpha == val]) + np.mean(self.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
+            cm_upwind_mean = np.array([np.mean(self.pitch_coeff[:,0][alpha == val]) + np.mean(self.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cm_downwind_mean = np.array([np.mean(self.pitch_coeff[:,2][alpha == val]) + np.mean(self.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
+            np.savez_compressed(filepath, alpha=unique_alphas, cd_in_rig=cd_upwind_mean, cd_on_wall=cd_downwind_mean, cl_in_rig=cl_upwind_mean, cl_on_wall=cl_downwind_mean, cm_in_rig=cm_upwind_mean, cm_on_wall=cm_downwind_mean)
+
+        elif mode == "single":
+            cd_upwind_mean = np.array([np.mean(self.drag_coeff[:,0][alpha == val]) + np.mean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cl_upwind_mean = np.array([np.mean(self.lift_coeff[:,0][alpha == val]) + np.mean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cm_upwind_mean = np.array([np.mean(self.pitch_coeff[:,0][alpha == val]) + np.mean(self.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+            np.savez_compressed(filepath, alpha=unique_alphas, cd_in_rig=cd_upwind_mean, cl_in_rig=cl_upwind_mean, cm_in_rig=cm_upwind_mean)
+    
+    
 def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
     """
     Plots drag coefficient from multiple StaticCoeff objects in the same figure.
