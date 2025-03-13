@@ -82,11 +82,11 @@ exp0_single, exp1_single, static_coeff_single = load_and_process_static_coeff(h5
 
 #%% Plot single deck experiments
 
-exp0_single.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 0 ms – After filtering", fontsize=16)
-exp1_single.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 6 ms – After filtering", fontsize=16)
-plt.show()
+#exp0_single.plot_experiment() #After filtering
+#plt.gcf().suptitle(f"{section_name} 0 ms – After filtering", fontsize=16)
+#exp1_single.plot_experiment() #After filtering
+#plt.gcf().suptitle(f"{section_name} 6 ms – After filtering", fontsize=16)
+#plt.show()
 
 
 
@@ -98,11 +98,11 @@ exp0_down, exp1_down, static_coeff_down = load_and_process_static_coeff(h5_input
 
 #%% Plot all downwind experiments 
 
-exp0_down.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 0 ms – After filtering", fontsize=16)
-exp1_down.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 6 ms – After filtering", fontsize=16)
-plt.show()
+#exp0_down.plot_experiment() #After filtering
+#plt.gcf().suptitle(f"{section_name} 0 ms – After filtering", fontsize=16)
+#exp1_down.plot_experiment() #After filtering
+#plt.gcf().suptitle(f"{section_name} 6 ms – After filtering", fontsize=16)
+#plt.show()
 
 
 #%% Load all upwind experiments (upwind in rig)
@@ -114,11 +114,11 @@ exp0_up, exp1_up, static_coeff_up = load_and_process_static_coeff(h5_input_path,
 
 #%% Plot all upwind experiments
 
-exp0_up.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 0 ms – After filtering", fontsize=16)
-exp1_up.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 6 ms – After filtering", fontsize=16)
-plt.show()
+#exp0_up.plot_experiment() #After filtering
+#plt.gcf().suptitle(f"{section_name} 0 ms – After filtering", fontsize=16)
+#exp1_up.plot_experiment() #After filtering
+#plt.gcf().suptitle(f"{section_name} 6 ms – After filtering", fontsize=16)
+#plt.show()
 
 
 
