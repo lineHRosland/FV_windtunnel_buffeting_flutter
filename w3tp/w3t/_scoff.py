@@ -184,7 +184,8 @@ class StaticCoeff:
         C_M_downwind = self.pitch_coeff[0:-1:10,2] + self.pitch_coeff[0:-1:10,3]
 
         # Create results dataframe
- 
+        static_coeff = static_coeff.round(3)
+
         static_coeff = pd.DataFrame({"pitch motion": self.pitch_motion[0:-1:10],
                                      "alpha [deg]": self.pitch_motion[0:-1:10] * 360 / (2 * np.pi),
                                 "C_D_upwind": C_D_upwind,
@@ -215,7 +216,76 @@ class StaticCoeff:
             with pd.ExcelWriter(filename, engine="openpyxl") as writer:
                 setUp.to_excel(writer, sheet_name)
                 static_coeff.to_excel(writer, sheet_name=sheet_name)
-               
+    
+    def to_excel_mean(self,section_name, sheet_name='Test' ,section_width=0,section_height=0,section_length_in_rig = 0, section_length_on_wall=0, upwind_in_rig=True):
+        """
+        Export mean static coefficients and setup info to Excel.
+
+        Parameters
+        ----------
+        section_name : string
+            section name.
+            Distance: 1D, 2D, 3D, 4D, 5D. Follow same structure always.
+        sheet_name : string 
+            name of the excel sheet that the data is stored in.
+            Options: MUS, MDS, Single.
+        section_width : float64, optional
+            Width of the section model. The default is 0.
+        section_height : float64, optional
+            Height of the section model. The default is 0.
+        section_length_in rig : float64, optional
+            Length of the section model in rig. The default is 0.
+        section_length_on_wall : float
+            Length of the section model on wall. The default is 0.
+        upwind_in_rig : bool
+            True dersom upwind-dekket er montert i rigg, False dersom downwind er i rigg.
+
+        Returns
+        -------
+        None.
+
+        """
+        alpha = np.round(self.pitch_motion * 360 / (2 * np.pi), 1)
+        unique_alphas = np.unique(alpha)
+
+        # Beregn middelverdi per alpha
+        C_D_upwind = np.array([np.mean(self.drag_coeff[:,0][alpha == val]) + np.mean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+        C_D_downwind = np.array([np.mean(self.drag_coeff[:,2][alpha == val]) + np.mean(self.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
+        C_L_upwind = np.array([np.mean(self.lift_coeff[:,0][alpha == val]) + np.mean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+        C_L_downwind = np.array([np.mean(self.lift_coeff[:,2][alpha == val]) + np.mean(self.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
+        C_M_upwind = np.array([np.mean(self.pitch_coeff[:,0][alpha == val]) + np.mean(self.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+        C_M_downwind = np.array([np.mean(self.pitch_coeff[:,2][alpha == val]) + np.mean(self.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
+
+        # Create results dataframe
+        static_coeff = pd.DataFrame({"alpha [deg]": unique_alphas,
+                                "C_D_upwind": C_D_upwind,
+                                "C_D_downwind": C_D_downwind,
+                                "C_L_upwind": C_L_upwind,
+                                "C_L_downwind": C_L_downwind,
+                                "C_M_upwind": C_M_upwind,
+                                "C_M_downwind": C_M_downwind,
+                                 }).round
+
+        # Geometry/documentation DataFrame
+        setUp = pd.DataFrame({
+            "D": [section_height],
+            "B": [section_width],
+            "L in rig": [section_length_in_rig],
+            "L on wall": [section_length_on_wall],
+            "Upwind in rig": [upwind_in_rig]
+        }).round(3)
+
+        # Write to excel
+        filename = os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Excel",
+                    f"Static_coeff_{section_name}.xlsx")
+        if os.path.exists(filename):# Add sheet/owerwrite sheet in excisting file
+           with pd.ExcelWriter(filename,mode="a",engine="openpyxl",if_sheet_exists="replace") as writer:
+               setUp.to_excel(writer, sheet_name)
+               static_coeff.to_excel(writer, sheet_name=sheet_name)
+        else: #create new excel file
+            with pd.ExcelWriter(filename, engine="openpyxl") as writer:
+                setUp.to_excel(writer, sheet_name)
+                static_coeff.to_excel(writer, sheet_name=sheet_name)             
             
     def plot_drag(self,mode="decks"):
         """ plots the drag coefficient
