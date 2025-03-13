@@ -852,7 +852,7 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
 
     cl_single_mean = np.array([np.mean(static_coeff_single.lift_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.lift_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
     cl_upwind_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,0][alpha_up == val]) + np.mean(static_coeff_up.lift_coeff[:,1][alpha_up == val]) for val in unique_alphas_up])
-    cl_downwind_mean = np.array([np.mean(static_coeff_down.lift_coeff[:2][alpha_down == val]) + np.mean(static_coeff_down.lift_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
+    cl_downwind_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,2][alpha_down == val]) + np.mean(static_coeff_down.lift_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
     cl_upDown_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.lift_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
     cl_downUp_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.lift_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
 
