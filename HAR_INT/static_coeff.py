@@ -72,6 +72,7 @@ section_length_in_rig = 2.68
 section_length_on_wall = 2.66
 
 h5_input_path = r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Python\Ole_sin_kode\HAR_INT\H5F\\"
+#dette er en test
 
 #%% Load single deck
 section_name = "Single_Static"
