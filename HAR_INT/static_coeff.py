@@ -159,3 +159,5 @@ static_coeff_single.to_excel_mean(section_name, sheet_name='Single' ,section_wid
 
 
 
+
+# %%

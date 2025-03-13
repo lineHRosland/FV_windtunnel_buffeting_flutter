@@ -184,7 +184,6 @@ class StaticCoeff:
         C_M_downwind = self.pitch_coeff[0:-1:10,2] + self.pitch_coeff[0:-1:10,3]
 
         # Create results dataframe
-        static_coeff = static_coeff.round(3)
 
         static_coeff = pd.DataFrame({"pitch motion": self.pitch_motion[0:-1:10],
                                      "alpha [deg]": self.pitch_motion[0:-1:10] * 360 / (2 * np.pi),
@@ -194,7 +193,7 @@ class StaticCoeff:
                                 "C_L_downwind": C_L_downwind,
                                 "C_M_upwind": C_M_upwind,
                                 "C_M_downwind": C_M_downwind,
-                                 })
+                                 }).round(3)
 
         # Geometry/documentation DataFrame
         setUp = pd.DataFrame({
@@ -203,7 +202,7 @@ class StaticCoeff:
             "L in rig": [section_length_in_rig],
             "L on wall": [section_length_on_wall],
             "Upwind in rig": [upwind_in_rig]
-        })
+        }).round(3)
 
         # Write to excel
         filename = os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Excel",
