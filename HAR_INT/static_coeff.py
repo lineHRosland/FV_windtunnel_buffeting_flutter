@@ -149,7 +149,7 @@ static_coeff_down.to_excel(section_name, sheet_name="MUS" ,section_width=18.3/10
 static_coeff_up.to_excel(section_name, sheet_name='MDS' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single.to_excel(section_name, sheet_name='Single' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
-section_name = "2D - mean"
+section_name = "2D_mean"
 
 static_coeff_down.to_excel_mean(section_name, sheet_name="MUS" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
 static_coeff_up.to_excel_mean(section_name, sheet_name='MDS' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
