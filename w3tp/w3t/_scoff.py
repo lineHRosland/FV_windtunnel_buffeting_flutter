@@ -186,6 +186,7 @@ class StaticCoeff:
         # Create results dataframe
  
         static_coeff = pd.DataFrame({"pitch motion": self.pitch_motion[0:-1:10],
+                                     "alpha [deg]": self.pitch_motion[0:-1:10] * 360 / (2 * np.pi),
                                 "C_D_upwind": C_D_upwind,
                                 "C_D_downwind": C_D_downwind,
                                 "C_L_upwind": C_L_upwind,
