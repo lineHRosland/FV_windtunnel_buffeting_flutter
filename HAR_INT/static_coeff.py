@@ -48,14 +48,14 @@ def load_and_process_static_coeff(h5_input_path, section_name, file_names, filte
     plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
 
-    #static_coeff.plot_drag(mode=mode)
-    #plt.gcf().suptitle(f"{section_name}", fontsize=16)
+    static_coeff.plot_drag(mode=mode)
+    plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
-    #static_coeff.plot_lift(mode=mode)
-    #plt.gcf().suptitle(f"{section_name}", fontsize=16)
+    static_coeff.plot_lift(mode=mode)
+    plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
-    #static_coeff.plot_pitch(mode=mode)
-    #plt.gcf().suptitle(f"{section_name}", fontsize=16)
+    static_coeff.plot_pitch(mode=mode)
+    plt.gcf().suptitle(f"{section_name}", fontsize=16)
     
     plt.show()
 
