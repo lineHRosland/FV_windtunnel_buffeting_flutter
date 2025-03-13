@@ -132,6 +132,13 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+w3t._scoff.plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_down)
+plt.gcf().suptitle(f"{section_name}", fontsize=16)
+w3t._scoff.plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_down)
+plt.gcf().suptitle(f"{section_name}", fontsize=16)
+w3t._scoff.plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_down)
+plt.gcf().suptitle(f"{section_name}", fontsize=16)
+
 plt.show()
 
 

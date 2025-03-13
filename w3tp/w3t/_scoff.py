@@ -728,7 +728,7 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
         The StaticCoeff object for downwind deck.
     """
     # Calculate unique alpha values (pitch motion in degrees)
-    alpha = np.round(self.pitch_motion*360/2/np.pi,1)
+    alpha = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
     unique_alphas = np.unique(alpha)
 
     cd_single_mean = np.array([np.mean(static_coeff_single.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_single.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
