@@ -643,7 +643,7 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
     
     Parameters
     ----------
-    static_coeff_single : StaticCoeff object
+     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff_up : StaticCoeff object
         The StaticCoeff object for upwind deck.
@@ -665,14 +665,13 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
     plt.legend()
     plt.title("Comparison of drag coefficients")
 
-
 def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down):
     """
     Plots lift coefficient from multiple StaticCoeff objects in the same figure.
     
     Parameters
     ----------
-    static_coeff_single : StaticCoeff object
+     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff_up : StaticCoeff object
         The StaticCoeff object for upwind deck.
@@ -701,7 +700,7 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
     
     Parameters
     ----------
-    static_coeff_single : StaticCoeff object
+     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff_up : StaticCoeff object
         The StaticCoeff object for upwind deck.
