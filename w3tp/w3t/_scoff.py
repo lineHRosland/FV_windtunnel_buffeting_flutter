@@ -176,21 +176,12 @@ class StaticCoeff:
 
         """
         
-        if upwind_in_rig: #upwind: cell 0,1
-            C_D_upwind = self.drag_coeff[0:-1:10,0] + self.drag_coeff[0:-1:10,1]
-            C_D_downwind  =self.drag_coeff[0:-1:10,2] + self.drag_coeff[0:-1:10,3]
-            C_L_upwind = self.lift_coeff[0:-1:10,0] + self.lift_coeff[0:-1:10,1]
-            C_L_downwind = self.lift_coeff[0:-1:10,2] + self.lift_coeff[0:-1:10,3]
-            C_M_upwind = self.pitch_coeff[0:-1:10,0] + self.pitch_coeff[0:-1:10,1]
-            C_M_downwind = self.pitch_coeff[0:-1:10,2] + self.pitch_coeff[0:-1:10,3]
-        
-        else: #downwind: cell 1,2
-            C_D_upwind = self.drag_coeff[0:-1:10,2] + self.drag_coeff[0:-1:10,3]
-            C_D_downwind = self.drag_coeff[0:-1:10,0] + self.drag_coeff[0:-1:10,1]
-            C_L_upwind = self.lift_coeff[0:-1:10,2] + self.lift_coeff[0:-1:10,3]
-            C_L_downwind = self.lift_coeff[0:-1:10,0] + self.lift_coeff[0:-1:10,1]
-            C_M_upwind = self.pitch_coeff[0:-1:10,2] + self.pitch_coeff[0:-1:10,3]
-            C_M_downwind = self.pitch_coeff[0:-1:10,0] + self.pitch_coeff[0:-1:10,1]
+        C_D_upwind = self.drag_coeff[0:-1:10,0] + self.drag_coeff[0:-1:10,1]
+        C_D_downwind  =self.drag_coeff[0:-1:10,2] + self.drag_coeff[0:-1:10,3]
+        C_L_upwind = self.lift_coeff[0:-1:10,0] + self.lift_coeff[0:-1:10,1]
+        C_L_downwind = self.lift_coeff[0:-1:10,2] + self.lift_coeff[0:-1:10,3]
+        C_M_upwind = self.pitch_coeff[0:-1:10,0] + self.pitch_coeff[0:-1:10,1]
+        C_M_downwind = self.pitch_coeff[0:-1:10,2] + self.pitch_coeff[0:-1:10,3]
 
         # Create results dataframe
  
@@ -251,8 +242,8 @@ class StaticCoeff:
         elif mode == "decks": #upwind and downwind deck + total sum
             plt.figure()
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Downwind deck"))
-            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Upwind deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"))
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
@@ -308,8 +299,8 @@ class StaticCoeff:
         elif mode == "decks":
             plt.figure()
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Downwind deck"))
-            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,2]+self.lift_coeff[:,3],label=("Upwind deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Upwind deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,2]+self.lift_coeff[:,3],label=("Downwind deck"))
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
@@ -363,8 +354,8 @@ class StaticCoeff:
         elif mode == "decks":
             plt.figure()
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Downwind deck"))
-            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,2]+self.pitch_coeff[:,3],label=("Upwind deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Upwind deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,2]+self.pitch_coeff[:,3],label=("Downwind deck"))
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
@@ -430,8 +421,8 @@ class StaticCoeff:
             cd_downwind_mean = np.array([np.mean(self.drag_coeff[:,2][alpha == val]) + np.mean(self.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
 
             #plt.plot(unique_alphas,cd_total_mean,label = "Total")    
-            plt.plot(unique_alphas,cd_upwind_mean,label=("Downwind deck")) # Switch upwind and downwind deck. For Downstream files the load cells are switched.
-            plt.plot(unique_alphas,cd_downwind_mean,label=("Upwind deck"))
+            plt.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck")) # Switch upwind and downwind deck. For Downstream files the load cells are switched.
+            plt.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"))
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
@@ -499,8 +490,8 @@ class StaticCoeff:
             cl_downwind_mean = np.array([np.mean(self.lift_coeff[:,2][alpha == val]) + np.mean(self.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
 
             #plt.plot(unique_alphas,cl_total_mean,label = "Total")
-            plt.plot(unique_alphas,cl_upwind_mean,label=("Downwind deck"))
-            plt.plot(unique_alphas,cl_downwind_mean,label=("Upwind deck"))
+            plt.plot(unique_alphas,cl_upwind_mean,label=("Upwind deck"))
+            plt.plot(unique_alphas,cl_downwind_mean,label=("Downwind deck"))
             
             plt.grid()
             plt.xlabel(r"$\alpha$")
@@ -569,8 +560,8 @@ class StaticCoeff:
            
 
             #plt.plot(unique_alphas,cm_total_mean,label = "Total")
-            plt.plot(unique_alphas,cm_upwind_mean,label=("Downwind deck"))
-            plt.plot(unique_alphas,cm_downwind_mean,label=("Upwind deck"))
+            plt.plot(unique_alphas,cm_upwind_mean,label=("Upwind deck"))
+            plt.plot(unique_alphas,cm_downwind_mean,label=("Downwind deck"))
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
@@ -643,7 +634,7 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
     
     Parameters
     ----------
-     static_coeff_single : StaticCoeff object
+    static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff_up : StaticCoeff object
         The StaticCoeff object for upwind deck.
@@ -653,11 +644,11 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
     plt.figure()
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi,static_coeff_single.drag_coeff[:,0]+static_coeff_single.drag_coeff[:,1],label=("Single deck"))
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.drag_coeff[:,0]+static_coeff_up.drag_coeff[:,1],label=("Upwind deck"))
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.drag_coeff[:,0]+static_coeff_down.drag_coeff[:,1],label=("Downwind deck"))
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.drag_coeff[:,0]+static_coeff_up.drag_coeff[:,1],label=("Upwind deck in rig"))
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.drag_coeff[:,2]+static_coeff_down.drag_coeff[:,3],label=("Downwind deck in rig"))
 
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.drag_coeff[:,2]+static_coeff_up.drag_coeff[:,3],label=("Up-Down deck"), alpha=0.5)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.drag_coeff[:,2]+static_coeff_down.drag_coeff[:,3],label=("Down-Up deck"), alpha=0.5)  
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.drag_coeff[:,2]+static_coeff_up.drag_coeff[:,3],label=("Downwind deck on wall"), alpha=0.5)
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.drag_coeff[:,0]+static_coeff_down.drag_coeff[:,1],label=("Upwind deck on wall"), alpha=0.5)  
     
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_D(\alpha)$")
@@ -665,13 +656,14 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
     plt.legend()
     plt.title("Comparison of drag coefficients")
 
+
 def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down):
     """
     Plots lift coefficient from multiple StaticCoeff objects in the same figure.
     
     Parameters
     ----------
-     static_coeff_single : StaticCoeff object
+    static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff_up : StaticCoeff object
         The StaticCoeff object for upwind deck.
@@ -682,11 +674,11 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down):
     plt.figure()
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi,static_coeff_single.lift_coeff[:,0]+static_coeff_single.lift_coeff[:,1],label=("Single deck"))
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.lift_coeff[:,0]+static_coeff_up.lift_coeff[:,1],label=("Upwind deck"))
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.lift_coeff[:,0]+static_coeff_down.lift_coeff[:,1],label=("Downwind deck"))
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.lift_coeff[:,0]+static_coeff_up.lift_coeff[:,1],label=("Upwind deck in rig"))
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.lift_coeff[:,2]+static_coeff_down.lift_coeff[:,3],label=("Downwind deck in rig"))
 
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.lift_coeff[:,2]+static_coeff_up.lift_coeff[:,3],label=("Up-Down deck"), alpha=0.5)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.lift_coeff[:,2]+static_coeff_down.lift_coeff[:,3],label=("Down-Up deck"), alpha=0.5)  
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.lift_coeff[:,2]+static_coeff_up.lift_coeff[:,3],label=("Downwind deck on wall"), alpha=0.5)
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.lift_coeff[:,0]+static_coeff_down.lift_coeff[:,1],label=("Upwind deck on wall"), alpha=0.5)  
     
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_L(\alpha)$")
@@ -700,7 +692,7 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
     
     Parameters
     ----------
-     static_coeff_single : StaticCoeff object
+    static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff_up : StaticCoeff object
         The StaticCoeff object for upwind deck.
@@ -710,11 +702,11 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
     plt.figure()
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi,static_coeff_single.pitch_coeff[:,0]+static_coeff_single.pitch_coeff[:,1],label=("Single deck"))
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.pitch_coeff[:,0]+static_coeff_up.pitch_coeff[:,1],label=("Upwind deck"))
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.pitch_coeff[:,0]+static_coeff_down.pitch_coeff[:,1],label=("Downwind deck"))
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.pitch_coeff[:,0]+static_coeff_up.pitch_coeff[:,1],label=("Upwind deck in rig"))
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.pitch_coeff[:,2]+static_coeff_down.pitch_coeff[:,3],label=("Downwind deck in rig"))
 
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.pitch_coeff[:,2]+static_coeff_up.pitch_coeff[:,3],label=("Up-Down deck"), alpha=0.5)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.pitch_coeff[:,2]+static_coeff_down.pitch_coeff[:,3],label=("Down-Up deck"), alpha=0.5)  
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi,static_coeff_up.pitch_coeff[:,2]+static_coeff_up.pitch_coeff[:,3],label=("Downwind deck on wall"), alpha=0.5)
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi,static_coeff_down.pitch_coeff[:,0]+static_coeff_down.pitch_coeff[:,1],label=("Upwind deck on wall"), alpha=0.5)  
     
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_M(\alpha)$")
@@ -741,18 +733,18 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
 
     cd_single_mean = np.array([np.mean(static_coeff_single.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_single.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
     cd_upwind_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_up.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
-    cd_downwind_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_down.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cd_downwind_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,2][alpha == val]) + np.mean(static_coeff_down.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
     cd_upDown_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,2][alpha == val]) + np.mean(static_coeff_up.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
-    cd_downUp_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,2][alpha == val]) + np.mean(static_coeff_down.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
+    cd_downUp_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_down.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
 
 
     plt.figure()
     
     plt.plot(unique_alphas, cd_single_mean, label="Single deck")
-    plt.plot(unique_alphas, cd_upwind_mean, label="Upwind deck")
-    plt.plot(unique_alphas, cd_downwind_mean, label="Downwind deck")
-    plt.plot(unique_alphas, cd_upDown_mean, label="Up-Down deck")
-    plt.plot(unique_alphas, cd_downUp_mean, label="Down-Up deck")
+    plt.plot(unique_alphas, cd_upwind_mean, label="Upwind deck in rig")
+    plt.plot(unique_alphas, cd_downwind_mean, label="Downwind deck in rig")
+    plt.plot(unique_alphas, cd_upDown_mean, label="Downwind deck on wall")
+    plt.plot(unique_alphas, cd_downUp_mean, label="Upwind deck on wall")
 
    
     plt.xlabel(r"$\alpha$")
@@ -781,17 +773,17 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
 
     cl_single_mean = np.array([np.mean(static_coeff_single.lift_coeff[:,0][alpha == val]) + np.mean(static_coeff_single.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
     cl_upwind_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,0][alpha == val]) + np.mean(static_coeff_up.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
-    cl_downwind_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,0][alpha == val]) + np.mean(static_coeff_down.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cl_downwind_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,2][alpha == val]) + np.mean(static_coeff_down.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
     cl_upDown_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,2][alpha == val]) + np.mean(static_coeff_up.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
-    cl_downUp_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,2][alpha == val]) + np.mean(static_coeff_down.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
+    cl_downUp_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,0][alpha == val]) + np.mean(static_coeff_down.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
 
     
     plt.figure()
     plt.plot(unique_alphas, cl_single_mean, label="Single deck")
-    plt.plot(unique_alphas, cl_upwind_mean, label="Upwind deck")
-    plt.plot(unique_alphas, cl_downwind_mean, label="Downwind deck")
-    plt.plot(unique_alphas, cl_upDown_mean, label="Up-Down deck")
-    plt.plot(unique_alphas, cl_downUp_mean, label="Down-Up deck")
+    plt.plot(unique_alphas, cl_upwind_mean, label="Upwind deck in rig")
+    plt.plot(unique_alphas, cl_downwind_mean, label="Downwind deck in rig")
+    plt.plot(unique_alphas, cl_upDown_mean, label="Downwind deck on wall")
+    plt.plot(unique_alphas, cl_downUp_mean, label="Upwind deck on wall")
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_L(\alpha)$")
@@ -818,17 +810,17 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
 
     cm_single_mean = np.array([np.mean(static_coeff_single.pitch_coeff[:,0][alpha == val]) + np.mean(static_coeff_single.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
     cm_upwind_mean = np.array([np.mean(static_coeff_up.pitch_coeff[:,0][alpha == val]) + np.mean(static_coeff_up.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
-    cm_downwind_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,0][alpha == val]) + np.mean(static_coeff_down.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cm_downwind_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,2][alpha == val]) + np.mean(static_coeff_down.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
     cm_upDown_mean = np.array([np.mean(static_coeff_up.pitch_coeff[:,2][alpha == val]) + np.mean(static_coeff_up.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
-    cm_downUp_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,2][alpha == val]) + np.mean(static_coeff_down.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
+    cm_downUp_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,0][alpha == val]) + np.mean(static_coeff_down.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
 
     
     plt.figure()
     plt.plot(unique_alphas, cm_single_mean, label="Single deck")
-    plt.plot(unique_alphas, cm_upwind_mean, label="Upwind deck")
-    plt.plot(unique_alphas, cm_downwind_mean, label="Downwind deck")
-    plt.plot(unique_alphas, cm_upDown_mean, label="Up-Down deck")
-    plt.plot(unique_alphas, cm_downUp_mean, label="Down-Up deck")
+    plt.plot(unique_alphas, cm_upwind_mean, label="Upwind deck in rig")
+    plt.plot(unique_alphas, cm_downwind_mean, label="Downwind deck in rig")
+    plt.plot(unique_alphas, cm_upDown_mean, label="Downwind deck on wall")
+    plt.plot(unique_alphas, cm_downUp_mean, label="Upwind deck on wall")
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
