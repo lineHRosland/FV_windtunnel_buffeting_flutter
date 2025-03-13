@@ -736,10 +736,12 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
         The StaticCoeff object for downwind deck.
     """
     # Calculate unique alpha values (pitch motion in degrees)
+    alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
+    unique_alphas_single = np.unique(alpha_single)
     alpha = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
     unique_alphas = np.unique(alpha)
 
-    cd_single_mean = np.array([np.mean(static_coeff_single.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_single.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cd_single_mean = np.array([np.mean(static_coeff_single.drag_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.drag_coeff[:,1][alpha_single == val]) for val in unique_alphas])
     cd_upwind_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_up.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
     cd_downwind_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_down.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
     cd_upDown_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,2][alpha == val]) + np.mean(static_coeff_up.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
@@ -748,7 +750,7 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
 
     plt.figure()
     
-    plt.plot(unique_alphas, cd_single_mean, label="Single deck")
+    plt.plot(unique_alphas_single, cd_single_mean, label="Single deck")
     plt.plot(unique_alphas, cd_upwind_mean, label="Upwind deck")
     plt.plot(unique_alphas, cd_downwind_mean, label="Downwind deck")
     plt.plot(unique_alphas, cd_upDown_mean, label="Up-Down deck")
