@@ -643,8 +643,12 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
     
     Parameters
     ----------
-    static_coeff_list : list of StaticCoeff objects
-        The StaticCoeff objects to compare.
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
     """
     plt.figure()
 
@@ -661,14 +665,19 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
     plt.legend()
     plt.title("Comparison of drag coefficients")
 
+
 def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down):
     """
     Plots lift coefficient from multiple StaticCoeff objects in the same figure.
     
     Parameters
     ----------
-    static_coeff_list : list of StaticCoeff objects
-        The StaticCoeff objects to compare.
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
     
     """
     plt.figure()
@@ -692,8 +701,12 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
     
     Parameters
     ----------
-    static_coeff_list : list of StaticCoeff objects
-        The StaticCoeff objects to compare.
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
     """
     plt.figure()
 
@@ -709,3 +722,116 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
     plt.grid()
     plt.legend()
     plt.title("Comparison of pitch coefficients")
+
+def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_down):
+    """
+    Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
+    
+    Parameters
+    ----------
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
+    """
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha = np.round(self.pitch_motion*360/2/np.pi,1)
+    unique_alphas = np.unique(alpha)
+
+    cd_single_mean = np.array([np.mean(static_coeff_single.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_single.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cd_upwind_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_up.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cd_downwind_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff_down.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cd_upDown_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,2][alpha == val]) + np.mean(static_coeff_up.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
+    cd_downUp_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,2][alpha == val]) + np.mean(static_coeff_down.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
+
+
+    plt.figure()
+    
+    plt.plot(unique_alphas, cd_single_mean, label="Single deck")
+    plt.plot(unique_alphas, cd_upwind_mean, label="Upwind deck")
+    plt.plot(unique_alphas, cd_downwind_mean, label="Downwind deck")
+    plt.plot(unique_alphas, cd_upDown_mean, label="Up-Down deck")
+    plt.plot(unique_alphas, cd_downUp_mean, label="Down-Up deck")
+
+   
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_D(\alpha)$")
+    plt.grid()
+    plt.legend()
+    plt.title("Comparison of mean drag coefficients")
+
+def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_down):
+    """
+    Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
+    
+    Parameters
+    ----------
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
+    
+    """
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
+    unique_alphas = np.unique(alpha)
+
+    cl_single_mean = np.array([np.mean(static_coeff_single.lift_coeff[:,0][alpha == val]) + np.mean(static_coeff_single.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cl_upwind_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,0][alpha == val]) + np.mean(static_coeff_up.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cl_downwind_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,0][alpha == val]) + np.mean(static_coeff_down.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cl_upDown_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,2][alpha == val]) + np.mean(static_coeff_up.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
+    cl_downUp_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,2][alpha == val]) + np.mean(static_coeff_down.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
+
+    
+    plt.figure()
+    plt.plot(unique_alphas, cl_single_mean, label="Single deck")
+    plt.plot(unique_alphas, cl_upwind_mean, label="Upwind deck")
+    plt.plot(unique_alphas, cl_downwind_mean, label="Downwind deck")
+    plt.plot(unique_alphas, cl_upDown_mean, label="Up-Down deck")
+    plt.plot(unique_alphas, cl_downUp_mean, label="Down-Up deck")
+
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_L(\alpha)$")
+    plt.grid()
+    plt.legend()
+    plt.title("Comparison of mean lift coefficients")
+
+def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_down):
+    """
+    Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
+    
+    Parameters
+    ----------
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
+    """
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
+    unique_alphas = np.unique(alpha)
+
+    cm_single_mean = np.array([np.mean(static_coeff_single.pitch_coeff[:,0][alpha == val]) + np.mean(static_coeff_single.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cm_upwind_mean = np.array([np.mean(static_coeff_up.pitch_coeff[:,0][alpha == val]) + np.mean(static_coeff_up.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cm_downwind_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,0][alpha == val]) + np.mean(static_coeff_down.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cm_upDown_mean = np.array([np.mean(static_coeff_up.pitch_coeff[:,2][alpha == val]) + np.mean(static_coeff_up.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
+    cm_downUp_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,2][alpha == val]) + np.mean(static_coeff_down.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
+
+    
+    plt.figure()
+    plt.plot(unique_alphas, cm_single_mean, label="Single deck")
+    plt.plot(unique_alphas, cm_upwind_mean, label="Upwind deck")
+    plt.plot(unique_alphas, cm_downwind_mean, label="Downwind deck")
+    plt.plot(unique_alphas, cm_upDown_mean, label="Up-Down deck")
+    plt.plot(unique_alphas, cm_downUp_mean, label="Down-Up deck")
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_M(\alpha)$")
+    plt.grid()
+    plt.legend()
+    plt.title("Comparison of mean pitch coefficients")
