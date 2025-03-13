@@ -279,12 +279,12 @@ class StaticCoeff:
                     f"Static_coeff_{section_name}.xlsx")
         if os.path.exists(filename):# Add sheet/owerwrite sheet in excisting file
            with pd.ExcelWriter(filename,mode="a",engine="openpyxl",if_sheet_exists="replace") as writer:
-               setUp.to_excel(writer, sheet_name)
-               static_coeff.to_excel(writer, sheet_name=sheet_name)
+               setUp.to_excel_mean(writer, sheet_name)
+               static_coeff.to_excel_mean(writer, sheet_name=sheet_name)
         else: #create new excel file
             with pd.ExcelWriter(filename, engine="openpyxl") as writer:
-                setUp.to_excel(writer, sheet_name)
-                static_coeff.to_excel(writer, sheet_name=sheet_name)             
+                setUp.to_excel_mean(writer, sheet_name)
+                static_coeff.to_excel_mean(writer, sheet_name=sheet_name)             
             
     def plot_drag(self,mode="decks"):
         """ plots the drag coefficient
