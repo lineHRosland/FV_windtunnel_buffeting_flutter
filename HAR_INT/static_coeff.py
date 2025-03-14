@@ -232,6 +232,56 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
 plt.show()
 
+#%% Compare all experiments - only with single deck
+
+#Low wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+
+#Medium wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+                                               
+#High wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+plt.show()
 
 # %% Compare all experiments (Wind speed)
 w3t._scoff.plot_compare_drag_wind_speeds(static_coeff_single_low, static_coeff_single_high,
@@ -387,6 +437,56 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
 plt.show()
 
+#%% Compare all experiments - only with single deck
+
+#Low wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+
+#Medium wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+                                               
+#High wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+plt.show()
 
 # %% Compare all experiments (Wind speed)
 w3t._scoff.plot_compare_drag_wind_speeds(static_coeff_single_low, static_coeff_single_high,
@@ -544,6 +644,56 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
 plt.show()
 
+#%% Compare all experiments - only with single deck
+
+#Low wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+
+#Medium wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+                                               
+#High wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+plt.show()
 
 # %% Compare all experiments (Wind speed)
 w3t._scoff.plot_compare_drag_wind_speeds(static_coeff_single_low, static_coeff_single_high,
@@ -697,6 +847,56 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
 plt.show()
 
+#%% Compare all experiments - only with single deck
+
+#Low wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+
+#Medium wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+                                               
+#High wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+plt.show()
 
 # %% Compare all experiments (Wind speed)
 w3t._scoff.plot_compare_drag_wind_speeds(static_coeff_single_low, static_coeff_single_high,
@@ -851,6 +1051,57 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
 plt.show()
 
+#%% Compare all experiments - only with single deck
+
+#Low wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_up_low)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+
+#Medium wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_med)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+                                               
+#High wind speed
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high)
+
+
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_high)
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+
+plt.show()
 
 # %% Compare all experiments (Wind speed)
 w3t._scoff.plot_compare_drag_wind_speeds(static_coeff_single_low, static_coeff_single_high,
