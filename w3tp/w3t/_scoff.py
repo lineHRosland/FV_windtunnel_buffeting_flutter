@@ -920,3 +920,69 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
     plt.legend()
     plt.title("Comparison of mean pitch coefficients")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+
+def plot_compare_drag_wind_speeds(static_coeff_single_low, static_coeff_single_high,
+                                   static_coeff_up_low, static_coeff_up_high,
+                                   static_coeff_down_low, static_coeff_down_high,
+                                   label_up="Upwind deck in rig", label_down="Downwind deck in rig",
+                                   section_name=""):
+    """
+    Plots drag coefficients for low and high wind speeds in same figure for each deck setup.
+
+    Parameters
+    ----------
+    static_coeff_single_low : StaticCoeff
+        Single deck, low wind speed
+    static_coeff_single_high : StaticCoeff
+        Single deck, high wind speed
+    static_coeff_up_low : StaticCoeff
+        Deck in rig (upwind or downwind), low wind speed
+    static_coeff_up_high : StaticCoeff
+        Same deck in rig, high wind speed
+    static_coeff_down_low : StaticCoeff
+        Deck on wall (opposite of upwind_in_rig), low wind speed
+    static_coeff_down_high : StaticCoeff
+        Deck on wall, high wind speed
+    label_up : str
+        Label for deck in rig
+    label_down : str
+        Label for deck on wall
+    section_name : str
+        Optional suptitle for the plot
+    """
+
+    plt.figure(figsize=(10,6))
+
+    # Alpha in degrees
+    alpha_single_low = static_coeff_single_low.pitch_motion * 360 / (2 * np.pi)
+    alpha_single_high = static_coeff_single_high.pitch_motion * 360 / (2 * np.pi)
+    alpha_up_low = static_coeff_up_low.pitch_motion * 360 / (2 * np.pi)
+    alpha_up_high = static_coeff_up_high.pitch_motion * 360 / (2 * np.pi)
+    alpha_down_low = static_coeff_down_low.pitch_motion * 360 / (2 * np.pi)
+    alpha_down_high = static_coeff_down_high.pitch_motion * 360 / (2 * np.pi)
+
+    # Plot low wind speed
+    plt.plot(alpha_single_low, static_coeff_single_low.drag_coeff[:,0] + static_coeff_single_low.drag_coeff[:,1],
+             label="Single deck (low wind)", linestyle='-')
+    plt.plot(alpha_up_low, static_coeff_up_low.drag_coeff[:,0] + static_coeff_up_low.drag_coeff[:,1],
+             label=f"{label_up} (low wind)", linestyle='-')
+    plt.plot(alpha_down_low, static_coeff_down_low.drag_coeff[:,2] + static_coeff_down_low.drag_coeff[:,3],
+             label=f"{label_down} (low wind)", linestyle='-')
+
+    # Plot high wind speed
+    plt.plot(alpha_single_high, static_coeff_single_high.drag_coeff[:,0] + static_coeff_single_high.drag_coeff[:,1],
+             label="Single deck (high wind)", linestyle='--')
+    plt.plot(alpha_up_high, static_coeff_up_high.drag_coeff[:,0] + static_coeff_up_high.drag_coeff[:,1],
+             label=f"{label_up} (high wind)", linestyle='--')
+    plt.plot(alpha_down_high, static_coeff_down_high.drag_coeff[:,2] + static_coeff_down_high.drag_coeff[:,3],
+             label=f"{label_down} (high wind)", linestyle='--')
+
+    plt.xlabel(r"$\alpha$ [deg]")
+    plt.ylabel(r"$C_D(\alpha)$")
+    plt.grid(True)
+    plt.legend()
+    plt.title("Comparison of drag coefficients at different wind speeds")
+    if section_name:
+        plt.suptitle(f"{section_name}", fontsize=14)
+
+
