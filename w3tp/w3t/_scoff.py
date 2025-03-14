@@ -713,12 +713,12 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
     """
     plt.figure()
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"))
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,0] + static_coeff_up.drag_coeff[:,1], label=("Upwind deck in rig"))
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,2] + static_coeff_down.drag_coeff[:,3], label=("Downwind deck in rig"))
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = "blue")
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,0] + static_coeff_up.drag_coeff[:,1], label=("Upwind deck in rig"), color = "red")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,2] + static_coeff_down.drag_coeff[:,3], label=("Downwind deck in rig"), color = "green")
 
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,2] + static_coeff_up.drag_coeff[:,3], label=("Downwind deck on wall"))
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,0] + static_coeff_down.drag_coeff[:,1], label=("Upwind deck on wall"))  
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,2] + static_coeff_up.drag_coeff[:,3], label=("Downwind deck on wall"), color = "red", linestyle = "--")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,0] + static_coeff_down.drag_coeff[:,1], label=("Upwind deck on wall"), color = "green", linestyle = "--")  
     
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_D(\alpha)$")
@@ -744,12 +744,12 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down):
     """
     plt.figure()
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"))
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,0] + static_coeff_up.lift_coeff[:,1], label=("Upwind deck in rig"))
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,2] + static_coeff_down.lift_coeff[:,3], label=("Downwind deck in rig"))
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "blue")
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,0] + static_coeff_up.lift_coeff[:,1], label=("Upwind deck in rig"), color = "red")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,2] + static_coeff_down.lift_coeff[:,3], label=("Downwind deck in rig"), color = "green")
 
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,2] + static_coeff_up.lift_coeff[:,3], label=("Downwind deck on wall"))
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,0] + static_coeff_down.lift_coeff[:,1], label=("Upwind deck on wall"))
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,2] + static_coeff_up.lift_coeff[:,3], label=("Downwind deck on wall"), color = "red", linestyle = "--")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,0] + static_coeff_down.lift_coeff[:,1], label=("Upwind deck on wall"), color = "green", linestyle = "--")
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_L(\alpha)$")
@@ -773,12 +773,12 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
     """
     plt.figure()
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"))
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,0] + static_coeff_up.pitch_coeff[:,1], label=("Upwind deck in rig"))
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,2] + static_coeff_down.pitch_coeff[:,3], label=("Downwind deck in rig"))
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "blue")
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,0] + static_coeff_up.pitch_coeff[:,1], label=("Upwind deck in rig"), color = "red")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,2] + static_coeff_down.pitch_coeff[:,3], label=("Downwind deck in rig"), color = "green")
 
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,2] + static_coeff_up.pitch_coeff[:,3], label=("Downwind deck on wall"))
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,0] + static_coeff_down.pitch_coeff[:,1], label=("Upwind deck on wall"))
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,2] + static_coeff_up.pitch_coeff[:,3], label=("Downwind deck on wall"), color = "red", linestyle = "--")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,0] + static_coeff_down.pitch_coeff[:,1], label=("Upwind deck on wall"), color = "green", linestyle = "--")
   
     
     plt.xlabel(r"$\alpha$")
@@ -821,11 +821,11 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
 
     plt.figure()
     
-    plt.plot(unique_alphas_single, cd_single_mean, label="Single deck")
-    plt.plot(unique_alphas_up, cd_upwind_mean, label="Upwind deck in rig")
-    plt.plot(unique_alphas_down, cd_downwind_mean, label="Downwind deck in rig")
-    plt.plot(unique_alphas_up, cd_upDown_mean, label="Downwind deck on wall")
-    plt.plot(unique_alphas_down, cd_downUp_mean, label="Upwind deck on wall")
+    plt.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = "blue")
+    plt.plot(unique_alphas_up, cd_upwind_mean, label="Upwind deck in rig", color = "red")
+    plt.plot(unique_alphas_down, cd_downwind_mean, label="Downwind deck in rig", color = "green")
+    plt.plot(unique_alphas_up, cd_upDown_mean, label="Downwind deck on wall", color = "red", linestyle = "--")
+    plt.plot(unique_alphas_down, cd_downUp_mean, label="Upwind deck on wall", color = "green", linestyle = "--")
 
 
    
@@ -866,11 +866,11 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
 
     plt.figure()
 
-    plt.plot(unique_alphas_single, cl_single_mean, label="Single deck")
-    plt.plot(unique_alphas_up, cl_upwind_mean, label="Upwind deck in rig")
-    plt.plot(unique_alphas_down, cl_downwind_mean, label="Downwind deck in rig")
-    plt.plot(unique_alphas_up, cl_upDown_mean, label="Downwind deck on wall")
-    plt.plot(unique_alphas_down, cl_downUp_mean, label="Upwind deck on wall")
+    plt.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = "blue")
+    plt.plot(unique_alphas_up, cl_upwind_mean, label="Upwind deck in rig", color = "red")
+    plt.plot(unique_alphas_down, cl_downwind_mean, label="Downwind deck in rig", color = "green")
+    plt.plot(unique_alphas_up, cl_upDown_mean, label="Downwind deck on wall", color = "red", linestyle = "--")
+    plt.plot(unique_alphas_down, cl_downUp_mean, label="Upwind deck on wall", color = "green", linestyle = "--")
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_L(\alpha)$")
@@ -908,11 +908,234 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
 
     plt.figure()
 
-    plt.plot(unique_alphas_single, cm_single_mean, label="Single deck")
-    plt.plot(unique_alphas_up, cm_upwind_mean, label="Upwind deck in rig")
-    plt.plot(unique_alphas_down, cm_downwind_mean, label="Downwind deck in rig")
-    plt.plot(unique_alphas_up, cm_upDown_mean, label="Downwind deck on wall")
-    plt.plot(unique_alphas_down, cm_downUp_mean, label="Upwind deck on wall")
+    plt.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = "blue")
+    plt.plot(unique_alphas_up, cm_upwind_mean, label="Upwind deck in rig", color = "red")
+    plt.plot(unique_alphas_down, cm_downwind_mean, label="Downwind deck in rig", color = "green")
+    plt.plot(unique_alphas_up, cm_upDown_mean, label="Downwind deck on wall", color = "red", linestyle = "--")
+    plt.plot(unique_alphas_down, cm_downUp_mean, label="Upwind deck on wall", color = "green", linestyle = "--")
+
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_M(\alpha)$")
+    plt.grid()
+    plt.legend()
+    plt.title("Comparison of mean pitch coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+
+def plot_compare_drag_only_single(static_coeff_single, static_coeff_up, static_coeff_down):
+    """
+    Plots drag coefficient from multiple StaticCoeff objects in the same figure.
+    
+    Parameters
+    ----------
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
+    """
+    plt.figure()
+
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = "blue")
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,0] + static_coeff_up.drag_coeff[:,1], label=("Upwind deck in rig"), color = "red")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,2] + static_coeff_down.drag_coeff[:,3], label=("Downwind deck in rig"), color = "green")
+
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,2] + static_coeff_up.drag_coeff[:,3], label=("Downwind deck on wall"), color = "red", linestyle = "--")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,0] + static_coeff_down.drag_coeff[:,1], label=("Upwind deck on wall"), color = "green", linestyle = "--")  
+    
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_D(\alpha)$")
+    plt.grid()
+    plt.legend()
+    plt.title("Comparison of drag coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+
+
+def plot_compare_lift_only_single(static_coeff_single, static_coeff_up, static_coeff_down):
+    """
+    Plots lift coefficient from multiple StaticCoeff objects in the same figure.
+    
+    Parameters
+    ----------
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
+    
+    """
+    plt.figure()
+
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "blue")
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,0] + static_coeff_up.lift_coeff[:,1], label=("Upwind deck in rig"), color = "red")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,2] + static_coeff_down.lift_coeff[:,3], label=("Downwind deck in rig"), color = "green")
+
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,2] + static_coeff_up.lift_coeff[:,3], label=("Downwind deck on wall"), color = "red", linestyle = "--")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,0] + static_coeff_down.lift_coeff[:,1], label=("Upwind deck on wall"), color = "green", linestyle = "--")
+
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_L(\alpha)$")
+    plt.grid()
+    plt.legend()
+    plt.title("Comparison of lift coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+
+def plot_compare_pitch_only_single(static_coeff_single, static_coeff_up, static_coeff_down):
+    """
+    Plots pitch coefficient from multiple StaticCoeff objects in the same figure.
+    
+    Parameters
+    ----------
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
+    """
+    plt.figure()
+
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "blue")
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,0] + static_coeff_up.pitch_coeff[:,1], label=("Upwind deck in rig"), color = "red")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,2] + static_coeff_down.pitch_coeff[:,3], label=("Downwind deck in rig"), color = "green")
+
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,2] + static_coeff_up.pitch_coeff[:,3], label=("Downwind deck on wall"), color = "red", linestyle = "--")
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,0] + static_coeff_down.pitch_coeff[:,1], label=("Upwind deck on wall"), color = "green", linestyle = "--")
+  
+    
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_M(\alpha)$")
+    plt.grid()
+    plt.legend()
+    plt.title("Comparison of pitch coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+
+def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff_up, static_coeff_down):
+    """
+    Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
+    
+    Parameters
+    ----------
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
+    """
+    
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
+    unique_alphas_single = np.unique(alpha_single)
+    alpha_up = np.round(static_coeff_up.pitch_motion*360/2/np.pi,1)
+    unique_alphas_up = np.unique(alpha_up)
+    alpha_down = np.round(static_coeff_down.pitch_motion*360/2/np.pi,1)
+    unique_alphas_down = np.unique(alpha_down)
+
+    cd_single_mean = np.array([np.mean(static_coeff_single.drag_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.drag_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
+    cd_upwind_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,0][alpha_up == val]) + np.mean(static_coeff_up.drag_coeff[:,1][alpha_up == val]) for val in unique_alphas_up])
+    cd_downwind_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,2][alpha_down == val]) + np.mean(static_coeff_down.drag_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
+    cd_upDown_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.drag_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
+    cd_downUp_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.drag_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
+    cd_upDown_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.drag_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
+    cd_downUp_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.drag_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
+
+
+    plt.figure()
+    
+    plt.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = "blue")
+    plt.plot(unique_alphas_up, cd_upwind_mean, label="Upwind deck in rig", color = "red")
+    plt.plot(unique_alphas_down, cd_downwind_mean, label="Downwind deck in rig", color = "green")
+    plt.plot(unique_alphas_up, cd_upDown_mean, label="Downwind deck on wall", color = "red", linestyle = "--")
+    plt.plot(unique_alphas_down, cd_downUp_mean, label="Upwind deck on wall", color = "green", linestyle = "--")
+
+
+   
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_D(\alpha)$")
+    plt.grid()
+    plt.legend()
+    plt.title("Comparison of mean drag coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+
+def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff_up, static_coeff_down):
+    """
+    Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
+    
+    Parameters
+    ----------
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
+    
+    """
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
+    unique_alphas_single = np.unique(alpha_single)
+    alpha_up = np.round(static_coeff_up.pitch_motion*360/2/np.pi,1)
+    unique_alphas_up = np.unique(alpha_up)
+    alpha_down = np.round(static_coeff_down.pitch_motion*360/2/np.pi,1)
+    unique_alphas_down = np.unique(alpha_down)
+
+    cl_single_mean = np.array([np.mean(static_coeff_single.lift_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.lift_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
+    cl_upwind_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,0][alpha_up == val]) + np.mean(static_coeff_up.lift_coeff[:,1][alpha_up == val]) for val in unique_alphas_up])
+    cl_downwind_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,2][alpha_down == val]) + np.mean(static_coeff_down.lift_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
+    cl_upDown_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.lift_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
+    cl_downUp_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.lift_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
+
+    plt.figure()
+
+    plt.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = "blue")
+    plt.plot(unique_alphas_up, cl_upwind_mean, label="Upwind deck in rig", color = "red")
+    plt.plot(unique_alphas_down, cl_downwind_mean, label="Downwind deck in rig", color = "green")
+    plt.plot(unique_alphas_up, cl_upDown_mean, label="Downwind deck on wall", color = "red", linestyle = "--")
+    plt.plot(unique_alphas_down, cl_downUp_mean, label="Upwind deck on wall", color = "green", linestyle = "--")
+
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_L(\alpha)$")
+    plt.grid()
+    plt.legend()
+    plt.title("Comparison of mean lift coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+
+def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff_up, static_coeff_down):
+    """
+    Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
+    
+    Parameters
+    ----------
+    static_coeff_single : StaticCoeff object
+        The StaticCoeff object for single deck.
+    static_coeff_up : StaticCoeff object
+        The StaticCoeff object for upwind deck.
+    static_coeff_down : StaticCoeff object
+        The StaticCoeff object for downwind deck.
+    """
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
+    unique_alphas_single = np.unique(alpha_single)
+    alpha_up = np.round(static_coeff_up.pitch_motion*360/2/np.pi,1)
+    unique_alphas_up = np.unique(alpha_up)
+    alpha_down = np.round(static_coeff_down.pitch_motion*360/2/np.pi,1)
+    unique_alphas_down = np.unique(alpha_down)
+
+    cm_single_mean = np.array([np.mean(static_coeff_single.pitch_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.pitch_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
+    cm_upwind_mean = np.array([np.mean(static_coeff_up.pitch_coeff[:,0][alpha_up == val]) + np.mean(static_coeff_up.pitch_coeff[:,1][alpha_up == val]) for val in unique_alphas_up])
+    cm_downwind_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,2][alpha_down == val]) + np.mean(static_coeff_down.pitch_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
+    cm_upDown_mean = np.array([np.mean(static_coeff_up.pitch_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.pitch_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
+    cm_downUp_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.pitch_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
+
+    plt.figure()
+
+    plt.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = "blue")
+    plt.plot(unique_alphas_up, cm_upwind_mean, label="Upwind deck in rig", color = "red")
+    plt.plot(unique_alphas_down, cm_downwind_mean, label="Downwind deck in rig", color = "green")
+    plt.plot(unique_alphas_up, cm_upDown_mean, label="Downwind deck on wall", color = "red", linestyle = "--")
+    plt.plot(unique_alphas_down, cm_downUp_mean, label="Upwind deck on wall", color = "green", linestyle = "--")
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_M(\alpha)$")
