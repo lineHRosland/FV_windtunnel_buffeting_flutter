@@ -1143,6 +1143,7 @@ def plot_compare_drag_wind_speeds(static_coeff_single_low, static_coeff_single_h
         Optional suptitle for the plot
     """
 
+
     plt.figure(figsize=(10,6))
 
     # Alpha in degrees
