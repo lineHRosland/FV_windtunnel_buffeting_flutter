@@ -97,7 +97,7 @@ plt.show()
 
 
 #%% Load all downwind experiments (downwind in rig)
-section_name = "MUS_1D_Static"
+section_name = "MDS_1D_Static"
 file_names_low = ["HAR_INT_MUS_GAP_213D_02_02_000","HAR_INT_MUS_GAP_213D_02_02_001"] #6 ms, vibrations (Ser OK ut)
 file_names_med = ["HAR_INT_MUS_GAP_213D_02_02_000","HAR_INT_MUS_GAP_213D_02_02_002"] # 8 ms, vibrations
 file_names_high = ["HAR_INT_MUS_GAP_213D_02_02_000","HAR_INT_MUS_GAP_213D_02_02_003"] # 10 ms
@@ -123,7 +123,7 @@ plt.show()
 
 #%% Load all upwind experiments (upwind in rig)
 
-section_name = "MDS_1D_Static"
+section_name = "MUS_1D_Static"
 file_names_low = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_001"] # 5 ms
 file_names_med = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_002"] # 8 ms, vibrations
 file_names_high = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_003"] # 10 ms, vibrations
@@ -148,37 +148,38 @@ plt.show()
 
 #%% Save all experiments to excel
 section_name = "1D"
+#Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_down_low.to_excel(section_name, sheet_name="MUS - 6 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_up_low.to_excel(section_name, sheet_name='MDS - 5 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_down_low.to_excel(section_name, sheet_name="MDS - 6 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_up_low.to_excel(section_name, sheet_name='MUS - 5 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_low.to_excel(section_name, sheet_name='Single - 6 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_down_med.to_excel(section_name, sheet_name="MUS - 8 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_up_med.to_excel(section_name, sheet_name='MDS - 8 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_down_med.to_excel(section_name, sheet_name="MDS - 8 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_up_med.to_excel(section_name, sheet_name='MUS - 8 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_high.to_excel(section_name, sheet_name='Single - 9 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_down_high.to_excel(section_name, sheet_name="MUS - 10 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_up_high.to_excel(section_name, sheet_name='MDS - 10 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_down_high.to_excel(section_name, sheet_name="MDS - 10 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_up_high.to_excel(section_name, sheet_name='MUS - 10 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_high.to_excel(section_name, sheet_name='Single - 9 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "1D_mean"
 
 # Low wind speed
-static_coeff_down_low.to_excel_mean(section_name, sheet_name="MUS - 6 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_up_low.to_excel_mean(section_name, sheet_name='MDS - 5 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_down_low.to_excel_mean(section_name, sheet_name="MDS - 6 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_up_low.to_excel_mean(section_name, sheet_name='MUS - 5 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_low.to_excel_mean(section_name, sheet_name='Single - 6 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_down_med.to_excel_mean(section_name, sheet_name="MUS - 8 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_up_med.to_excel_mean(section_name, sheet_name='MDS - 8 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_down_med.to_excel_mean(section_name, sheet_name="MDS - 8 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_up_med.to_excel_mean(section_name, sheet_name='MUS - 8 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_high.to_excel_mean(section_name, sheet_name='Single - 9 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_down_high.to_excel_mean(section_name, sheet_name="MUS - 10 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_up_high.to_excel_mean(section_name, sheet_name='MDS - 10 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_down_high.to_excel_mean(section_name, sheet_name="MDS - 10 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_up_high.to_excel_mean(section_name, sheet_name='MUS - 10 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_high.to_excel_mean(section_name, sheet_name='Single - 9 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 #%% Compare all experiments (MUS vs MDS vs Single)
@@ -186,12 +187,27 @@ section_name = "1D"
 
 #Low wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
-plt.gcf().suptitle(f"{section_name}: Low wind speed", fontsize=16)
-w3t._scoff.plot_compare_lift(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
-plt.gcf().suptitle(f"{section_name}: Low wind speed", fontsize=16)
-w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
-plt.gcf().suptitle(f"{section_name}: Low wind speed", fontsize=16)
+plt.text(0.95, 0.02,
+         "Single 6 m/s, MUS 5 m/s, MDS 6 m/s",
+         ha='right', va='bottom',
+         fontsize=11,
+         transform=plt.gca().transAxes,
+         bbox=dict(boxstyle='round', facecolor='lightgray', edgecolor='gray'))
 
+w3t._scoff.plot_compare_lift(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
+plt.text(0.95, 0.02,
+         "Single 6 m/s, MUS 5 m/s, MDS 6 m/s",
+         ha='right', va='bottom',
+         fontsize=11,
+         transform=plt.gca().transAxes,
+         bbox=dict(boxstyle='round', facecolor='lightgray', edgecolor='gray'))
+w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
+plt.text(0.95, 0.02,
+         "Single 6 m/s, MUS 5 m/s, MDS 6 m/s",
+         ha='right', va='bottom',
+         fontsize=11,
+         transform=plt.gca().transAxes,
+         bbox=dict(boxstyle='round', facecolor='lightgray', edgecolor='gray'))
 # Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}: Low wind speed", fontsize=16)
@@ -394,52 +410,52 @@ section_name = "2D"
 
 #Low wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Low wind speed", fontsize=16)
 w3t._scoff.plot_compare_lift(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Low wind speed", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Low wind speed", fontsize=16)
 
 # Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Low wind speed", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Low wind speed", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Low wind speed", fontsize=16)
 
 #Medium wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Medium wind speed", fontsize=16)
 w3t._scoff.plot_compare_lift(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Medium wind speed", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Medium wind speed", fontsize=16)
 
 # Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Medium wind speed", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Medium wind speed", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: Medium wind speed", fontsize=16)
 
 
 #High wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: High wind speed", fontsize=16)
 w3t._scoff.plot_compare_lift(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: High wind speed", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: High wind speed", fontsize=16)
 
 # Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: High wind speed", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: High wind speed", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
-plt.gcf().suptitle(f"{section_name}", fontsize=16)
+plt.gcf().suptitle(f"{section_name}: High wind speed", fontsize=16)
 
 plt.show()
 
