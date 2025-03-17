@@ -1036,7 +1036,8 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, setUp_type=
         color1 = "#006400"
         color2 ="#60BD68"
 
-    plt.figure()
+    plt.figure(figsize=(8,6))
+    plt.rcParams.update({'font.size': 14}) 
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
     plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1], label=("Upstream deck"), color = color1)
@@ -1068,7 +1069,8 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, setUp_type=
     else:
         color1 = "#006400"
         color2 ="#60BD68"
-    plt.figure()
+    plt.figure(figsize=(8,6))
+    plt.rcParams.update({'font.size': 14}) 
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
     plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1], label=("Upwind deck"), color = color1)
@@ -1099,7 +1101,8 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, setUp_type
     else:
         color1 = "#006400"
         color2 ="#60BD68"
-    plt.figure()
+    plt.figure(figsize=(8,6))
+    plt.rcParams.update({'font.size': 14}) 
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
     plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,0] + static_coeff.pitch_coeff[:,1], label=("Upwind deck"), color = color1)
@@ -1141,7 +1144,8 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, setUp_
     cd_downwind_mean = np.array([np.mean(static_coeff.drag_coeff[:,2][alpha == val]) + np.mean(static_coeff.drag_coeff[:,3][alpha== val]) for val in unique_alphas])
 
 
-    plt.figure()
+    plt.figure(figsize=(8,6))
+    plt.rcParams.update({'font.size': 14}) 
     
     plt.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = "#5DA5DA")
     plt.plot(unique_alphas, cd_upwind_mean, label="Upwind deck", color = color)
@@ -1182,7 +1186,8 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, setUp_
     cl_upwind_mean = np.array([np.mean(static_coeff.lift_coeff[:,0][alpha == val]) + np.mean(static_coeff.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
     cl_downwind_mean = np.array([np.mean(static_coeff.lift_coeff[:,2][alpha == val]) + np.mean(static_coeff.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
    
-    plt.figure()
+    plt.figure(figsize=(8,6))
+    plt.rcParams.update({'font.size': 14}) 
 
     plt.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = "#5DA5DA")
     plt.plot(unique_alphas, cl_upwind_mean, label="Upwind deck", color = color)
@@ -1221,7 +1226,8 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, setUp
     cm_upwind_mean = np.array([np.mean(static_coeff.pitch_coeff[:,0][alpha == val]) + np.mean(static_coeff.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
     cm_downwind_mean = np.array([np.mean(static_coeff.pitch_coeff[:,2][alpha == val]) + np.mean(static_coeff.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
     
-    plt.figure()
+    plt.figure(figsize=(8,6))
+    plt.rcParams.update({'font.size': 14}) 
 
     plt.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = "#5DA5DA")
     plt.plot(unique_alphas, cm_upwind_mean, label="Upwind deck", color = color)
@@ -1235,13 +1241,12 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, setUp
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Wind speeds
-def plot_compare_drag_wind_speeds(static_coeff_single_low, static_coeff_single_high,
-                                   static_coeff_up_low, static_coeff_up_high,
-                                   static_coeff_down_low, static_coeff_down_high,
-                                   label_up="Upwind deck in rig", label_down="Downwind deck in rig",
-                                   section_name=""):
+def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
+                                   static_coeff_single_high, static_coeff_low,
+                                   static_coeff_med, static_coeff_high,
+                                   setUp_type = "", scoff = ""):
     """
-    Plots drag coefficients for low and high wind speeds in same figure for each deck setup.
+    Plots  coefficients for low and high wind speeds in same figure for each deck setup.
 
     Parameters
     ----------
@@ -1257,47 +1262,163 @@ def plot_compare_drag_wind_speeds(static_coeff_single_low, static_coeff_single_h
         Deck on wall (opposite of upwind_in_rig), low wind speed
     static_coeff_down_high : StaticCoeff
         Deck on wall, high wind speed
-    label_up : str
-        Label for deck in rig
-    label_down : str
-        Label for deck on wall
-    section_name : str
-        Optional suptitle for the plot
+    setUp_type : str
+        "MUS" or "MDS"
+    scoff : str
+        "drag" or "ift" or "pitch"
+
     """
 
+    if setUp_type == "MUS":
+        color1 = "#F15854"
+        color2= "#990000"
+    else:
+        color1 = "#006400"
+        color2 ="#60BD68"
+    
+    if scoff == "drag":
+        axis = r"$C_D(\alpha)$"
+    elif scoff == "lift":
+        axis = r"$C_L(\alpha)$"
+    elif scoff == "pitch":
+        axis = r"$C_M(\alpha)$"
 
-    plt.figure(figsize=(10,6))
-
-    # Alpha in degrees
-    alpha_single_low = static_coeff_single_low.pitch_motion * 360 / (2 * np.pi)
-    alpha_single_high = static_coeff_single_high.pitch_motion * 360 / (2 * np.pi)
-    alpha_up_low = static_coeff_up_low.pitch_motion * 360 / (2 * np.pi)
-    alpha_up_high = static_coeff_up_high.pitch_motion * 360 / (2 * np.pi)
-    alpha_down_low = static_coeff_down_low.pitch_motion * 360 / (2 * np.pi)
-    alpha_down_high = static_coeff_down_high.pitch_motion * 360 / (2 * np.pi)
+    plt.figure(figsize=(8,6))
+    plt.rcParams.update({'font.size': 14}) 
 
     # Plot low wind speed
-    plt.plot(alpha_single_low, static_coeff_single_low.drag_coeff[:,0] + static_coeff_single_low.drag_coeff[:,1],
-             label="Single deck (low wind)", linestyle='-')
-    plt.plot(alpha_up_low, static_coeff_up_low.drag_coeff[:,0] + static_coeff_up_low.drag_coeff[:,1],
-             label=f"{label_up} (low wind)", linestyle='-')
-    plt.plot(alpha_down_low, static_coeff_down_low.drag_coeff[:,2] + static_coeff_down_low.drag_coeff[:,3],
-             label=f"{label_down} (low wind)", linestyle='-')
+    plt.plot(static_coeff_single_low.pitch_motion * 360 / (2 * np.pi), static_coeff_single_low.drag_coeff[:,0] + static_coeff_single_low.drag_coeff[:,1],
+             label=f"LWS - Single deck", color = "#5DA5DA",linestyle='-', alpha = 0.5)
+    plt.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), static_coeff_low.drag_coeff[:,0] + static_coeff_low.drag_coeff[:,1],
+             label=f"LWS -  Upstream deck", color = color1, linestyle='-', alpha = 0.5)
+    plt.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), static_coeff_low.drag_coeff[:,2] + static_coeff_low.drag_coeff[:,3],
+             label=f"LWS - Downstream deck", color = color2, linestyle='-', alpha = 0.5)
+
+    # Plot med wind speed
+    plt.plot(static_coeff_single_med.pitch_motion * 360 / (2 * np.pi), static_coeff_single_med.drag_coeff[:,0] + static_coeff_single_med.drag_coeff[:,1],
+             label=f" MWS - Single deck", color = "#5DA5DA",linestyle='--', alpha = 0.7)
+    plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), static_coeff_med.drag_coeff[:,0] + static_coeff_med.drag_coeff[:,1],
+             label=f" MWS - Upstream deck", color = color1, linestyle='--', alpha = 0.7)
+    plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), static_coeff_med.drag_coeff[:,2] + static_coeff_med.drag_coeff[:,3],
+             label=f" MWS - Downstream deck", color = color2, linestyle='--', alpha = 0.7)
 
     # Plot high wind speed
-    plt.plot(alpha_single_high, static_coeff_single_high.drag_coeff[:,0] + static_coeff_single_high.drag_coeff[:,1],
-             label="Single deck (high wind)", linestyle='--')
-    plt.plot(alpha_up_high, static_coeff_up_high.drag_coeff[:,0] + static_coeff_up_high.drag_coeff[:,1],
-             label=f"{label_up} (high wind)", linestyle='--')
-    plt.plot(alpha_down_high, static_coeff_down_high.drag_coeff[:,2] + static_coeff_down_high.drag_coeff[:,3],
-             label=f"{label_down} (high wind)", linestyle='--')
+    plt.plot(static_coeff_single_high.pitch_motion * 360 / (2 * np.pi), static_coeff_single_high.drag_coeff[:,0] + static_coeff_single_high.drag_coeff[:,1],
+             label=f" HWS - Single deck", color = "#5DA5DA",linestyle='-.', alpha = 1)
+    plt.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), static_coeff_high.drag_coeff[:,0] + static_coeff_high.drag_coeff[:,1],
+             label=f" HWS - Upstream deck", color = color1, linestyle='-.', alpha = 1)
+    plt.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), static_coeff_high.drag_coeff[:,2] + static_coeff_high.drag_coeff[:,3],
+             label=f" HWS - Downstream deck", color = color2, linestyle='-.', alpha = 1)
 
     plt.xlabel(r"$\alpha$ [deg]")
-    plt.ylabel(r"$C_D(\alpha)$")
+    plt.ylabel(axis)
     plt.grid(True)
     plt.legend()
-    plt.title("Comparison of drag coefficients at different wind speeds")
-    if section_name:
-        plt.suptitle(f"{section_name}", fontsize=14)
+    plt.title("Comparison of {scoff} coefficients at different wind speeds")
+    
+ 
+
+#%% Wind speeds
+def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_med,
+                                   static_coeff_single_high, static_coeff_low,
+                                   static_coeff_med, static_coeff_high,
+                                   setUp_type = "", scoff = ""):
+    """
+    Plots  coefficients for low and high wind speeds in same figure for each deck setup.
+
+    Parameters
+    ----------
+    static_coeff_single_low : StaticCoeff
+        Single deck, low wind speed
+    static_coeff_single_high : StaticCoeff
+        Single deck, high wind speed
+    static_coeff_up_low : StaticCoeff
+        Deck in rig (upwind or downwind), low wind speed
+    static_coeff_up_high : StaticCoeff
+        Same deck in rig, high wind speed
+    static_coeff_down_low : StaticCoeff
+        Deck on wall (opposite of upwind_in_rig), low wind speed
+    static_coeff_down_high : StaticCoeff
+        Deck on wall, high wind speed
+    setUp_type : str
+        "MUS" or "MDS"
+    scoff : str
+        "drag" or "ift" or "pitch"
+
+    """
+
+    if setUp_type == "MUS":
+        color = "#F15854"
+    else:
+        color = "#60BD68"
+    
+    if scoff == "drag":
+        axis = r"$C_D(\alpha)$"
+    elif scoff == "lift":
+        axis = r"$C_L(\alpha)$"
+    elif scoff == "pitch":
+        axis = r"$C_M(\alpha)$"
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_single_low = np.round(static_coeff_single_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_single_low = np.unique(alpha_single_low)
+    alpha_single_med = np.round(static_coeff_single_med.pitch_motion*360/2/np.pi,1)
+    unique_alphas_med = np.unique(alpha_single_med)
+    alpha_single_high = np.round(static_coeff_single_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_single_high)
+
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+    unique_alphas_med = np.unique(alpha_med)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    single_mean_low = np.array([np.mean(static_coeff_single_low.pitch_coeff[:,0][alpha_single_low == val]) + np.mean(static_coeff_single_low.pitch_coeff[:,1][alpha_single_low == val]) for val in unique_alphas_single])
+    upwind_mean_low = np.array([np.mean(static_coeff_low.pitch_coeff[:,0][alpha_low == val]) + np.mean(static_coeff_low.pitch_coeff[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.mean(static_coeff_low.pitch_coeff[:,2][alpha_low == val]) + np.mean(static_coeff_low.pitch_coeff[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    single_mean_med = np.array([np.mean(static_coeff_single_med.pitch_coeff[:,0][alpha_single_med == val]) + np.mean(static_coeff_single_med.pitch_coeff[:,1][alpha_single_med == val]) for val in unique_alphas_med])
+    upwind_mean_med = np.array([np.mean(static_coeff_med.pitch_coeff[:,0][alpha_med == val]) + np.mean(static_coeff_med.pitch_coeff[:,1][alpha_med == val]) for val in unique_alphas_med])
+    downwind_mean_med = np.array([np.mean(static_coeff_med.pitch_coeff[:,2][alpha_med == val]) + np.mean(static_coeff_med.pitch_coeff[:,3][alpha_med == val]) for val in unique_alphas_med])
+
+    single_mean_high = np.array([np.mean(static_coeff_single_high.pitch_coeff[:,0][alpha_single_high == val]) + np.mean(static_coeff_single_high.pitch_coeff[:,1][alpha_single_high == val]) for val in unique_alphas_high])
+    upwind_mean_high = np.array([np.mean(static_coeff_high.pitch_coeff[:,0][alpha_high == val]) + np.mean(static_coeff_high.pitch_coeff[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.mean(static_coeff_high.pitch_coeff[:,2][alpha_high == val]) + np.mean(static_coeff_high.pitch_coeff[:,3][alpha_high == val]) for val in unique_alphas_high])
 
 
+    plt.figure(figsize=(8,6))
+    plt.rcParams.update({'font.size': 14}) 
+
+    # Plot low wind speed
+    plt.plot(alpha_single_low, single_mean_low,
+             label=f"LWS - Single deck", color = "#5DA5DA",linestyle='-')
+    plt.plot(alpha_low, upwind_mean_low,
+             label=f"LWS -  Upstream deck", color = color, linestyle='-')
+    plt.plot(alpha_low, downwind_mean_low,
+             label=f"LWS - Downstream deck", color = color, linestyle='-')
+
+
+    # Plot med wind speed
+    plt.plot(alpha_single_med, single_mean_med,
+             label=f" MWS - Single deck", color = "#5DA5DA",linestyle='--')
+    plt.plot(alpha_med, upwind_mean_med,
+                label=f" MWS - Upstream deck", color = color, linestyle='--')
+    plt.plot(alpha_med, downwind_mean_med,
+                label=f" MWS - Downstream deck", color = color, linestyle='--')
+    
+    # Plot high wind speed
+    plt.plot(alpha_single_high, single_mean_high,
+             label=f" HWS - Single deck", color = "#5DA5DA",linestyle='-.')
+    plt.plot(alpha_high, upwind_mean_high,
+                label=f" HWS - Upstream deck", color = color, linestyle='-.')
+    plt.plot(alpha_high, downwind_mean_high,
+                label=f" HWS - Downstream deck", color = color, linestyle='-.')
+    
+    plt.xlabel(r"$\alpha$ [deg]")
+    plt.ylabel(axis)
+    plt.grid(True)
+    plt.legend()
+    plt.title("Comparison of {scoff} coefficients at different wind speeds")
+    
+ 
