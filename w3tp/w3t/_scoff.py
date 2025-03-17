@@ -286,7 +286,7 @@ class StaticCoeff:
                 setUp.to_excel(writer, sheet_name)
                 static_coeff.to_excel(writer, sheet_name=sheet_name)             
             
-    def plot_drag(self,mode="decks", type=""):
+    def plot_drag(self,mode="decks", setUp_type=""):
         """ plots the drag coefficient
         
         parameters:
@@ -294,10 +294,10 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        type: str
+        setUp_type: str
         "MUS" or "MDS"
         """
-        if type == "MUS":
+        if setUp_type == "MUS":
             color = "#F15854"
             linestyle1 = "-"
             linestyle2 = "--"
@@ -352,7 +352,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
                  
-    def plot_lift(self,mode="decks", type=""):
+    def plot_lift(self,mode="decks", setUp_type=""):
         """ plots the lift coefficient
         
         parameters:
@@ -360,10 +360,10 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        type: str
+        setUp_type: str
         "MUS" or "MDS"
         """
-        if type == "MUS":
+        if setUp_type == "MUS":
             color = "#F15854"
             linestyle1 = "-"
             linestyle2 = "--"
@@ -420,7 +420,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
         
-    def plot_pitch(self,mode="decks", type=""):
+    def plot_pitch(self,mode="decks", setUp_type=""):
         """ plots the pitch coefficient
         
         parameters:
@@ -428,10 +428,10 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        type: str
+        setUp_type: str
         "MUS" or "MDS"
         """
-        if type == "MUS":
+        if setUp_type == "MUS":
             color = "#F15854"
             linestyle1 = "-"
             linestyle2 = "--"
@@ -485,7 +485,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
     
-    def plot_drag_mean(self,mode="total", type =""):
+    def plot_drag_mean(self,mode="total", setUp_type =""):
         """ plots the drag coefficient mean
         
         parameters:
@@ -493,10 +493,10 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        type: str
+        setUp_type: str
         "MUS" or "MDS"
         """
-        if type == "MUS":
+        if setUp_type == "MUS":
             color = "#F15854"
             linestyle1 = "-"
             linestyle2 = "--"
@@ -566,7 +566,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
                  
-    def plot_lift_mean(self,mode="total", type =""):
+    def plot_lift_mean(self,mode="total", setUp_type =""):
         """ plots the lift coefficient mean
         
         parameters:
@@ -574,10 +574,10 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        type: str
+        setUp_type: str
         "MUS" or "MDS"
         """
-        if type == "MUS":
+        if setUp_type == "MUS":
             color = "#F15854"
             linestyle1 = "-"
             linestyle2 = "--"
@@ -646,7 +646,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
         
-    def plot_pitch_mean(self,mode="total", type=""):
+    def plot_pitch_mean(self,mode="total", setUp_type=""):
         """ plots the pitch coefficient mean 
         
         parameters:
@@ -654,10 +654,10 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        type: str
+        setUp_type: str
         "MUS" or "MDS"
         """
-        if type == "MUS":
+        if setUp_type == "MUS":
             color = "#F15854"
             linestyle1 = "-"
             linestyle2 = "--"
@@ -1054,7 +1054,7 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, type):
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 
-def plot_compare_lift_only_single(static_coeff_single, static_coeff, type):
+def plot_compare_lift_only_single(static_coeff_single, static_coeff, setUp_type):
     """
     Plots lift coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1063,10 +1063,10 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, type):
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
    static_coeff : MUS /MDS
-    type: str
+    setUp_type: str
         "MUS" or "MDS"
     """
-    if type == "MUS":
+    if setUp_type == "MUS":
         color = "#F15854"
     else:
         color = "#60BD68"
@@ -1080,10 +1080,10 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, type):
     plt.ylabel(r"$C_L(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}: Comparison of drag coefficients ")
+    plt.title(f"{setUp_type}: Comparison of drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
-def plot_compare_pitch_only_single(static_coeff_single, static_coeff, type):
+def plot_compare_pitch_only_single(static_coeff_single, static_coeff, setUp_type):
     """
     Plots pitch coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1092,10 +1092,10 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, type):
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff : MUS /MDS
-    type: str
+    setUp_type: str
         "MUS" or "MDS"
     """
-    if type == "MUS":
+    if setUp_type == "MUS":
         color = "#F15854"
     else:
         color = "#60BD68"
@@ -1110,10 +1110,10 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, type):
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}: Comparison of drag coefficients ")
+    plt.title(f"{setUp_type}: Comparison of drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
-def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, type):
+def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, setUp_type):
     """
     Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1122,10 +1122,10 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, type):
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff : MUS /MDS
-    type: str
+    setUp_type: str
         "MUS" or "MDS"
     """
-    if type == "MUS":
+    if setUp_type == "MUS":
         color = "#F15854"
     else:
         color = "#60BD68"
@@ -1153,10 +1153,10 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, type):
     plt.ylabel(r"$C_D(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}: Comparison of mean drag coefficients ")
+    plt.title(f"{setUp_type}: Comparison of mean drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
-def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, type):
+def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, setUp_type):
     """
     Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1165,10 +1165,10 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, type):
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff : MUS /MDS
-    type: str
+    setUp_type: str
         "MUS" or "MDS"
     """
-    if type == "MUS":
+    if setUp_type == "MUS":
         color = "#F15854"
     else:
         color = "#60BD68"
@@ -1192,10 +1192,10 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, type):
     plt.ylabel(r"$C_L(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}: Comparison of mean drag coefficients ")
+    plt.title(f"{setUp_type}: Comparison of mean drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
-def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, type):
+def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, setUp_type):
     """
     Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1204,10 +1204,10 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, type)
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff : MUS /MDS
-    type: str
+    setUp_type: str
         "MUS" or "MDS"
     """
-    if type == "MUS":
+    if setUp_type == "MUS":
         color = "#F15854"
     else:
         color = "#60BD68"
@@ -1231,7 +1231,7 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, type)
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}: Comparison of mean drag coefficients ")
+    plt.title(f"{setUp_type}: Comparison of mean drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Wind speeds
