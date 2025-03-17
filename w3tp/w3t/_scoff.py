@@ -1023,7 +1023,7 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Compare with single deck
-def plot_compare_drag_only_single(static_coeff_single, static_coeff, type):
+def plot_compare_drag_only_single(static_coeff_single, static_coeff, setUp_type=""):
     """
     Plots drag coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1032,10 +1032,10 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, type):
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
     static_coeff : MUS /MDS
-    type: str
+    setUp_type : str
         "MUS" or "MDS"
     """
-    if type == "MUS":
+    if setUp_type == "MUS":
         color = "#F15854"
     else:
         color = "#60BD68"
@@ -1054,7 +1054,7 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, type):
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 
-def plot_compare_lift_only_single(static_coeff_single, static_coeff, setUp_type):
+def plot_compare_lift_only_single(static_coeff_single, static_coeff, setUp_type=""):
     """
     Plots lift coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1083,7 +1083,7 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, setUp_type)
     plt.title(f"{setUp_type}: Comparison of drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
-def plot_compare_pitch_only_single(static_coeff_single, static_coeff, setUp_type):
+def plot_compare_pitch_only_single(static_coeff_single, static_coeff, setUp_type=""):
     """
     Plots pitch coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1113,7 +1113,7 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, setUp_type
     plt.title(f"{setUp_type}: Comparison of drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
-def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, setUp_type):
+def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, setUp_type=""):
     """
     Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1156,7 +1156,7 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, setUp_
     plt.title(f"{setUp_type}: Comparison of mean drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
-def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, setUp_type):
+def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, setUp_type=""):
     """
     Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1195,7 +1195,7 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, setUp_
     plt.title(f"{setUp_type}: Comparison of mean drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
-def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, setUp_type):
+def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, setUp_type=""):
     """
     Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
     

@@ -27,6 +27,7 @@ def load_and_process_static_coeff(h5_input_path, section_name, file_names, filte
     exp1 = w3t.Experiment.fromWTT(f[file_names[1]])
 
     # Nå er riktige eksperimenter hentet fra excel. Bytter så på navnene for at det faktisk skal være korrekt.
+    setUp_type=""
     if "MUS" in section_name:
         setUp_type = "MDS"
         section_name = section_name.replace("MUS", "MDS")
