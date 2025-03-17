@@ -35,10 +35,10 @@ def load_and_process_static_coeff(h5_input_path, section_name, file_names, filte
         setUp_type1 = "MUS"
         section_name = section_name.replace("MDS", "MUS")
 
-    exp0.plot_experiment() #Before filtering
-    plt.gcf().suptitle(f"{section_name} 0 ms – Before filtering", fontsize=16)
-    exp1.plot_experiment() #Before filtering
-    plt.gcf().suptitle(f"{section_name} {wind_speed} ms – Before filtering", fontsize=16)
+    #exp0.plot_experiment() #Before filtering
+    #plt.gcf().suptitle(f"{section_name} 0 ms – Before filtering", fontsize=16)
+    #exp1.plot_experiment() #Before filtering
+    #plt.gcf().suptitle(f"{section_name} {wind_speed} ms – Before filtering", fontsize=16)
 
     exp0.filt_forces(filter_order, filter_cutoff_frequency)
     exp1.filt_forces(filter_order, filter_cutoff_frequency)
@@ -48,22 +48,22 @@ def load_and_process_static_coeff(h5_input_path, section_name, file_names, filte
     elif upwind_in_rig == False:
         static_coeff = w3t.StaticCoeff.fromWTT(exp0,exp1,section_width,section_height,section_length_in_rig, section_length_on_wall, upwind_in_rig=False)
     
-    static_coeff.plot_drag_mean(mode=mode, setUp_type = setUp_type1)
-    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
-    static_coeff.plot_lift_mean(mode=mode, setUp_type = setUp_type1)
-    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
-    static_coeff.plot_pitch_mean(mode=mode, setUp_type = setUp_type1)
-    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    #static_coeff.plot_drag_mean(mode=mode, setUp_type = setUp_type1)
+    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    #static_coeff.plot_lift_mean(mode=mode, setUp_type = setUp_type1)
+    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    #static_coeff.plot_pitch_mean(mode=mode, setUp_type = setUp_type1)
+    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
 
 
-    static_coeff.plot_drag(mode=mode, setUp_type = setUp_type1)
-    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    #static_coeff.plot_drag(mode=mode, setUp_type = setUp_type1)
+    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
 
-    static_coeff.plot_lift(mode=mode, setUp_type = setUp_type1)
-    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    #static_coeff.plot_lift(mode=mode, setUp_type = setUp_type1)
+    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
 
-    static_coeff.plot_pitch(mode=mode, setUp_type = setUp_type1)
-    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    #static_coeff.plot_pitch(mode=mode, setUp_type = setUp_type1)
+    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
     
     plt.show()
 
