@@ -298,13 +298,11 @@ class StaticCoeff:
         "MUS" or "MDS"
         """
         if setUp_type == "MUS":
-            color = "#F15854"
-            linestyle1 = "-"
-            linestyle2 = "--"
+            color1 = "#F15854"
+            color2= "990000"
         else:
-            color = "#60BD68"
-            linestyle1 = "--"
-            linestyle2 = "-"
+            color1 = "#006400"
+            color2 ="#60BD68"
         
         
         if mode == "all": #individual load cells + total sum
@@ -323,8 +321,8 @@ class StaticCoeff:
         elif mode == "decks": #upwind and downwind deck + total sum
             plt.figure()
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"), color=color, linestyle=linestyle1)
-            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"), color=color, linestyle=linestyle2)
+            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"), color=color1)
+            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"), color=color2)
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
@@ -364,13 +362,11 @@ class StaticCoeff:
         "MUS" or "MDS"
         """
         if setUp_type == "MUS":
-            color = "#F15854"
-            linestyle1 = "-"
-            linestyle2 = "--"
+            color1 = "#F15854"
+            color2= "990000"
         else:
-            color = "#60BD68"
-            linestyle1 = "--"
-            linestyle2 = "-"
+            color1 = "#006400"
+            color2 ="#60BD68"
     
                 
         if mode == "all":
@@ -391,8 +387,8 @@ class StaticCoeff:
         elif mode == "decks":
             plt.figure()
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Upwind deck"), color=color, linestyle =linestyle1)
-            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,2]+self.lift_coeff[:,3],label=("Downwind deck"), color=color, linestyle= linestyle2)
+            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Upwind deck"), color=color1)
+            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,2]+self.lift_coeff[:,3],label=("Downwind deck"), color=color2)
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
@@ -432,13 +428,11 @@ class StaticCoeff:
         "MUS" or "MDS"
         """
         if setUp_type == "MUS":
-            color = "#F15854"
-            linestyle1 = "-"
-            linestyle2 = "--"
+            color1 = "#F15854"
+            color2= "990000"
         else:
-            color = "#60BD68"
-            linestyle1 = "--"
-            linestyle2 = "-"
+            color1 = "#006400"
+            color2 ="#60BD68"
                 
         if mode == "all":
             plt.figure()
@@ -456,8 +450,8 @@ class StaticCoeff:
         elif mode == "decks":
             plt.figure()
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Upwind deck"), color=color, linestyle =linestyle1)
-            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,2]+self.pitch_coeff[:,3],label=("Downwind deck"), color=color, linestyle=linestyle2)
+            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Upwind deck"), color=color1)
+            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,2]+self.pitch_coeff[:,3],label=("Downwind deck"), color=color2)
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
