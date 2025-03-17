@@ -26,6 +26,12 @@ def load_and_process_static_coeff(h5_input_path, section_name, file_names, filte
     exp0 = w3t.Experiment.fromWTT(f[file_names[0]])
     exp1 = w3t.Experiment.fromWTT(f[file_names[1]])
 
+    # Nå er riktige eksperimenter hentet fra excel. Bytter så på navnene for at det faktisk skal være korrekt.
+    if "MUS" in section_name:
+        section_name = section_name.replace("MUS", "MDS")
+    elif "MDS" in section_name:
+        section_name = section_name.replace("MDS", "MUS")
+
     exp0.plot_experiment() #Before filtering
     plt.gcf().suptitle(f"{section_name} 0 ms – Before filtering", fontsize=16)
     exp1.plot_experiment() #Before filtering
@@ -97,7 +103,7 @@ plt.show()
 
 
 #%% Load all downwind experiments (downwind in rig)
-section_name = "MDS_1D_Static"
+section_name = "MUS_1D_Static"
 file_names_low = ["HAR_INT_MUS_GAP_213D_02_02_000","HAR_INT_MUS_GAP_213D_02_02_001"] #6 ms, vibrations (Ser OK ut)
 file_names_med = ["HAR_INT_MUS_GAP_213D_02_02_000","HAR_INT_MUS_GAP_213D_02_02_002"] # 8 ms, vibrations
 file_names_high = ["HAR_INT_MUS_GAP_213D_02_02_000","HAR_INT_MUS_GAP_213D_02_02_003"] # 10 ms
@@ -111,19 +117,19 @@ exp0_down, exp1_down_high, static_coeff_down_high = load_and_process_static_coef
 #%% Plot all downwind experiments 
 
 exp0_down.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 0 ms – After filtering", fontsize=16)
+plt.gcf().suptitle(f"MDS_1D_Static: 0 ms – After filtering", fontsize=16)
 exp1_down_low.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 6 ms – After filtering", fontsize=16)
+plt.gcf().suptitle(f"MDS_1D_Static: 6 ms – After filtering", fontsize=16)
 exp1_down_med.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 8 ms – After filtering", fontsize=16)
+plt.gcf().suptitle(f"MDS_1D_Static: 8 ms – After filtering", fontsize=16)
 exp1_down_high.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 10 ms – After filtering", fontsize=16)
+plt.gcf().suptitle(f"MDS_1D_Static: 10 ms – After filtering", fontsize=16)
 plt.show()
 
 
 #%% Load all upwind experiments (upwind in rig)
 
-section_name = "MUS_1D_Static"
+section_name = "MDS_1D_Static"
 file_names_low = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_001"] # 5 ms
 file_names_med = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_002"] # 8 ms, vibrations
 file_names_high = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_003"] # 10 ms, vibrations
@@ -135,13 +141,13 @@ exp0_up, exp1_up_high, static_coeff_up_high = load_and_process_static_coeff(h5_i
 #%% Plot all upwind experiments
 
 exp0_up.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 0 ms – After filtering", fontsize=16)
+plt.gcf().suptitle(f"MUS_1D_Static: 0 ms – After filtering", fontsize=16)
 exp1_up_low.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 5 ms – After filtering", fontsize=16)
+plt.gcf().suptitle(f"MUS_1D_Static: 5 ms – After filtering", fontsize=16)
 exp1_up_med.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 8 ms – After filtering", fontsize=16)
+plt.gcf().suptitle(f"MUS_1D_Static: 8 ms – After filtering", fontsize=16)
 exp1_up_high.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 10 ms – After filtering", fontsize=16)
+plt.gcf().suptitle(f"MUS_1D_Static: 10 ms – After filtering", fontsize=16)
 plt.show()
 
 
