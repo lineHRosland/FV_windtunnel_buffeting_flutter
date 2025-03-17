@@ -1047,7 +1047,7 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, setUp_type=
     plt.ylabel(r"$C_D(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}: Comparison of drag coefficients")
+    plt.title(f" Comparison of drag coefficients")
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 
@@ -1080,7 +1080,7 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, setUp_type=
     plt.ylabel(r"$C_L(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{setUp_type}: Comparison of lift coefficients ")
+    plt.title(f"Comparison of lift coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_only_single(static_coeff_single, static_coeff, setUp_type=""):
@@ -1113,7 +1113,7 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, setUp_type
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{setUp_type}: Comparison of pitch coefficients ")
+    plt.title(f"Comparison of pitch coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, setUp_type=""):
@@ -1157,7 +1157,7 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, setUp_
     plt.ylabel(r"$C_D(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{setUp_type}: Comparison of mean drag coefficients ")
+    plt.title(f"Comparison of mean drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, setUp_type=""):
@@ -1197,7 +1197,7 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, setUp_
     plt.ylabel(r"$C_L(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{setUp_type}: Comparison of mean lift coefficients ")
+    plt.title(f" Comparison of mean lift coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, setUp_type=""):
@@ -1237,7 +1237,7 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, setUp
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{setUp_type}: Comparison of mean pitch coefficients ")
+    plt.title(f" Comparison of mean pitch coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Wind speeds
@@ -1303,8 +1303,6 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
              label=f"LWS - Downstream deck", color = color3LWS)
 
     # Plot med wind speed
-    plt.plot(static_coeff_single_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_single_med, coeff)[:,0] + getattr(static_coeff_single_med, coeff)[:,1],
-             label=f"MWS - Single deck", color = color1MWS)
     plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,0] + getattr(static_coeff_med, coeff)[:,1],
              label=f"MWS - Upstream deck", color = color2MWS)
     plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,2] + getattr(static_coeff_med, coeff)[:,3],
@@ -1419,8 +1417,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
 
 
     # Plot med wind speed
-    plt.plot(unique_alphas_single_med, single_mean_med,
-             label=f"MWS - Single deck", color = color2MWS,linestyle=':')
+  
     plt.plot(unique_alphas_med, upwind_mean_med,
                 label=f"MWS - Upstream deck", color = color2MWS, linestyle='--')
     plt.plot(unique_alphas_med, downwind_mean_med,

@@ -338,14 +338,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                              scoff = "drag")                        
-plt.gcf().suptitle(f"{section_name} MUS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_high,
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                                 scoff = "drag")                        
-plt.gcf().suptitle(f"{section_name} MDS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 
 #lift
 #MUS
@@ -353,27 +353,27 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                             scoff = "lift")                        
-plt.gcf().suptitle(f"{section_name} MUS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_high,
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                                scoff = "lift")                        
-plt.gcf().suptitle(f"{section_name} MDS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_high,
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                               scoff = "pitch")                        
-plt.gcf().suptitle(f"{section_name} MUS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_high,
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                           scoff = "pitch")                        
-plt.gcf().suptitle(f"{section_name} MDS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 
 #drag
 # MUS
@@ -381,39 +381,39 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_s
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                            scoff = "drag")                        
-plt.gcf().suptitle(f"{section_name} MUS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_high,
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                               scoff = "drag")                        
-plt.gcf().suptitle(f"{section_name} MDS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_high,
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"{section_name} MUS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_high,
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"{section_name} MDS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_high,
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                                 scoff = "pitch")                        
-plt.gcf().suptitle(f"{section_name} MUS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_high,
                                static_coeff_single_high, static_coeff_up_low,
                                static_coeff_up_med, static_coeff_up_high,
                                scoff = "pitch")                        
-plt.gcf().suptitle(f"{section_name} MDS", fontsize=16)
+plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 
 
 
