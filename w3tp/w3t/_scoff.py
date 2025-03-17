@@ -778,9 +778,9 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
     plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,0] + static_coeff_up.drag_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2) #MUS er her riktig, altså motsatt av i excel arket.
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,2] + static_coeff_up.drag_coeff[:,3], label=("MUS: Downstream deck"), color = colors["mus"], linestyle = "--", alpha = 0.5, linewidth = 1.5)  
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,2] + static_coeff_up.drag_coeff[:,3], label=("MUS: Downstream deck"), color = colors["mus"],  alpha = 0.5, linewidth = 1.5)  
     plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,2] + static_coeff_down.drag_coeff[:,3], label=("MDS: Downstream deck"), color = colors["mds"], linewidth = 2)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,0] + static_coeff_down.drag_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"], linestyle = "--", alpha = 0.5, linewidth = 1.5)  
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,0] + static_coeff_down.drag_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"],alpha = 0.5, linewidth = 1.5)  
     
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_D(\alpha)$")
@@ -815,9 +815,9 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down):
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
     plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,0] + static_coeff_up.lift_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2)
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,2] + static_coeff_up.lift_coeff[:,3], label=("MUS: Dowstream deck"), color = colors["mus"], linestyle = "--", alpha = 0.5, linewidth = 1.5)
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,2] + static_coeff_up.lift_coeff[:,3], label=("MUS: Dowstream deck"), color = colors["mus"], alpha = 0.5, linewidth = 1.5)
     plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,2] + static_coeff_down.lift_coeff[:,3], label=("MDS: Dowstream deck"), color = colors["mds"], linewidth = 2)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,0] + static_coeff_down.lift_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"], linestyle = "--", alpha = 0.5, linewidth = 1.5)
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,0] + static_coeff_down.lift_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"], alpha = 0.5, linewidth = 1.5)
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_L(\alpha)$")
@@ -850,9 +850,9 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
     plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
     plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,0] + static_coeff_up.pitch_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,0] + static_coeff_down.pitch_coeff[:,1], label=("MUS: Downstream deck"), color = colors["mus"], linestyle = "--", alpha = 0.5, linewidth = 1.5)
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,0] + static_coeff_down.pitch_coeff[:,1], label=("MUS: Downstream deck"), color = colors["mus"],  alpha = 0.5, linewidth = 1.5)
     plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,2] + static_coeff_down.pitch_coeff[:,3], label=("MDS: Downstream deck"), color = colors["mds"], linewidth = 2)
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,2] + static_coeff_up.pitch_coeff[:,3], label=("MDS: Upstream deck"), color = colors["mds"], linestyle = "--", alpha = 0.5, linewidth = 1.5)
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,2] + static_coeff_up.pitch_coeff[:,3], label=("MDS: Upstream deck"), color = colors["mds"],  alpha = 0.5, linewidth = 1.5)
   
     
     plt.xlabel(r"$\alpha$")
@@ -1030,15 +1030,17 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, setUp_type=
         "MUS" or "MDS"
     """
     if setUp_type == "MUS":
-        color = "#F15854"
+        color1 = "#F15854"
+        color2= "#990000"
     else:
-        color = "#60BD68"
+        color1 = "#006400"
+        color2 ="#60BD68"
 
     plt.figure()
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1], label=("Upstream deck"), color = color)
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,2] + static_coeff.drag_coeff[:,3], label=("Downstream deck"), color = color, linestyle = "--")
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1], label=("Upstream deck"), color = color1)
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,2] + static_coeff.drag_coeff[:,3], label=("Downstream deck"), color = color2)
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_D(\alpha)$")
@@ -1061,14 +1063,16 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, setUp_type=
         "MUS" or "MDS"
     """
     if setUp_type == "MUS":
-        color = "#F15854"
+        color1 = "#F15854"
+        color2= "#990000"
     else:
-        color = "#60BD68"
+        color1 = "#006400"
+        color2 ="#60BD68"
     plt.figure()
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1], label=("Upwind deck"), color = color)
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,2] + static_coeff.lift_coeff[:,3], label=("Downwind deck"), color = color, linestyle = "--")
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1], label=("Upwind deck"), color = color1)
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,2] + static_coeff.lift_coeff[:,3], label=("Downwind deck"), color = color2)
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_L(\alpha)$")
@@ -1090,14 +1094,16 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, setUp_type
         "MUS" or "MDS"
     """
     if setUp_type == "MUS":
-        color = "#F15854"
+        color1 = "#F15854"
+        color2= "#990000"
     else:
-        color = "#60BD68"
+        color1 = "#006400"
+        color2 ="#60BD68"
     plt.figure()
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,0] + static_coeff.pitch_coeff[:,1], label=("Upwind deck"), color = color)
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,2] + static_coeff.pitch_coeff[:,3], label=("Downwind deck"), color = color, linestyle = "--")
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,0] + static_coeff.pitch_coeff[:,1], label=("Upwind deck"), color = color1)
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,2] + static_coeff.pitch_coeff[:,3], label=("Downwind deck"), color = color2)
 
     
     plt.xlabel(r"$\alpha$")
