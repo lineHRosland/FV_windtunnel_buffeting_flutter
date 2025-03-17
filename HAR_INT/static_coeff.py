@@ -192,6 +192,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
@@ -207,6 +208,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
@@ -223,6 +225,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
@@ -242,7 +245,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_d
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low)
@@ -258,7 +261,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med)
@@ -274,7 +277,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high)
@@ -397,6 +400,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
@@ -412,6 +416,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
@@ -428,6 +433,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
@@ -447,7 +453,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_d
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low)
@@ -463,7 +469,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med)
@@ -479,7 +485,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high)
@@ -604,6 +610,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
@@ -619,6 +626,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
@@ -635,6 +643,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
@@ -647,52 +656,52 @@ plt.show()
 #%% Compare all experiments - only with single deck
 
 #Low wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_up_low)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_down_low)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_up_low)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_down_low)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_up_low) # Upwind in rig  
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_low, static_coeff_down_low) # Downwind in rig
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_up_low) # Upwind in rig
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_down_low) # Downwind in rig
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low) # Upwind in rig
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low) # Downwind in rig
 
-
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_down_low)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_up_low)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_down_low)
+# Mean
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low) # Upwind in rig
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low) # Downwind in rig
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low) # Upwind in rig
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_down_low) # Downwind in rig
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_up_low) # Upwind in rig
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_low, static_coeff_down_low) # Downwind in rig
 
 #Medium wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_med)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_med)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_med)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_med)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_med) # Upwind in rig
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_med) # Downwind in rig
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_med) # Upwind in rig
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_med) # Downwind in rig
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med) # Upwind in rig
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)  # Downwind in rig
 
-
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_med)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_med)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_med)
+# Mean
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med) # Upwind in rig
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med) # Downwind in rig
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med) # Upwind in rig
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_med) # Downwind in rig
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_med) # Upwind in rig
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_med) # Downwind in rig
                                                
 #High wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_high)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_high)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_high)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_high)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high)
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_up_high) # Upwind in rig
+w3t._scoff.plot_compare_drag_only_single(static_coeff_single_high, static_coeff_down_high) # Downwind in rig
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_up_high) # Upwind in rig
+w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_down_high) # Downwind in rig
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high) # Upwind in rig
+w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high) # Downwind in rig
 
-
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_high)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_high)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_high)
+# Mean
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high) # Upwind in rig
+w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high) # Downwind in rig
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high) # Upwind in rig
+w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_down_high) # Downwind in rig
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_high) # Upwind in rig
+w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_high) # Downwind in rig
 plt.show()
 
 # %% Compare all experiments (Wind speed)
@@ -807,6 +816,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
@@ -822,6 +832,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
@@ -838,6 +849,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
@@ -857,7 +869,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_d
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low)
@@ -873,7 +885,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med)
@@ -889,7 +901,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high)
@@ -1011,6 +1023,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_low, static_coeff_down_low)
@@ -1026,6 +1039,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_med, static_coeff_down_med)
@@ -1042,6 +1056,7 @@ plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_pitch(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 
+# Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
 plt.gcf().suptitle(f"{section_name}", fontsize=16)
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_low, static_coeff_up_high, static_coeff_down_high)
@@ -1061,7 +1076,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_low, static_coeff_d
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_up_low)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_low, static_coeff_down_low)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_up_low)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_low, static_coeff_down_low)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_low, static_coeff_up_low)
@@ -1077,7 +1092,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_med)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_med)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_med)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_med)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_med)
@@ -1093,7 +1108,7 @@ w3t._scoff.plot_compare_lift_only_single(static_coeff_single_high, static_coeff_
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_up_high)
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_high, static_coeff_down_high)
 
-
+# Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_up_high)
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_high, static_coeff_down_high)
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_high, static_coeff_up_high)
