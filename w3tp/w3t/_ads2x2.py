@@ -227,15 +227,15 @@ class AerodynamicDerivatives2x2:
         ---------
         """
         
-        self.h1 = h1 or AerodynamicDerivative(label="H_1^*")
-        self.h2 = h2 or AerodynamicDerivative(label="H_2^*")
-        self.h3 = h3 or AerodynamicDerivative(label="H_3^*")
-        self.h4 = h4 or AerodynamicDerivative(label="H_4^*")
+        self.h1 = h1 or AerodynamicDerivative2x2(label="H_1^*")
+        self.h2 = h2 or AerodynamicDerivative2x2(label="H_2^*")
+        self.h3 = h3 or AerodynamicDerivative2x2(label="H_3^*")
+        self.h4 = h4 or AerodynamicDerivative2x2(label="H_4^*")
 
-        self.a1 = a1 or AerodynamicDerivative(label="A_1^*")
-        self.a2 = a2 or AerodynamicDerivative(label="A_2^*")
-        self.a3 = a3 or AerodynamicDerivative(label="A_3^*")
-        self.a4 = a4 or AerodynamicDerivative(label="A_4^*")
+        self.a1 = a1 or AerodynamicDerivative2x2(label="A_1^*")
+        self.a2 = a2 or AerodynamicDerivative2x2(label="A_2^*")
+        self.a3 = a3 or AerodynamicDerivative2x2(label="A_3^*")
+        self.a4 = a4 or AerodynamicDerivative2x2(label="A_4^*")
     
         
     @classmethod
@@ -338,45 +338,45 @@ class AerodynamicDerivatives2x2:
         obj2 = experiment_in_still_air
         model_prediction = Experiment(obj1.name, obj1.time, obj1.temperature, obj1.air_density, obj1.wind_speed,[],forces_predicted_by_ads,obj2.motion)
             
-        h1 = AerodynamicDerivative()
-        h2 = AerodynamicDerivative()
-        h3 = AerodynamicDerivative()
-        h4 = AerodynamicDerivative()
+        h1 = AerodynamicDerivative2x2()
+        h2 = AerodynamicDerivative2x2()
+        h3 = AerodynamicDerivative2x2()
+        h4 = AerodynamicDerivative2x2()
             
-        a1 = AerodynamicDerivative()
-        a2 = AerodynamicDerivative()
-        a3 = AerodynamicDerivative()
-        a4 = AerodynamicDerivative()
+        a1 = AerodynamicDerivative2x2()
+        a2 = AerodynamicDerivative2x2()
+        a3 = AerodynamicDerivative2x2()
+        a4 = AerodynamicDerivative2x2()
 
             
         if motion_type ==0:
-            
+            row = 0
         elif motion_type ==1:
             row = 0
             col = 1
-            h1 = AerodynamicDerivative("H_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h1 = AerodynamicDerivative2x2("H_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a1 = AerodynamicDerivative("A_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a1 = AerodynamicDerivative2x2("A_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
            
             row = 1
             col = 1
-            h4 = AerodynamicDerivative("H_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h4 = AerodynamicDerivative2x2("H_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a4 = AerodynamicDerivative("A_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a4 = AerodynamicDerivative2x2("A_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
         elif motion_type ==2:
             row = 0
             col = 1
-            h2 = AerodynamicDerivative("H_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h2 = AerodynamicDerivative2x2("H_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a2 = AerodynamicDerivative("A_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a2 = AerodynamicDerivative2x2("A_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
            
             row = 1
             col = 1
-            h3 = AerodynamicDerivative("H_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h3 = AerodynamicDerivative2x2("H_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a3 = AerodynamicDerivative("A_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a3 = AerodynamicDerivative2x2("A_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
               
-        return cls(h1, h2, h3, h4, a1, a2, a3, a4), model_prediction, experiment_in_wind_still_air_forces_removed
+        return cls(h1, h2, h3, h4, a1, a2, a3, a4), model_prediction, experiment_in_wind_still_air_forces_removed, mean_wind_speed
     
     @classmethod
     def from_Theodorsen(cls,vred):
@@ -408,15 +408,15 @@ class AerodynamicDerivatives2x2:
         a3_value = np.pi/2*(f*np.abs(vred)-g/4)*np.abs(vred)
         a4_value = np.pi/2*g*np.abs(vred)
            
-        h1 = AerodynamicDerivative("H_1^*",vred, h1_value/2, h1_value/2, vred*0, vred*0)
-        h2 = AerodynamicDerivative("H_2^*",vred, h2_value/2, h2_value/2, vred*0, vred*0)
-        h3 = AerodynamicDerivative("H_3^*",vred, h3_value/2, h3_value/2, vred*0, vred*0)
-        h4 = AerodynamicDerivative("H_4^*",vred, h4_value/2, h4_value/2, vred*0, vred*0)
+        h1 = AerodynamicDerivative2x2("H_1^*",vred, h1_value/2, h1_value/2, vred*0, vred*0)
+        h2 = AerodynamicDerivative2x2("H_2^*",vred, h2_value/2, h2_value/2, vred*0, vred*0)
+        h3 = AerodynamicDerivative2x2("H_3^*",vred, h3_value/2, h3_value/2, vred*0, vred*0)
+        h4 = AerodynamicDerivative2x2("H_4^*",vred, h4_value/2, h4_value/2, vred*0, vred*0)
       
-        a1 = AerodynamicDerivative("A_1^*",vred, a1_value/2, a1_value/2, vred*0, vred*0)
-        a2 = AerodynamicDerivative("A_2^*",vred, a2_value/2, a2_value/2, vred*0, vred*0)
-        a3 = AerodynamicDerivative("A_3^*",vred, a3_value/2, a3_value/2, vred*0, vred*0)
-        a4 = AerodynamicDerivative("A_4^*",vred, a4_value/2, a4_value/2, vred*0, vred*0)
+        a1 = AerodynamicDerivative2x2("A_1^*",vred, a1_value/2, a1_value/2, vred*0, vred*0)
+        a2 = AerodynamicDerivative2x2("A_2^*",vred, a2_value/2, a2_value/2, vred*0, vred*0)
+        a3 = AerodynamicDerivative2x2("A_3^*",vred, a3_value/2, a3_value/2, vred*0, vred*0)
+        a4 = AerodynamicDerivative2x2("A_4^*",vred, a4_value/2, a4_value/2, vred*0, vred*0)
            
         return cls(h1, h2, h3, h4, a1, a2, a3, a4)
     
@@ -436,7 +436,7 @@ class AerodynamicDerivatives2x2:
             else:
                 ad_value = np.abs(vred)**2*fit(poly_k[k,:],np.abs(1/vred),k_range[k,0],k_range[k,1])
                 
-            ads.append(AerodynamicDerivative(labels[k],vred,ad_value/2 , ad_value/2 , vred*0, vred*0))
+            ads.append(AerodynamicDerivative2x2(labels[k],vred,ad_value/2 , ad_value/2 , vred*0, vred*0))
             
              
         return cls(ads[0], ads[1], ads[2], ads[3], ads[4], ads[5], ads[6], ads[7])
@@ -452,7 +452,7 @@ class AerodynamicDerivatives2x2:
         
         """
         objs1 = [self.h1, self.h2, self.h3, self.h4, self.a1, self.a2, self.a3, self.a4]
-        objs2 = [ads.h1, ads.h2, ads.h3, ads.h4 ads.a1, ads.a2, ads.a3, ads.a4]
+        objs2 = [ads.h1, ads.h2, ads.h3, ads.h4, ads.a1, ads.a2, ads.a3, ads.a4]
         
         for k in range(len(objs1)):
             objs1[k].ad_load_cell_1 = np.append(objs1[k].ad_load_cell_1,objs2[k].ad_load_cell_1)
