@@ -1404,28 +1404,28 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
 
     # Plot low wind speed
     plt.plot(unique_alphas_single_low, single_mean_low,
-             label=f"LWS - Single deck", color = color2LWS,linestyle='-')
+             label=f"LWS - Single deck", color = color2LWS,linestyle=':')
     plt.plot(unique_alphas_low, upwind_mean_low,
-             label=f"LWS -  Upstream deck", color = color2LWS, linestyle='-')
+             label=f"LWS -  Upstream deck", color = color2LWS, linestyle='--')
     plt.plot(unique_alphas_low, downwind_mean_low,
              label=f"LWS - Downstream deck", color = color2LWS, linestyle='-')
 
 
     # Plot med wind speed
     plt.plot(unique_alphas_single_med, single_mean_med,
-             label=f"MWS - Single deck", color = color2MWS,linestyle='--')
+             label=f"MWS - Single deck", color = color2MWS,linestyle=':')
     plt.plot(unique_alphas_med, upwind_mean_med,
                 label=f"MWS - Upstream deck", color = color2MWS, linestyle='--')
     plt.plot(unique_alphas_med, downwind_mean_med,
-                label=f"MWS - Downstream deck", color = color2MWS, linestyle='--')
+                label=f"MWS - Downstream deck", color = color2MWS, linestyle='-')
     
     # Plot high wind speed
     plt.plot(unique_alphas_single_high, single_mean_high,
              label=f"HWS - Single deck", color = color2HWS,linestyle=':')
     plt.plot(unique_alphas_high, upwind_mean_high,
-                label=f"HWS - Upstream deck", color = color2HWS, linestyle=':')
+                label=f"HWS - Upstream deck", color = color2HWS, linestyle='--')
     plt.plot(unique_alphas_high, downwind_mean_high,
-                label=f"HWS - Downstream deck", color = color2HWS, linestyle=':')
+                label=f"HWS - Downstream deck", color = color2HWS, linestyle='-')
     
     plt.xlabel(r"$\alpha$ [deg]")
     plt.ylabel(axis)
