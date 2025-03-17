@@ -1421,11 +1421,11 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     
     # Plot high wind speed
     plt.plot(unique_alphas_single_high, single_mean_high,
-             label=f"HWS - Single deck", color = color2HWS,linestyle='.')
+             label=f"HWS - Single deck", color = color2HWS,linestyle=':')
     plt.plot(unique_alphas_high, upwind_mean_high,
-                label=f"HWS - Upstream deck", color = color2HWS, linestyle='.')
+                label=f"HWS - Upstream deck", color = color2HWS, linestyle=':')
     plt.plot(unique_alphas_high, downwind_mean_high,
-                label=f"HWS - Downstream deck", color = color2HWS, linestyle='.')
+                label=f"HWS - Downstream deck", color = color2HWS, linestyle=':')
     
     plt.xlabel(r"$\alpha$ [deg]")
     plt.ylabel(axis)
