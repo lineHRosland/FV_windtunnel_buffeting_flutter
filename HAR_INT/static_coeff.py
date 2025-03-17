@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 import time
 import pandas as pd
 #from scipy import signal as spsp
-#%%
+
 def load_and_process_static_coeff(h5_input_path, section_name, file_names, filter_order = 6, filter_cutoff_frequency = 2, mode="decks", wind_speed=0, upwind_in_rig=True):
     """Gather, filter, calculate and plot static coeff for."""
  
@@ -69,7 +69,7 @@ def load_and_process_static_coeff(h5_input_path, section_name, file_names, filte
 
     return exp0,exp1,static_coeff
 
-#%% Load all experiments
+# Load all experiments
 tic = time.perf_counter()
 plt.close("all")
 

@@ -1080,7 +1080,7 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, setUp_type=
     plt.ylabel(r"$C_L(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{setUp_type}: Comparison of drag coefficients ")
+    plt.title(f"{setUp_type}: Comparison of lift coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_only_single(static_coeff_single, static_coeff, setUp_type=""):
@@ -1113,7 +1113,7 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, setUp_type
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{setUp_type}: Comparison of drag coefficients ")
+    plt.title(f"{setUp_type}: Comparison of pitch coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, setUp_type=""):
@@ -1197,7 +1197,7 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, setUp_
     plt.ylabel(r"$C_L(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{setUp_type}: Comparison of mean drag coefficients ")
+    plt.title(f"{setUp_type}: Comparison of mean lift coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, setUp_type=""):
@@ -1237,7 +1237,7 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, setUp
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{setUp_type}: Comparison of mean drag coefficients ")
+    plt.title(f"{setUp_type}: Comparison of mean pitch coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Wind speeds
@@ -1404,28 +1404,28 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
 
     # Plot low wind speed
     plt.plot(unique_alphas_single_low, single_mean_low,
-             label=f"LWS - Single deck", color = color1LWS,linestyle='-')
+             label=f"LWS - Single deck", color = color2LWS,linestyle='-')
     plt.plot(unique_alphas_low, upwind_mean_low,
              label=f"LWS -  Upstream deck", color = color2LWS, linestyle='-')
     plt.plot(unique_alphas_low, downwind_mean_low,
-             label=f"LWS - Downstream deck", color = color3LWS, linestyle='-')
+             label=f"LWS - Downstream deck", color = color2LWS, linestyle='-')
 
 
     # Plot med wind speed
     plt.plot(unique_alphas_single_med, single_mean_med,
-             label=f"MWS - Single deck", color = color1MWS,linestyle='--')
+             label=f"MWS - Single deck", color = color2MWS,linestyle='--')
     plt.plot(unique_alphas_med, upwind_mean_med,
                 label=f"MWS - Upstream deck", color = color2MWS, linestyle='--')
     plt.plot(unique_alphas_med, downwind_mean_med,
-                label=f"MWS - Downstream deck", color = color3MWS, linestyle='--')
+                label=f"MWS - Downstream deck", color = color2MWS, linestyle='--')
     
     # Plot high wind speed
     plt.plot(unique_alphas_single_high, single_mean_high,
-             label=f"HWS - Single deck", color = color1HWS,linestyle='-.')
+             label=f"HWS - Single deck", color = color2HWS,linestyle='.')
     plt.plot(unique_alphas_high, upwind_mean_high,
-                label=f"HWS - Upstream deck", color = color2HWS, linestyle='-.')
+                label=f"HWS - Upstream deck", color = color2HWS, linestyle='.')
     plt.plot(unique_alphas_high, downwind_mean_high,
-                label=f"HWS - Downstream deck", color = color3HWS, linestyle='-.')
+                label=f"HWS - Downstream deck", color = color2HWS, linestyle='.')
     
     plt.xlabel(r"$\alpha$ [deg]")
     plt.ylabel(axis)
