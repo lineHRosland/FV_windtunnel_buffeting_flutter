@@ -1244,7 +1244,7 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, setUp
 def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
                                    static_coeff_single_high, static_coeff_low,
                                    static_coeff_med, static_coeff_high,
-                                   setUp_type = "", scoff = ""):
+                                   scoff = ""):
     """
     Plots  coefficients for low and high wind speeds in same figure for each deck setup.
 
@@ -1268,13 +1268,19 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
         "drag" or "ift" or "pitch"
 
     """
-
-    if setUp_type == "MUS":
-        color1 = "#F15854"
-        color2= "#990000"
-    else:
-        color1 = "#006400"
-        color2 ="#60BD68"
+    WS = ["LWS", "MWS", "HWS"]
+    if WS == "HWS":
+        color1 = "#D76C82"
+        color2= "#B03052"
+        color3="#3D0301"
+    if WS == "MWS":
+        color1 = "#FDBF6F"
+        color2= "#E69F00"
+        color3="#CC5500"    
+    elif WS == "LWS":
+        color1 = "#1F7D53"
+        color2 ="#255F38"
+        color3="#27391C"
     
     if scoff == "drag":
         axis = r"$C_D(\alpha)$"
@@ -1287,34 +1293,37 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     plt.rcParams.update({'font.size': 14}) 
 
     # Plot low wind speed
+    WS = "LWS"
     plt.plot(static_coeff_single_low.pitch_motion * 360 / (2 * np.pi), static_coeff_single_low.drag_coeff[:,0] + static_coeff_single_low.drag_coeff[:,1],
-             label=f"LWS - Single deck", color = "#5DA5DA",linestyle='-', alpha = 0.5)
+             label=f"LWS - Single deck", color = color3)
     plt.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), static_coeff_low.drag_coeff[:,0] + static_coeff_low.drag_coeff[:,1],
-             label=f"LWS -  Upstream deck", color = color1, linestyle='-', alpha = 0.5)
+             label=f"LWS -  Upstream deck", color = color1)
     plt.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), static_coeff_low.drag_coeff[:,2] + static_coeff_low.drag_coeff[:,3],
-             label=f"LWS - Downstream deck", color = color2, linestyle='-', alpha = 0.5)
+             label=f"LWS - Downstream deck", color = color2)
 
     # Plot med wind speed
+    WS = "MWS"
     plt.plot(static_coeff_single_med.pitch_motion * 360 / (2 * np.pi), static_coeff_single_med.drag_coeff[:,0] + static_coeff_single_med.drag_coeff[:,1],
-             label=f" MWS - Single deck", color = "#5DA5DA",linestyle='--', alpha = 0.7)
+             label=f" MWS - Single deck", color = color3)
     plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), static_coeff_med.drag_coeff[:,0] + static_coeff_med.drag_coeff[:,1],
-             label=f" MWS - Upstream deck", color = color1, linestyle='--', alpha = 0.7)
+             label=f" MWS - Upstream deck", color = color1)
     plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), static_coeff_med.drag_coeff[:,2] + static_coeff_med.drag_coeff[:,3],
-             label=f" MWS - Downstream deck", color = color2, linestyle='--', alpha = 0.7)
+             label=f" MWS - Downstream deck", color = color2)
 
     # Plot high wind speed
+    WS = "HWS"
     plt.plot(static_coeff_single_high.pitch_motion * 360 / (2 * np.pi), static_coeff_single_high.drag_coeff[:,0] + static_coeff_single_high.drag_coeff[:,1],
-             label=f" HWS - Single deck", color = "#5DA5DA",linestyle='-.', alpha = 1)
+             label=f" HWS - Single deck", color = color3)
     plt.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), static_coeff_high.drag_coeff[:,0] + static_coeff_high.drag_coeff[:,1],
-             label=f" HWS - Upstream deck", color = color1, linestyle='-.', alpha = 1)
+             label=f" HWS - Upstream deck", color = color1)
     plt.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), static_coeff_high.drag_coeff[:,2] + static_coeff_high.drag_coeff[:,3],
-             label=f" HWS - Downstream deck", color = color2, linestyle='-.', alpha = 1)
+             label=f" HWS - Downstream deck", color = color2)
 
     plt.xlabel(r"$\alpha$ [deg]")
     plt.ylabel(axis)
     plt.grid(True)
     plt.legend()
-    plt.title("Comparison of {scoff} coefficients at different wind speeds")
+    plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
     
  
 
@@ -1363,9 +1372,9 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     alpha_single_low = np.round(static_coeff_single_low.pitch_motion*360/2/np.pi,1)
     unique_alphas_single_low = np.unique(alpha_single_low)
     alpha_single_med = np.round(static_coeff_single_med.pitch_motion*360/2/np.pi,1)
-    unique_alphas_med = np.unique(alpha_single_med)
+    unique_alphas_single_med = np.unique(alpha_single_med)
     alpha_single_high = np.round(static_coeff_single_high.pitch_motion*360/2/np.pi,1)
-    unique_alphas_high = np.unique(alpha_single_high)
+    unique_alphas_single_high = np.unique(alpha_single_high)
 
     alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
     unique_alphas_low = np.unique(alpha_low)
@@ -1374,15 +1383,15 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
     unique_alphas_high = np.unique(alpha_high)
 
-    single_mean_low = np.array([np.mean(static_coeff_single_low.pitch_coeff[:,0][alpha_single_low == val]) + np.mean(static_coeff_single_low.pitch_coeff[:,1][alpha_single_low == val]) for val in unique_alphas_single])
+    single_mean_low = np.array([np.mean(static_coeff_single_low.pitch_coeff[:,0][alpha_single_low == val]) + np.mean(static_coeff_single_low.pitch_coeff[:,1][alpha_single_low == val]) for val in unique_alphas_single_low])
     upwind_mean_low = np.array([np.mean(static_coeff_low.pitch_coeff[:,0][alpha_low == val]) + np.mean(static_coeff_low.pitch_coeff[:,1][alpha_low == val]) for val in unique_alphas_low])
     downwind_mean_low = np.array([np.mean(static_coeff_low.pitch_coeff[:,2][alpha_low == val]) + np.mean(static_coeff_low.pitch_coeff[:,3][alpha_low == val]) for val in unique_alphas_low])
     
-    single_mean_med = np.array([np.mean(static_coeff_single_med.pitch_coeff[:,0][alpha_single_med == val]) + np.mean(static_coeff_single_med.pitch_coeff[:,1][alpha_single_med == val]) for val in unique_alphas_med])
+    single_mean_med = np.array([np.mean(static_coeff_single_med.pitch_coeff[:,0][alpha_single_med == val]) + np.mean(static_coeff_single_med.pitch_coeff[:,1][alpha_single_med == val]) for val in unique_alphas_single_med])
     upwind_mean_med = np.array([np.mean(static_coeff_med.pitch_coeff[:,0][alpha_med == val]) + np.mean(static_coeff_med.pitch_coeff[:,1][alpha_med == val]) for val in unique_alphas_med])
     downwind_mean_med = np.array([np.mean(static_coeff_med.pitch_coeff[:,2][alpha_med == val]) + np.mean(static_coeff_med.pitch_coeff[:,3][alpha_med == val]) for val in unique_alphas_med])
 
-    single_mean_high = np.array([np.mean(static_coeff_single_high.pitch_coeff[:,0][alpha_single_high == val]) + np.mean(static_coeff_single_high.pitch_coeff[:,1][alpha_single_high == val]) for val in unique_alphas_high])
+    single_mean_high = np.array([np.mean(static_coeff_single_high.pitch_coeff[:,0][alpha_single_high == val]) + np.mean(static_coeff_single_high.pitch_coeff[:,1][alpha_single_high == val]) for val in unique_alphas_single_high])
     upwind_mean_high = np.array([np.mean(static_coeff_high.pitch_coeff[:,0][alpha_high == val]) + np.mean(static_coeff_high.pitch_coeff[:,1][alpha_high == val]) for val in unique_alphas_high])
     downwind_mean_high = np.array([np.mean(static_coeff_high.pitch_coeff[:,2][alpha_high == val]) + np.mean(static_coeff_high.pitch_coeff[:,3][alpha_high == val]) for val in unique_alphas_high])
 
@@ -1419,6 +1428,6 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     plt.ylabel(axis)
     plt.grid(True)
     plt.legend()
-    plt.title("Comparison of {scoff} coefficients at different wind speeds")
+    plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
     
  
