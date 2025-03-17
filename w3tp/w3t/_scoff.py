@@ -299,7 +299,7 @@ class StaticCoeff:
         """
         if setUp_type == "MUS":
             color1 = "#F15854"
-            color2= "990000"
+            color2= "#990000"
         else:
             color1 = "#006400"
             color2 ="#60BD68"
@@ -363,7 +363,7 @@ class StaticCoeff:
         """
         if setUp_type == "MUS":
             color1 = "#F15854"
-            color2= "990000"
+            color2= "#990000"
         else:
             color1 = "#006400"
             color2 ="#60BD68"
@@ -429,7 +429,7 @@ class StaticCoeff:
         """
         if setUp_type == "MUS":
             color1 = "#F15854"
-            color2= "990000"
+            color2= "#990000"
         else:
             color1 = "#006400"
             color2 ="#60BD68"
