@@ -286,7 +286,7 @@ class StaticCoeff:
                 setUp.to_excel(writer, sheet_name)
                 static_coeff.to_excel(writer, sheet_name=sheet_name)             
             
-    def plot_drag(self,mode="decks"):
+    def plot_drag(self,mode="decks", type=""):
         """ plots the drag coefficient
         
         parameters:
@@ -294,7 +294,18 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        """        
+        type: str
+        "MUS" or "MDS"
+        """
+        if type == "MUS":
+            color = "#F15854"
+            linestyle1 = "-"
+            linestyle2 = "--"
+        else:
+            color = "#60BD68"
+            linestyle1 = "--"
+            linestyle2 = "-"
+        
         
         if mode == "all": #individual load cells + total sum
             plt.figure()
@@ -312,8 +323,8 @@ class StaticCoeff:
         elif mode == "decks": #upwind and downwind deck + total sum
             plt.figure()
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"))
-            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"), color=color, linestyle=linestyle1)
+            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"), color=color, linestyle=linestyle2)
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
@@ -341,7 +352,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
                  
-    def plot_lift(self,mode="decks"):
+    def plot_lift(self,mode="decks", type=""):
         """ plots the lift coefficient
         
         parameters:
@@ -349,7 +360,18 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        """ 
+        type: str
+        "MUS" or "MDS"
+        """
+        if type == "MUS":
+            color = "#F15854"
+            linestyle1 = "-"
+            linestyle2 = "--"
+        else:
+            color = "#60BD68"
+            linestyle1 = "--"
+            linestyle2 = "-"
+    
                 
         if mode == "all":
             print("Lift coeff shape:", self.lift_coeff.shape)
@@ -369,8 +391,8 @@ class StaticCoeff:
         elif mode == "decks":
             plt.figure()
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Upwind deck"))
-            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,2]+self.lift_coeff[:,3],label=("Downwind deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Upwind deck"), color=color, linestyle =linestyle1)
+            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,2]+self.lift_coeff[:,3],label=("Downwind deck"), color=color, linestyle= linestyle2)
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_L(\alpha)$")
@@ -398,7 +420,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
         
-    def plot_pitch(self,mode="decks"):
+    def plot_pitch(self,mode="decks", type=""):
         """ plots the pitch coefficient
         
         parameters:
@@ -406,7 +428,17 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        """ 
+        type: str
+        "MUS" or "MDS"
+        """
+        if type == "MUS":
+            color = "#F15854"
+            linestyle1 = "-"
+            linestyle2 = "--"
+        else:
+            color = "#60BD68"
+            linestyle1 = "--"
+            linestyle2 = "-"
                 
         if mode == "all":
             plt.figure()
@@ -424,8 +456,8 @@ class StaticCoeff:
         elif mode == "decks":
             plt.figure()
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Upwind deck"))
-            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,2]+self.pitch_coeff[:,3],label=("Downwind deck"))
+            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Upwind deck"), color=color, linestyle =linestyle1)
+            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,2]+self.pitch_coeff[:,3],label=("Downwind deck"), color=color, linestyle=linestyle2)
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
@@ -453,7 +485,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
     
-    def plot_drag_mean(self,mode="total"):
+    def plot_drag_mean(self,mode="total", type =""):
         """ plots the drag coefficient mean
         
         parameters:
@@ -461,7 +493,18 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        """        
+        type: str
+        "MUS" or "MDS"
+        """
+        if type == "MUS":
+            color = "#F15854"
+            linestyle1 = "-"
+            linestyle2 = "--"
+        else:
+            color = "#60BD68"
+            linestyle1 = "--"
+            linestyle2 = "-"
+
         alpha = np.round(self.pitch_motion*360/2/np.pi,1)
         unique_alphas = np.unique(alpha)      
 
@@ -491,8 +534,8 @@ class StaticCoeff:
             cd_downwind_mean = np.array([np.mean(self.drag_coeff[:,2][alpha == val]) + np.mean(self.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
 
             #plt.plot(unique_alphas,cd_total_mean,label = "Total")    
-            plt.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck")) # Switch upwind and downwind deck. For Downstream files the load cells are switched.
-            plt.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"))
+            plt.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1) # Switch upwind and downwind deck. For Downstream files the load cells are switched.
+            plt.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_D(\alpha)$")
@@ -523,7 +566,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
                  
-    def plot_lift_mean(self,mode="total"):
+    def plot_lift_mean(self,mode="total", type =""):
         """ plots the lift coefficient mean
         
         parameters:
@@ -531,7 +574,17 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        """ 
+        type: str
+        "MUS" or "MDS"
+        """
+        if type == "MUS":
+            color = "#F15854"
+            linestyle1 = "-"
+            linestyle2 = "--"
+        else:
+            color = "#60BD68"
+            linestyle1 = "--"
+            linestyle2 = "-" 
         alpha = np.round(self.pitch_motion*360/2/np.pi,1)
         unique_alphas = np.unique(alpha)   
 
@@ -560,8 +613,8 @@ class StaticCoeff:
             cl_downwind_mean = np.array([np.mean(self.lift_coeff[:,2][alpha == val]) + np.mean(self.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
 
             #plt.plot(unique_alphas,cl_total_mean,label = "Total")
-            plt.plot(unique_alphas,cl_upwind_mean,label=("Upwind deck"))
-            plt.plot(unique_alphas,cl_downwind_mean,label=("Downwind deck"))
+            plt.plot(unique_alphas,cl_upwind_mean,label=("Upwind deck"), color = color, linestyle = linestyle1)
+            plt.plot(unique_alphas,cl_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
             
             plt.grid()
             plt.xlabel(r"$\alpha$")
@@ -593,7 +646,7 @@ class StaticCoeff:
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
         
-    def plot_pitch_mean(self,mode="total"):
+    def plot_pitch_mean(self,mode="total", type=""):
         """ plots the pitch coefficient mean 
         
         parameters:
@@ -601,7 +654,17 @@ class StaticCoeff:
         mode : str, optional
             all, decks, total plots results from all load cells, upwind and downwind deck and sum of all four load cells
 
-        """ 
+        type: str
+        "MUS" or "MDS"
+        """
+        if type == "MUS":
+            color = "#F15854"
+            linestyle1 = "-"
+            linestyle2 = "--"
+        else:
+            color = "#60BD68"
+            linestyle1 = "--"
+            linestyle2 = "-"
         alpha = np.round(self.pitch_motion*360/2/np.pi,1)
         unique_alphas = np.unique(alpha)  
                 
@@ -630,8 +693,8 @@ class StaticCoeff:
            
 
             #plt.plot(unique_alphas,cm_total_mean,label = "Total")
-            plt.plot(unique_alphas,cm_upwind_mean,label=("Upwind deck"))
-            plt.plot(unique_alphas,cm_downwind_mean,label=("Downwind deck"))
+            plt.plot(unique_alphas,cm_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1)
+            plt.plot(unique_alphas,cm_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
             plt.grid()
             plt.xlabel(r"$\alpha$")
             plt.ylabel(r"$C_M(\alpha)$")
