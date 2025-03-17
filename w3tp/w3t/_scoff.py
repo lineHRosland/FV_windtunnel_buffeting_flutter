@@ -987,7 +987,7 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, type):
     plt.ylabel(r"$C_D(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}:Comparison of drag coefficients with single deck")
+    plt.title(f"{type}:Comparison of drag coefficients")
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 
@@ -1009,15 +1009,15 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, type):
         color = "#60BD68"
     plt.figure()
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "blue")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1], label=("Upwind deck"), color = "red")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,2] + static_coeff.lift_coeff[:,3], label=("Downwind deck"), color = "red", linestyle = "--")
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1], label=("Upwind deck"), color = color)
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,2] + static_coeff.lift_coeff[:,3], label=("Downwind deck"), color = color, linestyle = "--")
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_L(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}:Comparison of drag coefficients with single deck")
+    plt.title(f"{type}:Comparison of drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_only_single(static_coeff_single, static_coeff, type):
@@ -1038,16 +1038,16 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, type):
         color = "#60BD68"
     plt.figure()
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "blue")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,0] + static_coeff.pitch_coeff[:,1], label=("Upwind deck"), color = "red")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,2] + static_coeff.pitch_coeff[:,3], label=("Downwind deck"), color = "red", linestyle = "--")
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,0] + static_coeff.pitch_coeff[:,1], label=("Upwind deck"), color = color)
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,2] + static_coeff.pitch_coeff[:,3], label=("Downwind deck"), color = color, linestyle = "--")
 
     
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}:Comparison of drag coefficients with single deck")
+    plt.title(f"{type}:Comparison of drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, type):
@@ -1080,9 +1080,9 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, type):
 
     plt.figure()
     
-    plt.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = "blue")
-    plt.plot(unique_alphas, cd_upwind_mean, label="Upwind deck", color = "red")
-    plt.plot(unique_alphas, cd_downwind_mean, label="Downwind deck", color = "red", linestyle = "--")
+    plt.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = "#5DA5DA")
+    plt.plot(unique_alphas, cd_upwind_mean, label="Upwind deck", color = color)
+    plt.plot(unique_alphas, cd_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
 
 
    
@@ -1090,7 +1090,7 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, type):
     plt.ylabel(r"$C_D(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}:Comparison of mean drag coefficients with single deck")
+    plt.title(f"{type}:Comparison of mean drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, type):
@@ -1121,15 +1121,15 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, type):
    
     plt.figure()
 
-    plt.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = "blue")
-    plt.plot(unique_alphas, cl_upwind_mean, label="Upwind deck", color = "red")
-    plt.plot(unique_alphas, cl_downwind_mean, label="Downwind deck", color = "red", linestyle = "--")
+    plt.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = "#5DA5DA")
+    plt.plot(unique_alphas, cl_upwind_mean, label="Upwind deck", color = color)
+    plt.plot(unique_alphas, cl_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_L(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}:Comparison of mean drag coefficients with single deck")
+    plt.title(f"{type}:Comparison of mean drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, type):
@@ -1160,15 +1160,15 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, type)
     
     plt.figure()
 
-    plt.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = "blue")
-    plt.plot(unique_alphas, cm_upwind_mean, label="Upwind deck", color = "red")
-    plt.plot(unique_alphas, cm_downwind_mean, label="Downwind deck", color = "red", linestyle = "--")
+    plt.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = "#5DA5DA")
+    plt.plot(unique_alphas, cm_upwind_mean, label="Upwind deck", color = color)
+    plt.plot(unique_alphas, cm_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title(f"{type}:Comparison of mean drag coefficients with single deck")
+    plt.title(f"{type}:Comparison of mean drag coefficients ")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Wind speeds
