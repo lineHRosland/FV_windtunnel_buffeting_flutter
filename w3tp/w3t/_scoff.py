@@ -711,19 +711,24 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
     static_coeff_down : StaticCoeff object
         The StaticCoeff object for downwind deck.
     """
+    colors = {
+        "single": "#5DA5DA",
+        "mus": "#F15854",
+        "mds": "#60BD68"
+    }
+    plt.figure(figsize=(8,6))
     plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
-    fig, ax = plt.subplots(figsize=(8,6))  # Bedre størrelse og proporsjoner
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = "#1f77b4", linewidth = 2)
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,0] + static_coeff_up.drag_coeff[:,1], label=("MUS: Upstream deck"), color = "#d62728", linewidth = 2) #MUS er her riktig, altså motsatt av i excel arket.
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,2] + static_coeff_up.drag_coeff[:,3], label=("MUS: Downstream deck"), color = "#d62728", linestyle = "--", alpha = 0.5, linewidth = 1.5)  
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,2] + static_coeff_down.drag_coeff[:,3], label=("MDS: Downstream deck"), color = "#2ca02c", linewidth = 2)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,0] + static_coeff_down.drag_coeff[:,1], label=("MDS: Upstream deck"), color = "#2ca02c", linestyle = "--", alpha = 0.5, linewidth = 1.5)  
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,0] + static_coeff_up.drag_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2) #MUS er her riktig, altså motsatt av i excel arket.
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,2] + static_coeff_up.drag_coeff[:,3], label=("MUS: Downstream deck"), color = colors["mus"], linestyle = "--", alpha = 0.5, linewidth = 1.5)  
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,2] + static_coeff_down.drag_coeff[:,3], label=("MDS: Downstream deck"), color = colors["mds"], linewidth = 2)
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,0] + static_coeff_down.drag_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"], linestyle = "--", alpha = 0.5, linewidth = 1.5)  
     
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_D(\alpha)$")
-    ax.grid(True)
-    ax.legend(loc="best", frameon=True)
+    plt.grid(True)
+    plt.legend(loc="best", frameon=True)
     plt.legend()
     plt.title("Comparison of drag coefficients")
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
@@ -743,22 +748,27 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down):
         The StaticCoeff object for downwind deck.
     
     """
+    colors = {
+        "single": "#5DA5DA",
+        "mus": "#F15854",
+        "mds": "#60BD68"
+    }
+    plt.figure(figsize=(8,6))
     plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
-    fig, ax = plt.subplots(figsize=(8,6))  # Bedre størrelse og proporsjoner
 
-    ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "#1f77b4", linewidth = 2)
-    ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,0] + static_coeff_up.lift_coeff[:,1], label=("MUS: Upstream deck"), color = "#d62728", linewidth = 2)
-    ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,2] + static_coeff_up.lift_coeff[:,3], label=("MUS: Dowstream deck"), color = "#d62728", linestyle = "--", alpha = 0.5, linewidth = 1.5)
-    ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,2] + static_coeff_down.lift_coeff[:,3], label=("MDS: Dowstream deck"), color = "#2ca02c", linewidth = 2)
-    ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,0] + static_coeff_down.lift_coeff[:,1], label=("MDS: Upstream deck"), color = "#2ca02c", linestyle = "--", alpha = 0.5, linewidth = 1.5)
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,0] + static_coeff_up.lift_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2)
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,2] + static_coeff_up.lift_coeff[:,3], label=("MUS: Dowstream deck"), color = colors["mus"], linestyle = "--", alpha = 0.5, linewidth = 1.5)
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,2] + static_coeff_down.lift_coeff[:,3], label=("MDS: Dowstream deck"), color = colors["mds"], linewidth = 2)
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,0] + static_coeff_down.lift_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"], linestyle = "--", alpha = 0.5, linewidth = 1.5)
 
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_L(\alpha)$")
-    ax.grid(True)
-    ax.legend(loc="best", frameon=True)
-    ax.legend()
-    ax.title("Comparison of lift coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_L(\alpha)$")
+    plt.grid(True)
+    plt.legend(loc="best", frameon=True)
+    plt.legend()
+    plt.title("Comparison of lift coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
     """
@@ -773,23 +783,29 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
     static_coeff_down : StaticCoeff object
         The StaticCoeff object for downwind deck.
     """
+    colors = {
+        "single": "#5DA5DA",
+        "mus": "#F15854",
+        "mds": "#60BD68"
+    }
+    plt.figure(figsize=(8,6))
+
     plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
-    fig, ax = plt.subplots(figsize=(8,6))  # Bedre størrelse og proporsjoner
-    ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "#1f77b4", linewidth = 2)
-    ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,0] + static_coeff_up.pitch_coeff[:,1], label=("MUS: Upstream deck"), color = "#d62728", linewidth = 2)
-    ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,0] + static_coeff_down.pitch_coeff[:,1], label=("MUS: Downstream deck"), color = "	#d62728", linestyle = "--", alpha = 0.5, linewidth = 1.5)
-    ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,2] + static_coeff_down.pitch_coeff[:,3], label=("MDS: Downstream deck"), color = "	#2ca02c", linewidth = 2)
-    ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,2] + static_coeff_up.pitch_coeff[:,3], label=("MDS: Upstream deck"), color = "2ca02c", linestyle = "--", alpha = 0.5, linewidth = 1.5)
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,0] + static_coeff_up.pitch_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2)
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,0] + static_coeff_down.pitch_coeff[:,1], label=("MUS: Downstream deck"), color = colors["mus"], linestyle = "--", alpha = 0.5, linewidth = 1.5)
+    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,2] + static_coeff_down.pitch_coeff[:,3], label=("MDS: Downstream deck"), color = colors["mds"], linewidth = 2)
+    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,2] + static_coeff_up.pitch_coeff[:,3], label=("MDS: Upstream deck"), color = colors["mds"], linestyle = "--", alpha = 0.5, linewidth = 1.5)
   
     
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_M(\alpha)$")
-    ax.grid(True)
-    ax.legend(loc="best", frameon=True)
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_M(\alpha)$")
+    plt.grid(True)
+    plt.legend(loc="best", frameon=True)
 
-    ax.legend()
-    ax.title("Comparison of pitch coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    plt.legend()
+    plt.title("Comparison of pitch coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_down):
     """
@@ -804,7 +820,11 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     static_coeff_down : StaticCoeff object
         The StaticCoeff object for downwind deck.
     """
-    
+    colors = {
+        "single": "#5DA5DA",
+        "mus": "#F15854",
+        "mds": "#60BD68"
+    }
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
     unique_alphas_single = np.unique(alpha_single)
@@ -819,25 +839,25 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     cd_upDown_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.drag_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
     cd_downUp_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.drag_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
    
+    plt.figure(figsize=(8,6))
 
     plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
-    fig, ax = plt.subplots(figsize=(8,6))  # Bedre størrelse og proporsjoner
 
-    ax.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = "#1f77b4")
-    ax.plot(unique_alphas_up, cd_upwind_mean, label="MUS: Upstream deck ", color = "#d62728")
-    ax.plot(unique_alphas_up, cd_upDown_mean, label="MUS: Downstream deck", color = "#d62728", linestyle = "--")
-    ax.plot(unique_alphas_down, cd_downwind_mean, label="MDS: Downstream deck", color = "#2ca02c")
-    ax.plot(unique_alphas_down, cd_downUp_mean, label="MDS: Upstream deck", color = "#2ca02c", linestyle = "--")
+    plt.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = colors["single"])
+    plt.plot(unique_alphas_up, cd_upwind_mean, label="MUS: Upstream deck ", color = colors["mus"])
+    plt.plot(unique_alphas_up, cd_upDown_mean, label="MUS: Downstream deck", color = colors["mus"], linestyle = "--")
+    plt.plot(unique_alphas_down, cd_downwind_mean, label="MDS: Downstream deck", color = colors["mds"])
+    plt.plot(unique_alphas_down, cd_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
 
 
    
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_D(\alpha)$")
-    ax.grid(True)
-    ax.legend(loc="best", frameon=True)
-    ax.legend()
-    ax.title("Comparison of mean drag coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_D(\alpha)$")
+    plt.grid(True)
+    plt.legend(loc="best", frameon=True)
+    plt.legend()
+    plt.title("Comparison of mean drag coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_down):
     """
@@ -853,6 +873,11 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
         The StaticCoeff object for downwind deck.
     
     """
+    colors = {
+        "single": "#5DA5DA",
+        "mus": "#F15854",
+        "mds": "#60BD68"
+    }
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
     unique_alphas_single = np.unique(alpha_single)
@@ -866,23 +891,23 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
     cl_downwind_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,2][alpha_down == val]) + np.mean(static_coeff_down.lift_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
     cl_upDown_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.lift_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
     cl_downUp_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.lift_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
+    plt.figure(figsize=(8,6))
 
     plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
-    fig, ax = plt.subplots(figsize=(8,6))  # Bedre størrelse og proporsjoner
 
-    ax.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = "#1f77b4")
-    ax.plot(unique_alphas_up, cl_upwind_mean, label="MUS: Upstream deck", color = "#d62728")
-    ax.plot(unique_alphas_up, cl_upDown_mean, label="MUS: Downstream deck", color = "#d62728", linestyle = "--")
-    ax.plot(unique_alphas_down, cl_downwind_mean, label="MDS: Downstream deck", color = "#2ca02c")
-    ax.plot(unique_alphas_down, cl_downUp_mean, label="MDS: Upstream deck", color = "#2ca02c", linestyle = "--")
+    plt.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = colors["single"])
+    plt.plot(unique_alphas_up, cl_upwind_mean, label="MUS: Upstream deck", color = colors["mus"])
+    plt.plot(unique_alphas_up, cl_upDown_mean, label="MUS: Downstream deck", color = colors["mus"], linestyle = "--")
+    plt.plot(unique_alphas_down, cl_downwind_mean, label="MDS: Downstream deck", color = colors["mds"])
+    plt.plot(unique_alphas_down, cl_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
 
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_L(\alpha)$")
-    ax.grid(True)
-    ax.legend(loc="best", frameon=True)
-    ax.legend()
-    ax.title("Comparison of mean lift coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_L(\alpha)$")
+    plt.grid(True)
+    plt.legend(loc="best", frameon=True)
+    plt.legend()
+    plt.title("Comparison of mean lift coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_down):
     """
@@ -911,25 +936,31 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
     cm_upDown_mean = np.array([np.mean(static_coeff_up.pitch_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.pitch_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
     cm_downUp_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.pitch_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
 
+    colors = {
+        "single": "#5DA5DA",
+        "mus": "#F15854",
+        "mds": "#60BD68"
+    }
+    plt.figure(figsize=(8,6))
     plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
-    fig, ax = plt.subplots(figsize=(8,6))  # Bedre størrelse og proporsjoner
 
-    ax.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = "#1f77b4")
-    ax.plot(unique_alphas_up, cm_upwind_mean, label="MUS: Upstream deck", color = "#d62728")
-    ax.plot(unique_alphas_up, cm_upDown_mean, label="MUS: Downstream deck", color = "#d62728", linestyle = "--")
+    plt.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = colors["single"])
+    plt.plot(unique_alphas_up, cm_upwind_mean, label="MUS: Upstream deck", color =colors["mus"])
+    plt.plot(unique_alphas_up, cm_upDown_mean, label="MUS: Downstream deck", color = colors["mus"], linestyle = "--")
 
-    ax.plot(unique_alphas_down, cm_downwind_mean, label="MDS: Downstream deck", color = "#2ca02c")
-    ax.plot(unique_alphas_down, cm_downUp_mean, label="MDS: Upstream deck", color = "#2ca02c", linestyle = "--")
+    plt.plot(unique_alphas_down, cm_downwind_mean, label="MDS: Downstream deck", color =colors["mds"])
+    plt.plot(unique_alphas_down, cm_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
 
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_M(\alpha)$")
-    ax.grid(True)
-    ax.legend(loc="best", frameon=True)
-    ax.legend()
-    ax.title("Comparison of mean pitch coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_M(\alpha)$")
+    plt.grid(True)
+    plt.legend(loc="best", frameon=True)
+    plt.legend()
+    plt.title("Comparison of mean pitch coefficients")
+    plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
-def plot_compare_drag_only_single(static_coeff_single, static_coeff):
+#%% Compare with single deck
+def plot_compare_drag_only_single(static_coeff_single, static_coeff, type):
     """
     Plots drag coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -937,26 +968,30 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff):
     ----------
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
-    static_coeff_up : StaticCoeff object
-        The StaticCoeff object for upwind deck.
-    static_coeff_down : StaticCoeff object
-        The StaticCoeff object for downwind deck.
+    static_coeff : MUS /MDS
+    type: str
+        "MUS" or "MDS"
     """
+    if type == "MUS":
+        color = "#F15854"
+    else:
+        color = "#60BD68"
+
     plt.figure()
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = "blue")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1], label=("Upwind deck"), color = "red")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,2] + static_coeff.drag_coeff[:,3], label=("Downwind deck"), color = "red", linestyle = "--")
+    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1], label=("Upstream deck"), color = color)
+    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,2] + static_coeff.drag_coeff[:,3], label=("Downstream deck"), color = color, linestyle = "--")
 
     plt.xlabel(r"$\alpha$")
     plt.ylabel(r"$C_D(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title("Comparison of drag coefficients")
+    plt.title(f"{type}:Comparison of drag coefficients with single deck")
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 
-def plot_compare_lift_only_single(static_coeff_single, static_coeff):
+def plot_compare_lift_only_single(static_coeff_single, static_coeff, type):
     """
     Plots lift coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -964,12 +999,14 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff):
     ----------
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
-    static_coeff_up : StaticCoeff object
-        The StaticCoeff object for upwind deck.
-    static_coeff_down : StaticCoeff object
-        The StaticCoeff object for downwind deck.
-    
+   static_coeff : MUS /MDS
+    type: str
+        "MUS" or "MDS"
     """
+    if type == "MUS":
+        color = "#F15854"
+    else:
+        color = "#60BD68"
     plt.figure()
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "blue")
@@ -980,10 +1017,10 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff):
     plt.ylabel(r"$C_L(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title("Comparison of lift coefficients")
+    plt.title(f"{type}:Comparison of drag coefficients with single deck")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
-def plot_compare_pitch_only_single(static_coeff_single, static_coeff):
+def plot_compare_pitch_only_single(static_coeff_single, static_coeff, type):
     """
     Plots pitch coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -991,11 +1028,14 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff):
     ----------
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
-    static_coeff_up : StaticCoeff object
-        The StaticCoeff object for upwind deck.
-    static_coeff_down : StaticCoeff object
-        The StaticCoeff object for downwind deck.
+    static_coeff : MUS /MDS
+    type: str
+        "MUS" or "MDS"
     """
+    if type == "MUS":
+        color = "#F15854"
+    else:
+        color = "#60BD68"
     plt.figure()
 
     plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "blue")
@@ -1007,10 +1047,10 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff):
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title("Comparison of pitch coefficients")
+    plt.title(f"{type}:Comparison of drag coefficients with single deck")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
-def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff):
+def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, type):
     """
     Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1018,11 +1058,14 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff):
     ----------
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
-    static_coeff_up : StaticCoeff object
-        The StaticCoeff object for upwind deck.
-    static_coeff_down : StaticCoeff object
-        The StaticCoeff object for downwind deck.
+    static_coeff : MUS /MDS
+    type: str
+        "MUS" or "MDS"
     """
+    if type == "MUS":
+        color = "#F15854"
+    else:
+        color = "#60BD68"
     
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
@@ -1047,10 +1090,10 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff):
     plt.ylabel(r"$C_D(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title("Comparison of mean drag coefficients")
+    plt.title(f"{type}:Comparison of mean drag coefficients with single deck")
     plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
-def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff):
+def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, type):
     """
     Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1058,12 +1101,14 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff):
     ----------
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
-    static_coeff_up : StaticCoeff object
-        The StaticCoeff object for upwind deck.
-    static_coeff_down : StaticCoeff object
-        The StaticCoeff object for downwind deck.
-    
+    static_coeff : MUS /MDS
+    type: str
+        "MUS" or "MDS"
     """
+    if type == "MUS":
+        color = "#F15854"
+    else:
+        color = "#60BD68"
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
     unique_alphas_single = np.unique(alpha_single)
@@ -1084,10 +1129,10 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff):
     plt.ylabel(r"$C_L(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title("Comparison of mean lift coefficients")
+    plt.title(f"{type}:Comparison of mean drag coefficients with single deck")
     plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
-def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff):
+def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, type):
     """
     Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1095,11 +1140,14 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff):
     ----------
     static_coeff_single : StaticCoeff object
         The StaticCoeff object for single deck.
-    static_coeff_up : StaticCoeff object
-        The StaticCoeff object for upwind deck.
-    static_coeff_down : StaticCoeff object
-        The StaticCoeff object for downwind deck.
+    static_coeff : MUS /MDS
+    type: str
+        "MUS" or "MDS"
     """
+    if type == "MUS":
+        color = "#F15854"
+    else:
+        color = "#60BD68"
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
     unique_alphas_single = np.unique(alpha_single)
@@ -1120,9 +1168,10 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff):
     plt.ylabel(r"$C_M(\alpha)$")
     plt.grid()
     plt.legend()
-    plt.title("Comparison of mean pitch coefficients")
+    plt.title(f"{type}:Comparison of mean drag coefficients with single deck")
     plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
+#%% Wind speeds
 def plot_compare_drag_wind_speeds(static_coeff_single_low, static_coeff_single_high,
                                    static_coeff_up_low, static_coeff_up_high,
                                    static_coeff_down_low, static_coeff_down_high,
