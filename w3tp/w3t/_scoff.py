@@ -1282,38 +1282,41 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     
     if scoff == "drag":
         axis = r"$C_D(\alpha)$"
+        coeff = "drag_coeff"
     elif scoff == "lift":
         axis = r"$C_L(\alpha)$"
+        coeff = "lift_coeff"
     elif scoff == "pitch":
         axis = r"$C_M(\alpha)$"
+        coeff = "pitch_coeff"
 
     plt.figure(figsize=(8,16))
     plt.rcParams.update({'font.size': 14}) 
 
     # Plot low wind speed
    
-    plt.plot(static_coeff_single_low.pitch_motion * 360 / (2 * np.pi), static_coeff_single_low.drag_coeff[:,0] + static_coeff_single_low.drag_coeff[:,1],
+    plt.plot(static_coeff_single_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_single_low, coeff)[:,0] + getattr(static_coeff_single_low, coeff)[:,1],
              label=f"LWS - Single deck", color = color1LWS)
-    plt.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), static_coeff_low.drag_coeff[:,0] + static_coeff_low.drag_coeff[:,1],
+    plt.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_low, coeff)[:,0] + getattr(static_coeff_low, coeff)[:,1],
              label=f"LWS -  Upstream deck", color = color2LWS)
-    plt.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), static_coeff_low.drag_coeff[:,2] + static_coeff_low.drag_coeff[:,3],
+    plt.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_low, coeff)[:,2] + getattr(static_coeff_low, coeff)[:,3],
              label=f"LWS - Downstream deck", color = color3LWS)
 
     # Plot med wind speed
-    plt.plot(static_coeff_single_med.pitch_motion * 360 / (2 * np.pi), static_coeff_single_med.drag_coeff[:,0] + static_coeff_single_med.drag_coeff[:,1],
+    plt.plot(static_coeff_single_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_single_med, coeff)[:,0] + getattr(static_coeff_single_med, coeff)[:,1],
              label=f"MWS - Single deck", color = color1MWS)
-    plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), static_coeff_med.drag_coeff[:,0] + static_coeff_med.drag_coeff[:,1],
+    plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,0] + getattr(static_coeff_med, coeff)[:,1],
              label=f"MWS - Upstream deck", color = color2MWS)
-    plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), static_coeff_med.drag_coeff[:,2] + static_coeff_med.drag_coeff[:,3],
+    plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,2] + getattr(static_coeff_med, coeff)[:,3],
              label=f"MWS - Downstream deck", color = color3MWS)
 
     # Plot high wind speed
     
-    plt.plot(static_coeff_single_high.pitch_motion * 360 / (2 * np.pi), static_coeff_single_high.drag_coeff[:,0] + static_coeff_single_high.drag_coeff[:,1],
+    plt.plot(static_coeff_single_high.pitch_motion * 360 / (2 * np.pi),getattr(static_coeff_single_high, coeff)[:,0] + getattr(static_coeff_single_high, coeff)[:,1],
              label=f"HWS - Single deck", color = color1HWS)
-    plt.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), static_coeff_high.drag_coeff[:,0] + static_coeff_high.drag_coeff[:,1],
+    plt.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_high, coeff)[:,0] + getattr(static_coeff_high, coeff)[:,1],
              label=f"HWS - Upstream deck", color = color2HWS)
-    plt.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), static_coeff_high.drag_coeff[:,2] + static_coeff_high.drag_coeff[:,3],
+    plt.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_high, coeff)[:,2] + getattr(static_coeff_high, coeff)[:,3],
              label=f"HWS - Downstream deck", color = color3HWS)
 
     plt.xlabel(r"$\alpha$ [deg]")
@@ -1366,10 +1369,14 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     
     if scoff == "drag":
         axis = r"$C_D(\alpha)$"
+        coeff = "drag_coeff"
+        
     elif scoff == "lift":
         axis = r"$C_L(\alpha)$"
+        coeff = "lift_coeff"
     elif scoff == "pitch":
         axis = r"$C_M(\alpha)$"
+        coeff = "pitch_coeff"
 
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single_low = np.round(static_coeff_single_low.pitch_motion*360/2/np.pi,1)
@@ -1386,17 +1393,17 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
     unique_alphas_high = np.unique(alpha_high)
 
-    single_mean_low = np.array([np.mean(static_coeff_single_low.pitch_coeff[:,0][alpha_single_low == val]) + np.mean(static_coeff_single_low.pitch_coeff[:,1][alpha_single_low == val]) for val in unique_alphas_single_low])
-    upwind_mean_low = np.array([np.mean(static_coeff_low.pitch_coeff[:,0][alpha_low == val]) + np.mean(static_coeff_low.pitch_coeff[:,1][alpha_low == val]) for val in unique_alphas_low])
-    downwind_mean_low = np.array([np.mean(static_coeff_low.pitch_coeff[:,2][alpha_low == val]) + np.mean(static_coeff_low.pitch_coeff[:,3][alpha_low == val]) for val in unique_alphas_low])
+    single_mean_low = np.array([np.mean(getattr(static_coeff_single_low, coeff)[:,0][alpha_single_low == val]) + np.mean(getattr(static_coeff_single_low, coeff)[:,1][alpha_single_low == val]) for val in unique_alphas_single_low])
+    upwind_mean_low = np.array([np.mean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.mean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.mean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.mean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
     
-    single_mean_med = np.array([np.mean(static_coeff_single_med.pitch_coeff[:,0][alpha_single_med == val]) + np.mean(static_coeff_single_med.pitch_coeff[:,1][alpha_single_med == val]) for val in unique_alphas_single_med])
-    upwind_mean_med = np.array([np.mean(static_coeff_med.pitch_coeff[:,0][alpha_med == val]) + np.mean(static_coeff_med.pitch_coeff[:,1][alpha_med == val]) for val in unique_alphas_med])
-    downwind_mean_med = np.array([np.mean(static_coeff_med.pitch_coeff[:,2][alpha_med == val]) + np.mean(static_coeff_med.pitch_coeff[:,3][alpha_med == val]) for val in unique_alphas_med])
+    single_mean_med = np.array([np.mean(getattr(static_coeff_single_med, coeff)[:,0][alpha_single_med == val]) + np.mean(getattr(static_coeff_single_med, coeff)[:,1][alpha_single_med == val]) for val in unique_alphas_single_med])
+    upwind_mean_med = np.array([np.mean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.mean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+    downwind_mean_med = np.array([np.mean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.mean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
 
-    single_mean_high = np.array([np.mean(static_coeff_single_high.pitch_coeff[:,0][alpha_single_high == val]) + np.mean(static_coeff_single_high.pitch_coeff[:,1][alpha_single_high == val]) for val in unique_alphas_single_high])
-    upwind_mean_high = np.array([np.mean(static_coeff_high.pitch_coeff[:,0][alpha_high == val]) + np.mean(static_coeff_high.pitch_coeff[:,1][alpha_high == val]) for val in unique_alphas_high])
-    downwind_mean_high = np.array([np.mean(static_coeff_high.pitch_coeff[:,2][alpha_high == val]) + np.mean(static_coeff_high.pitch_coeff[:,3][alpha_high == val]) for val in unique_alphas_high])
+    single_mean_high = np.array([np.mean(getattr(static_coeff_single_high, coeff)[:,0][alpha_single_high == val]) + np.mean(getattr(static_coeff_single_high, coeff)[:,1][alpha_single_high == val]) for val in unique_alphas_single_high])
+    upwind_mean_high = np.array([np.mean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.mean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.mean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.mean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
 
 
     plt.figure(figsize=(8,12))
