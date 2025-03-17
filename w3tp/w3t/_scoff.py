@@ -1356,9 +1356,9 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     color2HWS= "#F15854"
     color3HWS="#FCA5A5"
 
-    color1MWS = "#FDBE85"
-    color2MWS= "#FDAE6B"
-    color3MWS="#E6550D"    
+    color1MWS = "#A6CEE3"
+    color2MWS= "#5DA5DA"
+    color3MWS="#1F4E79"    
 
     color1LWS = "#A1D99B"
     color2LWS ="#60BD68"
