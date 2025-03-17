@@ -28,10 +28,10 @@ def load_and_process_static_coeff(h5_input_path, section_name, file_names, filte
 
     # Nå er riktige eksperimenter hentet fra excel. Bytter så på navnene for at det faktisk skal være korrekt.
     if "MUS" in section_name:
-        type = "MDS"
+        setUp_type = "MDS"
         section_name = section_name.replace("MUS", "MDS")
     elif "MDS" in section_name:
-        type = "MUS"
+        setUp_type = "MUS"
         section_name = section_name.replace("MDS", "MUS")
 
     exp0.plot_experiment() #Before filtering
@@ -47,21 +47,21 @@ def load_and_process_static_coeff(h5_input_path, section_name, file_names, filte
     elif upwind_in_rig == False:
         static_coeff = w3t.StaticCoeff.fromWTT(exp0,exp1,section_width,section_height,section_length_in_rig, section_length_on_wall, upwind_in_rig=False)
     
-    static_coeff.plot_drag_mean(mode=mode, type = type)
+    static_coeff.plot_drag_mean(mode=mode, type = setUp_type)
     plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
-    static_coeff.plot_lift_mean(mode=mode, type = type)
+    static_coeff.plot_lift_mean(mode=mode, type = setUp_type)
     plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
-    static_coeff.plot_pitch_mean(mode=mode, type = type)
-    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
-
-
-    static_coeff.plot_drag(mode=mode, type = type)
+    static_coeff.plot_pitch_mean(mode=mode, type = setUp_type)
     plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
 
-    static_coeff.plot_lift(mode=mode, type = type)
+
+    static_coeff.plot_drag(mode=mode, type = setUp_type)
     plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
 
-    static_coeff.plot_pitch(mode=mode, type = type)
+    static_coeff.plot_lift(mode=mode, type = setUp_type)
+    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+
+    static_coeff.plot_pitch(mode=mode, type = setUp_type)
     plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
     
     plt.show()
