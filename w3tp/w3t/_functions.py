@@ -35,69 +35,100 @@ def group_motions(experiments):
     
     """
     upper_triangular_match_making_matrix = np.zeros((len(experiments),len(experiments))) 
-    for k1 in range(len(experiments)):
-        for k2 in range(k1+1,len(experiments)):
+            # Lager en N×N matrise (der N er antall eksperimenter)
 
+    for k1 in range(len(experiments)): #  radindeks
+        for k2 in range(k1+1,len(experiments)): # k2 starter alltid ett hakk etter k1, og dermed går man kun gjennom de parene som ligger i øvre trekant.
+
+            # Henter ut bevegelsesdataene for to eksperimenter:
             motions1 = experiments[k1].motion
             motions2 = experiments[k2].motion
 
             max_hor_vert_pitch_motion = [np.max(motions1[:,0]), np.max(motions1[:,1]), np.max(motions1[:,2]) ]
-            motion_type = np.argmax(max_hor_vert_pitch_motion)
+                # motions1[:, 0] = horisontal bevegelse
+                # motions1[:, 1] = vertikal bevegelse
+                # motions1[:, 2] = rotasjon bevegelse
 
+            motion_type = np.argmax(max_hor_vert_pitch_motion)
+            # finner indeksen til den største verdien i max_hor_vert_pitch_motion - finner den mest dominerende bevegelsen, f.eks rotasjon
+            
+            # Henter ut den mest dominerende bevegelsen for de to eksperimentene
             motion1 = motions1[:,motion_type]
             motion2 = motions2[:,motion_type]
+                # motion_type baseres på motion 1, viktig å kunne sammenlige samme type bevegelse i begge eksperiementene
+                # Hvis motion2 har en annen bevegelseskomponent som dominerer, er de uansett ikke ansett som like
             
-
+            # Lagrer antall datapunkter for hver av bevegelsene:            
             n_points_motion1 = motion1.shape[0]
             n_points_motion2 = motion2.shape[0]
             
+            # Beregner krysskorrelasjonen mellom bevegelsene:
             cross_correlation = spsp.correlate(motion1,motion2,mode='full', method='auto')
 
+            #Normaliserer krysskorrelasjonen:
             cross_correlation_coefficient = cross_correlation/(np.std(motion1)*np.std(motion2))/(n_points_motion1*n_points_motion2)**0.5
+            # Gir en verdi mellom -1 og 1, 1 = perfect match
 
             #correlation_lags = spsp.correlation_lags(n_points_motion1,n_points_motion2,mode='full')
 
-            upper_triangular_match_making_matrix[k1,k2] = np.max(cross_correlation_coefficient)
-            
+            upper_triangular_match_making_matrix[k1,k2] = np.max(cross_correlation_coefficient) 
+            # den  øvre trekanten av en kvadratisk matrise: f. eks. sammenligning mellom eksperiment 1 og 3 er det samme som eksperiment 3 og 1.
+
             # In case the motion is the same, but with different amplitude or mean value (Will not be detected by correlation)
-            if np.abs((np.max(motion1)-np.max(motion2)))/np.max(motion1)>1/100:
-                upper_triangular_match_making_matrix[k1,k2]  = 0
+            if np.abs((np.max(motion1)-np.max(motion2)))/np.max(motion1)>1/100:  # sjekker om forskjellen i amplitude er større enn 1%
+                upper_triangular_match_making_matrix[k1,k2]  = 0  # Nullstiller korrelasjonsmatrisen hvis forskjellen er for stor
+                # np.abs((np.max(motion1)-np.max(motion2)))/np.max(motion1): hvor stor forskjellen er i prosent 
 
             # In case the motion is the same, but with different mean value for other components
-
+            # Er de andre komponentene (de som ikke er motion_type) også tilstrekkelig like?
+            # forskjeller i maksimal og minimal verdi (amplitude) i de ikke-dominerende komponentene?
             for m in range(3):
                 if m == motion_type:
-                    continue
-                else:
-                    if np.abs(np.max(experiments[k1].motion[:,m])-np.max(experiments[k2].motion[:,m]))>1/100:
+                    continue # Hopper over hovedkomponenten
+                else: #Sjekker om maksverdien i komponent m er veldig forskjellig mellom eksperimentene.
+                    if np.abs(np.max(experiments[k1].motion[:,m])-np.max(experiments[k2].motion[:,m]))>1/100: 
                         upper_triangular_match_making_matrix[k1,k2]  = 0
                     if np.abs(np.min(experiments[k1].motion[:,m])-np.min(experiments[k2].motion[:,m]))>1/100:
                         upper_triangular_match_making_matrix[k1,k2]  = 0
+                        # Det er en kontrollsjekk for å sikre at de andre komponentene er små nok, 
+                        # og altså ikke «forstyrrer» det som skal være en «ren» bevegelse i én retning
 
-            if motion_type == 0:
+        # vil være helt sikre på at de to eksperimentene er "rene" og at de andre bevegelseskomponentene
+        #  (de ikke-dominerende DOF-ene) er like små i begge eksperimentene.
+        # np.abs(np.max(np.abs(motion))):
+         # 1. (abs) gjør alle verdiene positive (tar absoluttverdien av bevegelsen – altså amplituden i hvert øyeblikk) (blir et alternativ til å sjekke først max, og så min, som de gjør over)
+         # 2. (max) finner den høyeste av disse amplitudene (dvs. maksimal bevegelsesutslag)
+         # 3. (abs) har ingen effekt her, for max av absoluttverdier er alltid positiv uansett.
+
+        # JEG SYNES DET VIRKER SOM AT OLE HARDKODET DETTE, SÅ FORBEDRET DET TIL DET OVER, OG GLEMTE Å SLETTE DENNE SJEKKEN HER.
+            if motion_type == 0: #horisontal bevegelse dominerer
                 if (np.abs(np.max(np.abs(experiments[k1].motion[:,1]))- np.max(np.abs(experiments[k2].motion[:,1]))) > 1/100) or (np.abs(np.max(np.abs(experiments[k1].motion[:,2]))- np.max(np.abs(experiments[k2].motion[:,2]))) > 1/100):
                     upper_triangular_match_making_matrix[k1,k2]  = 0
-            if motion_type == 1:
+            if motion_type == 1: #vertikal bevegelse dominerer
                 if (np.abs(np.max(np.abs(experiments[k1].motion[:,0]))- np.max(np.abs(experiments[k2].motion[:,0]))) > 1/100) or (np.abs(np.max(experiments[k1].motion[:,2])- np.max(experiments[k2].motion[:,2])) > 1/100):
                     upper_triangular_match_making_matrix[k1,k2]  = 0
-            if motion_type == 2:
-                if (np.abs(np.max(experiments[k1].motion[:,0])- np.max(experiments[k2].motion[:,0])) > 1/100) or (np.abs(np.max(experiments[k1].motion[:,1])- np.max(experiments[k2].motion[:,1])) > 1/100):
-                    upper_triangular_match_making_matrix[k1,k2]  = 0
-  
+            if motion_type == 2: #rotasjon bevegelse dominerer
+                if (np.abs(np.max(experiments[k1].motion[:,0])- np.max(experiments[k2].motion[:,0])) > 1/100) or (np.abs(np.max(experiments[k1].motion[:,1])- np.max(experiments[k2].motion[:,1])) > 1/100): # sjekker om forskjellen i amplitude er større enn 1%
+                    upper_triangular_match_making_matrix[k1,k2]  = 0 # Nullstiller korrelasjonsmatrisen hvis forskjellen er for stor
+
+    # Fjerner korrelasjoner under 90%
     upper_triangular_match_making_matrix[upper_triangular_match_making_matrix<0.9] = 0
     upper_triangular_match_making_matrix[upper_triangular_match_making_matrix>=0.9] = 1
 
     match_making_matrix = upper_triangular_match_making_matrix + upper_triangular_match_making_matrix.T + np.eye(len(experiments))
-
+    # Sikrer at matrisen er symmetrisk
+        # np.eye(len(experiments)) setter diagonalene til 1 (et eksperiment samsvarer alltid med seg selv)
+    
     tests_with_equal_motion = []
     for k1 in range(len(experiments)):
-        equal_motion = np.array(np.where(match_making_matrix[k1,:]==1))
-        if equal_motion.shape[1]>1:
+        equal_motion = np.array(np.where(match_making_matrix[k1,:]==1)) # Henter ut indeksene som har lik bevegelse
+        if equal_motion.shape[1]>1: # Hvis det er flere enn ett eksperiment som har samme bevegelse
             tests_with_equal_motion.append(np.where(match_making_matrix[k1,:]==1)[0])
             for q in equal_motion:
                 match_making_matrix[q,:] = match_making_matrix[q,:]*0
+                # Sikrer at hvert eksperiment kun blir gruppert en gang
     return tests_with_equal_motion
-
+    # liste over grupper (arrays) med like bevegelser
 
 def group_motions_legacy(experiments):
     """ identifies wind tunnel tests with the same motion
