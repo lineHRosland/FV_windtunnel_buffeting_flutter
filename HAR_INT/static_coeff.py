@@ -101,7 +101,7 @@ plt.show()
 
 #%% Filter and plot
 
-w3t._scoff.plot_static_coeff_filtered_threshold(static_coeff=static_coeff_single_high, threshold=0.005, scoff="drag", single = True)
+w3t._scoff.plot_static_coeff_filtered_threshold(static_coeff=static_coeff_single_high, threshold=0.2, scoff="drag", single = True)
 
 
 

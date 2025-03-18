@@ -1475,7 +1475,7 @@ def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", 
     else:
         raise ValueError("scoff must be 'drag', 'lift' or 'pitch'")
 
-    alpha = static_coeff.pitch_motion * 360 / (2 * np.pi)
+    alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi),1)
 
     # Filter coeff_up
     indices_to_remove_up = []
