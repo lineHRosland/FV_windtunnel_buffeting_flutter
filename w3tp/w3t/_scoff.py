@@ -1523,6 +1523,8 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
 
     # Plot
     plt.figure()
+    plt.rcParams.update({'font.size': 14}) 
+
     if coeff_down_plot is None:
         plt.plot(alpha, coeff_up_plot, label="Single deck")  # alpha is unchanged, but coeff has NaNs
         plt.xlabel(r"$\alpha$")
@@ -1530,7 +1532,7 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
         plt.grid()
         plt.legend()
         plt.ylim(min,max)
-        plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
+        plt.title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
         plt.tight_layout()
         return 
 
@@ -1544,7 +1546,7 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
     plt.ylim(min, max)
     plt.legend()
     plt.tight_layout()
-    plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
+    plt.title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
 
 
 def filter_by_reference_spread(static_coeff_1, static_coeff_2, static_coeff_3, threshold=0.1, scoff="drag"):
@@ -1793,11 +1795,13 @@ def plot_filtered_static_coeff(alpha, coeff_up, coeff_down, scoff, setUp_type=""
         max = 0.25
 
     plt.figure(figsize=(10, 6))
+    plt.rcParams.update({'font.size': 14}) 
+
     plt.plot(alpha, coeff_up, label="Upstream deck", color=color1)
     plt.plot(alpha, coeff_down, label="Downstream deck", color=color2)
     plt.xlabel(r"$\alpha$ [deg]")
     plt.ylabel(ylabel)
-    plt.title(f"{scoff} coefficients filtered")
+    plt.title(f"{scoff} coefficients filtered - Step 2")
     plt.grid(True)
     plt.legend()
     plt.ylim(min, max)
@@ -1820,10 +1824,12 @@ def plot_filtered_static_coeff_single(alpha, coeff_up, scoff):
         max = 0.25
 
     plt.figure(figsize=(10, 6))
+    plt.rcParams.update({'font.size': 14}) 
+
     plt.plot(alpha, coeff_up, label="Upstream deck")
     plt.xlabel(r"$\alpha$ [deg]")
     plt.ylabel(ylabel)
-    plt.title(f"{scoff} coefficients filtered")
+    plt.title(f"{scoff} coefficients filtered - Step 2")
     plt.grid(True)
     plt.legend()
     plt.ylim(min, max)
