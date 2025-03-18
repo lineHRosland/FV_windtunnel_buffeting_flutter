@@ -1674,7 +1674,7 @@ def filter_by_reference_spread(static_coeff_1, static_coeff_2, static_coeff_3, t
             alpha_2, coeff_up_2_filtered, coeff_down_2_filtered,
             alpha_3, coeff_up_3_filtered, coeff_down_3_filtered)
 
-def filter_by_reference_spread_single(static_coeff_1, static_coeff_2, threshold=0.1, scoff="drag", threshold_single=0.05):
+def filter_by_reference_spread_single(static_coeff_1, static_coeff_2, threshold=0.1, scoff="drag", threshold_single_low=0.05, threshold_single_high=0.05):
     """
     Filters out points in each dataset (static_coeff_1/2/3) where values deviate too much from reference value at a given alpha.
     Reference is chosen based on the dataset with lowest spread (max-min) at each alpha.
@@ -1740,8 +1740,8 @@ def filter_by_reference_spread_single(static_coeff_1, static_coeff_2, threshold=
 
 
         # find most accurate reference     
-        coeff_check1 =static_coeff_filtered_out_above_threshold(static_coeff_1, threshold_single, scoff, single = True)[1]
-        coeff_check2 =static_coeff_filtered_out_above_threshold(static_coeff_2, threshold_single, scoff, single = True)[1]
+        coeff_check1 =static_coeff_filtered_out_above_threshold(static_coeff_1, threshold_single_low, scoff, single = True)[1]
+        coeff_check2 =static_coeff_filtered_out_above_threshold(static_coeff_2, threshold_single_high, scoff, single = True)[1]
         has_nan_1 = np.any(np.isnan(coeff_check1[idx1]))
         has_nan_2 = np.any(np.isnan(coeff_check2[idx2]))
 
