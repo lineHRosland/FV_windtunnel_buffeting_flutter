@@ -94,7 +94,7 @@ class AerodynamicDerivative2x2:
         return self.ad_load_cell_1 + self.ad_load_cell_2 + self.ad_load_cell_3 + self.ad_load_cell_4
         
         
-    def plot(self, mode = "all", conv = "normal", ax=[] ):
+    def plot(self, mode = "all", conv = "normal", ax=[], V=1.0):
         """ plots the aerodynamic derivative
         
         The method plots the aerodynamic derivative as function of the mean 
@@ -141,6 +141,14 @@ class AerodynamicDerivative2x2:
                 ax.set_ylabel(("$" + self.label + "$"))
                 ax.set_xlabel(r"Reduced velocity $\hat{V}$")
                 ax.grid(True)
+
+            elif mode == "velocity":
+                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4, "o", label=f"V = {V:.1f} m/s")
+                ax.set_ylabel(("$" + self.label + "$"))
+                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+                ax.legend()
+                ax.grid(True)
+
             #plt.tight_layout()
                 
         elif conv == "zasso" and len(self.reduced_velocities) != 0:
@@ -180,10 +188,9 @@ class AerodynamicDerivative2x2:
                 
             elif mode == "total":
                 ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4), "o", label="Total")
+                ax.grid(True)
                 ax.set_ylabel(("$" + K_label + self.label + "$"))
                 ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.grid(True)
-        
         #plt.tight_layout()
                 
 
@@ -214,7 +221,7 @@ class AerodynamicDerivatives2x2:
     
     """
     def __init__(self, h1=None, h2=None, 
-                 h3=None, h4=None, a1=None, a2=None, a3=None, a4=None):
+                 h3=None, h4=None, a1=None, a2=None, a3=None, a4=None, meanV=None):
         """
         parameters:
         ----------
@@ -236,6 +243,8 @@ class AerodynamicDerivatives2x2:
         self.a2 = a2 or AerodynamicDerivative2x2(label="A_2^*")
         self.a3 = a3 or AerodynamicDerivative2x2(label="A_3^*")
         self.a4 = a4 or AerodynamicDerivative2x2(label="A_4^*")
+
+        self.meanV = meanV
     
         
     @classmethod
@@ -287,7 +296,7 @@ class AerodynamicDerivatives2x2:
             
             #max_hor_vert_pitch_motion = [np.max(motions[:,0]), np.max(motions[:,1]), np.max(motions[:,2]) ]
             motion_type = experiment_in_wind_still_air_forces_removed.motion_type()
-            print("Motion type: " + str(motion_type))
+            #print("Motion type: " + str(motion_type))
             fourier_amplitudes = np.fft.fft(motions[starts[k]:stops[k],motion_type]-np.mean(motions[starts[k]:stops[k],motion_type]))
             
             
@@ -348,7 +357,8 @@ class AerodynamicDerivatives2x2:
         a3 = AerodynamicDerivative2x2()
         a4 = AerodynamicDerivative2x2()
 
-            
+        meanV = np.mean(mean_wind_speeds) 
+
         if motion_type ==0:
             row = 0
         elif motion_type ==1:
@@ -376,7 +386,7 @@ class AerodynamicDerivatives2x2:
             col = 2
             a3 = AerodynamicDerivative2x2("A_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
               
-        return cls(h1, h2, h3, h4, a1, a2, a3, a4), model_prediction, experiment_in_wind_still_air_forces_removed, mean_wind_speed
+        return cls(h1, h2, h3, h4, a1, a2, a3, a4, meanV), model_prediction, experiment_in_wind_still_air_forces_removed
     
     @classmethod
     def from_Theodorsen(cls,vred):
@@ -625,7 +635,7 @@ class AerodynamicDerivatives2x2:
         
         conv            : normal or zasso
         
-        mode            : total, all or decks        
+        mode            : total, all, decks, velocity        
         
         """
         
@@ -643,23 +653,23 @@ class AerodynamicDerivatives2x2:
         
         axs_damping = fig_damping.get_axes()
 #        
-        self.h1.plot(mode=mode, conv=conv, ax=axs_damping[0])
-        self.h2.plot(mode=mode, conv=conv, ax=axs_damping[1])
+        self.h1.plot(mode=mode, conv=conv, ax=axs_damping[0], V=self.meanV)
+        self.h2.plot(mode=mode, conv=conv, ax=axs_damping[1], V=self.meanV)
 
-        self.a1.plot(mode=mode, conv=conv, ax=axs_damping[2])
-        self.a2.plot(mode=mode, conv=conv, ax=axs_damping[3])
+        self.a1.plot(mode=mode, conv=conv, ax=axs_damping[2], V=self.meanV)
+        self.a2.plot(mode=mode, conv=conv, ax=axs_damping[3], V=self.meanV)
         
         axs_stiffness = fig_stiffness.get_axes()
 
-        self.h4.plot(mode=mode, conv=conv, ax=axs_stiffness[0])
-        self.h3.plot(mode=mode, conv=conv, ax=axs_stiffness[1])
+        self.h4.plot(mode=mode, conv=conv, ax=axs_stiffness[0], V=self.meanV)
+        self.h3.plot(mode=mode, conv=conv, ax=axs_stiffness[1], V=self.meanV)
         
-        self.a4.plot(mode=mode, conv=conv, ax=axs_stiffness[2])
-        self.a3.plot(mode=mode, conv=conv, ax=axs_stiffness[3])
+        self.a4.plot(mode=mode, conv=conv, ax=axs_stiffness[2], V=self.meanV)
+        self.a3.plot(mode=mode, conv=conv, ax=axs_stiffness[3], V=self.meanV)
         
         
         
-        for k in range(4):
+        for k in range(2):
             axs_damping[k].set_xlabel("")
             axs_stiffness[k].set_xlabel("")
         
