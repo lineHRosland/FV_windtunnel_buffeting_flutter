@@ -1451,7 +1451,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
     
  
-def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, scoff="", single = True):
+def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, scoff="", single = True, setUp_type=""):
     """
     Filters out coefficient values at specific alpha values where spread exceeds a threshold,
     and sets them to NaN to avoid connecting lines over bad data.
@@ -1476,6 +1476,13 @@ def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, 
         max = 0.25
     else:
         raise ValueError("scoff must be 'drag', 'lift' or 'pitch'")
+    
+    if setUp_type == "MUS":
+        color1 = "#F15854"
+        color2= "#990000"
+    elif setUp_type == "MDS":
+        color1 = "#006400"
+        color2 ="#60BD68"
 
     alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
 
@@ -1509,13 +1516,12 @@ def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, 
     for val in unique_alphas:
         idx = np.where(alpha == val)[0]
         spread = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
-        print(f"α = {val:.1f}: {len(idx)} values DOWN, spread = {spread:.3f}")
         if spread > threshold:
             coeff_down_plot[idx] = np.nan
 
     # Plot both decks
-    plt.plot(alpha, coeff_up_plot, label="Upwind deck")
-    plt.plot(alpha, coeff_down_plot, label="Downwind deck")
+    plt.plot(alpha, coeff_up_plot, color = color1,label="Upwind deck")
+    plt.plot(alpha, coeff_down_plot, color = color2,label="Downwind deck")
     plt.xlabel(r"$\alpha$")
     plt.ylabel(ylabel)
     plt.grid()
