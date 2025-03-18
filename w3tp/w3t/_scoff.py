@@ -1489,7 +1489,6 @@ def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, 
     for val in unique_alphas:
         idx = np.where(alpha == val)[0]
         spread = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
-        print(f"α = {val:.1f}: {len(idx)} values UP, spread = {spread:.3f}")
         if spread > threshold:
             coeff_up_plot[idx] = np.nan  # set NaN instead of removing
 
@@ -1526,84 +1525,4 @@ def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, 
     plt.tight_layout()
 
     return alpha, coeff_up_plot, coeff_down_plot
-
-
-def filter_using_best_spread(static_coeff_low, static_coeff_med, static_coeff_high, scoff="drag", threshold=0.1):
-    """
-    Filters out unreliable coefficient values per alpha based on comparison across 3 experiments.
-    The experiment with the smallest spread (max-min) at each alpha is considered most reliable.
-
-    Parameters
-    ----------
-    static_coeff_low, static_coeff_med, static_coeff_high : StaticCoeff
-        StaticCoeff objects at three wind speeds (excluding single deck for now).
-    scoff : str
-        "drag", "lift" or "pitch"
-    threshold : float
-        Max allowed deviation from reference mean for a value to be kept.
-
-    Returns
-    -------
-    alpha : array
-    coeff_low_filtered, coeff_med_filtered, coeff_high_filtered : arrays
-        Filtered coefficients for each wind speed.
-    """
-
-    if scoff == "drag":
-        coeffs = [sc.drag_coeff[:,0] + sc.drag_coeff[:,1] for sc in [static_coeff_low, static_coeff_med, static_coeff_high]]
-        ylabel = r"$C_D(\alpha)$"
-        min = 0
-        max = 1
-    elif scoff == "lift":
-        coeffs = [sc.lift_coeff[:,0] + sc.lift_coeff[:,1] for sc in [static_coeff_low, static_coeff_med, static_coeff_high]]
-        ylabel = r"$C_L(\alpha)$"
-        min = -1
-        max = 1
-    elif scoff == "pitch":
-        coeffs = [sc.pitch_coeff[:,0] + sc.pitch_coeff[:,1] for sc in [static_coeff_low, static_coeff_med, static_coeff_high]]
-        ylabel = r"$C_M(\alpha)$"
-        min = -0.25
-        max = 0.25
-    else:
-        raise ValueError("Invalid scoff. Must be drag, lift or pitch")
-
-    alphas = [np.round(sc.pitch_motion * 360 / (2 * np.pi), 1) for sc in [static_coeff_low, static_coeff_med, static_coeff_high]]
-    unique_alpha = np.unique(alphas[0])  # assuming all share same alpha range
-
-    coeffs_filtered = [[], [], []]
-    alpha_filtered = []
-
-    for val in unique_alpha:
-        group_vals = [coeff[alpha == val] for coeff, alpha in zip(coeffs, alphas)]
-        spreads = [np.max(gv) - np.min(gv) if len(gv) > 1 else 0 for gv in group_vals]
-
-        best_idx = np.argmin(spreads)
-        if len(group_vals[best_idx]) > 0:
-            ref_mean = np.mean(group_vals[best_idx])
-        else:
-            continue  # skip if no data
-
-        for i in range(3):
-            for a, c in zip(alphas[i], coeffs[i]):
-                if np.round(a, 1) == val and abs(c - ref_mean) <= threshold:
-                    coeffs_filtered[i].append(c)
-                elif np.round(a, 1) == val:
-                    coeffs_filtered[i].append(np.nan)  # to keep plotting aligned
-
-        alpha_filtered.append(val)
-
-    # Plotting result
-    plt.figure(figsize=(8,6))
-    labels = ["Low wind", "Medium wind", "High wind"]
-    for i in range(3):
-        plt.plot(alpha_filtered, coeffs_filtered[i], label=labels[i])
-    plt.xlabel(r"$\alpha$ [deg]")
-    plt.ylabel(ylabel)
-    plt.grid()
-    plt.legend()
-    plt.ylim(min, max)
-    plt.title(f"Filtered {scoff} coefficients using best spread method")
-    plt.tight_layout()
-
-    return np.array(alpha_filtered), *[np.array(cf) for cf in coeffs_filtered]
 
