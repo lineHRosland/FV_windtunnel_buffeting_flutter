@@ -56,14 +56,14 @@ def load_and_process_static_coeff(h5_input_path, section_name, file_names, filte
     #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
 
 
-    #static_coeff.plot_drag(mode=mode, setUp_type = setUp_type1)
-    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    static_coeff.plot_drag(mode=mode, setUp_type = setUp_type1)
+    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
 
-    #static_coeff.plot_lift(mode=mode, setUp_type = setUp_type1)
-    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    static_coeff.plot_lift(mode=mode, setUp_type = setUp_type1)
+    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
 
-    #static_coeff.plot_pitch(mode=mode, setUp_type = setUp_type1)
-    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    static_coeff.plot_pitch(mode=mode, setUp_type = setUp_type1)
+    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
     
     plt.show()
 
@@ -74,8 +74,8 @@ tic = time.perf_counter()
 plt.close("all")
 
 
-section_height = 3.33/100
-section_width =  18.3/100
+section_height = 0.066
+section_width =  0.365
 section_length_in_rig = 2.68
 section_length_on_wall = 2.66
 
@@ -328,7 +328,7 @@ plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_up_high, setUp_type ="MUS")
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_high, static_coeff_down_high, setUp_type ="MDS")
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.figtext(0.5, -0.08,f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.show()
 
 # %% Compare all experiments (Wind speed)
@@ -419,8 +419,8 @@ plt.gcf().suptitle(f"{section_name} ", fontsize=16)
 
 
 ############################################################################################################
-#%%
-print("2D")
+
+#print("2D")
 
 
 #%% Load all downwind experiments (downwind in rig)
@@ -451,12 +451,12 @@ plt.show()
 #%% Load all upwind experiments (upwind in rig)
 
 section_name = "MDS_2D_Static"
-file_names_low = ["HAR_INT_MDS_GAP_213D_02_00_001","HAR_INT_MDS_GAP_213D_02_00_003"] # 5 ms, vibrations
-file_names_med = ["HAR_INT_MDS_GAP_213D_02_00_001","HAR_INT_MDS_GAP_213D_02_00_004"] # 8.5 ms, vibrations
-file_names_high = ["HAR_INT_MDS_GAP_213D_02_00_001","HAR_INT_MDS_GAP_213D_02_00_005"] # 10 ms, vibrations
+file_names_low = ["HAR_INT_MDS_GAP_213D_02_00_000","HAR_INT_MDS_GAP_213D_02_00_001"] # 5 ms, vibrations
+file_names_med = ["HAR_INT_MDS_GAP_213D_02_00_000","HAR_INT_MDS_GAP_213D_02_00_002"] # 8 ms, vibrations
+file_names_high = ["HAR_INT_MDS_GAP_213D_02_00_000","HAR_INT_MDS_GAP_213D_02_00_003"] # 10 ms, vibrations
 
 exp0_up, exp1_up_low, static_coeff_up_low = load_and_process_static_coeff(h5_input_path, section_name, file_names_low, mode="decks", wind_speed = 5, upwind_in_rig=True)
-exp0_up, exp1_up_med, static_coeff_up_med = load_and_process_static_coeff(h5_input_path, section_name, file_names_med, mode="decks", wind_speed = 8.5, upwind_in_rig=True)
+exp0_up, exp1_up_med, static_coeff_up_med = load_and_process_static_coeff(h5_input_path, section_name, file_names_med, mode="decks", wind_speed = 8, upwind_in_rig=True)
 exp0_up, exp1_up_high, static_coeff_up_high = load_and_process_static_coeff(h5_input_path, section_name, file_names_high, mode="decks", wind_speed = 10, upwind_in_rig=True)
 
 #%% Plot all upwind experiments
@@ -466,7 +466,7 @@ plt.gcf().suptitle(f"{section_name} 0 ms – After filtering", fontsize=16)
 exp1_up_low.plot_experiment() #After filtering
 plt.gcf().suptitle(f"{section_name} 5 ms – After filtering", fontsize=16)
 exp1_up_med.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 8.5 ms – After filtering", fontsize=16)
+plt.gcf().suptitle(f"{section_name} 8 ms – After filtering", fontsize=16)
 exp1_up_high.plot_experiment() #After filtering
 plt.gcf().suptitle(f"{section_name} 10 ms – After filtering", fontsize=16)
 plt.show()
@@ -483,7 +483,7 @@ static_coeff_single_low.to_excel(section_name, sheet_name='Single - 6 ms' ,secti
 
 # Medium wind speed
 static_coeff_down_med.to_excel(section_name, sheet_name="MUS - 8 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_up_med.to_excel(section_name, sheet_name='MDS - 8.5 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_up_med.to_excel(section_name, sheet_name='MDS - 8 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_high.to_excel(section_name, sheet_name='Single - 9 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
@@ -500,7 +500,7 @@ static_coeff_single_low.to_excel_mean(section_name, sheet_name='Single - 6 ms' ,
 
 # Medium wind speed
 static_coeff_down_med.to_excel_mean(section_name, sheet_name="MUS - 8 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_up_med.to_excel_mean(section_name, sheet_name='MDS - 8.5 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_up_med.to_excel_mean(section_name, sheet_name='MDS - 8 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_high.to_excel_mean(section_name, sheet_name='Single - 9 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
@@ -666,7 +666,7 @@ file_names_med = ["HAR_INT_MDS_GAP_213D_02_02_000","HAR_INT_MDS_GAP_213D_02_02_0
 file_names_high = ["HAR_INT_MDS_GAP_213D_02_02_000","HAR_INT_MDS_GAP_213D_02_02_005"] # 10 ms, vibrations
 
 exp0_up, exp1_up_low, static_coeff_up_low = load_and_process_static_coeff(h5_input_path, section_name, file_names_low, mode="decks", wind_speed = 5, upwind_in_rig=True)
-exp0_up, exp1_up_med, static_coeff_up_med = load_and_process_static_coeff(h5_input_path, section_name, file_names_med, mode="decks", wind_speed = 8.5, upwind_in_rig=True)
+exp0_up, exp1_up_med, static_coeff_up_med = load_and_process_static_coeff(h5_input_path, section_name, file_names_med, mode="decks", wind_speed = 8, upwind_in_rig=True)
 exp0_up, exp1_up_high, static_coeff_up_high = load_and_process_static_coeff(h5_input_path, section_name, file_names_high, mode="decks", wind_speed = 10, upwind_in_rig=True)
 
 #%% Plot all upwind experiments
@@ -846,8 +846,8 @@ file_names_med = ["HAR_INT_MUS_GAP_45D_02_00_000","HAR_INT_MUS_GAP_45D_02_00_003
 file_names_high = ["HAR_INT_MUS_GAP_45D_02_00_000","HAR_INT_MUS_GAP_45D_02_00_004"] # 10 ms
 
 
-exp0_down, exp1_down_low, static_coeff_down_low = load_and_process_static_coeff(h5_input_path, section_name, file_names_low, mode="decks",  wind_speed = 6, upwind_in_rig=False)
-exp0_down, exp1_down_med, static_coeff_down_med = load_and_process_static_coeff(h5_input_path, section_name, file_names_med, mode="decks", wind_speed = 8, upwind_in_rig=False)
+exp0_down, exp1_down_low, static_coeff_down_low = load_and_process_static_coeff(h5_input_path, section_name, file_names_low, mode="decks",  wind_speed = 5.5, upwind_in_rig=False)
+exp0_down, exp1_down_med, static_coeff_down_med = load_and_process_static_coeff(h5_input_path, section_name, file_names_med, mode="decks", wind_speed = 8.5, upwind_in_rig=False)
 exp0_down, exp1_down_high, static_coeff_down_high = load_and_process_static_coeff(h5_input_path, section_name, file_names_high, mode="decks", wind_speed = 10, upwind_in_rig=False)
 
 
@@ -1053,8 +1053,8 @@ file_names_med = ["HAR_INT_MUS_GAP_45D_02_01_000","HAR_INT_MUS_GAP_45D_02_01_002
 file_names_high = ["HAR_INT_MUS_GAP_45D_02_01_000","HAR_INT_MUS_GAP_45D_02_01_003"] # 10 ms
 
 
-exp0_down, exp1_down_low, static_coeff_down_low = load_and_process_static_coeff(h5_input_path, section_name, file_names_low, mode="decks",  wind_speed = 6, upwind_in_rig=False)
-exp0_down, exp1_down_med, static_coeff_down_med = load_and_process_static_coeff(h5_input_path, section_name, file_names_med, mode="decks", wind_speed = 8, upwind_in_rig=False)
+exp0_down, exp1_down_low, static_coeff_down_low = load_and_process_static_coeff(h5_input_path, section_name, file_names_low, mode="decks",  wind_speed = 5.5, upwind_in_rig=False)
+exp0_down, exp1_down_med, static_coeff_down_med = load_and_process_static_coeff(h5_input_path, section_name, file_names_med, mode="decks", wind_speed = 8.5, upwind_in_rig=False)
 exp0_down, exp1_down_high, static_coeff_down_high = load_and_process_static_coeff(h5_input_path, section_name, file_names_high, mode="decks", wind_speed = 10, upwind_in_rig=False)
 
 

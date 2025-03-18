@@ -140,13 +140,13 @@ class StaticCoeff:
     
     #Plot limits
     ymin_drag = 0
-    ymax_drag = 2.5
+    ymax_drag = 1.5
 
-    ymin_lift = -1.5
-    ymax_lift = 1.5
+    ymin_lift = -1
+    ymax_lift = 1
 
-    ymin_pitch = -1
-    ymax_pitch = 1
+    ymin_pitch = -0.25
+    ymax_pitch = 0.25
     
     def to_excel(self,section_name, sheet_name='Test' ,section_width=0,section_height=0,section_length_in_rig = 0, section_length_on_wall=0, upwind_in_rig=True):
         """
