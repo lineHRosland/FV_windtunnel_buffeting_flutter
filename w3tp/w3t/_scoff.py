@@ -1495,7 +1495,7 @@ def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", 
     # If single deck plot only
     if single:
         plt.figure()
-        plt.plot(alpha_filtered, coeff_up_filtered, label="Single deck")
+        plt.plot(alpha_filtered, coeff_up_filtered, 'o',label="Single deck")
         plt.xlabel(r"$\alpha$")
         plt.ylabel(ylabel)
         plt.grid()
@@ -1519,8 +1519,8 @@ def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", 
 
     # Plot both decks
     plt.figure()
-    plt.plot(alpha[mask_up], coeff_up_filtered, label="Upwind deck")
-    plt.plot(alpha[mask_down], coeff_down_filtered, label="Downwind deck")
+    plt.plot(alpha[mask_up], coeff_up_filtered, 'o',label="Upwind deck")
+    plt.plot(alpha[mask_down], coeff_down_filtered, 'o',label="Downwind deck")
     plt.xlabel(r"$\alpha$")
     plt.ylabel(ylabel)
     plt.grid()
