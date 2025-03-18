@@ -99,6 +99,11 @@ exp1_single_high.plot_experiment() #After filtering
 plt.gcf().suptitle(f"{section_name} 9 ms – After filtering", fontsize=16)
 plt.show()
 
+#%% Filter and plot
+
+w3t._scoff.plot_filter_vibration_threshold(static_coeff=static_coeff_single_high, threshold=0.2, scoff="drag", single = True)
+
+
 
 ############################################################################################################
 

@@ -1321,6 +1321,7 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     plt.ylabel(axis)
     plt.grid(True)
     plt.legend()
+
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
     
  
@@ -1438,3 +1439,77 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
     
  
+def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", single = True):
+    """
+    Filters coefficient data by removing individual points where spread (max-min) is above threshold.
+    Assumes 2 values per alpha for single deck, 4 for twin decks.
+
+    Parameters
+    ----------
+    static_coeff : StaticCoeff
+    threshold : float
+        Max allowed spread per group of values at same alpha (in order).
+    scoff : str
+        "drag", "lift", or "pitch"
+
+    Returns
+    -------
+    alpha_up_filtered, values_up_filtered, alpha_down_filtered, values_down_filtered
+    """
+    alpha = static_coeff.pitch_motion * 360 / (2 * np.pi)
+
+    if scoff == "drag":
+        coeff_up = static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1]
+        coeff_down = static_coeff.drag_coeff[:,2] + static_coeff.drag_coeff[:,3]
+        ylabel = r"$C_D(\alpha)$"
+    elif scoff == "lift":
+        coeff_up = static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1]
+        coeff_down = static_coeff.lift_coeff[:,2] + static_coeff.lift_coeff[:,3]
+        ylabel = r"$C_L(\alpha)$"
+    elif scoff == "pitch":
+        coeff_up = static_coeff.pitch_coeff[:,0] + static_coeff.pitch_coeff[:,1]
+        coeff_down = static_coeff.pitch_coeff[:,2] + static_coeff.pitch_coeff[:,3]
+        ylabel = r"$C_M(\alpha)$"
+    else:
+        raise ValueError("scoff must be 'drag', 'lift' or 'pitch'")
+
+    alpha_up_filtered = []
+    coeff_up_filtered = []
+
+    alpha_down_filtered = []
+    coeff_down_filtered = []
+
+    # Iterate through all alpha values (assume identical indexing for coeff and alpha)
+    for i in range(0, len(alpha), 2):  # assumes 2 points per alpha (for upwind and downwind separately)
+        idx = slice(i, i+2)
+        spread_up = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
+        spread_down = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
+
+        if spread_up <= threshold:
+            alpha_up_filtered.extend(alpha[idx])
+            coeff_up_filtered.extend(coeff_up[idx])
+
+        if spread_down <= threshold:
+            alpha_down_filtered.extend(alpha[idx])
+            coeff_down_filtered.extend(coeff_down[idx])
+
+    # Plot result
+    plt.figure(figsize=(8,6))
+    if single:
+        plt.plot(alpha_up_filtered, coeff_up_filtered, 'o', label="Single deck", markersize=3)
+    else:
+        plt.plot(alpha_up_filtered, coeff_up_filtered, 'o', label="Upwind deck", markersize=3)
+        plt.plot(alpha_down_filtered, coeff_down_filtered, 'o', label="Downwind deck", markersize=3)
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(ylabel)
+    plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+
+    return np.array(alpha_up_filtered), np.array(coeff_up_filtered), np.array(alpha_down_filtered), np.array(coeff_down_filtered)
+
+
+
+
+# %%
