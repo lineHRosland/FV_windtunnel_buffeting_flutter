@@ -102,19 +102,19 @@ plt.show()
 #%% Filter and plot
 #drag
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(static_coeff=static_coeff_single_low, threshold=0.05, scoff="drag", single = True)
-plt.gcf().subtitle(f"{section_name}, 6 m/s", fontsize=16)
+plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(static_coeff=static_coeff_single_high, threshold=0.05, scoff="drag", single = True)
-plt.gcf().subtitle(f"{section_name}, 9 m/s", fontsize=16)
+plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 #lift
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(static_coeff=static_coeff_single_low, threshold=0.05, scoff="lift", single = True)
-plt.gcf().subtitle(f"{section_name}, 6 m/s", fontsize=16)
+plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(static_coeff=static_coeff_single_high, threshold=0.05, scoff="lift", single = True)
-plt.gcf().subtitle(f"{section_name}, 9 m/s", fontsize=16)
+plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 #pitch
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(static_coeff=static_coeff_single_low, threshold=0.05, scoff="pitch", single = True)
-plt.gcf().subtitle(f"{section_name}, 6 m/s", fontsize=16)
+plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(static_coeff=static_coeff_single_high, threshold=0.05, scoff="pitch", single = True)
-plt.gcf().subtitle(f"{section_name}, 9 m/s", fontsize=16)
+plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 
 
 

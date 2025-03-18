@@ -1521,8 +1521,9 @@ def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, 
     plt.grid()
     plt.ylim(min, max)
     plt.legend()
-    plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
     plt.tight_layout()
+
+    plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
 
     return alpha, coeff_up_plot, coeff_down_plot
 
