@@ -1439,27 +1439,11 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
     
  
-def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", single = True):
+def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, scoff="", single = True):
     """
-    Filters out coefficient values at specific alpha values where spread exceeds a threshold.
-
-    Parameters:
-    ----------
-    static_coeff : StaticCoeff
-    threshold : float
-        Maximum allowed (max - min) spread per alpha.
-    scoff : str
-        "drag", "lift", or "pitch"
-    single : bool
-        If True, only plot upwind/single deck. If False, plot both decks.
-
-    Returns:
-    --------
-    alpha_filtered : array
-    coeff_up_filtered : array
-    coeff_down_filtered : array
+    Filters out coefficient values at specific alpha values where spread exceeds a threshold,
+    and sets them to NaN to avoid connecting lines over bad data.
     """
-
     if scoff == "drag":
         coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
         coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
@@ -1475,52 +1459,45 @@ def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", 
     else:
         raise ValueError("scoff must be 'drag', 'lift' or 'pitch'")
 
-    alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi),1)
+    alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
 
-    # Filter coeff_up
-    indices_to_remove_up = []
+    # Copy arrays for safe editing
+    coeff_up_plot = coeff_up.copy()
+    coeff_down_plot = coeff_down.copy()
+
     unique_alphas = np.unique(alpha)
+
+    # Filter upwind
     for val in unique_alphas:
-            idx = np.where(alpha == val)[0]
-            spread_up = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
-            print(f"α = {val:.1f}: {len(idx)} values UP, spread = {spread_up:.3f}")
-            if spread_up > threshold:
-                indices_to_remove_up.extend(idx)
+        idx = np.where(alpha == val)[0]
+        spread = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
+        print(f"α = {val:.1f}: {len(idx)} values UP, spread = {spread:.3f}")
+        if spread > threshold:
+            coeff_up_plot[idx] = np.nan  # set NaN instead of removing
 
-    mask_up = np.ones(len(alpha), dtype=bool)
-    mask_up[indices_to_remove_up] = False
-    alpha_filtered = alpha[mask_up]
-    coeff_up_filtered = coeff_up[mask_up]
-
-    # If single deck plot only
+    # Plot
+    plt.figure()
     if single:
-        plt.figure()
-        plt.plot(alpha_filtered, coeff_up_filtered, 'o',label="Single deck")
+        plt.plot(alpha, coeff_up_plot, label="Single deck")  # alpha is unchanged, but coeff has NaNs
         plt.xlabel(r"$\alpha$")
         plt.ylabel(ylabel)
         plt.grid()
         plt.legend()
         plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
         plt.tight_layout()
-        return alpha_filtered, coeff_up_filtered, None
+        return alpha, coeff_up_plot, None
 
-    # If both decks
-    indices_to_remove_down = []
+    # Filter downwind
     for val in unique_alphas:
         idx = np.where(alpha == val)[0]
-        spread_down = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
-        print(f"α = {val:.1f}: {len(idx)} values DOWN, spread = {spread_down:.3f}")
-        if spread_down > threshold:
-            indices_to_remove_down.extend(idx)
-
-    mask_down = np.ones(len(alpha), dtype=bool)
-    mask_down[indices_to_remove_down] = False
-    coeff_down_filtered = coeff_down[mask_down]
+        spread = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
+        print(f"α = {val:.1f}: {len(idx)} values DOWN, spread = {spread:.3f}")
+        if spread > threshold:
+            coeff_down_plot[idx] = np.nan
 
     # Plot both decks
-    plt.figure()
-    plt.plot(alpha[mask_up], coeff_up_filtered, 'o',label="Upwind deck")
-    plt.plot(alpha[mask_down], coeff_down_filtered, 'o',label="Downwind deck")
+    plt.plot(alpha, coeff_up_plot, label="Upwind deck")
+    plt.plot(alpha, coeff_down_plot, label="Downwind deck")
     plt.xlabel(r"$\alpha$")
     plt.ylabel(ylabel)
     plt.grid()
@@ -1528,5 +1505,6 @@ def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", 
     plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
     plt.tight_layout()
 
-    return alpha[mask_up], coeff_up_filtered, coeff_down_filtered
+    return alpha, coeff_up_plot, coeff_down_plot
+
 # %%
