@@ -140,7 +140,7 @@ class StaticCoeff:
     
     #Plot limits
     ymin_drag = 0
-    ymax_drag = 1.5
+    ymax_drag = 1
 
     ymin_lift = -1
     ymax_lift = 1
