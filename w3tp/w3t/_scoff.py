@@ -1441,74 +1441,70 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
  
 def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", single = True):
     """
-    Filters coefficient data by removing individual points where spread (max-min) is above threshold.
-    Assumes 2 values per alpha for single deck, 4 for twin decks.
+    Filters out coefficient values at specific alpha values where spread exceeds a threshold.
 
-    Parameters
+    Parameters:
     ----------
     static_coeff : StaticCoeff
     threshold : float
-        Max allowed spread per group of values at same alpha (in order).
+        Maximum allowed (max - min) spread per alpha.
     scoff : str
         "drag", "lift", or "pitch"
 
-    Returns
-    -------
-    alpha_up_filtered, values_up_filtered, alpha_down_filtered, values_down_filtered
+    Returns:
+    --------
+    alpha_filtered : array
+    coeff_up_filtered : array
+    coeff_down_filtered : array
     """
-    alpha = static_coeff.pitch_motion * 360 / (2 * np.pi)
 
     if scoff == "drag":
-        coeff_up = static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1]
-        coeff_down = static_coeff.drag_coeff[:,2] + static_coeff.drag_coeff[:,3]
-        ylabel = r"$C_D(\alpha)$"
+        coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
+        coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
     elif scoff == "lift":
-        coeff_up = static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1]
-        coeff_down = static_coeff.lift_coeff[:,2] + static_coeff.lift_coeff[:,3]
-        ylabel = r"$C_L(\alpha)$"
+        coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
+        coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
     elif scoff == "pitch":
-        coeff_up = static_coeff.pitch_coeff[:,0] + static_coeff.pitch_coeff[:,1]
-        coeff_down = static_coeff.pitch_coeff[:,2] + static_coeff.pitch_coeff[:,3]
-        ylabel = r"$C_M(\alpha)$"
+        coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
+        coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
     else:
         raise ValueError("scoff must be 'drag', 'lift' or 'pitch'")
 
-    alpha_up_filtered = []
-    coeff_up_filtered = []
+    alpha = static_coeff.pitch_motion * 360 / (2 * np.pi)
 
-    alpha_down_filtered = []
+    alpha_filtered = []
+    coeff_up_filtered = []
     coeff_down_filtered = []
 
-    # Iterate through all alpha values (assume identical indexing for coeff and alpha)
-    for i in range(0, len(alpha), 2):  # assumes 2 points per alpha (for upwind and downwind separately)
-        idx = slice(i, i+2)
-        spread_up = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
-        spread_down = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
+    unique_alphas = np.unique(alpha)
 
-        if spread_up <= threshold:
-            alpha_up_filtered.extend(alpha[idx])
-            coeff_up_filtered.extend(coeff_up[idx])
+    for a in unique_alphas:
+        idx = np.where(alpha == a)[0]
+        group_up = coeff_up[idx]
+        group_down = coeff_down[idx]
 
-        if spread_down <= threshold:
-            alpha_down_filtered.extend(alpha[idx])
-            coeff_down_filtered.extend(coeff_down[idx])
+        # UPWIND
+        if len(group_up) <= 1 or (np.max(group_up) - np.min(group_up) <= threshold):
+            alpha_filtered.extend(alpha[idx])
+            coeff_up_filtered.extend(group_up)
 
-    # Plot result
-    plt.figure(figsize=(8,6))
+        # DOWNWIND
+        if len(group_down) <= 1 or (np.max(group_down) - np.min(group_down) <= threshold):
+            coeff_down_filtered.extend(group_down)
+
+    plt.figure()
     if single:
-        plt.plot(alpha_up_filtered, coeff_up_filtered, 'o', label="Single deck", markersize=3)
+        plt.plot(alpha_filtered, coeff_up_filtered, label="Single deck")
+
     else:
-        plt.plot(alpha_up_filtered, coeff_up_filtered, 'o', label="Upwind deck", markersize=3)
-        plt.plot(alpha_down_filtered, coeff_down_filtered, 'o', label="Downwind deck", markersize=3)
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(ylabel)
-    plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
-    plt.grid(True)
+        plt.plot(alpha_filtered, coeff_up_filtered, label="Upwind deck")
+        plt.plot(alpha_filtered, coeff_down_filtered, label="Downwind deck")
     plt.legend()
-    plt.tight_layout()
-
-    return np.array(alpha_up_filtered), np.array(coeff_up_filtered), np.array(alpha_down_filtered), np.array(coeff_down_filtered)
-
+    plt.xlabel(r"$\alpha$")
+    plt.ylabel(r"$C_D(\alpha)$")
+    plt.grid()
+    plt.title("Filtered drag coefficients (threshold=0.15)")
+    return np.array(alpha_filtered), np.array(coeff_up_filtered), np.array(coeff_down_filtered)
 
 
 
