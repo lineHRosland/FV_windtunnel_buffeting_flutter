@@ -1450,6 +1450,8 @@ def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", 
         Maximum allowed (max - min) spread per alpha.
     scoff : str
         "drag", "lift", or "pitch"
+    single : bool
+        If True, only plot upwind/single deck. If False, plot both decks.
 
     Returns:
     --------
@@ -1461,51 +1463,70 @@ def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", 
     if scoff == "drag":
         coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
         coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
+        ylabel = r"$C_D(\alpha)$"
     elif scoff == "lift":
         coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
         coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
+        ylabel = r"$C_L(\alpha)$"
     elif scoff == "pitch":
         coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
         coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
+        ylabel = r"$C_M(\alpha)$"
     else:
         raise ValueError("scoff must be 'drag', 'lift' or 'pitch'")
 
     alpha = static_coeff.pitch_motion * 360 / (2 * np.pi)
 
-    alpha_filtered = []
-    coeff_up_filtered = []
-    coeff_down_filtered = []
-
+    # Filter coeff_up
+    indices_to_remove_up = []
     unique_alphas = np.unique(alpha)
+    for val in unique_alphas:
+            idx = np.where(alpha == val)[0]
+            spread_up = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
+            print(f"α = {val:.1f}: {len(idx)} values UP, spread = {spread_up:.3f}")
+            if spread_up > threshold:
+                indices_to_remove_up.extend(idx)
 
-    for a in unique_alphas:
-        idx = np.where(alpha == a)[0]
-        group_up = coeff_up[idx]
-        group_down = coeff_down[idx]
+    mask_up = np.ones(len(alpha), dtype=bool)
+    mask_up[indices_to_remove_up] = False
+    alpha_filtered = alpha[mask_up]
+    coeff_up_filtered = coeff_up[mask_up]
 
-        # UPWIND
-        if len(group_up) <= 1 or (np.max(group_up) - np.min(group_up) <= threshold):
-            alpha_filtered.extend(alpha[idx])
-            coeff_up_filtered.extend(group_up)
-
-        # DOWNWIND
-        if len(group_down) <= 1 or (np.max(group_down) - np.min(group_down) <= threshold):
-            coeff_down_filtered.extend(group_down)
-
-    plt.figure()
+    # If single deck plot only
     if single:
+        plt.figure()
         plt.plot(alpha_filtered, coeff_up_filtered, label="Single deck")
+        plt.xlabel(r"$\alpha$")
+        plt.ylabel(ylabel)
+        plt.grid()
+        plt.legend()
+        plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
+        plt.tight_layout()
+        return alpha_filtered, coeff_up_filtered, None
 
-    else:
-        plt.plot(alpha_filtered, coeff_up_filtered, label="Upwind deck")
-        plt.plot(alpha_filtered, coeff_down_filtered, label="Downwind deck")
-    plt.legend()
+    # If both decks
+    indices_to_remove_down = []
+    for val in unique_alphas:
+        idx = np.where(alpha == val)[0]
+        spread_down = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
+        print(f"α = {val:.1f}: {len(idx)} values DOWN, spread = {spread_down:.3f}")
+        if spread_down > threshold:
+            indices_to_remove_down.extend(idx)
+
+    mask_down = np.ones(len(alpha), dtype=bool)
+    mask_down[indices_to_remove_down] = False
+    coeff_down_filtered = coeff_down[mask_down]
+
+    # Plot both decks
+    plt.figure()
+    plt.plot(alpha[mask_up], coeff_up_filtered, label="Upwind deck")
+    plt.plot(alpha[mask_down], coeff_down_filtered, label="Downwind deck")
     plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_D(\alpha)$")
+    plt.ylabel(ylabel)
     plt.grid()
-    plt.title("Filtered drag coefficients (threshold=0.15)")
-    return np.array(alpha_filtered), np.array(coeff_up_filtered), np.array(coeff_down_filtered)
+    plt.legend()
+    plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
+    plt.tight_layout()
 
-
-
+    return alpha[mask_up], coeff_up_filtered, coeff_down_filtered
 # %%
