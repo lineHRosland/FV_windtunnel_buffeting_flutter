@@ -1283,12 +1283,18 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     if scoff == "drag":
         axis = r"$C_D(\alpha)$"
         coeff = "drag_coeff"
+        min = 0
+        max = 1
     elif scoff == "lift":
         axis = r"$C_L(\alpha)$"
         coeff = "lift_coeff"
+        min = -1
+        max = 1
     elif scoff == "pitch":
         axis = r"$C_M(\alpha)$"
         coeff = "pitch_coeff"
+        min = -0.25
+        max = 0.25
 
     plt.figure(figsize=(8,16))
     plt.rcParams.update({'font.size': 14}) 
@@ -1321,7 +1327,7 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     plt.ylabel(axis)
     plt.grid(True)
     plt.legend()
-
+    plt.ylim(min,max)
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
     
  
@@ -1369,13 +1375,18 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     if scoff == "drag":
         axis = r"$C_D(\alpha)$"
         coeff = "drag_coeff"
-        
+        min = 0
+        max = 1
     elif scoff == "lift":
         axis = r"$C_L(\alpha)$"
         coeff = "lift_coeff"
+        min = -1
+        max = 1
     elif scoff == "pitch":
         axis = r"$C_M(\alpha)$"
         coeff = "pitch_coeff"
+        min = -0.25
+        max = 0.25
 
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single_low = np.round(static_coeff_single_low.pitch_motion*360/2/np.pi,1)
@@ -1435,98 +1446,365 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     plt.xlabel(r"$\alpha$ [deg]")
     plt.ylabel(axis)
     plt.grid(True)
+    plt.ylim(min,max)
     plt.legend()
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
     
  
-def plot_static_coeff_filtered_threshold(static_coeff, threshold=0.3, scoff="", single = True):
+def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, scoff="", single = True, setUp_type=""):
     """
-    Filters out coefficient values at specific alpha values where spread exceeds a threshold.
-
-    Parameters:
-    ----------
-    static_coeff : StaticCoeff
-    threshold : float
-        Maximum allowed (max - min) spread per alpha.
-    scoff : str
-        "drag", "lift", or "pitch"
-    single : bool
-        If True, only plot upwind/single deck. If False, plot both decks.
-
-    Returns:
-    --------
-    alpha_filtered : array
-    coeff_up_filtered : array
-    coeff_down_filtered : array
+    Filters out coefficient values at specific alpha values where spread exceeds a threshold,
+    and sets them to NaN to avoid connecting lines over bad data.
     """
-
     if scoff == "drag":
         coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
         coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
         ylabel = r"$C_D(\alpha)$"
+        min = 0
+        max = 1
     elif scoff == "lift":
         coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
         coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
         ylabel = r"$C_L(\alpha)$"
+        min = -1
+        max = 1
     elif scoff == "pitch":
         coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
         coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
         ylabel = r"$C_M(\alpha)$"
+        min = -0.25
+        max = 0.25
     else:
         raise ValueError("scoff must be 'drag', 'lift' or 'pitch'")
+    
+    if setUp_type == "MUS":
+        color1 = "#F15854"
+        color2= "#990000"
+    elif setUp_type == "MDS":
+        color1 = "#006400"
+        color2 ="#60BD68"
 
-    alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi),1)
+    alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
 
-    # Filter coeff_up
-    indices_to_remove_up = []
+    # Copy arrays for safe editing
+    coeff_up_plot = coeff_up.copy()
+    coeff_down_plot = coeff_down.copy()
+
     unique_alphas = np.unique(alpha)
+
+    # Filter upwind
     for val in unique_alphas:
-            idx = np.where(alpha == val)[0]
-            spread_up = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
-            print(f"α = {val:.1f}: {len(idx)} values UP, spread = {spread_up:.3f}")
-            if spread_up > threshold:
-                indices_to_remove_up.extend(idx)
+        idx = np.where(alpha == val)[0]
+        spread = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
+        if spread > threshold:
+            coeff_up_plot[idx] = np.nan  # set NaN instead of removing
 
-    mask_up = np.ones(len(alpha), dtype=bool)
-    mask_up[indices_to_remove_up] = False
-    alpha_filtered = alpha[mask_up]
-    coeff_up_filtered = coeff_up[mask_up]
-
-    # If single deck plot only
+    # Plot
+    plt.figure()
     if single:
-        plt.figure()
-        plt.plot(alpha_filtered, coeff_up_filtered, label="Single deck")
+        plt.plot(alpha, coeff_up_plot, label="Single deck")  # alpha is unchanged, but coeff has NaNs
         plt.xlabel(r"$\alpha$")
         plt.ylabel(ylabel)
         plt.grid()
         plt.legend()
+        plt.ylim(min,max)
         plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
         plt.tight_layout()
-        return alpha_filtered, coeff_up_filtered, None
+        return alpha, coeff_up_plot, None
 
-    # If both decks
-    indices_to_remove_down = []
+    # Filter downwind
     for val in unique_alphas:
         idx = np.where(alpha == val)[0]
-        spread_down = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
-        print(f"α = {val:.1f}: {len(idx)} values DOWN, spread = {spread_down:.3f}")
-        if spread_down > threshold:
-            indices_to_remove_down.extend(idx)
-
-    mask_down = np.ones(len(alpha), dtype=bool)
-    mask_down[indices_to_remove_down] = False
-    coeff_down_filtered = coeff_down[mask_down]
+        spread = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
+        if spread > threshold:
+            coeff_down_plot[idx] = np.nan
 
     # Plot both decks
-    plt.figure()
-    plt.plot(alpha[mask_up], coeff_up_filtered, label="Upwind deck")
-    plt.plot(alpha[mask_down], coeff_down_filtered, label="Downwind deck")
+    plt.plot(alpha, coeff_up_plot, color = color1,label="Upwind deck")
+    plt.plot(alpha, coeff_down_plot, color = color2,label="Downwind deck")
     plt.xlabel(r"$\alpha$")
     plt.ylabel(ylabel)
     plt.grid()
+    plt.ylim(min, max)
     plt.legend()
-    plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
     plt.tight_layout()
 
-    return alpha[mask_up], coeff_up_filtered, coeff_down_filtered
-# %%
+    plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
+
+    return alpha, coeff_up_plot, coeff_down_plot
+
+
+def filter_by_reference_spread(static_coeff_1, static_coeff_2, static_coeff_3, threshold=0.1, scoff="drag"):
+    """
+    Filters out points in each dataset (static_coeff_1/2/3) where values deviate too much from reference value at a given alpha.
+    Reference is chosen based on the dataset with lowest spread (max-min) at each alpha.
+
+    Parameters
+    ----------
+    static_coeff_1/2/3 : StaticCoeff
+        StaticCoeff objects for three different wind speeds.
+    threshold : float
+        Allowed deviation from reference mean value per alpha point.
+    scoff : str
+        'drag', 'lift' or 'pitch'
+
+    Returns
+    -------
+    alpha_1, coeff_1_filtered : np.ndarray, np.ndarray
+    alpha_2, coeff_2_filtered : np.ndarray, np.ndarray
+    alpha_3, coeff_3_filtered : np.ndarray, np.ndarray
+        Filtered alpha and coefficients (with np.nan for removed values) for each experiment.
+    """
+   
+
+
+    def get_coeff(static_coeff, scoff):
+        alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
+        if scoff == "drag":
+            coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
+            coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
+            
+        elif scoff == "lift":
+            coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
+            coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
+        
+        elif scoff == "pitch":
+            coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
+            coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
+        
+        else:
+            raise ValueError("scoff must be 'drag', 'lift', or 'pitch'")
+        return alpha, coeff_up,coeff_down
+
+    alpha_1, coeff_up_1,coeff_down_1= get_coeff(static_coeff_1, scoff)
+    alpha_2, coeff_up_2,coeff_down_2= get_coeff(static_coeff_2, scoff)
+    alpha_3, coeff_up_3,coeff_down_3 = get_coeff(static_coeff_3, scoff)
+
+    coeff_up_1_filtered = coeff_up_1.copy()
+    coeff_down_1_filtered = coeff_down_1.copy()
+    coeff_up_2_filtered = coeff_up_2.copy()
+    coeff_down_2_filtered = coeff_down_2.copy()
+    coeff_up_3_filtered = coeff_up_3.copy()
+    coeff_down_3_filtered = coeff_down_3.copy()
+
+
+    unique_alpha = np.unique(alpha_1) # to iterate through every unique alpha value
+
+    for val in unique_alpha:
+        idx1 = np.where(alpha_1 == val)[0]
+        idx2 = np.where(alpha_2 == val)[0]
+        idx3 = np.where(alpha_3 == val)[0]
+
+        if not (len(idx1) and len(idx2) and len(idx3)):
+            continue  # skip alpha if one dataset is missing it
+        
+        #which points belong to this exact alpha value
+        vals_up_1 = coeff_up_1[idx1]
+        vals_down_1 = coeff_down_1[idx1]
+        vals_up_2 = coeff_up_2[idx2]
+        vals_down_2 = coeff_down_2[idx2]
+        vals_up_3 = coeff_up_3[idx3]
+        vals_down_3 = coeff_down_3[idx3]
+
+        # Calculate spread for each dataset at this alpha
+        spread_up_1 = np.max(vals_up_1) - np.min(vals_up_1)
+        spread_down_1 = np.max(vals_down_1) - np.min(vals_down_1)
+        spread_up_2 = np.max(vals_up_2) - np.min(vals_up_2)
+        spread_down_2 = np.max(vals_down_2) - np.min(vals_down_2)
+        spread_up_3 = np.max(vals_up_3) - np.min(vals_up_3)
+        spread_down_3 = np.max(vals_down_3) - np.min(vals_down_3)
+
+        # Find best reference
+        spreads_up = [spread_up_1, spread_up_2, spread_up_3]
+        spreads_down = [spread_down_1, spread_down_2, spread_down_3]
+
+        # find most accurate reference
+        ref_idx_up = np.argmin(spreads_up)
+        ref_idx_down = np.argmin(spreads_down)
+
+        if ref_idx_up == 0:
+            ref_values_up = vals_up_1
+        elif ref_idx_up == 1:
+            ref_values_up = vals_up_2
+        else:
+            ref_values_up = vals_up_3
+
+        if ref_idx_down == 0:
+            ref_values_down = vals_down_1
+        elif ref_idx_down == 1:
+            ref_values_down = vals_down_2
+        else:
+            ref_values_down = vals_down_3
+
+        # calculate reference mean
+        ref_mean_up = np.mean(ref_values_up)
+        ref_mean_down = np.mean(ref_values_down)
+
+        # Remove outliers based on deviation from ref_mean
+        # Filter UP
+        for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_up_1_filtered, coeff_up_2_filtered, coeff_up_3_filtered]):
+            # idx er listen med indekser for den aktuelle alpha-verdien i hvert eksperiment
+            # coeff_array er den tilhørende upwind-koeffisient-arrayen som skal oppdateres (eventuelt med np.nan)
+            # Eksempel første iterasjon: idx = idx1, coeff_array = coeff_up_1_filtered
+            for i in idx:
+                if abs(coeff_array[i] - ref_mean_up) > threshold:
+                    coeff_array[i] = np.nan
+
+        # Filter DOWN
+        for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_down_1_filtered, coeff_down_2_filtered, coeff_down_3_filtered]):
+            for i in idx:
+                if abs(coeff_array[i] - ref_mean_down) > threshold:
+                    coeff_array[i] = np.nan
+
+
+    return (alpha_1, coeff_up_1_filtered, coeff_down_1_filtered,
+            alpha_2, coeff_up_2_filtered, coeff_down_2_filtered,
+            alpha_3, coeff_up_3_filtered, coeff_down_3_filtered)
+
+def filter_by_reference_spread_single(static_coeff_1, static_coeff_2, threshold=0.1, scoff="drag"):
+    """
+    Filters out points in each dataset (static_coeff_1/2/3) where values deviate too much from reference value at a given alpha.
+    Reference is chosen based on the dataset with lowest spread (max-min) at each alpha.
+
+    Parameters
+    ----------
+    static_coeff_1/2/3 : StaticCoeff
+        StaticCoeff objects for three different wind speeds.
+    threshold : float
+        Allowed deviation from reference mean value per alpha point.
+    scoff : str
+        'drag', 'lift' or 'pitch'
+
+    Returns
+    -------
+    alpha_1, coeff_1_filtered : np.ndarray, np.ndarray
+    alpha_2, coeff_2_filtered : np.ndarray, np.ndarray
+        Filtered alpha and coefficients (with np.nan for removed values) for each experiment.
+    """
+   
+
+
+    def get_coeff(static_coeff, scoff):
+        alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
+        if scoff == "drag":
+            coeff = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
+            
+        elif scoff == "lift":
+            coeff = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
+        
+        elif scoff == "pitch":
+            coeff = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
+        
+        else:
+            raise ValueError("scoff must be 'drag', 'lift', or 'pitch'")
+        return alpha, coeff
+
+    alpha_1, coeff_1= get_coeff(static_coeff_1, scoff)
+    alpha_2, coeff_2= get_coeff(static_coeff_2, scoff)
+
+    coeff_1_filtered = coeff_1.copy()
+    coeff_2_filtered = coeff_2.copy()
+
+    unique_alpha = np.unique(alpha_1) # to iterate through every unique alpha value
+
+    for val in unique_alpha:
+        idx1 = np.where(alpha_1 == val)[0]
+        idx2 = np.where(alpha_2 == val)[0]
+
+        if not (len(idx1) and len(idx2) ):
+            continue  # skip alpha if one dataset is missing it
+        
+        #which points belong to this exact alpha value
+        vals_1 = coeff_1[idx1]
+        vals_2 = coeff_2[idx2]
+
+        # Calculate spread for each dataset at this alpha
+        spread_1 = np.max(vals_1) - np.min(vals_1)
+        spread_2 = np.max(vals_2) - np.min(vals_2)
+
+        # Find best reference
+        spreads = [spread_1, spread_2]
+
+        # find most accurate reference
+        ref_idx = np.argmin(spreads)
+
+        if ref_idx == 0:
+            ref_values = vals_1
+        elif ref_idx == 1:
+            ref_values = vals_2
+
+    
+        # calculate reference mean
+        ref_mean = np.mean(ref_values)
+
+        # Remove outliers based on deviation from ref_mean
+        # Filter 
+        for idx, coeff_array in zip([idx1, idx2], [coeff_1_filtered, coeff_2_filtered]):
+            # idx er listen med indekser for den aktuelle alpha-verdien i hvert eksperiment
+            # coeff_array er den tilhørende upwind-koeffisient-arrayen som skal oppdateres (eventuelt med np.nan)
+            # Eksempel første iterasjon: idx = idx1, coeff_array = coeff_up_1_filtered
+            for i in idx:
+                if abs(coeff_array[i] - ref_mean) > threshold:
+                    coeff_array[i] = np.nan
+
+    return (alpha_1, coeff_1_filtered, alpha_2, coeff_2_filtered)
+
+def plot_filtered_static_coeff(alpha, coeff_up, coeff_down, scoff, setUp_type=""):
+    if setUp_type == "MUS":
+        color1 = "#F15854"
+        color2 = "#990000"
+    elif setUp_type == "MDS":
+        color1 = "#006400"
+        color2 = "#60BD68"
+
+    if scoff == "drag":
+        ylabel = r"$C_D(\alpha)$"
+        min = 0
+        max = 1
+    elif scoff == "lift":
+        ylabel = r"$C_L(\alpha)$"
+        min = -1
+        max = 1
+    elif scoff == "pitch":
+        ylabel = r"$C_M(\alpha)$"
+        min = -0.25
+        max = 0.25
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(alpha, coeff_up, label="Upstream deck", color=color1)
+    plt.plot(alpha, coeff_down, label="Downstream deck", color=color2)
+    plt.xlabel(r"$\alpha$ [deg]")
+    plt.ylabel(ylabel)
+    plt.title(f"{scoff} coefficients filtered")
+    plt.grid(True)
+    plt.legend()
+    plt.ylim(min, max)
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_filtered_static_coeff_single(alpha, coeff_up, scoff):
+   
+    if scoff == "drag":
+        ylabel = r"$C_D(\alpha)$"
+        min = 0
+        max = 1
+    elif scoff == "lift":
+        ylabel = r"$C_L(\alpha)$"
+        min = -1
+        max = 1
+    elif scoff == "pitch":
+        ylabel = r"$C_M(\alpha)$"
+        min = -0.25
+        max = 0.25
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(alpha, coeff_up, label="Upstream deck")
+    plt.xlabel(r"$\alpha$ [deg]")
+    plt.ylabel(ylabel)
+    plt.title(f"{scoff} coefficients filtered")
+    plt.grid(True)
+    plt.legend()
+    plt.ylim(min, max)
+    plt.tight_layout()
+    plt.show()
