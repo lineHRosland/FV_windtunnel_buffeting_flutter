@@ -1451,7 +1451,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
     
  
-def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, scoff="", single = True, setUp_type=""):
+def static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, scoff="", single = True):
     """
     Filters out coefficient values at specific alpha values where spread exceeds a threshold,
     and sets them to NaN to avoid connecting lines over bad data.
@@ -1459,30 +1459,19 @@ def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, 
     if scoff == "drag":
         coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
         coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
-        ylabel = r"$C_D(\alpha)$"
-        min = 0
-        max = 1
+
     elif scoff == "lift":
         coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
         coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
-        ylabel = r"$C_L(\alpha)$"
-        min = -1
-        max = 1
+
     elif scoff == "pitch":
         coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
         coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
-        ylabel = r"$C_M(\alpha)$"
-        min = -0.25
-        max = 0.25
+
     else:
         raise ValueError("scoff must be 'drag', 'lift' or 'pitch'")
     
-    if setUp_type == "MUS":
-        color1 = "#F15854"
-        color2= "#990000"
-    elif setUp_type == "MDS":
-        color1 = "#006400"
-        color2 ="#60BD68"
+    
 
     alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
 
@@ -1492,16 +1481,49 @@ def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, 
 
     unique_alphas = np.unique(alpha)
 
-    # Filter upwind
+    if single:
+        # Filter upwind
+        for val in unique_alphas:
+            idx = np.where(alpha == val)[0]
+            spread = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
+            if spread > threshold:
+                coeff_up_plot[idx] = np.nan  # set NaN instead of removing
+        return alpha, coeff_up_plot
+
+    # Filter downwind
     for val in unique_alphas:
         idx = np.where(alpha == val)[0]
-        spread = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
+        spread = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
         if spread > threshold:
-            coeff_up_plot[idx] = np.nan  # set NaN instead of removing
+            coeff_down_plot[idx] = np.nan
+
+    return alpha, coeff_up_plot, coeff_down_plot
+
+def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_down_plot=None, setUp_type="", threshold=0.3, scoff=""):
+
+    if setUp_type == "MUS":
+        color1 = "#F15854"
+        color2= "#990000"
+    elif setUp_type == "MDS":
+        color1 = "#006400"
+        color2 ="#60BD68"
+
+    if scoff == "drag":
+        ylabel = r"$C_D(\alpha)$"
+        min = 0
+        max = 1
+    elif scoff == "lift":
+        ylabel = r"$C_L(\alpha)$"
+        min = -1
+        max = 1
+    elif scoff == "pitch":
+        ylabel = r"$C_M(\alpha)$"
+        min = -0.25
+        max = 0.25
 
     # Plot
     plt.figure()
-    if single:
+    if coeff_down_plot is None:
         plt.plot(alpha, coeff_up_plot, label="Single deck")  # alpha is unchanged, but coeff has NaNs
         plt.xlabel(r"$\alpha$")
         plt.ylabel(ylabel)
@@ -1510,14 +1532,8 @@ def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, 
         plt.ylim(min,max)
         plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
         plt.tight_layout()
-        return alpha, coeff_up_plot, None
+        return 
 
-    # Filter downwind
-    for val in unique_alphas:
-        idx = np.where(alpha == val)[0]
-        spread = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
-        if spread > threshold:
-            coeff_down_plot[idx] = np.nan
 
     # Plot both decks
     plt.plot(alpha, coeff_up_plot, color = color1,label="Upwind deck")
@@ -1528,10 +1544,7 @@ def plot_static_coeff_filtered_out_above_threshold(static_coeff, threshold=0.3, 
     plt.ylim(min, max)
     plt.legend()
     plt.tight_layout()
-
     plt.title(f"Filtered {scoff} coefficients (threshold={threshold})")
-
-    return alpha, coeff_up_plot, coeff_down_plot
 
 
 def filter_by_reference_spread(static_coeff_1, static_coeff_2, static_coeff_3, threshold=0.1, scoff="drag"):
@@ -1661,7 +1674,7 @@ def filter_by_reference_spread(static_coeff_1, static_coeff_2, static_coeff_3, t
             alpha_2, coeff_up_2_filtered, coeff_down_2_filtered,
             alpha_3, coeff_up_3_filtered, coeff_down_3_filtered)
 
-def filter_by_reference_spread_single(static_coeff_1, static_coeff_2, threshold=0.1, scoff="drag"):
+def filter_by_reference_spread_single(static_coeff_1, static_coeff_2, threshold=0.1, scoff="drag", threshold_single=0.05):
     """
     Filters out points in each dataset (static_coeff_1/2/3) where values deviate too much from reference value at a given alpha.
     Reference is chosen based on the dataset with lowest spread (max-min) at each alpha.
@@ -1721,20 +1734,29 @@ def filter_by_reference_spread_single(static_coeff_1, static_coeff_2, threshold=
         # Calculate spread for each dataset at this alpha
         spread_1 = np.max(vals_1) - np.min(vals_1)
         spread_2 = np.max(vals_2) - np.min(vals_2)
-
-        # Find best reference
         spreads = [spread_1, spread_2]
 
-        # find most accurate reference
-        ref_idx = np.argmin(spreads)
+        
 
+
+        # find most accurate reference     
+        coeff_check1 =static_coeff_filtered_out_above_threshold(static_coeff_1, threshold_single, scoff, single = True)[1]
+        coeff_check2 =static_coeff_filtered_out_above_threshold(static_coeff_2, threshold_single, scoff, single = True)[1]
+        has_nan_1 = np.any(np.isnan(coeff_check1[idx1]))
+        has_nan_2 = np.any(np.isnan(coeff_check2[idx2]))
+
+        if has_nan_1 and not has_nan_2:
+            ref_idx = 1
+        elif has_nan_2 and not has_nan_1:
+            ref_idx = 0
+        else:
+            ref_idx = np.argmin(spreads)
+        
+        # calculate reference mean
         if ref_idx == 0:
             ref_values = vals_1
         elif ref_idx == 1:
             ref_values = vals_2
-
-    
-        # calculate reference mean
         ref_mean = np.mean(ref_values)
 
         # Remove outliers based on deviation from ref_mean
@@ -1780,7 +1802,6 @@ def plot_filtered_static_coeff(alpha, coeff_up, coeff_down, scoff, setUp_type=""
     plt.legend()
     plt.ylim(min, max)
     plt.tight_layout()
-    plt.show()
 
 
 def plot_filtered_static_coeff_single(alpha, coeff_up, scoff):
@@ -1807,4 +1828,3 @@ def plot_filtered_static_coeff_single(alpha, coeff_up, scoff):
     plt.legend()
     plt.ylim(min, max)
     plt.tight_layout()
-    plt.show()
