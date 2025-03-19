@@ -1531,7 +1531,7 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
 
 
 
-def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1, threshold_low=0.05, threshold_med=None, threshold_high=0.05, single=False):
+def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1, threshold_low=[0.05, 0.05, 0.05], threshold_med=[None, None, None], threshold_high=0.[0.05, 0.05, 0.05], single=False):
     """
     Filters drag, lift, and pitch coefficients in each dataset where values deviate too much from reference at a given alpha.
     Reference is chosen based on dataset with lowest spread per alpha.
@@ -1574,6 +1574,9 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                 continue
 
             for i, name in enumerate(coeff_names):
+                this_threshold_low  = threshold_low[i] if threshold_low[i] is not None else threshold
+                this_threshold_high = threshold_high[i] if threshold_high[i] is not None else threshold
+                
                 coeff_1 = coeffs_1[i]
                 coeff_2 = coeffs_2[i]
                 coeff_1_f = coeffs_1_filt[i]
@@ -1585,8 +1588,8 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                 spread_2 = np.max(vals_2) - np.min(vals_2)
                 spreads = [spread_1, spread_2]
 
-                coeff_check1 = filter(static_coeff_1, threshold_low, scoff=name, single=True)[1]
-                coeff_check2 = filter(static_coeff_2, threshold_high, scoff=name, single=True)[1]
+                coeff_check1 = filter(static_coeff_1, this_threshold_low, scoff=name, single=True)[1]
+                coeff_check2 = filter(static_coeff_2, this_threshold_high, scoff=name, single=True)[1]
                 has_nan_1 = np.any(np.isnan(coeff_check1[idx1]))
                 has_nan_2 = np.any(np.isnan(coeff_check2[idx2]))
 
@@ -1609,6 +1612,10 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                 continue
 
             for i, name in enumerate(coeff_names):
+                this_threshold_low  = threshold_low[i] if threshold_low[i] is not None else threshold
+                this_threshold_med  = threshold_med[i] if threshold_med[i] is not None else threshold
+                this_threshold_high = threshold_high[i] if threshold_high[i] is not None else threshold
+
                 coeff_1 = coeffs_1[i]
                 coeff_2 = coeffs_2[i]
                 coeff_3 = coeffs_3[i]
@@ -1624,9 +1631,9 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
 
                 
                 coeff_up_checks = [
-                    filter(static_coeff_1, threshold_low, scoff=name, single=False)[1],
-                    filter(static_coeff_2, threshold_med, scoff=name, single=False)[1],
-                    filter(static_coeff_3, threshold_high, scoff=name, single=False)[1],
+                    filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[1],
+                    filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[1],
+                    filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[1],
                 ]
                 nan_flags_up = [np.any(np.isnan(check[idx, 0])) for check, idx in zip(coeff_up_checks, [idx1, idx2, idx3])]
                 clean_idxs_up = [i for i, nan in enumerate(nan_flags_up) if not nan]
@@ -1696,70 +1703,6 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
 
 
 #####################################################################33
-
-def plot_filtered_static_coeff(alpha, coeff_up, coeff_down, scoff, upwind_in_rig=True):
-    if setUp_type == "MUS":
-        color1 = "#F15854"
-        color2 = "#990000"
-    elif setUp_type == "MDS":
-        color1 = "#006400"
-        color2 = "#60BD68"
-    
-    
-    
-    if scoff == "drag":
-        ylabel = r"$C_D(\alpha)$"
-        min = 0
-        max = 1
-    elif scoff == "lift":
-        ylabel = r"$C_L(\alpha)$"
-        min = -1
-        max = 1
-    elif scoff == "pitch":
-        ylabel = r"$C_M(\alpha)$"
-        min = -0.25
-        max = 0.25
-
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14}) 
-
-    plt.plot(alpha, coeff_up, label="Upstream deck", color=color1)
-    plt.plot(alpha, coeff_down, label="Downstream deck", color=color2)
-    plt.xlabel(r"$\alpha$ [deg]")
-    plt.ylabel(ylabel)
-    plt.title(f"{scoff} coefficients filtered - Step 2")
-    plt.grid(True)
-    plt.legend()
-    plt.ylim(min, max)
-    plt.tight_layout()
-
-
-def plot_filtered_static_coeff_single(alpha, coeff_up, scoff):
-   
-    if scoff == "drag":
-        ylabel = r"$C_D(\alpha)$"
-        min = 0
-        max = 1
-    elif scoff == "lift":
-        ylabel = r"$C_L(\alpha)$"
-        min = -1
-        max = 1
-    elif scoff == "pitch":
-        ylabel = r"$C_M(\alpha)$"
-        min = -0.25
-        max = 0.25
-
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14}) 
-
-    plt.plot(alpha, coeff_up, label="Single deck")
-    plt.xlabel(r"$\alpha$ [deg]")
-    plt.ylabel(ylabel)
-    plt.title(f"{scoff} coefficients filtered - Step 2")
-    plt.grid(True)
-    plt.legend()
-    plt.ylim(min, max)
-    plt.tight_layout()
 
 
 def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.3, scoff=""):

@@ -52,9 +52,10 @@ def generate_static_coeff_from_experiments(exp0, exp1, section_width, section_he
     return w3t.StaticCoeff.fromWTT(exp0, exp1, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=upwind_in_rig)
 
 def plot_static_coeff_summary(static_coeff, section_name, wind_speed, mode="decks", upwind_in_rig=True):
-    if upwind_in_rig:
+    if "MUS" in section_name:
+        section_name = "MDS"
+    elif "MDS" in section_name:
         section_name = "MUS"
-    else: section_name = "MDS"
 
     static_coeff.plot_drag(mode=mode,upwind_in_rig=upwind_in_rig)
     plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
@@ -131,8 +132,8 @@ plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 
 static_coeff_single_low_filtered, static_coeff_single_high_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_low,static_coeff_2=static_coeff_single_high,threshold=0.05,  threshold_low=0.07, threshold_high=0.019,single=True)
 
-plot_static_coeff_summary(static_coeff_single_low_filtered, section_name, 6, mode="decks", upwind_in_rig=True)
-plot_static_coeff_summary(static_coeff_single_high_filtered, section_name, 9, mode="decks", upwind_in_rig=True)
+plot_static_coeff_summary(static_coeff_single_low_filtered, section_name, 6, mode="single", upwind_in_rig=True)
+plot_static_coeff_summary(static_coeff_single_high_filtered, section_name, 9, mode="single", upwind_in_rig=True)
 
 
 
