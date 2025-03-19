@@ -279,16 +279,20 @@ class AerodynamicDerivatives2x2:
         normalized_coefficient_matrix = np.zeros((2,3,len(starts),4))
         
         forces_predicted_by_ads = np.zeros((experiment_in_wind_still_air_forces_removed.forces_global_center.shape[0],24))
+
+      
         #model_forces = np.zeros((experiment_in_wind_still_air_forces_removed.forces_global_center.shape[0],3))
         
         # loop over all single harmonic test in the time series
-        for k in range(len(starts)):           
+        for k in range(len(starts)):    # 6 frequencies       
 
             sampling_frequency = 1/(experiment_in_still_air.time[1]- experiment_in_still_air.time[0])
        
             sos = spsp.butter(filter_order,cutoff_frequency, fs=sampling_frequency, output="sos")
            
             motions = experiment_in_wind_still_air_forces_removed.motion
+
+            print("motions:", motions.shape)
             
             motions = spsp.sosfiltfilt(sos,motions,axis=0)
             
@@ -312,6 +316,7 @@ class AerodynamicDerivatives2x2:
             regressor_matrix = np.vstack((time_derivative_motions[starts[k]:stops[k],motion_type],motions[starts[k]:stops[k],motion_type])).T
                         
             pseudo_inverse_regressor_matrix = spla.pinv(regressor_matrix) 
+            print(regressor_matrix.shape)
             selected_forces = np.array([0,2,4])
             
             
@@ -341,7 +346,8 @@ class AerodynamicDerivatives2x2:
                 
                 forces_predicted_by_ads[starts[k]:stops[k],selected_forces + 6*m] = forces_predicted_by_ads[starts[k]:stops[k],selected_forces + 6*m]  + regressor_matrix @ coefficient_matrix + np.mean(experiment_in_wind_still_air_forces_removed.forces_global_center[0:400,selected_forces + 6*m],axis= 0)
             
-               
+             
+
         # Make Experiment object for simulation of model
         obj1 = experiment_in_wind_still_air_forces_removed
         obj2 = experiment_in_still_air
