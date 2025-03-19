@@ -17,57 +17,52 @@ import time
 import pandas as pd
 #from scipy import signal as spsp
 
-def load_and_process_static_coeff(h5_input_path, section_name, file_names, filter_order = 6, filter_cutoff_frequency = 2, mode="decks", wind_speed=0, upwind_in_rig=True):
-    """Gather, filter, calculate and plot static coeff for."""
- 
+def load_experiments_from_hdf5(h5_input_path, section_name, file_names,  upwind_in_rig=True):
     h5_file = os.path.join(h5_input_path, section_name)
-    f = h5py.File((h5_file + ".hdf5"), "r")
- 
+    f = h5py.File(h5_file + ".hdf5", "r")
     exp0 = w3t.Experiment.fromWTT(f[file_names[0]])
     exp1 = w3t.Experiment.fromWTT(f[file_names[1]])
 
-    # Nå er riktige eksperimenter hentet fra excel. Bytter så på navnene for at det faktisk skal være korrekt.
-    setUp_type1=""
-    if "MUS" in section_name:
-        setUp_type1 = "MDS"
-        section_name = section_name.replace("MUS", "MDS")
-    elif "MDS" in section_name:
-        setUp_type1 = "MUS"
-        section_name = section_name.replace("MDS", "MUS")
-
+    if upwind_in_rig:
+        section_name = "MUS"
+    else: section_name = "MDS"
+    
     #exp0.plot_experiment() #Before filtering
     #plt.gcf().suptitle(f"{section_name} 0 ms – Before filtering", fontsize=16)
     #exp1.plot_experiment() #Before filtering
     #plt.gcf().suptitle(f"{section_name} {wind_speed} ms – Before filtering", fontsize=16)
 
-    exp0.filt_forces(filter_order, filter_cutoff_frequency)
-    exp1.filt_forces(filter_order, filter_cutoff_frequency)
+    return exp0, exp1
 
-    if upwind_in_rig == True:
-        static_coeff = w3t.StaticCoeff.fromWTT(exp0,exp1,section_width,section_height,section_length_in_rig, section_length_on_wall, upwind_in_rig=True)
-    elif upwind_in_rig == False:
-        static_coeff = w3t.StaticCoeff.fromWTT(exp0,exp1,section_width,section_height,section_length_in_rig, section_length_on_wall, upwind_in_rig=False)
-    
-    #static_coeff.plot_drag_mean(mode=mode, setUp_type = setUp_type1)
-    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
-    #static_coeff.plot_lift_mean(mode=mode, setUp_type = setUp_type1)
-    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
-    #static_coeff.plot_pitch_mean(mode=mode, setUp_type = setUp_type1)
-    #plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+def generate_static_coeff_from_experiments(exp0, exp1, section_width, section_height, section_length_in_rig, section_length_on_wall, upwind_in_rig=True):
+    exp0.filt_forces(filter_order=6, filter_cutoff_frequency=2)
+    exp1.filt_forces(filter_order=6, filter_cutoff_frequency=2)
+    return w3t.StaticCoeff.fromWTT(exp0, exp1, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=upwind_in_rig)
 
+def plot_static_coeff_summary(static_coeff, section_name, wind_speed, mode="decks", upwind_in_rig=True):
+    if upwind_in_rig:
+        section_name = "MUS"
+    else: section_name = "MDS"
 
-    static_coeff.plot_drag(mode=mode, setUp_type = setUp_type1)
+    static_coeff.plot_drag(mode=mode,upwind_in_rig=upwind_in_rig)
+    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    static_coeff.plot_lift(mode=mode, upwind_in_rig=upwind_in_rig)
+    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    static_coeff.plot_pitch(mode=mode, upwind_in_rig=upwind_in_rig)
     plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
 
-    static_coeff.plot_lift(mode=mode, setUp_type = setUp_type1)
+    #mean
+    static_coeff.plot_drag_mean(mode=mode, upwind_in_rig=upwind_in_rig)
+    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    static_coeff.plot_lift_mean(mode=mode, upwind_in_rig=upwind_in_rig)
+    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
+    static_coeff.plot_pitch_mean(mode=mode, upwind_in_rig=upwind_in_rig)
     plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
 
-    static_coeff.plot_pitch(mode=mode, setUp_type = setUp_type1)
-    plt.gcf().suptitle(f"{section_name}, {wind_speed} m/s", fontsize=16)
-    
+    plt.tight_layout()
     plt.show()
 
-    return exp0,exp1,static_coeff
+
 
 # Load all experiments
 tic = time.perf_counter()
@@ -86,8 +81,11 @@ section_name = "Single_Static"
 file_names_low = ["HAR_INT_SINGLE_02_00_003","HAR_INT_SINGLE_02_00_005"] # 6 ms
 file_names_high = ["HAR_INT_SINGLE_02_00_003","HAR_INT_SINGLE_02_00_004"] # 9 ms, Vibrations
 
-exp0_single, exp1_single_low, static_coeff_single_low = load_and_process_static_coeff(h5_input_path, section_name, file_names_low, mode="single", wind_speed = 6, upwind_in_rig=True)
-exp0_single, exp1_single_high, static_coeff_single_high = load_and_process_static_coeff(h5_input_path, section_name, file_names_high, mode="single", wind_speed = 9, upwind_in_rig=True)
+exp0_single, exp1_single_low = load_experiments_from_hdf5(h5_input_path, section_name, file_names_low,  upwind_in_rig=True)
+exp0_single, exp1_single_high= load_experiments_from_hdf5(h5_input_path, section_name, file_names_high,  upwind_in_rig=True)
+
+static_coeff_single_low = generate_static_coeff_from_experiments(exp0_single, exp1_single_low, section_width, section_height, section_length_in_rig, section_length_on_wall, upwind_in_rig=True)
+static_coeff_single_high =  generate_static_coeff_from_experiments(exp0_single, exp1_single_high, section_width, section_height, section_length_in_rig, section_length_on_wall, upwind_in_rig=True)
 
 #%% Plot single deck experiments
 
@@ -101,56 +99,37 @@ plt.show()
 
 #%% Filter and plot ALT 1
 #drag
-alpha_single, coeff_single_plot=w3t._scoff.static_coeff_filtered_simple(static_coeff_single_low, threshold=0.07, scoff="drag", single = True)
+alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_low, threshold=0.07, scoff="drag", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, setUp_type="", threshold=0.07, scoff="drag")
 plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
-alpha_single, coeff_single_plot=w3t._scoff.static_coeff_filtered_simple(static_coeff_single_high, threshold=0.03, scoff="drag", single = True)
-w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, setUp_type="", threshold=0.03, scoff="drag")
+alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_high, threshold=0.05, scoff="drag", single = True)
+w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, setUp_type="", threshold=0.05, scoff="drag")
 plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 
 #lift
-alpha_single, coeff_single_plot=w3t._scoff.static_coeff_filtered_simple(static_coeff_single_low, threshold=0.05, scoff="lift", single = True)
+alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_low, threshold=0.05, scoff="lift", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, setUp_type="", threshold=0.05, scoff="lift")
 plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
-alpha_single, coeff_single_plot=w3t._scoff.static_coeff_filtered_simple(static_coeff_single_high, threshold=0.05, scoff="lift", single = True)
+alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_high, threshold=0.05, scoff="lift", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, setUp_type="", threshold=0.05, scoff="lift")
 plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 
 #pitch
-alpha_single, coeff_single_plot=w3t._scoff.static_coeff_filtered_simple(static_coeff_single_low, threshold=0.005, scoff="pitch", single = True)
+alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_low, threshold=0.005, scoff="pitch", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, setUp_type="", threshold=0.005, scoff="pitch")
 plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
-alpha_single, coeff_single_plot=w3t._scoff.static_coeff_filtered_simple(static_coeff_single_high, threshold=0.02, scoff="pitch", single = True)
+alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_high, threshold=0.02, scoff="pitch", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, setUp_type="", threshold=0.02, scoff="pitch")
 plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 
 #%%  Filter and plot ALT 2
-#drag
-alpha_drag_low, coeff_filtered_drag_low, alpha_drag_high, coeff_filtered_drag_high = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_low,
-                                                                                                                    static_coeff_2=static_coeff_single_high,
-                                                                                                                    threshold=0.05,
-                                                                                                                    scoff="drag",
-                                                                                                                    threshold_low=0.07,
-                                                                                                                    threshold_high=0.03,
-                                                                                                                    single=True)
-w3t._scoff.plot_filtered_static_coeff_single(alpha_drag_low, coeff_filtered_drag_low, scoff = "drag") 
-plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
-w3t._scoff.plot_filtered_static_coeff_single(alpha_drag_high, coeff_filtered_drag_high, scoff = "drag")
-plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 
-#lift
-alpha_lift_low, coeff_filtered_lift_low, alpha_lift_high, coeff_filtered_lift_high = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_low,static_coeff_2= static_coeff_single_high, threshold=0.05, scoff="lift", threshold_single_low=0.05, threshold_single_high=0.05, single=True)
-w3t._scoff.plot_filtered_static_coeff_single(alpha_lift_low, coeff_filtered_lift_low, scoff = "lift") 
-plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
-w3t._scoff.plot_filtered_static_coeff_single(alpha_lift_high, coeff_filtered_lift_high, scoff = "lift") 
-plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
+static_coeff_single_low_filtered, static_coeff_single_high_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_low,static_coeff_2=static_coeff_single_high,threshold=0.05, scoff="drag", threshold_low=0.07, threshold_high=0.019,single=True)
 
-#pitch
-alpha_pitch_low, coeff_filtered_pitch_low, alpha_pitch_high, coeff_filtered_pitch_high = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_low, static_coeff_2=static_coeff_single_high, threshold=0.05, scoff="pitch", threshold_single_low=0.005, threshold_single_high=0.02, single=True)
-w3t._scoff.plot_filtered_static_coeff_single(alpha_pitch_low, coeff_filtered_pitch_low, scoff = "pitch") 
-plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
-w3t._scoff.plot_filtered_static_coeff_single(alpha_pitch_high, coeff_filtered_pitch_high, scoff = "pitch") 
-plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
+plot_static_coeff_summary(static_coeff_single_low_filtered, section_name, 6, mode="decks", upwind_in_rig=True)
+plot_static_coeff_summary(static_coeff_single_high_filtered, section_name, 9, mode="decks", upwind_in_rig=True)
+
+
 
 
 
@@ -185,35 +164,35 @@ plt.show()
 
 #%% Filter and plot ALT 1
 #drag
-alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.static_coeff_filtered_simple(static_coeff_down_low, threshold=0.06, scoff="drag", single = False)
+alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_down_low, threshold=0.06, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, setUp_type="MDS", threshold=0.06, scoff="drag")
 plt.suptitle(f"MDS_1D_Static, 6 m/s", fontsize=16, y=1.08)
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.static_coeff_filtered_simple(static_coeff_down_med, threshold=0.05, scoff="drag", single = False)
+alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_down_med, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, setUp_type="MDS", threshold=0.05, scoff="drag")
 plt.suptitle(f"MDS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.tatic_coeff_filtered_simple(static_coeff_down_high, threshold=0.05, scoff="drag", single = False)
+alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_down_high, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, setUp_type="MDS", threshold=0.05, scoff="drag")
 plt.suptitle(f"MDS_1D_Static, 10 m/s", fontsize=16, y=1.08)
 
 #lift
-alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.static_coeff_filtered_simple(static_coeff_down_low, threshold=0.05, scoff="lift", single = False)
+alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_down_low, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, setUp_type="MDS", threshold=0.05, scoff="lift")
 plt.suptitle(f"MDS_1D_Static, 6 m/s", fontsize=16, y=1.08)
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.static_coeff_filtered_simple(static_coeff_down_med, threshold=0.05, scoff="lift", single = False)
+alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_down_med, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, setUp_type="MDS", threshold=0.05, scoff="lift")
 plt.suptitle(f"MDS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.static_coeff_filtered_simple(static_coeff_down_high, threshold=0.05, scoff="lift", single = False)
+alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_down_high, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, setUp_type="MDS", threshold=0.05, scoff="lift")
 plt.suptitle(f"MDS_1D_Static, 10 m/s", fontsize=16, y=1.08)
 
 #pitch
-alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.static_coeff_filtered_simple(static_coeff_down_low, threshold=0.05, scoff="pitch", single = False)
+alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_down_low, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, setUp_type="MDS", threshold=0.05, scoff="pitch")
 plt.suptitle(f"MDS_1D_Static, 6 m/s", fontsize=16, y=1.08)
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.static_coeff_filtered_simple(static_coeff_down_med, threshold=0.05, scoff="pitch", single = False)
+alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_down_med, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, setUp_type="MDS", threshold=0.05, scoff="pitch")
 plt.suptitle(f"MDS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.static_coeff_filtered_simple(static_coeff_down_high, threshold=0.05, scoff="pitch", single = False)
+alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_down_high, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, setUp_type="MDS", threshold=0.05, scoff="pitch")
 plt.suptitle(f"MDS_1D_Static, 10 m/s", fontsize=16, y=1.08)
 
@@ -221,31 +200,16 @@ plt.suptitle(f"MDS_1D_Static, 10 m/s", fontsize=16, y=1.08)
 
 #%%  Filter and plot ALT 2
 #drag
-alpha_drag_low, coeff_filtered_drag_up_low, coeff_filtered_drag_down_low, alpha_drag_med, coeff_filtered_drag_up_med, coeff_filtered_drag_down_med, alpha_drag_high, coeff_filtered_drag_up_high, coeff_filtered_drag_down_high = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_down_low, static_coeff_2=static_coeff_down_med, static_coeff_3=static_coeff_down_high, threshold=0.1, scoff="drag",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
-w3t._scoff.plot_filtered_static_coeff(alpha_drag_low, coeff_filtered_drag_up_low, coeff_filtered_drag_down_low, scoff="drag", setUp_type="MDS")
-plt.suptitle(f"MDS_1D_Static, 6 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_drag_med, coeff_filtered_drag_up_med, coeff_filtered_drag_down_med, scoff="drag", setUp_type="MDS")
-plt.suptitle(f"MDS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_drag_high, coeff_filtered_drag_up_high, coeff_filtered_drag_down_high, scoff="drag", setUp_type="MDS")
-plt.suptitle(f"MDS_1D_Static, 10 m/s", fontsize=16, y=1.08)
+static_coeff_1_filtered, static_coeff_2_filtered, static_coeff_3_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_down_low, static_coeff_2=static_coeff_down_med, static_coeff_3=static_coeff_down_high, threshold=0.1, scoff="drag",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
+
 
 #lift
-alpha_lift_low, coeff_filtered_lift_up_low, coeff_filtered_lift_down_low, alpha_lift_med, coeff_filtered_lift_up_med, coeff_filtered_lift_down_med, alpha_lift_high, coeff_filtered_lift_up_high, coeff_filtered_lift_down_high = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_down_low, static_coeff_2=static_coeff_down_med, static_coeff_3=static_coeff_down_high, threshold=0.1, scoff="lift",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
-w3t._scoff.plot_filtered_static_coeff(alpha_lift_low, coeff_filtered_lift_up_low, coeff_filtered_lift_down_low, scoff="lift", setUp_type="MDS")
-plt.suptitle(f"MDS_1D_Static, 6 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_lift_med, coeff_filtered_lift_up_med, coeff_filtered_lift_down_med, scoff="lift", setUp_type="MDS")
-plt.suptitle(f"MDS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_lift_high, coeff_filtered_lift_up_high, coeff_filtered_lift_down_high, scoff="lift", setUp_type="MDS")
-plt.suptitle(f"MDS_1D_Static, 10 m/s", fontsize=16, y=1.08)
+static_coeff_1_filtered, static_coeff_2_filtered, static_coeff_3_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_down_low, static_coeff_2=static_coeff_down_med, static_coeff_3=static_coeff_down_high, threshold=0.1, scoff="lift",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
+
 
 #pitch
-alpha_pitch_low, coeff_filtered_pitch_up_low, coeff_filtered_pitch_down_low, alpha_pitch_med, coeff_filtered_pitch_up_med, coeff_filtered_pitch_down_med, alpha_pitch_high, coeff_filtered_pitch_up_high, coeff_filtered_pitch_down_high = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_down_low, static_coeff_2=static_coeff_down_med, static_coeff_3=static_coeff_down_high, threshold=0.1, scoff="pitch",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
-w3t._scoff.plot_filtered_static_coeff(alpha_pitch_low, coeff_filtered_pitch_up_low, coeff_filtered_pitch_down_low, scoff="pitch", setUp_type="MDS")
-plt.suptitle(f"MDS_1D_Static, 6 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_pitch_med, coeff_filtered_pitch_up_med, coeff_filtered_pitch_down_med, scoff="pitch", setUp_type="MDS")
-plt.suptitle(f"MDS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_pitch_high, coeff_filtered_pitch_up_high, coeff_filtered_pitch_down_high, scoff="pitch", setUp_type="MDS")
-plt.suptitle(f"MDS_1D_Static, 10 m/s", fontsize=16, y=1.08)
+static_coeff_1_filtered, static_coeff_2_filtered, static_coeff_3_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_down_low, static_coeff_2=static_coeff_down_med, static_coeff_3=static_coeff_down_high, threshold=0.1, scoff="pitch",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
+
 
 
 
@@ -276,66 +240,48 @@ plt.show()
 
 #%% Filter and plot ALT 1
 #drag
-alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.static_coeff_filtered_simple(static_coeff_up_low, threshold=0.06, scoff="drag", single = False)
+alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_up_low, threshold=0.06, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, setUp_type="MUS", threshold=0.06, scoff="drag")
 plt.suptitle(f"MUS_1D_Static, 5 m/s", fontsize=16, y=1.08)
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.static_coeff_filtered_simple(static_coeff_up_med, threshold=0.05, scoff="drag", single = False)
+alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_up_med, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, setUp_type="MUS", threshold=0.05, scoff="drag")
 plt.suptitle(f"MUS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.static_coeff_filtered_simple(static_coeff_up_high, threshold=0.05, scoff="drag", single = False)
+alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_up_high, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, setUp_type="MUS", threshold=0.05, scoff="drag")
 plt.suptitle(f"MUS_1D_Static, 10 m/s", fontsize=16, y=1.08)
 
 #lift
-alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.static_coeff_filtered_simple(static_coeff_up_low, threshold=0.05, scoff="lift", single = False)
+alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_up_low, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, setUp_type="MUS", threshold=0.05, scoff="lift")
 plt.suptitle(f"MUS_1D_Static, 5 m/s", fontsize=16, y=1.08)
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.static_coeff_filtered_simple(static_coeff_up_med, threshold=0.05, scoff="lift", single = False)
+alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_up_med, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, setUp_type="MUS", threshold=0.05, scoff="lift")
 plt.suptitle(f"MUS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.static_coeff_filtered_simple(static_coeff_up_high, threshold=0.05, scoff="lift", single = False)
+alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_up_high, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, setUp_type="MUS", threshold=0.05, scoff="lift")
 plt.suptitle(f"MUS_1D_Static, 10 m/s", fontsize=16, y=1.08)
 
 #pitch
-alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.static_coeff_filtered_simple(static_coeff_up_low, threshold=0.05, scoff="pitch", single = False)
+alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_up_low, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, setUp_type="MUS", threshold=0.05, scoff="pitch")
 plt.suptitle(f"MUS_1D_Static, 5 m/s", fontsize=16, y=1.08)
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.static_coeff_filtered_simple(static_coeff_up_med, threshold=0.05, scoff="pitch", single = False)
+alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_up_med, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, setUp_type="MUS", threshold=0.05, scoff="pitch")
 plt.suptitle(f"MUS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.tatic_coeff_filtered_simple(static_coeff_up_high, threshold=0.05, scoff="pitch", single = False)
+alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_up_high, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, setUp_type="MUS", threshold=0.05, scoff="pitch")
 plt.suptitle(f"MUS_1D_Static, 10 m/s", fontsize=16, y=1.08)
 
 
 #%%  Filter and plot ALT 2
 #drag
-alpha_drag_low, coeff_filtered_drag_up_low, coeff_filtered_drag_down_low, alpha_drag_med, coeff_filtered_drag_up_med, coeff_filtered_drag_down_med, alpha_drag_high, coeff_filtered_drag_up_high, coeff_filtered_drag_down_high = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_up_low,static_coeff_2= static_coeff_up_med,static_coeff_3= static_coeff_up_high, threshold=0.1, scoff="drag",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
-w3t._scoff.plot_filtered_static_coeff(alpha_drag_low, coeff_filtered_drag_up_low, coeff_filtered_drag_down_low, scoff="drag", setUp_type="MUS")
-plt.suptitle(f"MUS_1D_Static, 5 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_drag_med, coeff_filtered_drag_up_med, coeff_filtered_drag_down_med, scoff="drag", setUp_type="MUS")
-plt.suptitle(f"MUS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_drag_high, coeff_filtered_drag_up_high, coeff_filtered_drag_down_high, scoff="drag", setUp_type="MUS")
-plt.suptitle(f"MUS_1D_Static, 10 m/s", fontsize=16, y=1.08)
+static_coeff_1_filtered, static_coeff_2_filtered, static_coeff_3_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_up_low,static_coeff_2= static_coeff_up_med,static_coeff_3= static_coeff_up_high, threshold=0.1, scoff="drag",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
 
 #lift
-alpha_lift_low, coeff_filtered_lift_up_low, coeff_filtered_lift_down_low, alpha_lift_med, coeff_filtered_lift_up_med, coeff_filtered_lift_down_med, alpha_lift_high, coeff_filtered_lift_up_high, coeff_filtered_lift_down_high = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_up_low, static_coeff_2=static_coeff_up_med,static_coeff_3= static_coeff_up_high, threshold=0.1, scoff="lift",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
-w3t._scoff.plot_filtered_static_coeff(alpha_lift_low, coeff_filtered_lift_up_low, coeff_filtered_lift_down_low, scoff="lift", setUp_type="MUS")
-plt.suptitle(f"MUS_1D_Static, 5 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_lift_med, coeff_filtered_lift_up_med, coeff_filtered_lift_down_med, scoff="lift", setUp_type="MUS")
-plt.suptitle(f"MUS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_lift_high, coeff_filtered_lift_up_high, coeff_filtered_lift_down_high, scoff="lift", setUp_type="MUS")
-plt.suptitle(f"MUS_1D_Static, 10 m/s", fontsize=16, y=1.08)
+static_coeff_1_filtered, static_coeff_2_filtered, static_coeff_3_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_up_low, static_coeff_2=static_coeff_up_med,static_coeff_3= static_coeff_up_high, threshold=0.1, scoff="lift",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
 
 #pitch
-alpha_pitch_low, coeff_filtered_pitch_up_low, coeff_filtered_pitch_down_low, alpha_pitch_med, coeff_filtered_pitch_up_med, coeff_filtered_pitch_down_med, alpha_pitch_high, coeff_filtered_pitch_up_high, coeff_filtered_pitch_down_high = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_up_low, static_coeff_2=static_coeff_up_med, static_coeff_3=static_coeff_up_high, threshold=0.1, scoff="pitch",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
-w3t._scoff.plot_filtered_static_coeff(alpha_pitch_low, coeff_filtered_pitch_up_low, coeff_filtered_pitch_down_low, scoff="pitch", setUp_type="MUS")
-plt.suptitle(f"MUS_1D_Static, 5 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_pitch_med, coeff_filtered_pitch_up_med, coeff_filtered_pitch_down_med, scoff="pitch", setUp_type="MUS")
-plt.suptitle(f"MUS_1D_Static, 8 m/s", fontsize=16, y=1.08)
-w3t._scoff.plot_filtered_static_coeff(alpha_pitch_high, coeff_filtered_pitch_up_high, coeff_filtered_pitch_down_high, scoff="pitch", setUp_type="MUS")
-plt.suptitle(f"MUS_1D_Static, 10 m/s", fontsize=16, y=1.08)
+static_coeff_1_filtered, static_coeff_2_filtered, static_coeff_3_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_up_low, static_coeff_2=static_coeff_up_med, static_coeff_3=static_coeff_up_high, threshold=0.1, scoff="pitch",threshold_low=0.07,threshold_med = 0.05,threshold_high=0.03,single=False)
 
 #%% Save all experiments to excel
 section_name = "1D"
