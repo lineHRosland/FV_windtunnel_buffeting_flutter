@@ -1651,7 +1651,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[1],
                     filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[1],
                 ]
-                nan_flags_up = [np.any(np.isnan(check[idx, 0])) for check, idx in zip(coeff_up_checks, [idx1, idx2, idx3])]
+                nan_flags_up = [np.any(np.isnan(check[idx])) for check, idx in zip(coeff_up_checks, [idx1, idx2, idx3])]
                 clean_idxs_up = [i for i, nan in enumerate(nan_flags_up) if not nan]
 
                 if len(clean_idxs_up) == 1:
@@ -1681,7 +1681,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     filter(static_coeff_2, threshold_med, scoff=name, single=False)[2],
                     filter(static_coeff_3, threshold_high, scoff=name, single=False)[2],
                 ]
-                nan_flags_down = [np.any(np.isnan(check[idx, 0])) for check, idx in zip(coeff_down_checks, [idx1, idx2, idx3])]
+                nan_flags_down = [np.any(np.isnan(check[idx])) for check, idx in zip(coeff_down_checks, [idx1, idx2, idx3])]
 
                 clean_idxs_down = [i for i, nan in enumerate(nan_flags_down) if not nan]
 
