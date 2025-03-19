@@ -111,8 +111,8 @@ plot_static_coeff_summary(static_coeff_single_high, section_name, 9, mode="singl
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_low, threshold=0.07, scoff="drag", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.07, scoff="drag")
 plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
-alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_high, threshold=0.019, scoff="drag", single = True)
-w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.019, scoff="drag")
+alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_high, threshold=0.05, scoff="drag", single = True)
+w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.05, scoff="drag")
 plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 
 #lift
@@ -170,11 +170,11 @@ plot_static_coeff_summary(static_coeff_down_high, section_name, 10, mode="decks"
 
 #%% Filter and plot ALT 1
 #drag
-alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_down_low, threshold=0.06, scoff="drag", single = False)
-w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.06, scoff="drag")
+alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_down_low, threshold=0.05, scoff="drag", single = False)
+w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
 plt.suptitle(f"MDS_1D_Static, 6 m/s", fontsize=16, y=1.08)
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_down_med, threshold=0.005, scoff="drag", single = False)
-w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.005, scoff="drag")
+alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_down_med, threshold=0.03, scoff="drag", single = False)
+w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.03, scoff="drag")
 plt.suptitle(f"MDS_1D_Static, 8 m/s", fontsize=16, y=1.08)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_down_high, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="drag")
@@ -240,8 +240,8 @@ plot_static_coeff_summary(static_coeff_up_high, section_name, 10, mode="decks", 
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_up_low, threshold=0.06, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.06, scoff="drag")
 plt.suptitle(f"MUS_1D_Static, 5 m/s", fontsize=16, y=1.08)
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_up_med, threshold=0.01, scoff="drag", single = False)
-w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.01, scoff="drag")
+alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_up_med, threshold=0.04, scoff="drag", single = False)
+w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.04, scoff="drag")
 plt.suptitle(f"MUS_1D_Static, 8 m/s", fontsize=16, y=1.08)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_up_high, threshold=0.02, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.02, scoff="drag")
@@ -321,7 +321,7 @@ section_name = "1D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_up_low_filtered.to_excel(section_name, sheet_name="MDS - 6 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_down_low_filtered.to_excel(section_name, sheet_name="MDS - 6 ms" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
 static_coeff_up_low_filtered.to_excel(section_name, sheet_name='MUS - 5 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_low_filtered.to_excel(section_name, sheet_name='Single - 6 ms' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
