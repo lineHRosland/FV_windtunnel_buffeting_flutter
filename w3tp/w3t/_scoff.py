@@ -1602,10 +1602,12 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                 vals_2 = coeff_2[idx2, 0] + coeff_2[idx2, 1]
                 spread_1 = np.max(vals_1) - np.min(vals_1)
                 spread_2 = np.max(vals_2) - np.min(vals_2)
-                spreads = [spread_1, spread_2]
 
                 coeff_check1 = filter(static_coeff_1, this_threshold_low, scoff=name, single=True)[1]
                 coeff_check2 = filter(static_coeff_2, this_threshold_high, scoff=name, single=True)[1]
+                
+
+
                 has_nan_1 = np.any(np.isnan(coeff_check1[idx1]))
                 has_nan_2 = np.any(np.isnan(coeff_check2[idx2]))
 
@@ -1651,6 +1653,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[1],
                     filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[1],
                 ]
+              
                 nan_flags_up = [np.any(np.isnan(check[idx])) for check, idx in zip(coeff_up_checks, [idx1, idx2, idx3])]
                 clean_idxs_up = [i for i, nan in enumerate(nan_flags_up) if not nan]
 
@@ -1670,6 +1673,10 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     coeff_array[idx[mask], 0] = np.nan
                     coeff_array[idx[mask], 1] = np.nan
 
+                filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[1]
+                filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[1]
+                filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[1]
+
                 # Same logic for downwind
                 vals_down = [coeff_1[idx1, 2] + coeff_1[idx1, 3],
                              coeff_2[idx2, 2] + coeff_2[idx2, 3],
@@ -1677,10 +1684,11 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                 spreads_down = [np.max(v) - np.min(v) for v in vals_down]
 
                 coeff_down_checks = [
-                    filter(static_coeff_1, threshold_low, scoff=name, single=False)[2],
-                    filter(static_coeff_2, threshold_med, scoff=name, single=False)[2],
-                    filter(static_coeff_3, threshold_high, scoff=name, single=False)[2],
+                    filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[2],
+                    filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[2],
+                    filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[2],
                 ]
+
                 nan_flags_down = [np.any(np.isnan(check[idx])) for check, idx in zip(coeff_down_checks, [idx1, idx2, idx3])]
 
                 clean_idxs_down = [i for i, nan in enumerate(nan_flags_down) if not nan]
