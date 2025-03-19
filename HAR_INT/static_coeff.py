@@ -108,8 +108,8 @@ static_coeff_single_high =  generate_static_coeff_from_experiments(exp0_single, 
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_low, threshold=0.07, scoff="drag", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.07, scoff="drag")
 plt.suptitle(f"{section_name}, 6 m/s", fontsize=16, y=1.05)
-alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_high, threshold=0.05, scoff="drag", single = True)
-w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.05, scoff="drag")
+alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_high, threshold=0.019, scoff="drag", single = True)
+w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.019, scoff="drag")
 plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 
 #lift
@@ -130,12 +130,12 @@ plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 
 #%%  Filter and plot ALT 2
 
-static_coeff_single_low_filtered, static_coeff_single_high_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_low,static_coeff_2=static_coeff_single_high,threshold=0.05,  threshold_low=[0.07, 0.05,0.005], threshold_high=[0.05,0.05,0.01],single=True)
+static_coeff_single_low_filtered, static_coeff_single_high_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_low,static_coeff_2=static_coeff_single_high,threshold=0.05,  threshold_low=[0.07, 0.05,0.005], threshold_high=[0.019,0.05,0.01],single=True)
+idx_inconsistent = np.where(np.isnan(static_coeff_1_filt.drag_coeff[:,0]) != np.isnan(static_coeff_1_filt.drag_coeff[:,1]))[0]
+print("Inconsistent NaN filtering between drag_coeff[:,0] and [:,1]:", idx_inconsistent)
 
 plot_static_coeff_summary(static_coeff_single_low_filtered, section_name, 6, mode="single", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_single_high_filtered, section_name, 9, mode="single", upwind_in_rig=True)
-
-
 
 
 

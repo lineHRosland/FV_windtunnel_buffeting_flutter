@@ -105,7 +105,7 @@ class StaticCoeff:
         
         sos = spsp.butter(filter_order,cutoff_frequency, fs=sampling_frequency, output="sos") #butterworth filtering of wind speed
         
-        filtered_wind = np.mean(spsp.sosfiltfilt(sos,experiment_in_wind_still_air_forces_removed.wind_speed))
+        filtered_wind = np.nanmean(spsp.sosfiltfilt(sos,experiment_in_wind_still_air_forces_removed.wind_speed))
         #need a representative mean wind velocity U for the calculation of the coefficients
 
         # drag_coeff = forces * 2 / (rho * U^2 * h * L)
@@ -248,12 +248,12 @@ class StaticCoeff:
         unique_alphas = np.unique(alpha)
 
         # Beregn middelverdi per alpha
-        C_D_upwind = np.array([np.mean(self.drag_coeff[:,0][alpha == val]) + np.mean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
-        C_D_downwind = np.array([np.mean(self.drag_coeff[:,2][alpha == val]) + np.mean(self.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
-        C_L_upwind = np.array([np.mean(self.lift_coeff[:,0][alpha == val]) + np.mean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
-        C_L_downwind = np.array([np.mean(self.lift_coeff[:,2][alpha == val]) + np.mean(self.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
-        C_M_upwind = np.array([np.mean(self.pitch_coeff[:,0][alpha == val]) + np.mean(self.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
-        C_M_downwind = np.array([np.mean(self.pitch_coeff[:,2][alpha == val]) + np.mean(self.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
+        C_D_upwind = np.array([np.nanmean(self.drag_coeff[:,0][alpha == val]) + np.nanmean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+        C_D_downwind = np.array([np.nanmean(self.drag_coeff[:,2][alpha == val]) + np.nanmean(self.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
+        C_L_upwind = np.array([np.nanmean(self.lift_coeff[:,0][alpha == val]) + np.nanmean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+        C_L_downwind = np.array([np.nanmean(self.lift_coeff[:,2][alpha == val]) + np.nanmean(self.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
+        C_M_upwind = np.array([np.nanmean(self.pitch_coeff[:,0][alpha == val]) + np.nanmean(self.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+        C_M_downwind = np.array([np.nanmean(self.pitch_coeff[:,2][alpha == val]) + np.nanmean(self.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
 
         # Create results dataframe
         static_coeff = pd.DataFrame({"alpha [deg]": unique_alphas,
@@ -503,13 +503,13 @@ class StaticCoeff:
             plt.figure(figsize=(8,6))
 
             cd_total = np.sum(self.drag_coeff,axis=1)
-            cd_total_mean = np.array([np.mean(cd_total[alpha == val]) for val in unique_alphas])
+            cd_total_mean = np.array([np.nanmean(cd_total[alpha == val]) for val in unique_alphas])
             
             plt.plot(unique_alphas,cd_total_mean,label = "Total")
                       
             for k in range(self.drag_coeff.shape[1]):
                 cd_k = self.drag_coeff[:,k]
-                cd_k_mean = np.array([np.mean(cd_k[alpha == val]) for val in unique_alphas])
+                cd_k_mean = np.array([np.nanmean(cd_k[alpha == val]) for val in unique_alphas])
                 plt.plot(unique_alphas,cd_k_mean,label=("Load cell " + str(k+1)),alpha =0.5)
             
             plt.grid()
@@ -520,11 +520,14 @@ class StaticCoeff:
         
         elif mode == "decks": #upwind and downwind deck + total sum
             plt.figure(figsize=(8,6))
-            cd_total_mean = np.array([np.mean(np.sum(self.drag_coeff,axis=1)[alpha == val]) for val in unique_alphas])
-            cd_upwind_mean = np.array([np.mean(self.drag_coeff[:,0][alpha == val]) + np.mean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
-            cd_downwind_mean = np.array([np.mean(self.drag_coeff[:,2][alpha == val]) + np.mean(self.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
-
-            #plt.plot(unique_alphas,cd_total_mean,label = "Total")    
+            cd_upwind_mean = np.array([
+                np.nanmean(self.drag_coeff[:,0][alpha == val]) + np.nanmean(self.drag_coeff[:,1][alpha == val])
+                for val in unique_alphas
+            ])
+            cd_downwind_mean = np.array([
+                np.nanmean(self.drag_coeff[:,2][alpha == val]) + np.nanmean(self.drag_coeff[:,3][alpha == val])
+                for val in unique_alphas
+            ])
             plt.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1) # Switch upwind and downwind deck. For Downstream files the load cells are switched.
             plt.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
             plt.grid()
@@ -535,7 +538,7 @@ class StaticCoeff:
 
         elif mode == "total": #only total sum
             plt.figure(figsize=(8,6))
-            cd_total_mean = np.array([np.mean(np.sum(self.drag_coeff,axis=1)[alpha == val]) for val in unique_alphas])
+            cd_total_mean = np.array([np.nanmean(np.sum(self.drag_coeff,axis=1)[alpha == val]) for val in unique_alphas])
             plt.plot(unique_alphas,cd_total_mean,label = "Total")    
             plt.grid()
             plt.xlabel(r"$\alpha$")
@@ -544,7 +547,11 @@ class StaticCoeff:
         
         elif mode == "single": #single deck
 
-            cd_single_mean = np.array([np.mean(self.drag_coeff[:,0][alpha == val]) + np.mean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cd_single_mean = np.array([
+                np.nanmean(self.drag_coeff[:,0][alpha == val]) + np.nanmean(self.drag_coeff[:,1][alpha == val])
+                for val in unique_alphas
+            ])
+
             
             plt.figure(figsize=(8,6))
             plt.plot(unique_alphas,cd_single_mean,label=("Single deck"))
@@ -583,12 +590,12 @@ class StaticCoeff:
             print("Lift coeff shape:", self.lift_coeff.shape)
 
             plt.figure(figsize=(8,6))
-            cl_total_mean = np.array([np.mean(np.sum(self.lift_coeff,axis=1)[alpha == val]) for val in unique_alphas])
+            cl_total_mean = np.array([np.nanmean(np.sum(self.lift_coeff,axis=1)[alpha == val]) for val in unique_alphas])
             plt.plot(unique_alphas,cl_total_mean,label = "Total")
                             
             for k in range(self.lift_coeff.shape[1]):
                 cl_k = self.lift_coeff[:,k]
-                cl_k_mean = np.array([np.mean(cl_k[alpha == val]) for val in unique_alphas])
+                cl_k_mean = np.array([np.nanmean(cl_k[alpha == val]) for val in unique_alphas])
                 plt.plot(unique_alphas,cl_k_mean,label=("Load cell " + str(k+1)),alpha=0.5)
             
             plt.grid()
@@ -599,11 +606,14 @@ class StaticCoeff:
         
         elif mode == "decks":
             plt.figure(figsize=(8,6))
-            cl_total_mean = np.array([np.mean(np.sum(self.lift_coeff,axis=1)[alpha == val]) for val in unique_alphas])
-            cl_upwind_mean = np.array([np.mean(self.lift_coeff[:,0][alpha == val]) + np.mean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
-            cl_downwind_mean = np.array([np.mean(self.lift_coeff[:,2][alpha == val]) + np.mean(self.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
-
-            #plt.plot(unique_alphas,cl_total_mean,label = "Total")
+            cl_upwind_mean = np.array([
+                np.nanmean(self.lift_coeff[:,0][alpha == val]) + np.nanmean(self.lift_coeff[:,1][alpha == val])
+                for val in unique_alphas
+            ])
+            cl_downwind_mean = np.array([
+                np.nanmean(self.lift_coeff[:,2][alpha == val]) + np.nanmean(self.lift_coeff[:,3][alpha == val])
+                for val in unique_alphas
+            ])
             plt.plot(unique_alphas,cl_upwind_mean,label=("Upwind deck"), color = color, linestyle = linestyle1)
             plt.plot(unique_alphas,cl_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
             
@@ -615,7 +625,7 @@ class StaticCoeff:
         
         elif mode == "total":
             plt.figure(figsize=(8,6))
-            cl_total_mean = np.array([np.mean(np.sum(self.lift_coeff,axis=1)[alpha == val]) for val in unique_alphas])
+            cl_total_mean = np.array([np.nanmean(np.sum(self.lift_coeff,axis=1)[alpha == val]) for val in unique_alphas])
             plt.plot(unique_alphas,cl_total_mean)
             plt.grid()
             plt.xlabel(r"$\alpha$")
@@ -623,8 +633,10 @@ class StaticCoeff:
             plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "single": #single deck
-
-            cl_single_mean = np.array([np.mean(self.lift_coeff[:,0][alpha == val]) + np.mean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cl_single_mean = np.array([
+                np.nanmean(self.lift_coeff[:,0][alpha == val]) + np.nanmean(self.lift_coeff[:,1][alpha == val])
+                for val in unique_alphas
+            ])
             
             plt.figure(figsize=(8,6))
             plt.plot(unique_alphas,cl_single_mean,label=("Single deck"))
@@ -661,12 +673,12 @@ class StaticCoeff:
                 
         if mode == "all":
             plt.figure(figsize=(8,6))
-            cm_total_mean = np.array([np.mean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
+            cm_total_mean = np.array([np.nanmean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
             plt.plot(unique_alphas,cm_total_mean,label = "Total")
                             
             for k in range(self.lift_coeff.shape[1]):
                 cm_k = self.pitch_coeff[:,k]
-                cm_k_mean = np.array([np.mean(cm_k[alpha == val]) for val in unique_alphas])
+                cm_k_mean = np.array([np.nanmean(cm_k[alpha == val]) for val in unique_alphas])
                 plt.plot(unique_alphas,cm_k_mean,label=("Load cell " + str(k+1)),alpha=0.5)
             
             plt.grid()
@@ -677,13 +689,14 @@ class StaticCoeff:
         
         elif mode == "decks":
             plt.figure(figsize=(8,6))
-            cm_total_mean = np.array([np.mean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
-            cm_upwind_mean = np.array([np.mean(self.pitch_coeff[:,0][alpha == val]) + np.mean(self.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
-            cm_downwind_mean = np.array([np.mean(self.pitch_coeff[:,2][alpha == val]) + np.mean(self.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
-
-           
-
-            #plt.plot(unique_alphas,cm_total_mean,label = "Total")
+            cm_upwind_mean = np.array([
+                np.nanmean(self.pitch_coeff[:,0][alpha == val]) + np.nanmean(self.pitch_coeff[:,1][alpha == val])
+                for val in unique_alphas
+            ])
+            cm_downwind_mean = np.array([
+                np.nanmean(self.pitch_coeff[:,2][alpha == val]) + np.nanmean(self.pitch_coeff[:,3][alpha == val])
+                for val in unique_alphas
+            ])
             plt.plot(unique_alphas,cm_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1)
             plt.plot(unique_alphas,cm_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
             plt.grid()
@@ -694,7 +707,7 @@ class StaticCoeff:
         
         elif mode == "total":
             plt.figure(figsize=(8,6))
-            cm_total_mean = np.array([np.mean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
+            cm_total_mean = np.array([np.nanmean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
             plt.plot(unique_alphas,cm_total_mean)
             plt.grid()
             plt.xlabel(r"$\alpha$")
@@ -702,9 +715,12 @@ class StaticCoeff:
             plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
 
         elif mode == "single": #single deck
-            pitch_coeff = self.pitch_coeff[:, :2]  # Bruk kun aktive lastceller
 
-            cm_single_mean = np.array([np.mean(pitch_coeff[:,0][alpha == val]) + np.mean(pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cm_single_mean = np.array([
+                            np.nanmean(self.pitch_coeff[:,0][alpha == val]) + np.nanmean(self.pitch_coeff[:,1][alpha == val])
+                            for val in unique_alphas
+                        ])
+
             
             plt.figure(figsize=(8,6))
             plt.plot(unique_alphas,cm_single_mean,label=("Single deck"))
@@ -737,18 +753,18 @@ class StaticCoeff:
         filepath = os.path.join(path, filename)
 
         if mode == "decks":
-            cd_upwind_mean = np.array([np.mean(self.drag_coeff[:,0][alpha == val]) + np.mean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
-            cd_downwind_mean = np.array([np.mean(self.drag_coeff[:,2][alpha == val]) + np.mean(self.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
-            cl_upwind_mean = np.array([np.mean(self.lift_coeff[:,0][alpha == val]) + np.mean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
-            cl_downwind_mean = np.array([np.mean(self.lift_coeff[:,2][alpha == val]) + np.mean(self.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
-            cm_upwind_mean = np.array([np.mean(self.pitch_coeff[:,0][alpha == val]) + np.mean(self.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
-            cm_downwind_mean = np.array([np.mean(self.pitch_coeff[:,2][alpha == val]) + np.mean(self.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
+            cd_upwind_mean = np.array([np.nanmean(self.drag_coeff[:,0][alpha == val]) + np.nanmean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cd_downwind_mean = np.array([np.nanmean(self.drag_coeff[:,2][alpha == val]) + np.nanmean(self.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
+            cl_upwind_mean = np.array([np.nanmean(self.lift_coeff[:,0][alpha == val]) + np.nanmean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cl_downwind_mean = np.array([np.nanmean(self.lift_coeff[:,2][alpha == val]) + np.nanmean(self.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
+            cm_upwind_mean = np.array([np.nanmean(self.pitch_coeff[:,0][alpha == val]) + np.nanmean(self.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cm_downwind_mean = np.array([np.nanmean(self.pitch_coeff[:,2][alpha == val]) + np.nanmean(self.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
             np.savez_compressed(filepath, alpha=unique_alphas, cd_in_rig=cd_upwind_mean, cd_on_wall=cd_downwind_mean, cl_in_rig=cl_upwind_mean, cl_on_wall=cl_downwind_mean, cm_in_rig=cm_upwind_mean, cm_on_wall=cm_downwind_mean)
 
         elif mode == "single":
-            cd_upwind_mean = np.array([np.mean(self.drag_coeff[:,0][alpha == val]) + np.mean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
-            cl_upwind_mean = np.array([np.mean(self.lift_coeff[:,0][alpha == val]) + np.mean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
-            cm_upwind_mean = np.array([np.mean(self.pitch_coeff[:,0][alpha == val]) + np.mean(self.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cd_upwind_mean = np.array([np.nanmean(self.drag_coeff[:,0][alpha == val]) + np.nanmean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cl_upwind_mean = np.array([np.nanmean(self.lift_coeff[:,0][alpha == val]) + np.nanmean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+            cm_upwind_mean = np.array([np.nanmean(self.pitch_coeff[:,0][alpha == val]) + np.nanmean(self.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
             np.savez_compressed(filepath, alpha=unique_alphas, cd_in_rig=cd_upwind_mean, cl_in_rig=cl_upwind_mean, cm_in_rig=cm_upwind_mean)
     
     
@@ -887,11 +903,11 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     alpha_down = np.round(static_coeff_down.pitch_motion*360/2/np.pi,1)
     unique_alphas_down = np.unique(alpha_down)
 
-    cd_single_mean = np.array([np.mean(static_coeff_single.drag_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.drag_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
-    cd_upwind_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,0][alpha_up == val]) + np.mean(static_coeff_up.drag_coeff[:,1][alpha_up == val]) for val in unique_alphas_up])
-    cd_downwind_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,2][alpha_down == val]) + np.mean(static_coeff_down.drag_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
-    cd_upDown_mean = np.array([np.mean(static_coeff_up.drag_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.drag_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
-    cd_downUp_mean = np.array([np.mean(static_coeff_down.drag_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.drag_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
+    cd_single_mean = np.array([np.nanmean(static_coeff_single.drag_coeff[:,0][alpha_single == val]) + np.nanmean(static_coeff_single.drag_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
+    cd_upwind_mean = np.array([np.nanmean(static_coeff_up.drag_coeff[:,0][alpha_up == val]) + np.nanmean(static_coeff_up.drag_coeff[:,1][alpha_up == val]) for val in unique_alphas_up])
+    cd_downwind_mean = np.array([np.nanmean(static_coeff_down.drag_coeff[:,2][alpha_down == val]) + np.nanmean(static_coeff_down.drag_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
+    cd_upDown_mean = np.array([np.nanmean(static_coeff_up.drag_coeff[:,2][alpha_up == val]) + np.nanmean(static_coeff_up.drag_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
+    cd_downUp_mean = np.array([np.nanmean(static_coeff_down.drag_coeff[:,0][alpha_down == val]) + np.nanmean(static_coeff_down.drag_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
    
     plt.figure(figsize=(8,6))
 
@@ -940,11 +956,11 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
     alpha_down = np.round(static_coeff_down.pitch_motion*360/2/np.pi,1)
     unique_alphas_down = np.unique(alpha_down)
 
-    cl_single_mean = np.array([np.mean(static_coeff_single.lift_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.lift_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
-    cl_upwind_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,0][alpha_up == val]) + np.mean(static_coeff_up.lift_coeff[:,1][alpha_up == val]) for val in unique_alphas_up])
-    cl_downwind_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,2][alpha_down == val]) + np.mean(static_coeff_down.lift_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
-    cl_upDown_mean = np.array([np.mean(static_coeff_up.lift_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.lift_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
-    cl_downUp_mean = np.array([np.mean(static_coeff_down.lift_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.lift_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
+    cl_single_mean = np.array([np.nanmean(static_coeff_single.lift_coeff[:,0][alpha_single == val]) + np.nanmean(static_coeff_single.lift_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
+    cl_upwind_mean = np.array([np.nanmean(static_coeff_up.lift_coeff[:,0][alpha_up == val]) + np.nanmean(static_coeff_up.lift_coeff[:,1][alpha_up == val]) for val in unique_alphas_up])
+    cl_downwind_mean = np.array([np.nanmean(static_coeff_down.lift_coeff[:,2][alpha_down == val]) + np.nanmean(static_coeff_down.lift_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
+    cl_upDown_mean = np.array([np.nanmean(static_coeff_up.lift_coeff[:,2][alpha_up == val]) + np.nanmean(static_coeff_up.lift_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
+    cl_downUp_mean = np.array([np.nanmean(static_coeff_down.lift_coeff[:,0][alpha_down == val]) + np.nanmean(static_coeff_down.lift_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
     plt.figure(figsize=(8,6))
 
     plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
@@ -984,11 +1000,11 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
     alpha_down = np.round(static_coeff_down.pitch_motion*360/2/np.pi,1)
     unique_alphas_down = np.unique(alpha_down)
 
-    cm_single_mean = np.array([np.mean(static_coeff_single.pitch_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.pitch_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
-    cm_upwind_mean = np.array([np.mean(static_coeff_up.pitch_coeff[:,0][alpha_up == val]) + np.mean(static_coeff_up.pitch_coeff[:,1][alpha_up == val]) for val in unique_alphas_up])
-    cm_downwind_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,2][alpha_down == val]) + np.mean(static_coeff_down.pitch_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
-    cm_upDown_mean = np.array([np.mean(static_coeff_up.pitch_coeff[:,2][alpha_up == val]) + np.mean(static_coeff_up.pitch_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
-    cm_downUp_mean = np.array([np.mean(static_coeff_down.pitch_coeff[:,0][alpha_down == val]) + np.mean(static_coeff_down.pitch_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
+    cm_single_mean = np.array([np.nanmean(static_coeff_single.pitch_coeff[:,0][alpha_single == val]) + np.nanmean(static_coeff_single.pitch_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
+    cm_upwind_mean = np.array([np.nanmean(static_coeff_up.pitch_coeff[:,0][alpha_up == val]) + np.nanmean(static_coeff_up.pitch_coeff[:,1][alpha_up == val]) for val in unique_alphas_up])
+    cm_downwind_mean = np.array([np.nanmean(static_coeff_down.pitch_coeff[:,2][alpha_down == val]) + np.nanmean(static_coeff_down.pitch_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
+    cm_upDown_mean = np.array([np.nanmean(static_coeff_up.pitch_coeff[:,2][alpha_up == val]) + np.nanmean(static_coeff_up.pitch_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
+    cm_downUp_mean = np.array([np.nanmean(static_coeff_down.pitch_coeff[:,0][alpha_down == val]) + np.nanmean(static_coeff_down.pitch_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
 
     colors = {
         "single": "#5DA5DA",
@@ -1147,9 +1163,9 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind
     alpha = np.round(static_coeff.pitch_motion*360/2/np.pi,1)
     unique_alphas = np.unique(alpha)
 
-    cd_single_mean = np.array([np.mean(static_coeff_single.drag_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.drag_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
-    cd_upwind_mean = np.array([np.mean(static_coeff.drag_coeff[:,0][alpha == val]) + np.mean(static_coeff.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
-    cd_downwind_mean = np.array([np.mean(static_coeff.drag_coeff[:,2][alpha == val]) + np.mean(static_coeff.drag_coeff[:,3][alpha== val]) for val in unique_alphas])
+    cd_single_mean = np.array([np.nanmean(static_coeff_single.drag_coeff[:,0][alpha_single == val]) + np.nanmean(static_coeff_single.drag_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
+    cd_upwind_mean = np.array([np.nanmean(static_coeff.drag_coeff[:,0][alpha == val]) + np.nanmean(static_coeff.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cd_downwind_mean = np.array([np.nanmean(static_coeff.drag_coeff[:,2][alpha == val]) + np.nanmean(static_coeff.drag_coeff[:,3][alpha== val]) for val in unique_alphas])
 
 
     plt.figure(figsize=(8,6))
@@ -1191,9 +1207,9 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind
     alpha = np.round(static_coeff.pitch_motion*360/2/np.pi,1)
     unique_alphas = np.unique(alpha)
 
-    cl_single_mean = np.array([np.mean(static_coeff_single.lift_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.lift_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
-    cl_upwind_mean = np.array([np.mean(static_coeff.lift_coeff[:,0][alpha == val]) + np.mean(static_coeff.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
-    cl_downwind_mean = np.array([np.mean(static_coeff.lift_coeff[:,2][alpha == val]) + np.mean(static_coeff.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
+    cl_single_mean = np.array([np.nanmean(static_coeff_single.lift_coeff[:,0][alpha_single == val]) + np.nanmean(static_coeff_single.lift_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
+    cl_upwind_mean = np.array([np.nanmean(static_coeff.lift_coeff[:,0][alpha == val]) + np.nanmean(static_coeff.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cl_downwind_mean = np.array([np.nanmean(static_coeff.lift_coeff[:,2][alpha == val]) + np.nanmean(static_coeff.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
    
     plt.figure(figsize=(8,6))
     plt.rcParams.update({'font.size': 14}) 
@@ -1232,9 +1248,9 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     alpha = np.round(static_coeff.pitch_motion*360/2/np.pi,1)
     unique_alphas = np.unique(alpha)
 
-    cm_single_mean = np.array([np.mean(static_coeff_single.pitch_coeff[:,0][alpha_single == val]) + np.mean(static_coeff_single.pitch_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
-    cm_upwind_mean = np.array([np.mean(static_coeff.pitch_coeff[:,0][alpha == val]) + np.mean(static_coeff.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
-    cm_downwind_mean = np.array([np.mean(static_coeff.pitch_coeff[:,2][alpha == val]) + np.mean(static_coeff.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
+    cm_single_mean = np.array([np.nanmean(static_coeff_single.pitch_coeff[:,0][alpha_single == val]) + np.nanmean(static_coeff_single.pitch_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
+    cm_upwind_mean = np.array([np.nanmean(static_coeff.pitch_coeff[:,0][alpha == val]) + np.nanmean(static_coeff.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
+    cm_downwind_mean = np.array([np.nanmean(static_coeff.pitch_coeff[:,2][alpha == val]) + np.nanmean(static_coeff.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
     
     plt.figure(figsize=(8,6))
     plt.rcParams.update({'font.size': 14}) 
@@ -1413,17 +1429,17 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
     unique_alphas_high = np.unique(alpha_high)
 
-    single_mean_low = np.array([np.mean(getattr(static_coeff_single_low, coeff)[:,0][alpha_single_low == val]) + np.mean(getattr(static_coeff_single_low, coeff)[:,1][alpha_single_low == val]) for val in unique_alphas_single_low])
-    upwind_mean_low = np.array([np.mean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.mean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
-    downwind_mean_low = np.array([np.mean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.mean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    single_mean_low = np.array([np.nanmean(getattr(static_coeff_single_low, coeff)[:,0][alpha_single_low == val]) + np.nanmean(getattr(static_coeff_single_low, coeff)[:,1][alpha_single_low == val]) for val in unique_alphas_single_low])
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
     
-    single_mean_med = np.array([np.mean(getattr(static_coeff_single_med, coeff)[:,0][alpha_single_med == val]) + np.mean(getattr(static_coeff_single_med, coeff)[:,1][alpha_single_med == val]) for val in unique_alphas_single_med])
-    upwind_mean_med = np.array([np.mean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.mean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
-    downwind_mean_med = np.array([np.mean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.mean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+    single_mean_med = np.array([np.nanmean(getattr(static_coeff_single_med, coeff)[:,0][alpha_single_med == val]) + np.nanmean(getattr(static_coeff_single_med, coeff)[:,1][alpha_single_med == val]) for val in unique_alphas_single_med])
+    upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+    downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
 
-    single_mean_high = np.array([np.mean(getattr(static_coeff_single_high, coeff)[:,0][alpha_single_high == val]) + np.mean(getattr(static_coeff_single_high, coeff)[:,1][alpha_single_high == val]) for val in unique_alphas_single_high])
-    upwind_mean_high = np.array([np.mean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.mean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
-    downwind_mean_high = np.array([np.mean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.mean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+    single_mean_high = np.array([np.nanmean(getattr(static_coeff_single_high, coeff)[:,0][alpha_single_high == val]) + np.nanmean(getattr(static_coeff_single_high, coeff)[:,1][alpha_single_high == val]) for val in unique_alphas_single_high])
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
 
 
     plt.figure(figsize=(8,16))
