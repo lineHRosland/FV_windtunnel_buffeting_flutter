@@ -1,7 +1,7 @@
 #%%
 import numpy as np
 import sys
-sys.path.append(r"C:\Users\oiseth\Documents\GitHub\w3tp")
+sys.path.append(r"C:\Users\alasm\Masteroppgave\w3tp")
 import w3t
 #import os
 import h5py
@@ -16,9 +16,9 @@ plt.close("all")
 
 
 section_name = "HARD_SINGLE"
-section_height = 0.05
-section_width =  0.740
-section_length = 2.640
+section_height = 0.0667
+section_width =  0.365
+section_length = 2.68
 
 #Load all experiments
 h5_file = section_name

@@ -7,6 +7,7 @@ Created on Wed Dec  1 11:39:19 2021
 from ._import_tdms import *
 from ._ads import *
 from ._ads2x2 import *
+from ._ads4x4 import *
 from ._scoff import *
 from ._exp import *
 from ._functions import *
