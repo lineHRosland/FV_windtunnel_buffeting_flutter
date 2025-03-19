@@ -1531,7 +1531,7 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
 
 
 
-def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1, threshold_low=[0.05, 0.05, 0.05], threshold_med=[None, None, None], threshold_high=0.[0.05, 0.05, 0.05], single=False):
+def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1, threshold_low=[0.05, 0.05, 0.05], threshold_med=[None, None, None], threshold_high=[0.05, 0.05, 0.05], single=False):
     """
     Filters drag, lift, and pitch coefficients in each dataset where values deviate too much from reference at a given alpha.
     Reference is chosen based on dataset with lowest spread per alpha.

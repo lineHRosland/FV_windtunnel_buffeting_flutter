@@ -130,7 +130,7 @@ plt.suptitle(f"{section_name}, 9 m/s", fontsize=16, y=1.05)
 
 #%%  Filter and plot ALT 2
 
-static_coeff_single_low_filtered, static_coeff_single_high_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_low,static_coeff_2=static_coeff_single_high,threshold=0.05,  threshold_low=0.07, threshold_high=0.019,single=True)
+static_coeff_single_low_filtered, static_coeff_single_high_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_low,static_coeff_2=static_coeff_single_high,threshold=0.05,  threshold_low=[0.07, 0.05,0.005], threshold_high=[0.05,0.05,0.01],single=True)
 
 plot_static_coeff_summary(static_coeff_single_low_filtered, section_name, 6, mode="single", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_single_high_filtered, section_name, 9, mode="single", upwind_in_rig=True)
