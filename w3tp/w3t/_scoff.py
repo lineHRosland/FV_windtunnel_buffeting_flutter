@@ -1585,8 +1585,8 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                 spread_2 = np.max(vals_2) - np.min(vals_2)
                 spreads = [spread_1, spread_2]
 
-                coeff_check1 = static_coeff_filtered_simple(static_coeff_1, threshold_low, scoff=name, single=True)
-                coeff_check2 = static_coeff_filtered_simple(static_coeff_2, threshold_high, scoff=name, single=True)
+                coeff_check1 = filter(static_coeff_1, threshold_low, scoff=name, single=True)
+                coeff_check2 = filter(static_coeff_2, threshold_high, scoff=name, single=True)
                 has_nan_1 = np.any(np.isnan(getattr(coeff_check1, f"{name}_coeff")[idx1, 0]))
                 has_nan_2 = np.any(np.isnan(getattr(coeff_check2, f"{name}_coeff")[idx2, 0]))
 
