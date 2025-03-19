@@ -1549,7 +1549,7 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
     plt.title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
 
 
-def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3, threshold=0.1, scoff="drag",  threshold_low=0.05, threshold_med = 0.05, threshold_high=0.05):
+def filter_by_reference_spread(static_coeff_1, static_coeff_2, static_coeff_3, threshold=0.1, scoff="drag",  threshold_low=0.05, threshold_med = 0.05, threshold_high=0.05):
     """
     Filters out points in each dataset (static_coeff_1/2/3) where values deviate too much from reference value at a given alpha.
     Reference is chosen based on the dataset with lowest spread (max-min) at each alpha.
@@ -1641,37 +1641,64 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3, threshol
         coeff_down_check2 =static_coeff_filtered_simple(static_coeff_2, threshold_med, scoff, single = False)[2]
         coeff_down_check3 =static_coeff_filtered_simple(static_coeff_3, threshold_high, scoff, single = False)[2]
 
-        has_nan_up1 = np.any(np.isnan(coeff_up_check1[idx1]))
-        has_nan_up2 = np.any(np.isnan(coeff_up_check2[idx2]))
-        has_nan_up3 = np.any(np.isnan(coeff_up_check3[idx3]))
-        has_nan_down1 = np.any(np.isnan(coeff_down_check1[idx1]))
-        has_nan_down2 = np.any(np.isnan(coeff_down_check2[idx2]))
-        has_nan_down3 = np.any(np.isnan(coeff_down_check3[idx3]))
+        # Check if any of the datasets already had clean values (no NaNs)
+        nan_flags_up = [np.any(np.isnan(coeff_up_check1[idx1])),
+                        np.any(np.isnan(coeff_up_check2[idx2])),
+                        np.any(np.isnan(coeff_up_check3[idx3]))]
+
+        nan_flags_down = [np.any(np.isnan(coeff_down_check1[idx1])),
+                        np.any(np.isnan(coeff_down_check2[idx2])),
+                        np.any(np.isnan(coeff_down_check3[idx3]))]
+
                            
+        #UP
+        clean_idxs_up = [i for i, has_nan in enumerate(nan_flags_up) if not has_nan]
 
-        if has_nan_up1 and not has_nan_up2 and not has_nan_up3:
-            ref_idx = 0
-        elif has_nan_up2 and not has_nan_up1 and not has_nan_up3:
-            ref_idx = 0
+        if len(clean_idxs_up) == 1:
+            # Bare én clean – bruk denne
+            ref_idx_up = clean_idxs_up[0]
+        elif len(clean_idxs_up) == 2:
+            # To clean – velg den med lavest spread av de to
+            if spreads_up[clean_idxs_up[0]] < spreads_up[clean_idxs_up[1]]:
+                ref_idx_up = clean_idxs_up[0]
+            else:
+                ref_idx_up = clean_idxs_up[1]
         else:
-            ref_idx = np.argmin(spreads)
-
-        ref_idx_up = np.argmin(spreads_up)
-        ref_idx_down = np.argmin(spreads_down)
-
+            # Enten 0 eller 3 clean – bruk lavest spread av alle
+            ref_idx_up = np.argmin(spreads_up)
+        
+        # calculate reference mean
         if ref_idx_up == 0:
             ref_values_up = vals_up_1
         elif ref_idx_up == 1:
             ref_values_up = vals_up_2
-        else:
+        elif ref_idx_up == 2:
             ref_values_up = vals_up_3
 
+
+        #DOWN 
+        clean_idxs_down = [i for i, has_nan in enumerate(nan_flags_down) if not has_nan]
+
+        if len(clean_idxs_down) == 1:
+            ref_idx_down = clean_idxs_down[0]
+        elif len(clean_idxs_down) == 2:
+            if spreads_down[clean_idxs_down[0]] < spreads_down[clean_idxs_down[1]]:
+                ref_idx_down = clean_idxs_down[0]
+            else:
+                ref_idx_down = clean_idxs_down[1]
+        else:
+            ref_idx_down = np.argmin(spreads_down)
+
+
+        # calculate reference mean
         if ref_idx_down == 0:
             ref_values_down = vals_down_1
         elif ref_idx_down == 1:
             ref_values_down = vals_down_2
-        else:
+        elif ref_idx_down == 2:
             ref_values_down = vals_down_3
+
+
 
         # calculate reference mean
         ref_mean_up = np.mean(ref_values_up)
@@ -1794,6 +1821,138 @@ def filter_by_reference_spread_single(static_coeff_1, static_coeff_2, threshold=
                     coeff_array[i] = np.nan
 
     return (alpha_1, coeff_1_filtered, alpha_2, coeff_2_filtered)
+
+########################################################################################################################
+
+def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1,
+                        scoff="drag", threshold_low=0.05, threshold_med=None, threshold_high=0.05, single=False):
+    """
+    Filters out points in each dataset (static_coeff_1/2/3) where values deviate too much from reference value at a given alpha.
+    Reference is chosen based on the dataset with lowest spread (max-min) at each alpha.
+    If single=True, filters only static_coeff_1 and static_coeff_2 (used for single-deck cases).
+    """
+
+    def get_coeff(static_coeff, scoff):
+        alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
+        if scoff == "drag":
+            coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
+            coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3] if not single else None
+        elif scoff == "lift":
+            coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
+            coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3] if not single else None
+        elif scoff == "pitch":
+            coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
+            coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3] if not single else None
+        else:
+            raise ValueError("scoff must be 'drag', 'lift', or 'pitch'")
+        return alpha, coeff_up, coeff_down
+
+    alpha_1, coeff_up_1, coeff_down_1 = get_coeff(static_coeff_1, scoff)
+    alpha_2, coeff_up_2, coeff_down_2 = get_coeff(static_coeff_2, scoff)
+    coeff_up_1_filtered = coeff_up_1.copy()
+    coeff_up_2_filtered = coeff_up_2.copy()
+
+    if not single:
+        alpha_3, coeff_up_3, coeff_down_3 = get_coeff(static_coeff_3, scoff)
+        coeff_up_3_filtered = coeff_up_3.copy()
+        coeff_down_1_filtered = coeff_down_1.copy()
+        coeff_down_2_filtered = coeff_down_2.copy()
+        coeff_down_3_filtered = coeff_down_3.copy()
+
+    unique_alpha = np.unique(alpha_1)
+
+    for val in unique_alpha:
+        idx1 = np.where(alpha_1 == val)[0]
+        idx2 = np.where(alpha_2 == val)[0]
+
+        if single:
+            if not (len(idx1) and len(idx2)):
+                continue
+            vals_1 = coeff_up_1[idx1]
+            vals_2 = coeff_up_2[idx2]
+            spread_1 = np.max(vals_1) - np.min(vals_1)
+            spread_2 = np.max(vals_2) - np.min(vals_2)
+            spreads = [spread_1, spread_2]
+
+            coeff_check1 = static_coeff_filtered_simple(static_coeff_1, threshold_low, scoff, single=True)[1]
+            coeff_check2 = static_coeff_filtered_simple(static_coeff_2, threshold_high, scoff, single=True)[1]
+            has_nan_1 = np.any(np.isnan(coeff_check1[idx1]))
+            has_nan_2 = np.any(np.isnan(coeff_check2[idx2]))
+
+            ref_idx = 1 if has_nan_1 and not has_nan_2 else 0 if has_nan_2 and not has_nan_1 else np.argmin(spreads)
+            ref_values = vals_1 if ref_idx == 0 else vals_2
+            ref_mean = np.mean(ref_values)
+
+            for idx, coeff_array in zip([idx1, idx2], [coeff_up_1_filtered, coeff_up_2_filtered]):
+                for i in idx:
+                    if abs(coeff_array[i] - ref_mean) > threshold:
+                        coeff_array[i] = np.nan
+
+        else:
+            idx3 = np.where(alpha_3 == val)[0]
+            if not (len(idx1) and len(idx2) and len(idx3)):
+                continue
+
+            vals_up = [coeff_up_1[idx1], coeff_up_2[idx2], coeff_up_3[idx3]]
+            spreads_up = [np.max(v) - np.min(v) for v in vals_up]
+            coeff_up_checks = [
+                static_coeff_filtered_simple(static_coeff_1, threshold_low, scoff, single=False)[1],
+                static_coeff_filtered_simple(static_coeff_2, threshold_med, scoff, single=False)[1],
+                static_coeff_filtered_simple(static_coeff_3, threshold_high, scoff, single=False)[1]
+            ]
+            nan_flags_up = [np.any(np.isnan(c[idx])) for c, idx in zip(coeff_up_checks, [idx1, idx2, idx3])]
+            clean_idxs = [i for i, nan in enumerate(nan_flags_up) if not nan]
+
+            if len(clean_idxs) == 1:
+                ref_idx_up = clean_idxs[0]
+            elif len(clean_idxs) == 2:
+                ref_idx_up = clean_idxs[0] if spreads_up[clean_idxs[0]] < spreads_up[clean_idxs[1]] else clean_idxs[1]
+            else:
+                ref_idx_up = np.argmin(spreads_up)
+
+            ref_values_up = vals_up[ref_idx_up]
+            ref_mean_up = np.mean(ref_values_up)
+
+            for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_up_1_filtered, coeff_up_2_filtered, coeff_up_3_filtered]):
+                for i in idx:
+                    if abs(coeff_array[i] - ref_mean_up) > threshold:
+                        coeff_array[i] = np.nan
+
+            # Same logic for downwind
+            vals_down = [coeff_down_1[idx1], coeff_down_2[idx2], coeff_down_3[idx3]]
+            spreads_down = [np.max(v) - np.min(v) for v in vals_down]
+            coeff_down_checks = [
+                static_coeff_filtered_simple(static_coeff_1, threshold_low, scoff, single=False)[2],
+                static_coeff_filtered_simple(static_coeff_2, threshold_med, scoff, single=False)[2],
+                static_coeff_filtered_simple(static_coeff_3, threshold_high, scoff, single=False)[2]
+            ]
+            nan_flags_down = [np.any(np.isnan(c[idx])) for c, idx in zip(coeff_down_checks, [idx1, idx2, idx3])]
+            clean_idxs_down = [i for i, nan in enumerate(nan_flags_down) if not nan]
+
+            if len(clean_idxs_down) == 1:
+                ref_idx_down = clean_idxs_down[0]
+            elif len(clean_idxs_down) == 2:
+                ref_idx_down = clean_idxs_down[0] if spreads_down[clean_idxs_down[0]] < spreads_down[clean_idxs_down[1]] else clean_idxs_down[1]
+            else:
+                ref_idx_down = np.argmin(spreads_down)
+
+            ref_values_down = vals_down[ref_idx_down]
+            ref_mean_down = np.mean(ref_values_down)
+
+            for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_down_1_filtered, coeff_down_2_filtered, coeff_down_3_filtered]):
+                for i in idx:
+                    if abs(coeff_array[i] - ref_mean_down) > threshold:
+                        coeff_array[i] = np.nan
+
+    if single:
+        return alpha_1, coeff_up_1_filtered, alpha_2, coeff_up_2_filtered
+    else:
+        return (
+            alpha_1, coeff_up_1_filtered, coeff_down_1_filtered,
+            alpha_2, coeff_up_2_filtered, coeff_down_2_filtered,
+            alpha_3, coeff_up_3_filtered, coeff_down_3_filtered
+        )
+
 
 def plot_filtered_static_coeff(alpha, coeff_up, coeff_down, scoff, setUp_type=""):
     if setUp_type == "MUS":
