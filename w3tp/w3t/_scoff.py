@@ -1531,40 +1531,37 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
 
 
 
-def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1,
-                        scoff="drag", threshold_low=0.05, threshold_med=None, threshold_high=0.05, single=False):
+def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1, threshold_low=0.05, threshold_med=None, threshold_high=0.05, single=False):
     """
-    Filters out points in each dataset (static_coeff_1/2/3) where values deviate too much from reference value at a given alpha.
-    Reference is chosen based on the dataset with lowest spread (max-min) at each alpha.
-    If single=True, filters only static_coeff_1 and static_coeff_2 (used for single-deck cases).
+    Filters drag, lift, and pitch coefficients in each dataset where values deviate too much from reference at a given alpha.
+    Reference is chosen based on dataset with lowest spread per alpha.
+    If single=True, filters only static_coeff_1 and static_coeff_2.
+    Returns filtered StaticCoeff objects.
     """
 
-    def get_coeff(static_coeff, scoff):
+    def get_coeffs(static_coeff):
         alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
-        if scoff == "drag":
-            coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
-            coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3] if not single else None
-        elif scoff == "lift":
-            coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
-            coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3] if not single else None
-        elif scoff == "pitch":
-            coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
-            coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3] if not single else None
-        else:
-            raise ValueError("scoff must be 'drag', 'lift', or 'pitch'")
-        return alpha, coeff_up, coeff_down
+        return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
 
-    alpha_1, coeff_up_1, coeff_down_1 = get_coeff(static_coeff_1, scoff)
-    alpha_2, coeff_up_2, coeff_down_2 = get_coeff(static_coeff_2, scoff)
-    coeff_up_1_filtered = coeff_up_1.copy()
-    coeff_up_2_filtered = coeff_up_2.copy()
+    alpha_1, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
+    alpha_2, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
+
+    drag_1_filt, lift_1_filt, pitch_1_filt = drag_1.copy(), lift_1.copy(), pitch_1.copy()
+    drag_2_filt, lift_2_filt, pitch_2_filt = drag_2.copy(), lift_2.copy(), pitch_2.copy()
 
     if not single:
-        alpha_3, coeff_up_3, coeff_down_3 = get_coeff(static_coeff_3, scoff)
-        coeff_up_3_filtered = coeff_up_3.copy()
-        coeff_down_1_filtered = coeff_down_1.copy()
-        coeff_down_2_filtered = coeff_down_2.copy()
-        coeff_down_3_filtered = coeff_down_3.copy()
+        alpha_3, drag_3, lift_3, pitch_3 = get_coeffs(static_coeff_3)
+        drag_3_filt, lift_3_filt, pitch_3_filt = drag_3.copy(), lift_3.copy(), pitch_3.copy()
+
+    coeff_names = ["drag", "lift", "pitch"]
+    coeffs_1 = [drag_1, lift_1, pitch_1]
+    coeffs_2 = [drag_2, lift_2, pitch_2]
+    coeffs_1_filt = [drag_1_filt, lift_1_filt, pitch_1_filt]
+    coeffs_2_filt = [drag_2_filt, lift_2_filt, pitch_2_filt]
+
+    if not single:
+        coeffs_3 = [drag_3, lift_3, pitch_3]
+        coeffs_3_filt = [drag_3_filt, lift_3_filt, pitch_3_filt]
 
     unique_alpha = np.unique(alpha_1)
 
@@ -1575,160 +1572,127 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
         if single:
             if not (len(idx1) and len(idx2)):
                 continue
-            vals_1 = coeff_up_1[idx1]
-            vals_2 = coeff_up_2[idx2]
-            spread_1 = np.max(vals_1) - np.min(vals_1)
-            spread_2 = np.max(vals_2) - np.min(vals_2)
-            spreads = [spread_1, spread_2]
 
-            coeff_check1 = filter(static_coeff_1, threshold_low, scoff, single=True)[1]
-            coeff_check2 = filter(static_coeff_2, threshold_high, scoff, single=True)[1]
-            has_nan_1 = np.any(np.isnan(coeff_check1[idx1]))
-            has_nan_2 = np.any(np.isnan(coeff_check2[idx2]))
+            for i, name in enumerate(coeff_names):
+                coeff_1 = coeffs_1[i]
+                coeff_2 = coeffs_2[i]
+                coeff_1_f = coeffs_1_filt[i]
+                coeff_2_f = coeffs_2_filt[i]
 
-            ref_idx = 1 if has_nan_1 and not has_nan_2 else 0 if has_nan_2 and not has_nan_1 else np.argmin(spreads)
-            ref_values = vals_1 if ref_idx == 0 else vals_2
-            ref_mean = np.mean(ref_values)
+                vals_1 = coeff_1[idx1, 0] + coeff_1[idx1, 1]
+                vals_2 = coeff_2[idx2, 0] + coeff_2[idx2, 1]
+                spread_1 = np.max(vals_1) - np.min(vals_1)
+                spread_2 = np.max(vals_2) - np.min(vals_2)
+                spreads = [spread_1, spread_2]
 
-            for idx, coeff_array in zip([idx1, idx2], [coeff_up_1_filtered, coeff_up_2_filtered]):
-                for i in idx:
-                    if abs(coeff_array[i] - ref_mean) > threshold:
-                        coeff_array[i] = np.nan
+                coeff_check1 = static_coeff_filtered_simple(static_coeff_1, threshold_low, scoff=name, single=True)
+                coeff_check2 = static_coeff_filtered_simple(static_coeff_2, threshold_high, scoff=name, single=True)
+                has_nan_1 = np.any(np.isnan(getattr(coeff_check1, f"{name}_coeff")[idx1, 0]))
+                has_nan_2 = np.any(np.isnan(getattr(coeff_check2, f"{name}_coeff")[idx2, 0]))
+
+                if has_nan_1 and not has_nan_2:
+                    ref_mean = np.mean(vals_2)
+                elif has_nan_2 and not has_nan_1:
+                    ref_mean = np.mean(vals_1)
+                else:
+                    ref_mean = np.mean(vals_1) if spread_1 <= spread_2 else np.mean(vals_2)
+
+                for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
+                    summed = coeff_array[idx, 0] + coeff_array[idx, 1]
+                    mask = np.abs(summed - ref_mean) > threshold
+                    coeff_array[idx[mask], 0] = np.nan
+                    coeff_array[idx[mask], 1] = np.nan
 
         else:
             idx3 = np.where(alpha_3 == val)[0]
             if not (len(idx1) and len(idx2) and len(idx3)):
                 continue
 
-            vals_up = [coeff_up_1[idx1], coeff_up_2[idx2], coeff_up_3[idx3]]
-            spreads_up = [np.max(v) - np.min(v) for v in vals_up]
-            coeff_up_checks = [
-                filter(static_coeff_1, threshold_low, scoff, single=False)[1],
-                filter(static_coeff_2, threshold_med, scoff, single=False)[1],
-                filter(static_coeff_3, threshold_high, scoff, single=False)[1]
-            ]
-            nan_flags_up = [np.any(np.isnan(c[idx])) for c, idx in zip(coeff_up_checks, [idx1, idx2, idx3])]
-            clean_idxs = [i for i, nan in enumerate(nan_flags_up) if not nan]
+            for i, name in enumerate(coeff_names):
+                coeff_1 = coeffs_1[i]
+                coeff_2 = coeffs_2[i]
+                coeff_3 = coeffs_3[i]
+                coeff_1_f = coeffs_1_filt[i]
+                coeff_2_f = coeffs_2_filt[i]
+                coeff_3_f = coeffs_3_filt[i]
 
-            if len(clean_idxs) == 1:
-                ref_idx_up = clean_idxs[0]
-            elif len(clean_idxs) == 2:
-                ref_idx_up = clean_idxs[0] if spreads_up[clean_idxs[0]] < spreads_up[clean_idxs[1]] else clean_idxs[1]
-            else:
-                ref_idx_up = np.argmin(spreads_up)
+                #UP
+                vals_up = [coeff_1[idx1, 0] + coeff_1[idx1, 1],
+                           coeff_2[idx2, 0] + coeff_2[idx2, 1],
+                           coeff_3[idx3, 0] + coeff_3[idx3, 1]]
+                spreads_up = [np.max(v) - np.min(v) for v in vals_up]
 
-            ref_values_up = vals_up[ref_idx_up]
-            ref_mean_up = np.mean(ref_values_up)
+                
+                coeff_up_checks = [
+                    filter(static_coeff_1, threshold_low, scoff=name, single=False),
+                    filter(static_coeff_2, threshold_med, scoff=name, single=False),
+                    filter(static_coeff_3, threshold_high, scoff=name, single=False),
+                ]
+                nan_flags_up = [np.any(np.isnan(getattr(check, f"{name}_coeff")[idx, 0])) for check, idx in zip(coeff_up_checks, [idx1, idx2, idx3])]
+                clean_idxs_up = [i for i, nan in enumerate(nan_flags_up) if not nan]
 
-            for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_up_1_filtered, coeff_up_2_filtered, coeff_up_3_filtered]):
-                for i in idx:
-                    if abs(coeff_array[i] - ref_mean_up) > threshold:
-                        coeff_array[i] = np.nan
+                if len(clean_idxs_up) == 1:
+                    ref_idx_up = clean_idxs_up[0]
+                elif len(clean_idxs_up) == 2:
+                    ref_idx_up = clean_idxs_up[0] if spreads_up[clean_idxs_up[0]] < spreads_up[clean_idxs_up[1]] else clean_idxs_up[1]
+                else:
+                    ref_idx_up = np.argmin(spreads_up)
 
-            # Same logic for downwind
-            vals_down = [coeff_down_1[idx1], coeff_down_2[idx2], coeff_down_3[idx3]]
-            spreads_down = [np.max(v) - np.min(v) for v in vals_down]
-            coeff_down_checks = [
-                static_coeff_filtered_simple(static_coeff_1, threshold_low, scoff, single=False)[2],
-                static_coeff_filtered_simple(static_coeff_2, threshold_med, scoff, single=False)[2],
-                static_coeff_filtered_simple(static_coeff_3, threshold_high, scoff, single=False)[2]
-            ]
-            nan_flags_down = [np.any(np.isnan(c[idx])) for c, idx in zip(coeff_down_checks, [idx1, idx2, idx3])]
-            clean_idxs_down = [i for i, nan in enumerate(nan_flags_down) if not nan]
+                ref_mean_up = np.mean(vals_up[ref_idx_up])
 
-            if len(clean_idxs_down) == 1:
-                ref_idx_down = clean_idxs_down[0]
-            elif len(clean_idxs_down) == 2:
-                ref_idx_down = clean_idxs_down[0] if spreads_down[clean_idxs_down[0]] < spreads_down[clean_idxs_down[1]] else clean_idxs_down[1]
-            else:
-                ref_idx_down = np.argmin(spreads_down)
 
-            ref_values_down = vals_down[ref_idx_down]
-            ref_mean_down = np.mean(ref_values_down)
+                for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
+                    summed = coeff_array[idx, 0] + coeff_array[idx, 1]
+                    mask = np.abs(summed - ref_mean_up) > threshold
+                    coeff_array[idx[mask], 0] = np.nan
+                    coeff_array[idx[mask], 1] = np.nan
 
-            for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_down_1_filtered, coeff_down_2_filtered, coeff_down_3_filtered]):
-                for i in idx:
-                    if abs(coeff_array[i] - ref_mean_down) > threshold:
-                        coeff_array[i] = np.nan
+                # Same logic for downwind
+                vals_down = [coeff_1[idx1, 2] + coeff_1[idx1, 3],
+                             coeff_2[idx2, 2] + coeff_2[idx2, 3],
+                             coeff_3[idx3, 2] + coeff_3[idx3, 3]]
+                spreads_down = [np.max(v) - np.min(v) for v in vals_down]
+
+                coeff_down_checks = [
+                    filter(static_coeff_1, threshold_low, scoff=name, single=False),
+                    filter(static_coeff_2, threshold_med, scoff=name, single=False),
+                    filter(static_coeff_3, threshold_high, scoff=name, single=False),
+                ]
+                nan_flags_down = [np.any(np.isnan(getattr(check, f"{name}_coeff")[idx, 2])) for check, idx in zip(coeff_down_checks, [idx1, idx2, idx3])]
+                clean_idxs_down = [i for i, nan in enumerate(nan_flags_down) if not nan]
+
+                if len(clean_idxs_down) == 1:
+                    ref_idx_down = clean_idxs_down[0]
+                elif len(clean_idxs_down) == 2:
+                    ref_idx_down = clean_idxs_down[0] if spreads_down[clean_idxs_down[0]] < spreads_down[clean_idxs_down[1]] else clean_idxs_down[1]
+                else:
+                    ref_idx_down = np.argmin(spreads_down)
+
+                ref_mean_down = np.mean(vals_down[ref_idx_down])
+
+                for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
+                    summed = coeff_array[idx, 2] + coeff_array[idx, 3]
+                    mask = np.abs(summed - ref_mean_down) > threshold
+                    coeff_array[idx[mask], 2] = np.nan
+                    coeff_array[idx[mask], 3] = np.nan
+
+    static_coeff_1_f = copy.deepcopy(static_coeff_1)
+    static_coeff_2_f = copy.deepcopy(static_coeff_2)
+    for name, data in zip(coeff_names, [drag_1_filt, lift_1_filt, pitch_1_filt]):
+        setattr(static_coeff_1_f, f"{name}_coeff", data)
+    for name, data in zip(coeff_names, [drag_2_filt, lift_2_filt, pitch_2_filt]):
+        setattr(static_coeff_2_f, f"{name}_coeff", data)
 
     if single:
-        static_coeff_1_filtered = copy.deepcopy(static_coeff_1)
-        static_coeff_2_filtered = copy.deepcopy(static_coeff_2)
+        return static_coeff_1_f, static_coeff_2_f
 
-        if scoff == "drag":
-            static_coeff_1_filtered.drag_coeff[:, 0] = coeff_up_1_filtered / 2 # previously combined [:,0] + [:,1]. To reconstruct [:,0] and [:,1], split the sum equally between the two
-            static_coeff_1_filtered.drag_coeff[:, 1] = coeff_up_1_filtered / 2
-            static_coeff_2_filtered.drag_coeff[:, 0] = coeff_up_2_filtered / 2
-            static_coeff_2_filtered.drag_coeff[:, 1] = coeff_up_2_filtered / 2
+    static_coeff_3_f = copy.deepcopy(static_coeff_3)
+    for name, data in zip(coeff_names, [drag_3_filt, lift_3_filt, pitch_3_filt]):
+        setattr(static_coeff_3_f, f"{name}_coeff", data)
 
-        elif scoff == "lift":
-            static_coeff_1_filtered.lift_coeff[:, 0] = coeff_up_1_filtered / 2
-            static_coeff_1_filtered.lift_coeff[:, 1] = coeff_up_1_filtered / 2
-            static_coeff_2_filtered.lift_coeff[:, 0] = coeff_up_2_filtered / 2
-            static_coeff_2_filtered.lift_coeff[:, 1] = coeff_up_2_filtered / 2
+    return static_coeff_1_f, static_coeff_2_f, static_coeff_3_f
 
-        elif scoff == "pitch":
-            static_coeff_1_filtered.pitch_coeff[:, 0] = coeff_up_1_filtered / 2
-            static_coeff_1_filtered.pitch_coeff[:, 1] = coeff_up_1_filtered / 2
-            static_coeff_2_filtered.pitch_coeff[:, 0] = coeff_up_2_filtered / 2
-            static_coeff_2_filtered.pitch_coeff[:, 1] = coeff_up_2_filtered / 2
 
-        return static_coeff_1_filtered, static_coeff_2_filtered
-
-    else:
-        static_coeff_1_filtered = copy.deepcopy(static_coeff_1)
-        static_coeff_2_filtered = copy.deepcopy(static_coeff_2)
-        static_coeff_3_filtered = copy.deepcopy(static_coeff_3)
-
-    if scoff == "drag":
-        static_coeff_1_filtered.drag_coeff[:, 0] = coeff_up_1_filtered / 2
-        static_coeff_1_filtered.drag_coeff[:, 1] = coeff_up_1_filtered / 2
-        static_coeff_1_filtered.drag_coeff[:, 2] = coeff_down_1_filtered / 2
-        static_coeff_1_filtered.drag_coeff[:, 3] = coeff_down_1_filtered / 2
-
-        static_coeff_2_filtered.drag_coeff[:, 0] = coeff_up_2_filtered / 2
-        static_coeff_2_filtered.drag_coeff[:, 1] = coeff_up_2_filtered / 2
-        static_coeff_2_filtered.drag_coeff[:, 2] = coeff_down_2_filtered / 2
-        static_coeff_2_filtered.drag_coeff[:, 3] = coeff_down_2_filtered / 2
-
-        static_coeff_3_filtered.drag_coeff[:, 0] = coeff_up_3_filtered / 2
-        static_coeff_3_filtered.drag_coeff[:, 1] = coeff_up_3_filtered / 2
-        static_coeff_3_filtered.drag_coeff[:, 2] = coeff_down_3_filtered / 2
-        static_coeff_3_filtered.drag_coeff[:, 3] = coeff_down_3_filtered / 2
-
-    elif scoff == "lift":
-        static_coeff_1_filtered.lift_coeff[:, 0] = coeff_up_1_filtered / 2
-        static_coeff_1_filtered.lift_coeff[:, 1] = coeff_up_1_filtered / 2
-        static_coeff_1_filtered.lift_coeff[:, 2] = coeff_down_1_filtered / 2
-        static_coeff_1_filtered.lift_coeff[:, 3] = coeff_down_1_filtered / 2
-
-        static_coeff_2_filtered.lift_coeff[:, 0] = coeff_up_2_filtered / 2
-        static_coeff_2_filtered.lift_coeff[:, 1] = coeff_up_2_filtered / 2
-        static_coeff_2_filtered.lift_coeff[:, 2] = coeff_down_2_filtered / 2
-        static_coeff_2_filtered.lift_coeff[:, 3] = coeff_down_2_filtered / 2
-
-        static_coeff_3_filtered.lift_coeff[:, 0] = coeff_up_3_filtered / 2
-        static_coeff_3_filtered.lift_coeff[:, 1] = coeff_up_3_filtered / 2
-        static_coeff_3_filtered.lift_coeff[:, 2] = coeff_down_3_filtered / 2
-        static_coeff_3_filtered.lift_coeff[:, 3] = coeff_down_3_filtered / 2
-
-    elif scoff == "pitch":
-        static_coeff_1_filtered.pitch_coeff[:, 0] = coeff_up_1_filtered / 2
-        static_coeff_1_filtered.pitch_coeff[:, 1] = coeff_up_1_filtered / 2
-        static_coeff_1_filtered.pitch_coeff[:, 2] = coeff_down_1_filtered / 2
-        static_coeff_1_filtered.pitch_coeff[:, 3] = coeff_down_1_filtered / 2
-
-        static_coeff_2_filtered.pitch_coeff[:, 0] = coeff_up_2_filtered / 2
-        static_coeff_2_filtered.pitch_coeff[:, 1] = coeff_up_2_filtered / 2
-        static_coeff_2_filtered.pitch_coeff[:, 2] = coeff_down_2_filtered / 2
-        static_coeff_2_filtered.pitch_coeff[:, 3] = coeff_down_2_filtered / 2
-
-        static_coeff_3_filtered.pitch_coeff[:, 0] = coeff_up_3_filtered / 2
-        static_coeff_3_filtered.pitch_coeff[:, 1] = coeff_up_3_filtered / 2
-        static_coeff_3_filtered.pitch_coeff[:, 2] = coeff_down_3_filtered / 2
-        static_coeff_3_filtered.pitch_coeff[:, 3] = coeff_down_3_filtered / 2
-
-    return static_coeff_1_filtered, static_coeff_2_filtered, static_coeff_3_filtered
 
 #####################################################################33
 
