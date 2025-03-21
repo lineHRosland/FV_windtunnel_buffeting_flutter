@@ -56,7 +56,7 @@ class AerodynamicDerivative4x4:
         plots the aerodynamic derivative        
     
     """
-    def __init__(self,label="x",reduced_velocities=[],ad_load_cell_1=[],ad_load_cell_2=[],ad_load_cell_3=[],ad_load_cell_4=[],mean_wind_speeds=[], frequencies=[]):
+    def __init__(self,label="x",reduced_velocities=[],ad_load_cell_a=[],ad_load_cell_b=[],mean_wind_speeds=[], frequencies=[]):
         """  
             
         Arguments
@@ -81,17 +81,15 @@ class AerodynamicDerivative4x4:
         
         """
         self.reduced_velocities = reduced_velocities
-        self.ad_load_cell_1 = ad_load_cell_1
-        self.ad_load_cell_2 = ad_load_cell_2
-        self.ad_load_cell_3 = ad_load_cell_3
-        self.ad_load_cell_4 = ad_load_cell_4
+        self.ad_load_cell_a = ad_load_cell_a
+        self.ad_load_cell_b = ad_load_cell_b
         self.mean_wind_speeds = mean_wind_speeds
         self.frequencies = frequencies
         self.label = label
     
     @property    
     def value(self):
-        return self.ad_load_cell_1 + self.ad_load_cell_2 + self.ad_load_cell_3 + self.ad_load_cell_4
+        return self.ad_load_cell_a + self.ad_load_cell_b
         
         
     def plot(self, mode = "all", conv = "normal", ax=[] ):
@@ -137,7 +135,7 @@ class AerodynamicDerivative4x4:
                 ax.legend()
                 
             elif mode == "total":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4, "o", label="Total")
+                ax.plot(self.reduced_velocities,self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
                 ax.set_ylabel(("$" + self.label + "$"))
                 ax.set_xlabel(r"Reduced velocity $\hat{V}$")
                 ax.grid(True)
@@ -277,7 +275,7 @@ class AerodynamicDerivatives4x4:
     
         
     @classmethod
-    def fromWTT(cls,experiment_in_still_air,experiment_in_wind,section_width, section_length_1, section_length_2, filter_order = 6, cutoff_frequency = 7):
+    def fromWTT(cls,experiment_in_still_air,experiment_in_wind,section_width, section_length_1, section_length_2, upstream_in_rig = True, filter_order = 6, cutoff_frequency = 7):
         """ obtains an instance of the class Aerodynamic derivatives from a wind tunnel experiment
         
         parameters:
@@ -311,21 +309,30 @@ class AerodynamicDerivatives4x4:
         #model_forces = np.zeros((experiment_in_wind_still_air_forces_removed.forces_global_center.shape[0],3))
         
         # loop over all single harmonic test in the time series
+        # 6 single harmonic tests are performed for each motion type
         for k in range(len(starts)):           
 
             sampling_frequency = 1/(experiment_in_still_air.time[1]- experiment_in_still_air.time[0])
        
             sos = spsp.butter(filter_order,cutoff_frequency, fs=sampling_frequency, output="sos")
            
-            motions = experiment_in_wind_still_air_forces_removed.motion
+            #r_x,1 r_z,1 r_theta,1 (bru i rigg, avlest av riggen)
+            motions_bridge_in_rig = experiment_in_wind_still_air_forces_removed.motion 
+
+            #r_x,2 r_z,2 r_theta,2 (bru på vegg, ingen bevegelser)
+            motions_bridge_on_wall = np.zeros_like(motions_bridge_in_rig)
+
+            #r_x,1 r_z,1 r_theta,1 r_x,2 r_z,2 r_theta,2
+            motions = np.hstack((motions_bridge_in_rig, motions_bridge_on_wall))
             
             motions = spsp.sosfiltfilt(sos,motions,axis=0)
+
+            #r_x,1\dot r_z,1\dot r_theta,1\dot r_x,2\dot r_z,2\dot r_theta,2\dot
+            time_derivative_motions = np.vstack((np.array([0,0,0,0,0,0]),np.diff(motions,axis=0)))*sampling_frequency
             
-            time_derivative_motions = np.vstack((np.array([0,0,0]),np.diff(motions,axis=0)))*sampling_frequency
-            
-            #max_hor_vert_pitch_motion = [np.max(motions[:,0]), np.max(motions[:,1]), np.max(motions[:,2]) ]
             motion_type = experiment_in_wind_still_air_forces_removed.motion_type()
-            print("Motion type: " + str(motion_type))
+
+            #print("Motion type: " + str(motion_type))
             fourier_amplitudes = np.fft.fft(motions[starts[k]:stops[k],motion_type]-np.mean(motions[starts[k]:stops[k],motion_type]))
             
             
@@ -338,11 +345,12 @@ class AerodynamicDerivatives4x4:
             frequency_of_motion = frequencies[peak_index]
             frequencies_of_motion[k] = frequency_of_motion
          
+            #X-matrise, men bare det som ikke er null --> r_i\dot r_i, i er motion type for testen som behandles
             regressor_matrix = np.vstack((time_derivative_motions[starts[k]:stops[k],motion_type],motions[starts[k]:stops[k],motion_type])).T
-                        
+
+            #Pseudoinvers av X-matrise  --> X^+ * q = E            
             pseudo_inverse_regressor_matrix = spla.pinv(regressor_matrix) 
             selected_forces = np.array([0,2,4])
-            
             
             mean_wind_speed = np.mean(experiment_in_wind_still_air_forces_removed.wind_speed[starts[k]:stops[k]])
             mean_wind_speeds[k] = mean_wind_speed
@@ -350,20 +358,23 @@ class AerodynamicDerivatives4x4:
             reduced_frequency  = frequency_of_motion*2*np.pi*section_width/mean_wind_speed
             
             reduced_velocities[k] = 1/reduced_frequency
+
+            section_length = 0
             
             #model_forces = np.zeros((experiment_in_wind_still_air_forces_removed.forces_global_center.shape))
             
             # Loop over all load cells
             for m in range(4):
-                if m == [0,1]:
+                if m == 0 or m == 1:
                     section_length = section_length_1
-                elif m == [2,3]:
+                elif m == 2 or m == 3:
                     section_length = section_length_2
 
+                #q_x, q_z, q_theta for the cell being considered
                 forces = experiment_in_wind_still_air_forces_removed.forces_global_center[starts[k]:stops[k],selected_forces + 6*m]
-                froces_mean_wind_removed = forces - np.mean(experiment_in_wind_still_air_forces_removed.forces_global_center[0:400,selected_forces + 6*m],axis= 0)
+                forces_mean_wind_removed = forces - np.mean(experiment_in_wind_still_air_forces_removed.forces_global_center[0:400,selected_forces + 6*m],axis= 0)
                                 
-                coefficient_matrix = pseudo_inverse_regressor_matrix @ froces_mean_wind_removed
+                coefficient_matrix = pseudo_inverse_regressor_matrix @ forces_mean_wind_removed
                                 
                 normalized_coefficient_matrix[:,:,k,m] = np.copy(coefficient_matrix)
                 normalized_coefficient_matrix[0,:,k,m] = normalized_coefficient_matrix[0,:,k,m]*2  / experiment_in_wind_still_air_forces_removed.air_density / mean_wind_speed / reduced_frequency / section_width / section_length
@@ -421,113 +432,83 @@ class AerodynamicDerivatives4x4:
         k_R2R1 = AerodynamicDerivative4x4()
         k_R2V2 = AerodynamicDerivative4x4()
         k_R2R2 = AerodynamicDerivative4x4()
+          
 
-            
-        if motion_type ==0:
-            row = 0
-            col = 0
-            p1 = AerodynamicDerivative("P_1^*", reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 1
-            h5 = AerodynamicDerivative("H_5^*", reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 2
-            a5 = AerodynamicDerivative("A_5^*", reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-           
-            row = 1
-            col = 0
-            p4 = AerodynamicDerivative("P_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 1
-            h6 = AerodynamicDerivative("H_6^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 2
-            a6 = AerodynamicDerivative("A_6^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-        elif motion_type ==1:
-            row = 0
-            col = 0
-            p5 = AerodynamicDerivative("P_5^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 1
-            h1 = AerodynamicDerivative("H_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 2
-            a1 = AerodynamicDerivative("A_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-           
-            row = 1
-            col = 0
-            p6 = AerodynamicDerivative("P_6^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 1
-            h4 = AerodynamicDerivative("H_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 2
-            a4 = AerodynamicDerivative("A_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-        elif motion_type ==2:
-            row = 0
-            col = 0
-            p2 = AerodynamicDerivative("P_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 1
-            h2 = AerodynamicDerivative("H_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 2
-            a2 = AerodynamicDerivative("A_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-           
-            row = 1
-            col = 0
-            p3 = AerodynamicDerivative("P_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 1
-            h3 = AerodynamicDerivative("H_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-            col = 2
-            a3 = AerodynamicDerivative("A_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
-              
-        return cls(p1, p2, p3, p4, p5, p6, h1, h2, h3, h4, h5, h6, a1, a2, a3, a4, a5, a6), model_prediction, experiment_in_wind_still_air_forces_removed
-    
-    @classmethod
-    def from_Theodorsen(cls,vred):
-        
-        vred[vred==0] = 1.0e-10
-        
-        k = 0.5/np.abs(vred)
+        if upstream_in_rig == True:    
+            if motion_type == 0:
+                mat = 0
+            elif motion_type == 1:
+                mat = 0 # C(damping)
+                col = 1
+                c_V1V1 = AerodynamicDerivative4x4("c_{V_1V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_V2V1 = AerodynamicDerivative4x4("c_{V_2V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                col = 2
+                c_R1V1 = AerodynamicDerivative4x4("c_{R_1V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_R2V1 = AerodynamicDerivative4x4("c_{R_2V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
 
-        j0 = spspes.jv(0,k)
-        j1 = spspes.jv(1,k)
-        y0 = spspes.yn(0,k)
-        y1 = spspes.yn(1,k)
+                mat = 1 # K(stiffness)
+                col = 1
+                k_V1V1 = AerodynamicDerivative4x4("k_{V_1V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_V2V1 = AerodynamicDerivative4x4("k_{V_2V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                col = 2
+                k_R1V1 = AerodynamicDerivative4x4("k_{R_1V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_R2V1 = AerodynamicDerivative4x4("k_{R_2V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
 
-        a = j1 + y0
-        b = y1-j0
-        c = a**2 + b**2
+            elif motion_type == 2:
+                mat = 0 # C(damping)
+                col = 1
+                c_V1R1 = AerodynamicDerivative4x4("c_{V_1R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_V2R1 = AerodynamicDerivative4x4("c_{V_2R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                col = 2
+                c_R1R1 = AerodynamicDerivative4x4("c_{R_1R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_R2R1 = AerodynamicDerivative4x4("c_{R_2R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
 
-        f = (j1*a + y1*b)/c
-        g = -(j1*j0 + y1*y0)/c
-        
-        h1_value = -2*np.pi*f*np.abs(vred)
-        h2_value = np.pi/2*(1+f+4*g*np.abs(vred))*np.abs(vred)
-        h3_value = 2*np.pi*(f*np.abs(vred)-g/4)*np.abs(vred)
-        h4_value = np.pi/2*(1+4*g*np.abs(vred))
-        
-        
-        a1_value = -np.pi/2*f*np.abs(vred)
-        a2_value = -np.pi/8*(1-f-4*g*np.abs(vred))*np.abs(vred)
-        a3_value = np.pi/2*(f*np.abs(vred)-g/4)*np.abs(vred)
-        a4_value = np.pi/2*g*np.abs(vred)
-        
-        p1 = AerodynamicDerivative("P_1^*",vred, vred*0, vred*0, vred*0, vred*0)
-        p2 = AerodynamicDerivative("P_2^*",vred, vred*0, vred*0, vred*0, vred*0)
-        p3 = AerodynamicDerivative("P_3^*",vred, vred*0, vred*0, vred*0, vred*0)
-        p4 = AerodynamicDerivative("P_4^*",vred, vred*0, vred*0, vred*0, vred*0)
-        p5 = AerodynamicDerivative("P_5^*",vred, vred*0, vred*0, vred*0, vred*0)
-        p6 = AerodynamicDerivative("P_6^*",vred, vred*0, vred*0, vred*0, vred*0)
-           
-        h1 = AerodynamicDerivative("H_1^*",vred, h1_value/2, h1_value/2, vred*0, vred*0)
-        h2 = AerodynamicDerivative("H_2^*",vred, h2_value/2, h2_value/2, vred*0, vred*0)
-        h3 = AerodynamicDerivative("H_3^*",vred, h3_value/2, h3_value/2, vred*0, vred*0)
-        h4 = AerodynamicDerivative("H_4^*",vred, h4_value/2, h4_value/2, vred*0, vred*0)
-        h5 = AerodynamicDerivative("H_5^*",vred, vred*0, vred*0, vred*0, vred*0)
-        h6 = AerodynamicDerivative("H_6^*",vred, vred*0, vred*0, vred*0, vred*0)
-      
-        a1 = AerodynamicDerivative("A_1^*",vred, a1_value/2, a1_value/2, vred*0, vred*0)
-        a2 = AerodynamicDerivative("A_2^*",vred, a2_value/2, a2_value/2, vred*0, vred*0)
-        a3 = AerodynamicDerivative("A_3^*",vred, a3_value/2, a3_value/2, vred*0, vred*0)
-        a4 = AerodynamicDerivative("A_4^*",vred, a4_value/2, a4_value/2, vred*0, vred*0)
-        a5 = AerodynamicDerivative("A_5^*",vred, vred*0, vred*0, vred*0, vred*0)
-        a6 = AerodynamicDerivative("A_6^*",vred, vred*0, vred*0, vred*0, vred*0)
-        
+                mat = 1 # K(stiffness)
+                col = 1
+                k_V1R1 = AerodynamicDerivative4x4("k_{V_1R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_V2R1 = AerodynamicDerivative4x4("k_{V_2R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                col = 2
+                k_R1R1 = AerodynamicDerivative4x4("k_{R_1R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_R2R1 = AerodynamicDerivative4x4("k_{R_2R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                        
+        elif upstream_in_rig == False:
+            if motion_type == 0:
+                mat = 0
+            elif motion_type == 1:
+                mat = 0 #C(damping)
+                col = 1
+                c_V1V2 = AerodynamicDerivative4x4("c_{V_1V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_V2V2 = AerodynamicDerivative4x4("c_{V_2V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                col = 2
+                c_R1V2 = AerodynamicDerivative4x4("c_{R_1V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_R2V2 = AerodynamicDerivative4x4("c_{R_2V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
 
-                
-        return cls(p1, p2, p3, p4, p5, p6, h1, h2, h3, h4, h5, h6, a1, a2, a3, a4, a5, a6)
+                mat = 1 #K(stiffness)
+                col = 1
+                k_V1V2 = AerodynamicDerivative4x4("k_{V_1V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_V2V2 = AerodynamicDerivative4x4("k_{V_2V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                col = 2
+                k_R1V2 = AerodynamicDerivative4x4("k_{R_1V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_R2V2 = AerodynamicDerivative4x4("k_{R_2V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+
+            elif motion_type == 2:
+                mat = 0 #C(damping)
+                col = 1
+                c_V1R2 = AerodynamicDerivative4x4("c_{V_1R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_V2R2 = AerodynamicDerivative4x4("c_{V_2R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                col = 2
+                c_R1R2 = AerodynamicDerivative4x4("c_{R_1R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_R2R2 = AerodynamicDerivative4x4("c_{R_2R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+
+                mat = 1 #K(stiffness)
+                col = 1
+                k_V1R2 = AerodynamicDerivative4x4("k_{V_1R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_V2R2 = AerodynamicDerivative4x4("k_{V_2R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                col = 2
+                k_R1R2 = AerodynamicDerivative4x4("k_{R_1R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_R2R2 = AerodynamicDerivative4x4("k_{R_2R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)   
+
+        return cls(c_V1V1, c_V1R1, c_V1V2, c_V1R2, c_R1V1, c_R1R1, c_R1V2, c_R1R2, c_V2V1, c_V2R1, c_V2V2, c_V2R2, c_R2V1, c_R2R1, c_R2V2, c_R2R2, k_V1V1, k_V1R1, k_V1V2, k_V1R2, k_R1V1, k_R1R1, k_R1V2, k_R1R2, k_V2V1, k_V2R1, k_V2V2, k_V2R2, k_R2V1, k_R2R1, k_R2V2, k_R2R2), model_prediction, experiment_in_wind_still_air_forces_removed
     
     @classmethod
     def from_poly_k(cls,poly_k,k_range, vred):
@@ -804,50 +785,70 @@ class AerodynamicDerivatives4x4:
         # Make figure objects if not given
         if bool(fig_damping) == False:
             fig_damping = plt.figure()
-            for k in range(9):
-                fig_damping.add_subplot(3,3,k+1)
+            for k in range(16):
+                fig_damping.add_subplot(4,4,k+1)
         
         if bool(fig_stiffness) == False:
             fig_stiffness = plt.figure()
-            for k in range(9):
-                fig_stiffness.add_subplot(3,3,k+1)
+            for k in range(16):
+                fig_stiffness.add_subplot(4,4,k+1)
         
         
-        axs_damping = fig_damping.get_axes()
-#        
-        self.p1.plot(mode=mode, conv=conv, ax=axs_damping[0])
-        self.p5.plot(mode=mode, conv=conv, ax=axs_damping[1])
-        self.p2.plot(mode=mode, conv=conv, ax=axs_damping[2])
-        
-        self.h5.plot(mode=mode, conv=conv, ax=axs_damping[3])
-        self.h1.plot(mode=mode, conv=conv, ax=axs_damping[4])
-        self.h2.plot(mode=mode, conv=conv, ax=axs_damping[5])
-        
-        self.a5.plot(mode=mode, conv=conv, ax=axs_damping[6])
-        self.a1.plot(mode=mode, conv=conv, ax=axs_damping[7])
-        self.a2.plot(mode=mode, conv=conv, ax=axs_damping[8])
+        axs_damping = fig_damping.get_axes()  
+        self.c_V1V1.plot(mode=mode, conv=conv, ax=axs_damping[0])
+        self.c_V1R1.plot(mode=mode, conv=conv, ax=axs_damping[1])
+        self.c_V1V2.plot(mode=mode, conv=conv, ax=axs_damping[2])
+        self.c_V1R2.plot(mode=mode, conv=conv, ax=axs_damping[3])
+
+        self.c_R1V1.plot(mode=mode, conv=conv, ax=axs_damping[4])
+        self.c_R1R1.plot(mode=mode, conv=conv, ax=axs_damping[5])
+        self.c_R1V2.plot(mode=mode, conv=conv, ax=axs_damping[6])
+        self.c_R1R2.plot(mode=mode, conv=conv, ax=axs_damping[7])
+
+        self.c_V2V1.plot(mode=mode, conv=conv, ax=axs_damping[8])
+        self.c_V2R1.plot(mode=mode, conv=conv, ax=axs_damping[9])
+        self.c_V2V2.plot(mode=mode, conv=conv, ax=axs_damping[10])
+        self.c_V2R2.plot(mode=mode, conv=conv, ax=axs_damping[11])
+
+        self.c_R2V1.plot(mode=mode, conv=conv, ax=axs_damping[12])
+        self.c_R2R1.plot(mode=mode, conv=conv, ax=axs_damping[13])
+        self.c_R2V2.plot(mode=mode, conv=conv, ax=axs_damping[14])
+        self.c_R2R2.plot(mode=mode, conv=conv, ax=axs_damping[15])
+
         
         axs_stiffness = fig_stiffness.get_axes()
-        self.p4.plot(mode=mode, conv=conv, ax=axs_stiffness[0])
-        self.p6.plot(mode=mode, conv=conv, ax=axs_stiffness[1])
-        self.p3.plot(mode=mode, conv=conv, ax=axs_stiffness[2])
-        
-        self.h6.plot(mode=mode, conv=conv, ax=axs_stiffness[3])
-        self.h4.plot(mode=mode, conv=conv, ax=axs_stiffness[4])
-        self.h3.plot(mode=mode, conv=conv, ax=axs_stiffness[5])
-        
-        self.a6.plot(mode=mode, conv=conv, ax=axs_stiffness[6])
-        self.a4.plot(mode=mode, conv=conv, ax=axs_stiffness[7])
-        self.a3.plot(mode=mode, conv=conv, ax=axs_stiffness[8])
-        
-        
-        
-        for k in range(6):
+        self.k_V1V1.plot(mode=mode, conv=conv, ax=axs_stiffness[0])
+        self.k_V1R1.plot(mode=mode, conv=conv, ax=axs_stiffness[1])
+        self.k_V1V2.plot(mode=mode, conv=conv, ax=axs_stiffness[2])
+        self.k_V1R2.plot(mode=mode, conv=conv, ax=axs_stiffness[3])
+
+        self.k_R1V1.plot(mode=mode, conv=conv, ax=axs_stiffness[4])
+        self.k_R1R1.plot(mode=mode, conv=conv, ax=axs_stiffness[5])
+        self.k_R1V2.plot(mode=mode, conv=conv, ax=axs_stiffness[6])
+        self.k_R1R2.plot(mode=mode, conv=conv, ax=axs_stiffness[7])
+
+        self.k_V2V1.plot(mode=mode, conv=conv, ax=axs_stiffness[8])
+        self.k_V2R1.plot(mode=mode, conv=conv, ax=axs_stiffness[9])
+        self.k_V2V2.plot(mode=mode, conv=conv, ax=axs_stiffness[10])
+        self.k_V2R2.plot(mode=mode, conv=conv, ax=axs_stiffness[11])
+
+        self.k_R2V1.plot(mode=mode, conv=conv, ax=axs_stiffness[12])
+        self.k_R2R1.plot(mode=mode, conv=conv, ax=axs_stiffness[13])
+        self.k_R2V2.plot(mode=mode, conv=conv, ax=axs_stiffness[14])
+        self.k_R2R2.plot(mode=mode, conv=conv, ax=axs_stiffness[15])
+
+        for k in range(12):
             axs_damping[k].set_xlabel("")
             axs_stiffness[k].set_xlabel("")
-        
+
+        scal = 1.8
+        fig_damping.set_size_inches(20/scal,15/scal)
+        fig_stiffness.set_size_inches(20/scal,15/scal)
+
+        '''
         fig_damping.set_size_inches(20/2.54,15/2.54)
         fig_stiffness.set_size_inches(20/2.54,15/2.54)
+        '''
         
         fig_damping.tight_layout()
         fig_stiffness.tight_layout()

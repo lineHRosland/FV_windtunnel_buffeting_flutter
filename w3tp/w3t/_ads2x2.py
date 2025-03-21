@@ -291,9 +291,6 @@ class AerodynamicDerivatives2x2:
             sos = spsp.butter(filter_order,cutoff_frequency, fs=sampling_frequency, output="sos")
            
             motions = experiment_in_wind_still_air_forces_removed.motion
-
-            print("motions:", motions.shape)
-            
             motions = spsp.sosfiltfilt(sos,motions,axis=0)
             
             time_derivative_motions = np.vstack((np.array([0,0,0]),np.diff(motions,axis=0)))*sampling_frequency
@@ -302,7 +299,6 @@ class AerodynamicDerivatives2x2:
             motion_type = experiment_in_wind_still_air_forces_removed.motion_type()
             #print("Motion type: " + str(motion_type))
             fourier_amplitudes = np.fft.fft(motions[starts[k]:stops[k],motion_type]-np.mean(motions[starts[k]:stops[k],motion_type]))
-            
             
             time_step = experiment_in_wind_still_air_forces_removed.time[1]- experiment_in_wind_still_air_forces_removed.time[0]
             
@@ -316,7 +312,6 @@ class AerodynamicDerivatives2x2:
             regressor_matrix = np.vstack((time_derivative_motions[starts[k]:stops[k],motion_type],motions[starts[k]:stops[k],motion_type])).T
                         
             pseudo_inverse_regressor_matrix = spla.pinv(regressor_matrix) 
-            print(regressor_matrix.shape)
             selected_forces = np.array([0,2,4])
             
             
@@ -363,34 +358,36 @@ class AerodynamicDerivatives2x2:
         a3 = AerodynamicDerivative2x2()
         a4 = AerodynamicDerivative2x2()
 
-        meanV = np.mean(mean_wind_speeds) 
+        meanV = np.mean(mean_wind_speeds)
+
+        zero_matrix = np.zeros_like(normalized_coefficient_matrix[0,0,:,0]) 
 
         if motion_type ==0:
             row = 0
         elif motion_type ==1:
             row = 0
             col = 1
-            h1 = AerodynamicDerivative2x2("H_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h1 = AerodynamicDerivative2x2("H_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a1 = AerodynamicDerivative2x2("A_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a1 = AerodynamicDerivative2x2("A_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
            
             row = 1
             col = 1
-            h4 = AerodynamicDerivative2x2("H_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h4 = AerodynamicDerivative2x2("H_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a4 = AerodynamicDerivative2x2("A_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a4 = AerodynamicDerivative2x2("A_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
         elif motion_type ==2:
             row = 0
             col = 1
-            h2 = AerodynamicDerivative2x2("H_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h2 = AerodynamicDerivative2x2("H_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a2 = AerodynamicDerivative2x2("A_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a2 = AerodynamicDerivative2x2("A_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
            
             row = 1
             col = 1
-            h3 = AerodynamicDerivative2x2("H_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h3 = AerodynamicDerivative2x2("H_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a3 = AerodynamicDerivative2x2("A_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a3 = AerodynamicDerivative2x2("A_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
               
         return cls(h1, h2, h3, h4, a1, a2, a3, a4, meanV), model_prediction, experiment_in_wind_still_air_forces_removed
     
