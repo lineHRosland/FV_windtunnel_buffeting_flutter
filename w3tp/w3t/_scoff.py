@@ -1335,10 +1335,10 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
              label=f"LWS - Downstream deck", color = color3LWS)
 
     # Plot med wind speed
-    plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,0] + getattr(static_coeff_med, coeff)[:,1],
-             label=f"MWS - Upstream deck", color = color2MWS)
-    plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,2] + getattr(static_coeff_med, coeff)[:,3],
-             label=f"MWS - Downstream deck", color = color3MWS)
+    #plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,0] + getattr(static_coeff_med, coeff)[:,1],
+    #         label=f"MWS - Upstream deck", color = color2MWS)
+    #plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,2] + getattr(static_coeff_med, coeff)[:,3],
+    #         label=f"MWS - Downstream deck", color = color3MWS)
 
     # Plot high wind speed
     
@@ -1354,9 +1354,9 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     plt.grid(True)
     plt.legend()
     plt.ylim(min,max)
-    plt.tight_layout()
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
-    
+    plt.tight_layout()
+
  
 
 #%% Wind speeds
@@ -1457,10 +1457,10 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
 
     # Plot med wind speed
   
-    plt.plot(unique_alphas_med, upwind_mean_med,
-                label=f"MWS - Upstream deck", color = color2MWS, linestyle='--')
-    plt.plot(unique_alphas_med, downwind_mean_med,
-                label=f"MWS - Downstream deck", color = color2MWS, linestyle='-')
+    #plt.plot(unique_alphas_med, upwind_mean_med,
+    #            label=f"MWS - Upstream deck", color = color2MWS, linestyle='--')
+    #plt.plot(unique_alphas_med, downwind_mean_med,
+    #            label=f"MWS - Downstream deck", color = color2MWS, linestyle='-')
     
     # Plot high wind speed
     plt.plot(unique_alphas_single_high, single_mean_high,
@@ -1475,9 +1475,9 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     plt.grid(True)
     plt.ylim(min,max)
     plt.legend()
-    plt.tight_layout()
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
-    
+    plt.tight_layout()
+
  
 def filter(static_coeff, threshold=0.3, scoff="", single=True):
     """
