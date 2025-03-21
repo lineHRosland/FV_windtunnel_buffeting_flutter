@@ -1355,7 +1355,7 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     plt.legend()
     plt.ylim(min,max)
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, 1, 0.95])  # legg igjen plass øverst
 
  
 
@@ -1476,7 +1476,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     plt.ylim(min,max)
     plt.legend()
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, 1, 0.95])  # legg igjen plass øverst
 
  
 def filter(static_coeff, threshold=0.3, scoff="", single=True):
