@@ -279,17 +279,18 @@ class AerodynamicDerivatives2x2:
         normalized_coefficient_matrix = np.zeros((2,3,len(starts),4))
         
         forces_predicted_by_ads = np.zeros((experiment_in_wind_still_air_forces_removed.forces_global_center.shape[0],24))
+
+      
         #model_forces = np.zeros((experiment_in_wind_still_air_forces_removed.forces_global_center.shape[0],3))
         
         # loop over all single harmonic test in the time series
-        for k in range(len(starts)):           
+        for k in range(len(starts)):    # 6 frequencies       
 
             sampling_frequency = 1/(experiment_in_still_air.time[1]- experiment_in_still_air.time[0])
        
             sos = spsp.butter(filter_order,cutoff_frequency, fs=sampling_frequency, output="sos")
            
             motions = experiment_in_wind_still_air_forces_removed.motion
-            
             motions = spsp.sosfiltfilt(sos,motions,axis=0)
             
             time_derivative_motions = np.vstack((np.array([0,0,0]),np.diff(motions,axis=0)))*sampling_frequency
@@ -298,7 +299,6 @@ class AerodynamicDerivatives2x2:
             motion_type = experiment_in_wind_still_air_forces_removed.motion_type()
             #print("Motion type: " + str(motion_type))
             fourier_amplitudes = np.fft.fft(motions[starts[k]:stops[k],motion_type]-np.mean(motions[starts[k]:stops[k],motion_type]))
-            
             
             time_step = experiment_in_wind_still_air_forces_removed.time[1]- experiment_in_wind_still_air_forces_removed.time[0]
             
@@ -341,7 +341,8 @@ class AerodynamicDerivatives2x2:
                 
                 forces_predicted_by_ads[starts[k]:stops[k],selected_forces + 6*m] = forces_predicted_by_ads[starts[k]:stops[k],selected_forces + 6*m]  + regressor_matrix @ coefficient_matrix + np.mean(experiment_in_wind_still_air_forces_removed.forces_global_center[0:400,selected_forces + 6*m],axis= 0)
             
-               
+             
+
         # Make Experiment object for simulation of model
         obj1 = experiment_in_wind_still_air_forces_removed
         obj2 = experiment_in_still_air
@@ -357,34 +358,36 @@ class AerodynamicDerivatives2x2:
         a3 = AerodynamicDerivative2x2()
         a4 = AerodynamicDerivative2x2()
 
-        meanV = np.mean(mean_wind_speeds) 
+        meanV = np.mean(mean_wind_speeds)
+
+        zero_matrix = np.zeros_like(normalized_coefficient_matrix[0,0,:,0]) 
 
         if motion_type ==0:
             row = 0
         elif motion_type ==1:
             row = 0
             col = 1
-            h1 = AerodynamicDerivative2x2("H_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h1 = AerodynamicDerivative2x2("H_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a1 = AerodynamicDerivative2x2("A_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a1 = AerodynamicDerivative2x2("A_1^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
            
             row = 1
             col = 1
-            h4 = AerodynamicDerivative2x2("H_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h4 = AerodynamicDerivative2x2("H_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a4 = AerodynamicDerivative2x2("A_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a4 = AerodynamicDerivative2x2("A_4^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
         elif motion_type ==2:
             row = 0
             col = 1
-            h2 = AerodynamicDerivative2x2("H_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h2 = AerodynamicDerivative2x2("H_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a2 = AerodynamicDerivative2x2("A_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a2 = AerodynamicDerivative2x2("A_2^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
            
             row = 1
             col = 1
-            h3 = AerodynamicDerivative2x2("H_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            h3 = AerodynamicDerivative2x2("H_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
             col = 2
-            a3 = AerodynamicDerivative2x2("A_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],normalized_coefficient_matrix[row,col,:,2],normalized_coefficient_matrix[row,col,:,3],mean_wind_speeds,frequencies_of_motion)
+            a3 = AerodynamicDerivative2x2("A_3^*",reduced_velocities,normalized_coefficient_matrix[row,col,:,0],normalized_coefficient_matrix[row,col,:,1],zero_matrix,zero_matrix,mean_wind_speeds,frequencies_of_motion)
               
         return cls(h1, h2, h3, h4, a1, a2, a3, a4, meanV), model_prediction, experiment_in_wind_still_air_forces_removed
     
