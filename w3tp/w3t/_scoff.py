@@ -142,11 +142,11 @@ class StaticCoeff:
     ymin_drag = 0
     ymax_drag = 1
 
-    ymin_lift = -1
-    ymax_lift = 1
+    ymin_lift = -0.75
+    ymax_lift = 0.75
 
-    ymin_pitch = -0.25
-    ymax_pitch = 0.25
+    ymin_pitch = -0.175
+    ymax_pitch = 0.2
     
     def to_excel(self,section_name, sheet_name='Test' ,section_width=0,section_height=0,section_length_in_rig = 0, section_length_on_wall=0, upwind_in_rig=True):
         """
@@ -1314,15 +1314,15 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     elif scoff == "lift":
         axis = r"$C_L(\alpha)$"
         coeff = "lift_coeff"
-        min = -1
-        max = 1
+        min = -0.75
+        max = 0.75
     elif scoff == "pitch":
         axis = r"$C_M(\alpha)$"
         coeff = "pitch_coeff"
-        min = -0.25
-        max = 0.25
+        min = -0.175
+        max = 0.2
 
-    plt.figure(figsize=(8,16))
+    plt.figure(figsize=(8,12))
     plt.rcParams.update({'font.size': 14}) 
 
     # Plot low wind speed
@@ -1335,10 +1335,10 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
              label=f"LWS - Downstream deck", color = color3LWS)
 
     # Plot med wind speed
-    plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,0] + getattr(static_coeff_med, coeff)[:,1],
-             label=f"MWS - Upstream deck", color = color2MWS)
-    plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,2] + getattr(static_coeff_med, coeff)[:,3],
-             label=f"MWS - Downstream deck", color = color3MWS)
+    #plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,0] + getattr(static_coeff_med, coeff)[:,1],
+    #         label=f"MWS - Upstream deck", color = color2MWS)
+    #plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,2] + getattr(static_coeff_med, coeff)[:,3],
+    #         label=f"MWS - Downstream deck", color = color3MWS)
 
     # Plot high wind speed
     
@@ -1355,7 +1355,8 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     plt.legend()
     plt.ylim(min,max)
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
-    
+    plt.tight_layout()
+
  
 
 #%% Wind speeds
@@ -1406,13 +1407,13 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     elif scoff == "lift":
         axis = r"$C_L(\alpha)$"
         coeff = "lift_coeff"
-        min = -1
-        max = 1
+        min = -0.75
+        max = 0.75
     elif scoff == "pitch":
         axis = r"$C_M(\alpha)$"
         coeff = "pitch_coeff"
-        min = -0.25
-        max = 0.25
+        min = -0.175
+        max = 0.2
 
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single_low = np.round(static_coeff_single_low.pitch_motion*360/2/np.pi,1)
@@ -1442,7 +1443,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
 
 
-    plt.figure(figsize=(8,16))
+    plt.figure(figsize=(8,12))
     plt.rcParams.update({'font.size': 14}) 
 
     # Plot low wind speed
@@ -1456,10 +1457,10 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
 
     # Plot med wind speed
   
-    plt.plot(unique_alphas_med, upwind_mean_med,
-                label=f"MWS - Upstream deck", color = color2MWS, linestyle='--')
-    plt.plot(unique_alphas_med, downwind_mean_med,
-                label=f"MWS - Downstream deck", color = color2MWS, linestyle='-')
+    #plt.plot(unique_alphas_med, upwind_mean_med,
+    #            label=f"MWS - Upstream deck", color = color2MWS, linestyle='--')
+    #plt.plot(unique_alphas_med, downwind_mean_med,
+    #            label=f"MWS - Downstream deck", color = color2MWS, linestyle='-')
     
     # Plot high wind speed
     plt.plot(unique_alphas_single_high, single_mean_high,
@@ -1475,7 +1476,8 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     plt.ylim(min,max)
     plt.legend()
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
-    
+    plt.tight_layout()
+
  
 def filter(static_coeff, threshold=0.3, scoff="", single=True):
     """
@@ -1744,12 +1746,12 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
         max = 1
     elif scoff == "lift":
         ylabel = r"$C_L(\alpha)$"
-        min = -1
-        max = 1
+        min = -0.75
+        max = 0.75
     elif scoff == "pitch":
         ylabel = r"$C_M(\alpha)$"
-        min = -0.25
-        max = 0.25
+        min = -0.175
+        max = 0.2
 
     # Plot
     plt.figure(figsize=(8,6))
