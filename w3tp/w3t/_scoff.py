@@ -1322,7 +1322,7 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
         min = -0.25
         max = 0.25
 
-    plt.figure(figsize=(8,16))
+    plt.figure(figsize=(8,14))
     plt.rcParams.update({'font.size': 14}) 
 
     # Plot low wind speed
@@ -1355,6 +1355,7 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     plt.legend()
     plt.ylim(min,max)
     plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
+    plt.tight_layout()
     
  
 
