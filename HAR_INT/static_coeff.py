@@ -93,7 +93,7 @@ plt.gcf().suptitle(f"{section_name} 0 m/s – After filtering", fontsize=16, y=1
 exp1_single_6.plot_experiment() #After filtering
 plt.gcf().suptitle(f"{section_name} 6 m/s – After filtering", fontsize=16, y=1.02)
 exp1_single_9.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 9 V – After filtering", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"{section_name} 9 m/s – After filtering", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -3746,3 +3746,19 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                scoff = "pitch")                        
 plt.gcf().suptitle(f"5D: MDS  ", fontsize=16, y=1.02)
 
+##########################################################################333
+
+static_coeff_list = [static_coeff_1D, static_coeff_2D, static_coeff_3D, static_coeff_4D]
+titles = ["1D", "2D", "3D", "4D"]
+
+fig, axs = plt.subplots(nrows=1, ncols=4, figsize=(20, 5), sharex=True, sharey=True)
+
+for i, static_coeff in enumerate(static_coeff_list):
+    static_coeff.plot_drag(mode="decks", upwind_in_rig=True, ax=axs[i])
+    axs[i].set_title(f"Gap {titles[i]}")
+
+fig.suptitle("Drag coefficient comparison", fontsize=18)
+plt.tight_layout()
+plt.subplots_adjust(top=0.88)  # juster plass for suptitle
+plt.savefig("overview_drag_subplots.png", dpi=300)
+plt.show()
