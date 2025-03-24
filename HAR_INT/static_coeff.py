@@ -18,22 +18,22 @@ import pandas as pd
 import matplotlib as mpl
 
 # Computer Modern Roman without latex
-#mpl.rcParam/s['text.usetex'] = False  
+mpl.rcParam/s['text.usetex'] = False  
 
 # Bruk fonten som ligner mest på Computer Modern
-#mpl.rcParam/s['font.family'] = 'serif'
-#mpl.rcParam/s['font.serif'] = ['cmr10', 'Computer Modern Roman', 'Times New Roman']
-#mpl.rcParam/s['mathtext.fontset'] = 'cm' 
+mpl.rcParam/s['font.family'] = 'serif'
+mpl.rcParam/s['font.serif'] = ['cmr10', 'Computer Modern Roman', 'Times New Roman']
+mpl.rcParam/s['mathtext.fontset'] = 'cm' 
 
 # Generelt større og mer lesbar tekst
-#mpl.rcParam/s.update({
-#    'font.size': 14,              # Generell tekststørrelse
-#    'axes.labelsize': 14,         # Aksetitler
-#    'axes.titlesize': 16,         # Plot-titler
-#    'legend.fontsize': 12,        # Tekst i legend
-#    'xtick.labelsize': 12,        # X-tick labels
-#    'ytick.labelsize': 12         # Y-tick labels
-#})
+mpl.rcParam/s.update({
+    'font.size': 12,              # Generell tekststørrelse
+    'axes.labelsize': 12,         # Aksetitler
+    'axes.titlesize': 14,         # Plot-titler
+    'legend.fontsize': 12,        # Tekst i legend
+    'xtick.labelsize': 12,        # X-tick labels
+    'ytick.labelsize': 12         # Y-tick labels
+})
 
 #from scipy import signal as spsp
 
@@ -58,19 +58,19 @@ def plot_static_coeff_summary(static_coeff, section_name, wind_speed, mode="deck
         section_name = section_name.replace("MDS", "MUS")
 
     static_coeff.plot_drag(mode=mode,upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} -  {wind_speed} m/s", fontsize=16)
+    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
     static_coeff.plot_lift(mode=mode, upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} -  {wind_speed} m/s", fontsize=16)
+    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
     static_coeff.plot_pitch(mode=mode, upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} -  {wind_speed} m/s", fontsize=16)
+    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
 
     #mean
     static_coeff.plot_drag_mean(mode=mode, upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} -  {wind_speed} m/s", fontsize=16)
+    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
     static_coeff.plot_lift_mean(mode=mode, upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} -  {wind_speed} m/s", fontsize=16)
+    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
     static_coeff.plot_pitch_mean(mode=mode, upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} -  {wind_speed} m/s", fontsize=16)
+    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
 
     plt.tight_layout()
     plt.show()
@@ -98,22 +98,22 @@ exp0_single, exp1_single_6 = load_experiments_from_hdf5(h5_input_path, section_n
 exp0_single, exp1_single_9= load_experiments_from_hdf5(h5_input_path, section_name, file_names_9,  upwind_in_rig=True)
 
 exp0_single.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s",  y=1.05)
 exp1_single_6.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s",  y=1.05)
 exp1_single_9.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s",  y=1.05)
 
 exp0_single.filt_forces(6, 2)
 exp1_single_6.filt_forces(6, 2)
 exp1_single_9.filt_forces(6, 2)
 
 exp0_single.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.1)
+plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.1)
 exp1_single_6.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s - With Butterworth low-pass filter", fontsize=16, y=1.1)
+plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s - With Butterworth low-pass filter",  y=1.1)
 exp1_single_9.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s - With Butterworth low-pass filter", fontsize=16, y=1.1)
+plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s - With Butterworth low-pass filter",  y=1.1)
 plt.show()
 
 
@@ -131,26 +131,26 @@ plot_static_coeff_summary(static_coeff_single_9, section_name, 9, mode="single",
 #drag
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_6, threshold=0.05, scoff="drag", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"Single deck - Wind speed: 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"Single deck - Wind speed: 6 m/s",  y=1.05)
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_9, threshold=0.05, scoff="drag", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"Single deck - Wind speed: 9 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"Single deck - Wind speed: 9 m/s",  y=1.05)
 
 #lift
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_6, threshold=0.05, scoff="lift", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"Single deck - Wind speed: 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"Single deck - Wind speed: 6 m/s",  y=1.05)
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_9, threshold=0.05, scoff="lift", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"Single deck - Wind speed: 9 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"Single deck - Wind speed: 9 m/s",  y=1.05)
 
 #pitch
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_6, threshold=0.05, scoff="pitch", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"Single deck - Wind speed: 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"Single deck - Wind speed: 6 m/s",  y=1.05)
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_9, threshold=0.05, scoff="pitch", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"Single deck - Wind speed: 9 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"Single deck - Wind speed: 9 m/s",  y=1.05)
 
 #%%  Filter and plot ALT 2
 
@@ -180,13 +180,13 @@ exp0_MDS_1D, exp1_MDS_1D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 exp0_MDS_1D.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"MDS 1D - Wind speed: 0 m/s", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MDS 1D - Wind speed: 0 m/s",  y=1.05)
 exp1_MDS_1D_6.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"MDS 1D - Wind speed: 6 m/s", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MDS 1D - Wind speed: 6 m/s",  y=1.05)
 exp1_MDS_1D_8.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"MDS 1D - Wind speed: 8 m/s", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MDS 1D - Wind speed: 8 m/s",  y=1.05)
 exp1_MDS_1D_10.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"MDS 1D - Wind speed: 10 m/s", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MDS 1D - Wind speed: 10 m/s",  y=1.05)
 
 exp0_MDS_1D.filt_forces(6, 2)
 exp1_MDS_1D_6.filt_forces(6, 2)
@@ -194,13 +194,13 @@ exp1_MDS_1D_8.filt_forces(6, 2)
 exp1_MDS_1D_10.filt_forces(6, 2)
 
 exp0_MDS_1D.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"MDS 1D - Wind speed: 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MDS 1D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_1D_6.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"MDS 1D - Wind speed:) 6 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MDS 1D - Wind speed:) 6 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_1D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"MDS 1D - Wind speed: 8 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MDS 1D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"MDS 1D - Wind speed:) 10 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MDS 1D - Wind speed:) 10 m/s - With Butterworth low-pass filter",  y=1.05)
 plt.show()
 
 
@@ -220,35 +220,35 @@ plot_static_coeff_summary(static_coeff_MDS_1D_10, section_name, 10, mode="decks"
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_1D_6, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS 1D - Wind speed: 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS 1D - Wind speed: 6 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_1D_8, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS 1D - Wind speed: 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS 1D - Wind speed: 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_1D_10, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS 1D - Wind speed: 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS 1D - Wind speed: 10 m/s",  y=1.05)
 
 #lift
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_1D_6, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS 1D - Wind speed: 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS 1D - Wind speed: 6 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_1D_8, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS 1D - Wind speed: 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS 1D - Wind speed: 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_1D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS 1D - Wind speed: 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS 1D - Wind speed: 10 m/s",  y=1.05)
 
 #pitch
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_1D_6, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS 1D - Wind speed: 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS 1D - Wind speed: 6 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_1D_8, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS 1D - Wind speed: 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS 1D - Wind speed: 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_1D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS 1D - Wind speed: 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS 1D - Wind speed: 10 m/s",  y=1.05)
 
 
 
@@ -276,13 +276,13 @@ exp0_MUS_1D, exp1_MUS_1D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 exp0_MUS_1D.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"MUS 1D - Wind speed: 0 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MUS 1D - Wind speed: 0 m/s - ",  y=1.05)
 exp1_MUS_1D_5.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"MUS 1D - Wind speed: 5 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MUS 1D - Wind speed: 5 m/s - ",  y=1.05)
 exp1_MUS_1D_8.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"MUS 1D - Wind speed: 8 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MUS 1D - Wind speed: 8 m/s - ",  y=1.05)
 exp1_MUS_1D_10.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s - ",  y=1.05)
 
 exp0_MUS_1D.filt_forces(6, 2)
 exp1_MUS_1D_5.filt_forces(6, 2)
@@ -290,13 +290,13 @@ exp1_MUS_1D_8.filt_forces(6, 2)
 exp1_MUS_1D_10.filt_forces(6, 2)
 
 exp0_MUS_1D.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"MUS 1D - Wind speed: 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MUS 1D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_1D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"MUS 1D - Wind speed: 5 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MUS 1D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_1D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"MUS 1D - Wind speed: 8 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MUS 1D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=1.05)
 plt.show()
 
 
@@ -316,35 +316,35 @@ plot_static_coeff_summary(static_coeff_MUS_1D_10, section_name, 10, mode="decks"
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_1D_5, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS 1D - Wind speed: 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS 1D - Wind speed: 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_1D_8, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS 1D - Wind speed: 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS 1D - Wind speed: 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_1D_10, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS 1D - Wind speed: 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS 1D - Wind speed: 10 m/s",  y=1.05)
 
 #lift
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_1D_5, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS 1D - Wind speed: 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS 1D - Wind speed: 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_1D_8, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med,upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS 1D - Wind speed: 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS 1D - Wind speed: 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_1D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS 1D - Wind speed: 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS 1D - Wind speed: 10 m/s",  y=1.05)
 
 #pitch
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_1D_5, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS 1D - Wind speed: 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS 1D - Wind speed: 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_1D_8, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS 1D - Wind speed: 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS 1D - Wind speed: 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_1D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS 1D - Wind speed: 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS 1D - Wind speed: 10 m/s",  y=1.05)
 
 
 #%%  Filter and plot ALT 2
@@ -715,14 +715,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_single_9, static_coeff_MUS_1D_5,
                                static_coeff_MUS_1D_8, static_coeff_MUS_1D_10,
                              scoff = "drag")                        
-plt.gcf().suptitle(f"1D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS ",  y=1.05)
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_1D_6,
                                static_coeff_MDS_1D_8, static_coeff_MDS_1D_10,
                                 scoff = "drag")                        
-plt.gcf().suptitle(f"1D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS ",  y=1.05)
 
 #lift
 #MUS
@@ -730,27 +730,27 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_single_9, static_coeff_MUS_1D_5,
                                static_coeff_MUS_1D_8, static_coeff_MUS_1D_10,
                             scoff = "lift")                        
-plt.gcf().suptitle(f"1D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS  ",  y=1.05)
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9,static_coeff_MDS_1D_6,
                                static_coeff_MDS_1D_8, static_coeff_MDS_1D_10,
                                scoff = "lift")                        
-plt.gcf().suptitle(f"1D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS  ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_1D_5,
                                static_coeff_MUS_1D_8, static_coeff_MUS_1D_10,
                               scoff = "pitch")                        
-plt.gcf().suptitle(f"1D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_1D_6,
                                static_coeff_MDS_1D_8, static_coeff_MDS_1D_10,
                           scoff = "pitch")                        
-plt.gcf().suptitle(f"1D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS  ",  y=1.05)
 
 #MEAN
 #drag
@@ -759,39 +759,39 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_single_9, static_coeff_MUS_1D_5,
                                static_coeff_MUS_1D_8, static_coeff_MUS_1D_10,
                            scoff = "drag")                        
-plt.gcf().suptitle(f"1D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS ",  y=1.05)
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_1D_6,
                                static_coeff_MDS_1D_8, static_coeff_MDS_1D_10,
                               scoff = "drag")                        
-plt.gcf().suptitle(f"1D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS  ",  y=1.05)
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_1D_5,
-                               V, static_coeff_MUS_1D_10,
+                               static_coeff_MUS_1D_8, static_coeff_MUS_1D_10,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"1D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_1D_6,
                                static_coeff_MDS_1D_8, static_coeff_MDS_1D_10,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"1D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_1D_5,
                                static_coeff_MUS_1D_8, static_coeff_MUS_1D_10,
                                 scoff = "pitch")                        
-plt.gcf().suptitle(f"1D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_1D_6,
                                static_coeff_MDS_1D_8, static_coeff_MDS_1D_10,
                                scoff = "pitch")                        
-plt.gcf().suptitle(f"1D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS ",  y=1.05)
 
 
 # %% Compare all experiments (Wind speed) filtered
@@ -801,14 +801,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_single_9_filtered, static_coeff_MUS_1D_5_filtered,
                                static_coeff_MUS_1D_8_filtered, static_coeff_MUS_1D_10_filtered,
                              scoff = "drag")                        
-plt.gcf().suptitle(f"1D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS  ",  y=1.05)
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_1D_6_filtered,
                                static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered,
                                 scoff = "drag")                        
-plt.gcf().suptitle(f"1D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS  ",  y=1.05)
 
 #lift
 #MUS
@@ -816,27 +816,27 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_single_9_filtered, static_coeff_MUS_1D_5_filtered,
                                static_coeff_MUS_1D_8_filtered, static_coeff_MUS_1D_10_filtered,
                             scoff = "lift")                        
-plt.gcf().suptitle(f"1D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS  ",  y=1.05)
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_1D_6_filtered,
                                static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered,
                                scoff = "lift")                        
-plt.gcf().suptitle(f"1D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS  ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_1D_5_filtered,
                                static_coeff_MUS_1D_8_filtered, static_coeff_MUS_1D_10_filtered,
                               scoff = "pitch")                        
-plt.gcf().suptitle(f"1D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_1D_6_filtered,
                                static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered,
                           scoff = "pitch")                        
-plt.gcf().suptitle(f"1D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS ",  y=1.05)
 
 #MEAN
 #drag
@@ -845,39 +845,39 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_single_9_filtered, static_coeff_MUS_1D_5_filtered,
                                static_coeff_MUS_1D_8_filtered, static_coeff_MUS_1D_10_filtered,
                            scoff = "drag")                        
-plt.gcf().suptitle(f"1D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS  ",  y=1.05)
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_1D_6_filtered,
                                static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered,
                               scoff = "drag")                        
-plt.gcf().suptitle(f"1D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS  ",  y=1.05)
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_1D_5_filtered,
                                static_coeff_MUS_1D_8_filtered, static_coeff_MUS_1D_10_filtered,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"1D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_1D_6_filtered,
                                static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"1D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_1D_5_filtered,
                                static_coeff_MUS_1D_8_filtered, static_coeff_MUS_1D_10_filtered,
                                 scoff = "pitch")                        
-plt.gcf().suptitle(f"1D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_1D_6_filtered,
                                static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered,
                                scoff = "pitch")                        
-plt.gcf().suptitle(f"1D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"1D: MDS  ",  y=1.05)
 
 
 
@@ -901,13 +901,13 @@ exp0_MDS_2D, exp1_MDS_2D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 exp0_MDS_2D.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ",  y=1.05)
 exp1_MDS_2D_6.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s - ",  y=1.05)
 exp1_MDS_2D_8.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ",  y=1.05)
 exp1_MDS_2D_10.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ",  y=1.05)
 
 exp0_MDS_2D.filt_forces(6, 2)
 exp1_MDS_2D_6.filt_forces(6, 2)
@@ -915,13 +915,13 @@ exp1_MDS_2D_8.filt_forces(6, 2)
 exp1_MDS_2D_10.filt_forces(6, 2)
 
 exp0_MDS_2D.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_2D_6.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_2D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_2D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter",  y=1.05)
 plt.show()
 
 
@@ -940,35 +940,35 @@ plot_static_coeff_summary(static_coeff_MDS_2D_10, section_name, 10, mode="decks"
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_2D_6, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_2D_Static, 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_2D_Static, 6 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_2D_8, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_2D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_2D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_2D_10, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_2D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_2D_Static, 10 m/s",  y=1.05)
 
 #lift
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_2D_6, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_2D_Static, 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_2D_Static, 6 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_2D_8, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_2D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_2D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_2D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_2D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_2D_Static, 10 m/s",  y=1.05)
 
 #pitch
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_2D_6, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_2D_Static, 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_2D_Static, 6 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_2D_8, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_2D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_2D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_2D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_2D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_2D_Static, 10 m/s",  y=1.05)
 
 
 
@@ -998,13 +998,13 @@ exp0_MUS_2D, exp1_MUS_2D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 exp0_MUS_2D.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ",  y=1.05)
 exp1_MUS_2D_5.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - ",  y=1.05)
 exp1_MUS_2D_8.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ",  y=1.05)
 exp1_MUS_2D_10.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ",  y=1.05)
 
 exp0_MUS_2D.filt_forces(6, 2)
 exp1_MUS_2D_5.filt_forces(6, 2)
@@ -1012,13 +1012,13 @@ exp1_MUS_2D_8.filt_forces(6, 2)
 exp1_MUS_2D_10.filt_forces(6, 2)
 
 exp0_MUS_2D.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_2D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_2D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_2D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter",  y=1.05)
 plt.show()
 
 
@@ -1039,35 +1039,35 @@ plot_static_coeff_summary(static_coeff_MUS_2D_10, section_name, 10, mode="decks"
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_2D_5, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_2D_Static, 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_2D_Static, 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_2D_8, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_2D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_2D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_2D_10, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_2D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_2D_Static, 10 m/s",  y=1.05)
 
 #lift
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_2D_5, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.025, scoff="lift")
-plt.suptitle(f"MUS_2D_Static, 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_2D_Static, 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_2D_8, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med,upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_2D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_2D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_2D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_2D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_2D_Static, 10 m/s",  y=1.05)
 
 #pitch
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_2D_5, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_2D_Static, 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_2D_Static, 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_2D_8, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_2D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_2D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_2D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_2D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_2D_Static, 10 m/s",  y=1.05)
 
 
 #%%  Filter and plot ALT 2
@@ -1438,14 +1438,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_single_9, static_coeff_MUS_2D_5,
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                              scoff = "drag")                        
-plt.gcf().suptitle(f"2D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MUS ",  y=1.05)
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_2D_6,
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                                 scoff = "drag")                        
-plt.gcf().suptitle(f"2D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MDS ",  y=1.05)
 
 #lift
 #MUS
@@ -1453,27 +1453,27 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_single_9, static_coeff_MUS_2D_5,
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                             scoff = "lift")                        
-plt.gcf().suptitle(f"2D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MUS  ",  y=1.05)
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9,static_coeff_MDS_2D_6,
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                                scoff = "lift")                        
-plt.gcf().suptitle(f"2D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MDS  ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_2D_5,
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                               scoff = "pitch")                        
-plt.gcf().suptitle(f"2D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_2D_6,
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                           scoff = "pitch")                        
-plt.gcf().suptitle(f"2D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MDS  ",  y=1.05)
 
 #MEAN
 #drag
@@ -1482,39 +1482,39 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_single_9, static_coeff_MUS_2D_5,
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                            scoff = "drag")                        
-plt.gcf().suptitle(f"2D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MUS ",  y=1.05)
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_2D_6,
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                               scoff = "drag")                        
-plt.gcf().suptitle(f"2D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MDS  ",  y=1.05)
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_2D_5,
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"2D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_2D_6,
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"2D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MDS ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_2D_5,
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                                 scoff = "pitch")                        
-plt.gcf().suptitle(f"2D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_2D_6,
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                                scoff = "pitch")                        
-plt.gcf().suptitle(f"2D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"2D: MDS ",  y=1.05)
 
 
 # %% Compare all experiments (Wind speed) filtered
@@ -1627,13 +1627,13 @@ exp0_MDS_3D, exp1_MDS_3D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 exp0_MDS_3D.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ",  y=1.05)
 exp1_MDS_3D_6.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s - ",  y=1.05)
 exp1_MDS_3D_8.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ",  y=1.05)
 exp1_MDS_3D_10.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ",  y=1.05)
 
 exp0_MDS_3D.filt_forces(6, 2)
 exp1_MDS_3D_6.filt_forces(6, 2)
@@ -1641,13 +1641,13 @@ exp1_MDS_3D_8.filt_forces(6, 2)
 exp1_MDS_3D_10.filt_forces(6, 2)
 
 exp0_MDS_3D.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_3D_6.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_3D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_3D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter",  y=1.05)
 plt.show()
 
 
@@ -1667,35 +1667,35 @@ plot_static_coeff_summary(static_coeff_MDS_3D_10, section_name, 10, mode="decks"
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_3D_6, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_3D_Static, 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_3D_Static, 6 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_3D_8, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_3D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_3D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_3D_10, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_3D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_3D_Static, 10 m/s",  y=1.05)
 
 #lift
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_3D_6, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_3D_Static, 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_3D_Static, 6 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_3D_8, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_3D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_3D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_3D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_3D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_3D_Static, 10 m/s",  y=1.05)
 
 #pitch
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_3D_6, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_3D_Static, 6 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_3D_Static, 6 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_3D_8, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_3D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_3D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_3D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_3D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_3D_Static, 10 m/s",  y=1.05)
 
 
 
@@ -1724,13 +1724,13 @@ exp0_MUS_3D, exp1_MUS_3D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 exp0_MUS_3D.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ",  y=1.05)
 exp1_MUS_3D_5.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - ",  y=1.05)
 exp1_MUS_3D_8.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ",  y=1.05)
 exp1_MUS_3D_10.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ",  y=1.05)
 
 exp0_MUS_3D.filt_forces(6, 2)
 exp1_MUS_3D_5.filt_forces(6, 2)
@@ -1738,13 +1738,13 @@ exp1_MUS_3D_8.filt_forces(6, 2)
 exp1_MUS_3D_10.filt_forces(6, 2)
 
 exp0_MUS_3D.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_3D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_3D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_3D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter",  y=1.05)
 plt.show()
 
 
@@ -1764,35 +1764,35 @@ plot_static_coeff_summary(static_coeff_MUS_3D_10, section_name, 10, mode="decks"
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_3D_5, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_3D_Static, 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_3D_Static, 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_3D_8, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_3D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_3D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_3D_10, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_3D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_3D_Static, 10 m/s",  y=1.05)
 
 #lift
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_3D_5, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_3D_Static, 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_3D_Static, 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_3D_8, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med,upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_3D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_3D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_3D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_3D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_3D_Static, 10 m/s",  y=1.05)
 
 #pitch
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_3D_5, threshold=0.005, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.005, scoff="pitch")
-plt.suptitle(f"MUS_3D_Static, 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_3D_Static, 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_3D_8, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_3D_Static, 8 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_3D_Static, 8 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_3D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_3D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_3D_Static, 10 m/s",  y=1.05)
 
 
 #%%  Filter and plot ALT 2
@@ -2163,14 +2163,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_single_9, static_coeff_MUS_3D_5,
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                              scoff = "drag")                        
-plt.gcf().suptitle(f"3D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS ",  y=1.05)
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_3D_6,
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                                 scoff = "drag")                        
-plt.gcf().suptitle(f"3D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS ",  y=1.05)
 
 #lift
 #MUS
@@ -2178,27 +2178,27 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_single_9, static_coeff_MUS_3D_5,
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                             scoff = "lift")                        
-plt.gcf().suptitle(f"3D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS  ",  y=1.05)
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9,static_coeff_MDS_3D_6,
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                                scoff = "lift")                        
-plt.gcf().suptitle(f"3D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS  ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_3D_5,
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                               scoff = "pitch")                        
-plt.gcf().suptitle(f"3D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_3D_6,
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                           scoff = "pitch")                        
-plt.gcf().suptitle(f"3D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS  ",  y=1.05)
 
 #MEAN
 #drag
@@ -2207,39 +2207,39 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_single_9, static_coeff_MUS_3D_5,
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                            scoff = "drag")                        
-plt.gcf().suptitle(f"3D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS ",  y=1.05)
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_3D_6,
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                               scoff = "drag")                        
-plt.gcf().suptitle(f"3D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS  ",  y=1.05)
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_3D_5,
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"3D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_3D_6,
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"3D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_3D_5,
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                                 scoff = "pitch")                        
-plt.gcf().suptitle(f"3D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_3D_6,
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                                scoff = "pitch")                        
-plt.gcf().suptitle(f"3D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS ",  y=1.05)
 
 
 # %% Compare all experiments (Wind speed) filtered
@@ -2249,14 +2249,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_single_9_filtered, static_coeff_MUS_3D_5_filtered,
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                              scoff = "drag")                        
-plt.gcf().suptitle(f"3D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS  ",  y=1.05)
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_3D_6_filtered,
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                                 scoff = "drag")                        
-plt.gcf().suptitle(f"3D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS  ",  y=1.05)
 
 #lift
 #MUS
@@ -2264,27 +2264,27 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_single_9_filtered, static_coeff_MUS_3D_5_filtered,
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                             scoff = "lift")                        
-plt.gcf().suptitle(f"3D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS  ",  y=1.05)
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_3D_6_filtered,
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                                scoff = "lift")                        
-plt.gcf().suptitle(f"3D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS  ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_3D_5_filtered,
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                               scoff = "pitch")                        
-plt.gcf().suptitle(f"3D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_3D_6_filtered,
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                           scoff = "pitch")                        
-plt.gcf().suptitle(f"3D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS ",  y=1.05)
 
 #MEAN
 #drag
@@ -2293,39 +2293,39 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_single_9_filtered, static_coeff_MUS_3D_5_filtered,
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                            scoff = "drag")                        
-plt.gcf().suptitle(f"3D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS  ",  y=1.05)
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_3D_6_filtered,
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                               scoff = "drag")                        
-plt.gcf().suptitle(f"3D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS  ",  y=1.05)
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_3D_5_filtered,
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"3D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_3D_6_filtered,
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"3D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_3D_5_filtered,
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                                 scoff = "pitch")                        
-plt.gcf().suptitle(f"3D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_3D_6_filtered,
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                                scoff = "pitch")                        
-plt.gcf().suptitle(f"3D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"3D: MDS  ",  y=1.05)
 
 
 
@@ -2349,13 +2349,13 @@ exp0_MDS_4D, exp1_MDS_4D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 exp0_MDS_4D.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ",  y=1.05)
 exp1_MDS_4D_55.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - ",  y=1.05)
 exp1_MDS_4D_85.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ",  y=1.05)
 exp1_MDS_4D_10.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ",  y=1.05)
 
 exp0_MDS_4D.filt_forces(6, 2)
 exp1_MDS_4D_55.filt_forces(6, 2)
@@ -2363,13 +2363,13 @@ exp1_MDS_4D_85.filt_forces(6, 2)
 exp1_MDS_4D_10.filt_forces(6, 2)
 
 exp0_MDS_4D.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_4D_55.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_4D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_4D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter",  y=1.05)
 plt.show()
 
 
@@ -2389,35 +2389,35 @@ plot_static_coeff_summary(static_coeff_MDS_4D_10, section_name, 10, mode="decks"
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_4D_55, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_4D_Static, 5.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_4D_Static, 5.5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_4D_85, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_4D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_4D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_4D_10, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_4D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_4D_Static, 10 m/s",  y=1.05)
 
 #lift
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_4D_55, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_4D_Static, 5.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_4D_Static, 5.5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_4D_85, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_4D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_4D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_4D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_4D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_4D_Static, 10 m/s",  y=1.05)
 
 #pitch
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_4D_55, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_4D_Static, 5.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_4D_Static, 5.5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_4D_85, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_4D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_4D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_4D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_4D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_4D_Static, 10 m/s",  y=1.05)
 
 
 
@@ -2444,13 +2444,13 @@ exp0_MUS_4D, exp1_MUS_4D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 exp0_MUS_4D.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ",  y=1.05)
 exp1_MUS_4D_5.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - ",  y=1.05)
 exp1_MUS_4D_85.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - ",  y=1.05)
 exp1_MUS_4D_10.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ",  y=1.05)
 
 exp0_MUS_4D.filt_forces(6, 2)
 exp1_MUS_4D_5.filt_forces(6, 2)
@@ -2458,13 +2458,13 @@ exp1_MUS_4D_85.filt_forces(6, 2)
 exp1_MUS_4D_10.filt_forces(6, 2)
 
 exp0_MUS_4D.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_4D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_4D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_4D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter",  y=1.05)
 plt.show()
 
 
@@ -2484,35 +2484,35 @@ plot_static_coeff_summary(static_coeff_MUS_4D_10, section_name, 10, mode="decks"
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_4D_5, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_4D_Static, 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_4D_Static, 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_4D_85, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_4D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_4D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_4D_10, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_4D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_4D_Static, 10 m/s",  y=1.05)
 
 #lift
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_4D_5, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_4D_Static, 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_4D_Static, 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_4D_85, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med,upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_4D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_4D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_4D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_4D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_4D_Static, 10 m/s",  y=1.05)
 
 #pitch
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_4D_5, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_4D_Static, 5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_4D_Static, 5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_4D_85, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_4D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_4D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_4D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_4D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_4D_Static, 10 m/s",  y=1.05)
 
 
 #%%  Filter and plot ALT 2
@@ -2883,14 +2883,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_single_9, static_coeff_MUS_4D_5,
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                              scoff = "drag")                        
-plt.gcf().suptitle(f"4D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS ",  y=1.05)
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_4D_55,
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                                 scoff = "drag")                        
-plt.gcf().suptitle(f"4D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS ",  y=1.05)
 
 #lift
 #MUS
@@ -2898,27 +2898,27 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_single_9, static_coeff_MUS_4D_5,
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                             scoff = "lift")                        
-plt.gcf().suptitle(f"4D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS  ",  y=1.05)
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9,static_coeff_MDS_4D_55,
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                                scoff = "lift")                        
-plt.gcf().suptitle(f"4D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS  ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_4D_5,
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                               scoff = "pitch")                        
-plt.gcf().suptitle(f"4D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_4D_55,
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                           scoff = "pitch")                        
-plt.gcf().suptitle(f"4D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS  ",  y=1.05)
 
 #MEAN
 #drag
@@ -2927,39 +2927,39 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_single_9, static_coeff_MUS_4D_5,
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                            scoff = "drag")                        
-plt.gcf().suptitle(f"4D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS ",  y=1.05)
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_4D_55,
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                               scoff = "drag")                        
-plt.gcf().suptitle(f"4D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS  ",  y=1.05)
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_4D_5,
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"4D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_4D_55,
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"4D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_4D_5,
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                                 scoff = "pitch")                        
-plt.gcf().suptitle(f"4D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_4D_55,
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                                scoff = "pitch")                        
-plt.gcf().suptitle(f"4D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS ",  y=1.05)
 
 # %% Compare all experiments (Wind speed) filtered
 #drag
@@ -2968,14 +2968,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_single_9_filtered, static_coeff_MUS_4D_5_filtered,
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                              scoff = "drag")                        
-plt.gcf().suptitle(f"4D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS  ",  y=1.05)
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_4D_55_filtered,
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                                 scoff = "drag")                        
-plt.gcf().suptitle(f"4D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS  ",  y=1.05)
 
 #lift
 #MUS
@@ -2983,27 +2983,27 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_single_9_filtered, static_coeff_MUS_4D_5_filtered,
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                             scoff = "lift")                        
-plt.gcf().suptitle(f"4D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS  ",  y=1.05)
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_4D_55_filtered,
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                                scoff = "lift")                        
-plt.gcf().suptitle(f"4D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS  ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_4D_5_filtered,
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                               scoff = "pitch")                        
-plt.gcf().suptitle(f"4D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_4D_55_filtered,
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                           scoff = "pitch")                        
-plt.gcf().suptitle(f"4D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS ",  y=1.05)
 
 #MEAN
 #drag
@@ -3012,39 +3012,39 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_single_9_filtered, static_coeff_MUS_4D_5_filtered,
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                            scoff = "drag")                        
-plt.gcf().suptitle(f"4D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS  ",  y=1.05)
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_4D_55_filtered,
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                               scoff = "drag")                        
-plt.gcf().suptitle(f"4D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS  ",  y=1.05)
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_4D_5_filtered,
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"4D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_4D_55_filtered,
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                               scoff = "lift")                        
-plt.gcf().suptitle(f"4D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_4D_5_filtered,
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                                 scoff = "pitch")                        
-plt.gcf().suptitle(f"4D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_4D_55_filtered,
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                                scoff = "pitch")                        
-plt.gcf().suptitle(f"4D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"4D: MDS  ",  y=1.05)
 
 
 
@@ -3068,13 +3068,13 @@ exp0_MDS_5D, exp1_MDS_5D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 exp0_MDS_5D.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ",  y=1.05)
 exp1_MDS_5D_55.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 5.5 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 5.5 m/s - ",  y=1.05)
 exp1_MDS_5D_85.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s - ",  y=1.05)
 exp1_MDS_5D_10.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ",  y=1.05)
 
 exp0_MDS_5D.filt_forces(6, 2)
 exp1_MDS_5D_55.filt_forces(6, 2)
@@ -3082,13 +3082,13 @@ exp1_MDS_5D_85.filt_forces(6, 2)
 exp1_MDS_5D_10.filt_forces(6, 2)
 
 exp0_MDS_5D.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_5D_55.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 5.5 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 5.5 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_5D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MDS_5D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter",  y=1.05)
 plt.show()
 
 
@@ -3107,35 +3107,35 @@ plot_static_coeff_summary(static_coeff_MDS_5D_10, section_name, 10, mode="decks"
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_5D_55, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_5D_Static, 5.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_5D_Static, 5.5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_5D_85, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_5D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_5D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_5D_10, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="drag")
-plt.suptitle(f"MDS_5D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_5D_Static, 10 m/s",  y=1.05)
 
 #lift
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_5D_55, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_5D_Static, 5.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_5D_Static, 5.5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_5D_85, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_5D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_5D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_5D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="lift")
-plt.suptitle(f"MDS_5D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_5D_Static, 10 m/s",  y=1.05)
 
 #pitch
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_5D_55, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_5D_Static, 5.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_5D_Static, 5.5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MDS_5D_85, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_5D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_5D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MDS_5D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=False, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MDS_5D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MDS_5D_Static, 10 m/s",  y=1.05)
 
 
 
@@ -3163,13 +3163,13 @@ exp0_MUS_5D, exp1_MUS_5D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 exp0_MUS_5D.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - ",  y=1.05)
 exp1_MUS_5D_45.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 4.5 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 4.5 m/s - ",  y=1.05)
 exp1_MUS_5D_85.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s - ",  y=1.05)
 exp1_MUS_5D_10.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - ",  y=1.05)
 
 exp0_MUS_5D.filt_forces(6, 2)
 exp1_MUS_5D_45.filt_forces(6, 2)
@@ -3177,13 +3177,13 @@ exp1_MUS_5D_85.filt_forces(6, 2)
 exp1_MUS_5D_10.filt_forces(6, 2)
 
 exp0_MUS_5D.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_5D_45.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 4.5 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 4.5 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_5D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s - With Butterworth low-pass filter",  y=1.05)
 exp1_MUS_5D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s - With Butterworth low-pass filter",  y=1.05)
 plt.show()
 
 
@@ -3203,35 +3203,35 @@ plot_static_coeff_summary(static_coeff_MUS_5D_10, section_name, 10, mode="decks"
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_5D_45, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_5D_Static, 4.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_5D_Static, 4.5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_5D_85, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_5D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_5D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_5D_10, threshold=0.0205, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS_5D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_5D_Static, 10 m/s",  y=1.05)
 
 #lift
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_5D_45, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_5D_Static, 4.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_5D_Static, 4.5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_5D_85, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med,upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_5D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_5D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_5D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS_5D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_5D_Static, 10 m/s",  y=1.05)
 
 #pitch
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_5D_45, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_5D_Static, 4.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_5D_Static, 4.5 m/s",  y=1.05)
 alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_5D_85, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_5D_Static, 8.5 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_5D_Static, 8.5 m/s",  y=1.05)
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_5D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS_5D_Static, 10 m/s", fontsize=16, y=1.05)
+plt.suptitle(f"MUS_5D_Static, 10 m/s",  y=1.05)
 
 
 #%%  Filter and plot ALT 2
@@ -3602,14 +3602,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_single_9, static_coeff_MUS_5D_45,
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                              scoff = "drag")                        
-plt.gcf().suptitle(f"5D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS ",  y=1.05)
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_5D_55,
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                                 scoff = "drag")                        
-plt.gcf().suptitle(f"5D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS ",  y=1.05)
 
 #lift
 #MUS
@@ -3617,27 +3617,27 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_single_9, static_coeff_MUS_5D_45,
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                             scoff = "lift")                        
-plt.gcf().suptitle(f"5D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS  ",  y=1.05)
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9,static_coeff_MDS_5D_55,
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                                scoff = "lift")                        
-plt.gcf().suptitle(f"5D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS  ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_5D_45,
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                               scoff = "pitch")                        
-plt.gcf().suptitle(f"5D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_5D_55,
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                           scoff = "pitch")                        
-plt.gcf().suptitle(f"5D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS  ",  y=1.05)
 
 #MEAN
 #drag
@@ -3646,39 +3646,39 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_single_9, static_coeff_MUS_5D_45,
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                            scoff = "drag")                        
-plt.gcf().suptitle(f"5D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS ",  y=1.05)
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_5D_55,
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                               scoff = "drag")                        
-plt.gcf().suptitle(f"5D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS  ",  y=1.05)
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_5D_45,
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"5D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_5D_55,
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"5D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MUS_5D_45,
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                                 scoff = "pitch")                        
-plt.gcf().suptitle(f"5D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS  ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_5D_55,
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                                scoff = "pitch")                        
-plt.gcf().suptitle(f"5D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS ",  y=1.05)
 
 
 # %% Compare all experiments (Wind speed) filtered
@@ -3688,14 +3688,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_single_9_filtered, static_coeff_MUS_5D_45_filtered,
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                              scoff = "drag")                        
-plt.gcf().suptitle(f"5D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS  ",  y=1.05)
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_5D_55_filtered,
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                                 scoff = "drag")                        
-plt.gcf().suptitle(f"5D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS  ",  y=1.05)
 
 #lift
 #MUS
@@ -3703,27 +3703,27 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_single_9_filtered, static_coeff_MUS_5D_45_filtered,
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                             scoff = "lift")                        
-plt.gcf().suptitle(f"5D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS  ",  y=1.05)
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_5D_55_filtered,
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                                scoff = "lift")                        
-plt.gcf().suptitle(f"5D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS  ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_5D_45_filtered,
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                               scoff = "pitch")                        
-plt.gcf().suptitle(f"5D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_5D_55_filtered,
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                           scoff = "pitch")                        
-plt.gcf().suptitle(f"5D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS ",  y=1.05)
 
 #MEAN
 #drag
@@ -3732,39 +3732,39 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_single_9_filtered, static_coeff_MUS_5D_45_filtered,
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                            scoff = "drag")                        
-plt.gcf().suptitle(f"5D: MUS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS  ",  y=1.05)
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_5D_55_filtered,
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                               scoff = "drag")                        
-plt.gcf().suptitle(f"5D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS  ",  y=1.05)
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_5D_45_filtered,
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                                 scoff = "lift")                        
-plt.gcf().suptitle(f"5D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_5D_55_filtered,
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                               scoff = "lift")                        
-plt.gcf().suptitle(f"5D: MDS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS ",  y=1.05)
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MUS_5D_45_filtered,
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                                 scoff = "pitch")                        
-plt.gcf().suptitle(f"5D: MUS ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MUS ",  y=1.05)
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_5D_55_filtered,
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                                scoff = "pitch")                        
-plt.gcf().suptitle(f"5D: MDS  ", fontsize=16, y=1.05)
+plt.gcf().suptitle(f"5D: MDS  ",  y=1.05)
 
 ##########################################################################333
 
