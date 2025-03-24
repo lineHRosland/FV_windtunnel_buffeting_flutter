@@ -133,17 +133,24 @@ class AerodynamicDerivative4x4:
                 ax.set_xlabel(r"Reduced velocity $\hat{V}$")
                 ax.grid(True)
                 ax.legend()
-                
+
+            #Eneste plottingen som er endret    
             elif mode == "total":
                 ax.plot(self.reduced_velocities,self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
                 ax.set_ylabel(("$" + self.label + "$"))
                 ax.set_xlabel(r"Reduced velocity $\hat{V}$")
                 ax.grid(True)
-            #plt.tight_layout()
                 
         elif conv == "zasso" and len(self.reduced_velocities) != 0:
-            damping_ads =["c_{V_1V_1}^*", "c_{V_1R_1}^*", "c_{V_1V_2}^*", "c_{V_1R_2}^*", "c_{R_1V_1}^*", "c_{R_1R_1}^*", "c_{R_1V_2}^*", "c_{R_1R_2}^*","c_{V_2V_1}^*", "c_{V_2R_1}^*", "c_{V_2V_2}^*", "c_{V_2R_2}^*", "c_{R_2V_1}^*", "c_{R_2R_1}^*", "c_{R_2V_2}^*", "c_{R_2R_2}^*"]
-            stiffness_ads =["k_{V_1V_1}^*", "k_{V_1R_1}^*", "k_{V_1V_2}^*", "k_{V_1R_2}^*","k_{R_1V_1}^*", "k_{R_1R_1}^*", "k_{R_1V_2}^*", "k_{R_1R_2}^*","k_{V_2V_1}^*", "k_{V_2R_1}^*", "k_{V_2V_2}^*", "k_{V_2R_2}^*","k_{R_2V_1}^*", "k_{R_2R_1}^*", "k_{R_2V_2}^*", "k_{R_2R_2}^*"]
+            damping_ads = ["c_{z_1z_1}^*", "c_{z_1\\theta_1}^*", "c_{z_1z_2}^*", "c_{z_1\\theta_2}^*", 
+                        "c_{\\theta_1z_1}^*", "c_{\\theta_1\\theta_1}^*", "c_{\\theta_1z_2}^*", "c_{\\theta_1\\theta_2}^*",
+                        "c_{z_2z_1}^*", "c_{z_2\\theta_1}^*", "c_{z_2z_2}^*", "c_{z_2\\theta_2}^*", 
+                        "c_{\\theta_2z_1}^*", "c_{\\theta_2\\theta_1}^*", "c_{\\theta_2z_2}^*", "c_{\\theta_2\\theta_2}^*"]
+
+            stiffness_ads = ["k_{z_1z_1}^*", "k_{z_1\\theta_1}^*", "k_{z_1z_2}^*", "k_{z_1\\theta_2}^*", 
+                            "k_{\\theta_1z_1}^*", "k_{\\theta_1\\theta_1}^*", "k_{\\theta_1z_2}^*", "k_{\\theta_1\\theta_2}^*",
+                            "k_{z_2z_1}^*", "k_{z_2\\theta_1}^*", "k_{z_2z_2}^*", "k_{z_2\\theta_2}^*", 
+                            "k_{\\theta_2z_1}^*", "k_{\\theta_2\\theta_1}^*", "k_{\\theta_2z_2}^*", "k_{\\theta_2\\theta_2}^*"]
              
             if self.label in damping_ads:
                 factor = 1.0/self.reduced_velocities
@@ -211,14 +218,15 @@ class AerodynamicDerivatives4x4:
     
     """
     def __init__(self, 
-                 c_V1V1=None, c_V1R1=None, c_V1V2=None, c_V1R2=None,
-                 c_R1V1=None, c_R1R1=None, c_R1V2=None, c_R1R2=None,
-                 c_V2V1=None, c_V2R1=None, c_V2V2=None, c_V2R2=None,
-                 c_R2V1=None, c_R2R1=None, c_R2V2=None, c_R2R2=None,
-                 k_V1V1=None, k_V1R1=None, k_V1V2=None, k_V1R2=None,
-                 k_R1V1=None, k_R1R1=None, k_R1V2=None, k_R1R2=None,
-                 k_V2V1=None, k_V2R1=None, k_V2V2=None, k_V2R2=None,
-                 k_R2V1=None, k_R2R1=None, k_R2V2=None, k_R2R2=None):
+                 c_z1z1=None, c_z1theta1=None, c_z1z2=None, c_z1theta2=None,
+                 c_theta1z1=None, c_theta1theta1=None, c_theta1z2=None, c_theta1theta2=None,
+                 c_z2z1=None, c_z2theta1=None, c_z2z2=None, c_z2theta2=None,
+                 c_theta2z1=None, c_theta2theta1=None, c_theta2z2=None, c_theta2theta2=None,
+                 k_z1z1=None, k_z1theta1=None, k_z1z2=None, k_z1theta2=None,
+                 k_theta1z1=None, k_theta1theta1=None, k_theta1z2=None, k_theta1theta2=None,
+                 k_z2z1=None, k_z2theta1=None, k_z2z2=None, k_z2theta2=None,
+                 k_theta2z1=None, k_theta2theta1=None, k_theta2z2=None, k_theta2theta2=None):
+
         """
         parameters:
         ----------
@@ -232,45 +240,46 @@ class AerodynamicDerivatives4x4:
         """
         
         
-        self.c_V1V1 = c_V1V1 or AerodynamicDerivative4x4(label="c_{V_1V_1}^*")
-        self.c_V1R1 = c_V1R1 or AerodynamicDerivative4x4(label="c_{V_1R_1}^*")
-        self.c_V1V2 = c_V1V2 or AerodynamicDerivative4x4(label="c_{V_1V_2}^*")
-        self.c_V1R2 = c_V1R2 or AerodynamicDerivative4x4(label="c_{V_1R_2}^*")
-        
-        self.c_R1V1 = c_R1V1 or AerodynamicDerivative4x4(label="c_{R_1V_1}^*")
-        self.c_R1R1 = c_R1R1 or AerodynamicDerivative4x4(label="c_{R_1R_1}^*")
-        self.c_R1V2 = c_R1V2 or AerodynamicDerivative4x4(label="c_{R_1V_2}^*")
-        self.c_R1R2 = c_R1R2 or AerodynamicDerivative4x4(label="c_{R_1R_2}^*")
-        
-        self.c_V2V1 = c_V2V1 or AerodynamicDerivative4x4(label="c_{V_2V_1}^*")
-        self.c_V2R1 = c_V2R1 or AerodynamicDerivative4x4(label="c_{V_2R_1}^*")
-        self.c_V2V2 = c_V2V2 or AerodynamicDerivative4x4(label="c_{V_2V_2}^*")
-        self.c_V2R2 = c_V2R2 or AerodynamicDerivative4x4(label="c_{V_2R_2}^*")
-        
-        self.c_R2V1 = c_R2V1 or AerodynamicDerivative4x4(label="c_{R_2V_1}^*")
-        self.c_R2R1 = c_R2R1 or AerodynamicDerivative4x4(label="c_{R_2R_1}^*")
-        self.c_R2V2 = c_R2V2 or AerodynamicDerivative4x4(label="c_{R_2V_2}^*")
-        self.c_R2R2 = c_R2R2 or AerodynamicDerivative4x4(label="c_{R_2R_2}^*")
-        
-        self.k_V1V1 = k_V1V1 or AerodynamicDerivative4x4(label="k_{V_1V_1}^*")
-        self.k_V1R1 = k_V1R1 or AerodynamicDerivative4x4(label="k_{V_1R_1}^*")
-        self.k_V1V2 = k_V1V2 or AerodynamicDerivative4x4(label="k_{V_1V_2}^*")
-        self.k_V1R2 = k_V1R2 or AerodynamicDerivative4x4(label="k_{V_1R_2}^*")
-        
-        self.k_R1V1 = k_R1V1 or AerodynamicDerivative4x4(label="k_{R_1V_1}^*")
-        self.k_R1R1 = k_R1R1 or AerodynamicDerivative4x4(label="k_{R_1R_1}^*")
-        self.k_R1V2 = k_R1V2 or AerodynamicDerivative4x4(label="k_{R_1V_2}^*")
-        self.k_R1R2 = k_R1R2 or AerodynamicDerivative4x4(label="k_{R_1R_2}^*")
-        
-        self.k_V2V1 = k_V2V1 or AerodynamicDerivative4x4(label="k_{V_2V_1}^*")
-        self.k_V2R1 = k_V2R1 or AerodynamicDerivative4x4(label="k_{V_2R_1}^*")
-        self.k_V2V2 = k_V2V2 or AerodynamicDerivative4x4(label="k_{V_2V_2}^*")
-        self.k_V2R2 = k_V2R2 or AerodynamicDerivative4x4(label="k_{V_2R_2}^*")
-        
-        self.k_R2V1 = k_R2V1 or AerodynamicDerivative4x4(label="k_{R_2V_1}^*")
-        self.k_R2R1 = k_R2R1 or AerodynamicDerivative4x4(label="k_{R_2R_1}^*")
-        self.k_R2V2 = k_R2V2 or AerodynamicDerivative4x4(label="k_{R_2V_2}^*")
-        self.k_R2R2 = k_R2R2 or AerodynamicDerivative4x4(label="k_{R_2R_2}^*")
+        self.c_z1z1 = c_z1z1 or AerodynamicDerivative4x4(label="c_{z_1z_1}^*")
+        self.c_z1theta1 = c_z1theta1 or AerodynamicDerivative4x4(label="c_{z_1\\theta_1}^*")
+        self.c_z1z2 = c_z1z2 or AerodynamicDerivative4x4(label="c_{z_1z_2}^*")
+        self.c_z1theta2 = c_z1theta2 or AerodynamicDerivative4x4(label="c_{z_1\\theta_2}^*")
+
+        self.c_theta1z1 = c_theta1z1 or AerodynamicDerivative4x4(label="c_{\\theta_1z_1}^*")
+        self.c_theta1theta1 = c_theta1theta1 or AerodynamicDerivative4x4(label="c_{\\theta_1\\theta_1}^*")
+        self.c_theta1z2 = c_theta1z2 or AerodynamicDerivative4x4(label="c_{\\theta_1z_2}^*")
+        self.c_theta1theta2 = c_theta1theta2 or AerodynamicDerivative4x4(label="c_{\\theta_1\\theta_2}^*")
+
+        self.c_z2z1 = c_z2z1 or AerodynamicDerivative4x4(label="c_{z_2z_1}^*")
+        self.c_z2theta1 = c_z2theta1 or AerodynamicDerivative4x4(label="c_{z_2\\theta_1}^*")
+        self.c_z2z2 = c_z2z2 or AerodynamicDerivative4x4(label="c_{z_2z_2}^*")
+        self.c_z2theta2 = c_z2theta2 or AerodynamicDerivative4x4(label="c_{z_2\\theta_2}^*")
+
+        self.c_theta2z1 = c_theta2z1 or AerodynamicDerivative4x4(label="c_{\\theta_2z_1}^*")
+        self.c_theta2theta1 = c_theta2theta1 or AerodynamicDerivative4x4(label="c_{\\theta_2\\theta_1}^*")
+        self.c_theta2z2 = c_theta2z2 or AerodynamicDerivative4x4(label="c_{\\theta_2z_2}^*")
+        self.c_theta2theta2 = c_theta2theta2 or AerodynamicDerivative4x4(label="c_{\\theta_2\\theta_2}^*")
+
+        self.k_z1z1 = k_z1z1 or AerodynamicDerivative4x4(label="k_{z_1z_1}^*")
+        self.k_z1theta1 = k_z1theta1 or AerodynamicDerivative4x4(label="k_{z_1\\theta_1}^*")
+        self.k_z1z2 = k_z1z2 or AerodynamicDerivative4x4(label="k_{z_1z_2}^*")
+        self.k_z1theta2 = k_z1theta2 or AerodynamicDerivative4x4(label="k_{z_1\\theta_2}^*")
+
+        self.k_theta1z1 = k_theta1z1 or AerodynamicDerivative4x4(label="k_{\\theta_1z_1}^*")
+        self.k_theta1theta1 = k_theta1theta1 or AerodynamicDerivative4x4(label="k_{\\theta_1\\theta_1}^*")
+        self.k_theta1z2 = k_theta1z2 or AerodynamicDerivative4x4(label="k_{\\theta_1z_2}^*")
+        self.k_theta1theta2 = k_theta1theta2 or AerodynamicDerivative4x4(label="k_{\\theta_1\\theta_2}^*")
+
+        self.k_z2z1 = k_z2z1 or AerodynamicDerivative4x4(label="k_{z_2z_1}^*")
+        self.k_z2theta1 = k_z2theta1 or AerodynamicDerivative4x4(label="k_{z_2\\theta_1}^*")
+        self.k_z2z2 = k_z2z2 or AerodynamicDerivative4x4(label="k_{z_2z_2}^*")
+        self.k_z2theta2 = k_z2theta2 or AerodynamicDerivative4x4(label="k_{z_2\\theta_2}^*")
+
+        self.k_theta2z1 = k_theta2z1 or AerodynamicDerivative4x4(label="k_{\\theta_2z_1}^*")
+        self.k_theta2theta1 = k_theta2theta1 or AerodynamicDerivative4x4(label="k_{\\theta_2\\theta_1}^*")
+        self.k_theta2z2 = k_theta2z2 or AerodynamicDerivative4x4(label="k_{\\theta_2z_2}^*")
+        self.k_theta2theta2 = k_theta2theta2 or AerodynamicDerivative4x4(label="k_{\\theta_2\\theta_2}^*")
+
 
     
         
@@ -348,7 +357,7 @@ class AerodynamicDerivatives4x4:
             #X-matrise, men bare det som ikke er null --> r_i\dot r_i, i er motion type for testen som behandles
             regressor_matrix = np.vstack((time_derivative_motions[starts[k]:stops[k],motion_type],motions[starts[k]:stops[k],motion_type])).T
 
-            #Pseudoinvers av X-matrise  --> X^+ * q = E            
+            #Pseudoinvers av X-matrise  --> X^+           
             pseudo_inverse_regressor_matrix = spla.pinv(regressor_matrix) 
             selected_forces = np.array([0,2,4])
             
@@ -373,9 +382,11 @@ class AerodynamicDerivatives4x4:
                 #q_x, q_z, q_theta for the cell being considered
                 forces = experiment_in_wind_still_air_forces_removed.forces_global_center[starts[k]:stops[k],selected_forces + 6*m]
                 forces_mean_wind_removed = forces - np.mean(experiment_in_wind_still_air_forces_removed.forces_global_center[0:400,selected_forces + 6*m],axis= 0)
-                                
+
+                #E = X^+ * q
                 coefficient_matrix = pseudo_inverse_regressor_matrix @ forces_mean_wind_removed
                                 
+                #Normalisering av koeffiesienter --> løse ut c^* og k^* fra E-matrisen
                 normalized_coefficient_matrix[:,:,k,m] = np.copy(coefficient_matrix)
                 normalized_coefficient_matrix[0,:,k,m] = normalized_coefficient_matrix[0,:,k,m]*2  / experiment_in_wind_still_air_forces_removed.air_density / mean_wind_speed / reduced_frequency / section_width / section_length
                 normalized_coefficient_matrix[1,:,k,m] = normalized_coefficient_matrix[1,:,k,m]*2  /experiment_in_wind_still_air_forces_removed.air_density / mean_wind_speed**2 / reduced_frequency**2 /section_length
@@ -393,45 +404,45 @@ class AerodynamicDerivatives4x4:
         model_prediction = Experiment(obj1.name, obj1.time, obj1.temperature, obj1.air_density, obj1.wind_speed,[],forces_predicted_by_ads,obj2.motion)
                  
         
-        c_V1V1 = AerodynamicDerivative4x4()
-        c_V1R1 = AerodynamicDerivative4x4()
-        c_V1V2 = AerodynamicDerivative4x4()
-        c_V1R2 = AerodynamicDerivative4x4()
+        c_z1z1 = AerodynamicDerivative4x4()
+        c_z1theta1 = AerodynamicDerivative4x4()
+        c_z1z2 = AerodynamicDerivative4x4()
+        c_z1theta2 = AerodynamicDerivative4x4()
         
-        c_R1V1 = AerodynamicDerivative4x4()
-        c_R1R1 = AerodynamicDerivative4x4()
-        c_R1V2 = AerodynamicDerivative4x4()
-        c_R1R2 = AerodynamicDerivative4x4()
+        c_theta1z1 = AerodynamicDerivative4x4()
+        c_theta1theta1 = AerodynamicDerivative4x4()
+        c_theta1z2 = AerodynamicDerivative4x4()
+        c_theta1theta2 = AerodynamicDerivative4x4()
         
-        c_V2V1 = AerodynamicDerivative4x4()
-        c_V2R1 = AerodynamicDerivative4x4()
-        c_V2V2 = AerodynamicDerivative4x4()
-        c_V2R2 = AerodynamicDerivative4x4()
+        c_z2z1 = AerodynamicDerivative4x4()
+        c_z2theta1 = AerodynamicDerivative4x4()
+        c_z2z2 = AerodynamicDerivative4x4()
+        c_z2theta2 = AerodynamicDerivative4x4()
         
-        c_R2V1 = AerodynamicDerivative4x4()
-        c_R2R1 = AerodynamicDerivative4x4()
-        c_R2V2 = AerodynamicDerivative4x4()
-        c_R2R2 = AerodynamicDerivative4x4()
+        c_theta2z1 = AerodynamicDerivative4x4()
+        c_theta2theta1 = AerodynamicDerivative4x4()
+        c_theta2z2 = AerodynamicDerivative4x4()
+        c_theta2theta2 = AerodynamicDerivative4x4()
         
-        k_V1V1 = AerodynamicDerivative4x4()
-        k_V1R1 = AerodynamicDerivative4x4()
-        k_V1V2 = AerodynamicDerivative4x4()
-        k_V1R2 = AerodynamicDerivative4x4()
+        k_z1z1 = AerodynamicDerivative4x4()
+        k_z1theta1 = AerodynamicDerivative4x4()
+        k_z1z2 = AerodynamicDerivative4x4()
+        k_z1theta2 = AerodynamicDerivative4x4()
         
-        k_R1V1 = AerodynamicDerivative4x4()
-        k_R1R1 = AerodynamicDerivative4x4()
-        k_R1V2 = AerodynamicDerivative4x4()
-        k_R1R2 = AerodynamicDerivative4x4()
+        k_theta1z1 = AerodynamicDerivative4x4()
+        k_theta1theta1 = AerodynamicDerivative4x4()
+        k_theta1z2 = AerodynamicDerivative4x4()
+        k_theta1theta2 = AerodynamicDerivative4x4()
         
-        k_V2V1 = AerodynamicDerivative4x4()
-        k_V2R1 = AerodynamicDerivative4x4()
-        k_V2V2 = AerodynamicDerivative4x4()
-        k_V2R2 = AerodynamicDerivative4x4()
+        k_z2z1 = AerodynamicDerivative4x4()
+        k_z2theta1 = AerodynamicDerivative4x4()
+        k_z2z2 = AerodynamicDerivative4x4()
+        k_z2theta2 = AerodynamicDerivative4x4()
         
-        k_R2V1 = AerodynamicDerivative4x4()
-        k_R2R1 = AerodynamicDerivative4x4()
-        k_R2V2 = AerodynamicDerivative4x4()
-        k_R2R2 = AerodynamicDerivative4x4()
+        k_theta2z1 = AerodynamicDerivative4x4()
+        k_theta2theta1 = AerodynamicDerivative4x4()
+        k_theta2z2 = AerodynamicDerivative4x4()
+        k_theta2theta2 = AerodynamicDerivative4x4()
           
 
         if upstream_in_rig == True:    
@@ -440,36 +451,36 @@ class AerodynamicDerivatives4x4:
             elif motion_type == 1:
                 mat = 0 # C(damping)
                 col = 1
-                c_V1V1 = AerodynamicDerivative4x4("c_{V_1V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
-                c_V2V1 = AerodynamicDerivative4x4("c_{V_2V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_z1z1 = AerodynamicDerivative4x4("c_{z_1z_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_z2z1 = AerodynamicDerivative4x4("c_{z_2z_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
                 col = 2
-                c_R1V1 = AerodynamicDerivative4x4("c_{R_1V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
-                c_R2V1 = AerodynamicDerivative4x4("c_{R_2V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_theta1z1 = AerodynamicDerivative4x4("c_{\\theta_1z_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_theta2z1 = AerodynamicDerivative4x4("c_{\\theta_2z_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
 
                 mat = 1 # K(stiffness)
                 col = 1
-                k_V1V1 = AerodynamicDerivative4x4("k_{V_1V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
-                k_V2V1 = AerodynamicDerivative4x4("k_{V_2V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_z1z1 = AerodynamicDerivative4x4("k_{z_1z_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_z2z1 = AerodynamicDerivative4x4("k_{z_2z_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
                 col = 2
-                k_R1V1 = AerodynamicDerivative4x4("k_{R_1V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
-                k_R2V1 = AerodynamicDerivative4x4("k_{R_2V_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_theta1z1 = AerodynamicDerivative4x4("k_{\\theta_1z_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_theta2z1 = AerodynamicDerivative4x4("k_{\\theta_2z_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
 
             elif motion_type == 2:
                 mat = 0 # C(damping)
                 col = 1
-                c_V1R1 = AerodynamicDerivative4x4("c_{V_1R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
-                c_V2R1 = AerodynamicDerivative4x4("c_{V_2R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_z1theta1 = AerodynamicDerivative4x4("c_{z_1\\theta_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_z2theta1 = AerodynamicDerivative4x4("c_{z_2\\theta_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
                 col = 2
-                c_R1R1 = AerodynamicDerivative4x4("c_{R_1R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
-                c_R2R1 = AerodynamicDerivative4x4("c_{R_2R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_theta1theta1 = AerodynamicDerivative4x4("c_{\\theta_1\\theta_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_theta2theta1 = AerodynamicDerivative4x4("c_{\\theta_2\\theta_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
 
                 mat = 1 # K(stiffness)
                 col = 1
-                k_V1R1 = AerodynamicDerivative4x4("k_{V_1R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
-                k_V2R1 = AerodynamicDerivative4x4("k_{V_2R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_z1theta1 = AerodynamicDerivative4x4("k_{z_1\\theta_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_z2theta1 = AerodynamicDerivative4x4("k_{z_2\\theta_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
                 col = 2
-                k_R1R1 = AerodynamicDerivative4x4("k_{R_1R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
-                k_R2R1 = AerodynamicDerivative4x4("k_{R_2R_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_theta1theta1 = AerodynamicDerivative4x4("k_{\\theta_1\\theta_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_theta2theta1 = AerodynamicDerivative4x4("k_{\\theta_2\\theta_1}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
                         
         elif upstream_in_rig == False:
             if motion_type == 0:
@@ -477,38 +488,38 @@ class AerodynamicDerivatives4x4:
             elif motion_type == 1:
                 mat = 0 #C(damping)
                 col = 1
-                c_V1V2 = AerodynamicDerivative4x4("c_{V_1V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
-                c_V2V2 = AerodynamicDerivative4x4("c_{V_2V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_z1z2 = AerodynamicDerivative4x4("c_{z_1z_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_z2z2 = AerodynamicDerivative4x4("c_{z_2z_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
                 col = 2
-                c_R1V2 = AerodynamicDerivative4x4("c_{R_1V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
-                c_R2V2 = AerodynamicDerivative4x4("c_{R_2V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_theta1z2 = AerodynamicDerivative4x4("c_{\\theta_1z_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_theta2z2 = AerodynamicDerivative4x4("c_{\\theta_2z_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
 
                 mat = 1 #K(stiffness)
                 col = 1
-                k_V1V2 = AerodynamicDerivative4x4("k_{V_1V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
-                k_V2V2 = AerodynamicDerivative4x4("k_{V_2V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_z1z2 = AerodynamicDerivative4x4("k_{z_1z_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_z2z2 = AerodynamicDerivative4x4("k_{z_2z_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
                 col = 2
-                k_R1V2 = AerodynamicDerivative4x4("k_{R_1V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
-                k_R2V2 = AerodynamicDerivative4x4("k_{R_2V_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_theta1z2 = AerodynamicDerivative4x4("k_{\\theta_1z_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_theta2z2 = AerodynamicDerivative4x4("k_{\\theta_2z_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
 
             elif motion_type == 2:
                 mat = 0 #C(damping)
                 col = 1
-                c_V1R2 = AerodynamicDerivative4x4("c_{V_1R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
-                c_V2R2 = AerodynamicDerivative4x4("c_{V_2R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_z1theta2 = AerodynamicDerivative4x4("c_{z_1\\theta_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_z2theta2 = AerodynamicDerivative4x4("c_{z_2\\theta_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
                 col = 2
-                c_R1R2 = AerodynamicDerivative4x4("c_{R_1R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
-                c_R2R2 = AerodynamicDerivative4x4("c_{R_2R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                c_theta1theta2 = AerodynamicDerivative4x4("c_{\\theta_1\\theta_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                c_theta2theta2 = AerodynamicDerivative4x4("c_{\\theta_2\\theta_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
 
                 mat = 1 #K(stiffness)
                 col = 1
-                k_V1R2 = AerodynamicDerivative4x4("k_{V_1R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
-                k_V2R2 = AerodynamicDerivative4x4("k_{V_2R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
+                k_z1theta2 = AerodynamicDerivative4x4("k_{z_1\\theta_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_z2theta2 = AerodynamicDerivative4x4("k_{z_2\\theta_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)
                 col = 2
-                k_R1R2 = AerodynamicDerivative4x4("k_{R_1R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
-                k_R2R2 = AerodynamicDerivative4x4("k_{R_2R_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)   
+                k_theta1theta2 = AerodynamicDerivative4x4("k_{\\theta_1\\theta_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 2], normalized_coefficient_matrix[mat, col, :, 3], mean_wind_speeds, frequencies_of_motion)
+                k_theta2theta2 = AerodynamicDerivative4x4("k_{\\theta_2\\theta_2}^*", reduced_velocities, normalized_coefficient_matrix[mat, col, :, 0], normalized_coefficient_matrix[mat, col, :, 1], mean_wind_speeds, frequencies_of_motion)   
 
-        return cls(c_V1V1, c_V1R1, c_V1V2, c_V1R2, c_R1V1, c_R1R1, c_R1V2, c_R1R2, c_V2V1, c_V2R1, c_V2V2, c_V2R2, c_R2V1, c_R2R1, c_R2V2, c_R2R2, k_V1V1, k_V1R1, k_V1V2, k_V1R2, k_R1V1, k_R1R1, k_R1V2, k_R1R2, k_V2V1, k_V2R1, k_V2V2, k_V2R2, k_R2V1, k_R2R1, k_R2V2, k_R2R2), model_prediction, experiment_in_wind_still_air_forces_removed
+        return cls(c_z1z1, c_z1theta1, c_z1z2, c_z1theta2, c_theta1z1, c_theta1theta1, c_theta1z2, c_theta1theta2, c_z2z1, c_z2theta1, c_z2z2, c_z2theta2, c_theta2z1, c_theta2theta1, c_theta2z2, c_theta2theta2, k_z1z1, k_z1theta1, k_z1z2, k_z1theta2, k_theta1z1, k_theta1theta1, k_theta1z2, k_theta1theta2, k_z2z1, k_z2theta1, k_z2z2, k_z2theta2, k_theta2z1, k_theta2theta1, k_theta2z2, k_theta2theta2), model_prediction, experiment_in_wind_still_air_forces_removed
     
     @classmethod
     def from_poly_k(cls,poly_k,k_range, vred):
@@ -516,20 +527,32 @@ class AerodynamicDerivatives4x4:
         uit_step = lambda k,kc: 1./(1 + np.exp(-2*20*(k-kc)))
         fit = lambda p,k,k1c,k2c : np.polyval(p,k)*uit_step(k,k1c)*(1-uit_step(k,k2c)) + np.polyval(p,k1c)*(1-uit_step(k,k1c)) + np.polyval(p,k2c)*(uit_step(k,k2c))
         
-        damping_ad = np.array([True, True, False, False, True, False,    True, True, False, False, True, False, True, True, False, False, True, False   ])
-        labels = ["P_1^*", "P_2^*", "P_3^*", "P_4^*", "P_5^*", "P_6^*",  "H_1^*", "H_2^*", "H_3^*", "H_4^*", "H_5^*", "H_6^*",     "A_1^*", "A_2^*", "A_3^*", "A_4^*", "A_5^*", "A_6^*"]
+        damping_ad = np.array([True, True, True, True, True, True, True, True,
+                               True, True, True, True, True, True, True, True,
+                               False, False, False, False, False, False, False, False,
+                               False, False, False, False, False, False, False, False])
+        
+        labels = ["c_{z_1z_1}^*", "c_{z_1\\theta_1}^*", "c_{z_1z_2}^*", "c_{z_1\\theta_2}^*",
+                  "c_{\\theta_1z_1}^*", "c_{\\theta_1\\theta_1}^*", "c_{\\theta_1z_2}^*", "c_{\\theta_1\\theta_2}^*",
+                  "c_{z_2z_1}^*", "c_{z_2\\theta_1}^*", "c_{z_2z_2}^*", "c_{z_2\\theta_2}^*",
+                  "c_{\\theta_2z_1}^*", "c_{\\theta_2\\theta_1}^*", "c_{\\theta_2z_2}^*", "c_{\\theta_2\\theta_2}^*",
+                  "k_{z_1z_1}^*", "k_{z_1\\theta_1}^*", "k_{z_1z_2}^*", "k_{z_1\\theta_2}^*",
+                  "k_{\\theta_1z_1}^*", "k_{\\theta_1\\theta_1}^*", "k_{\\theta_1z_2}^*", "k_{\\theta_1\\theta_2}^*",
+                  "k_{z_2z_1}^*", "k_{z_2\\theta_1}^*", "k_{z_2z_2}^*", "k_{z_2\\theta_2}^*",
+                  "k_{\\theta_2z_1}^*", "k_{\\theta_2\\theta_1}^*", "k_{\\theta_2z_2}^*", "k_{\\theta_2\\theta_2}^*"]
+
         ads = []
-        for k in range(18):
+        for k in range(32):
                       
             if damping_ad[k] == True:
                 ad_value = np.abs(vred)*fit(poly_k[k,:],np.abs(1/vred),k_range[k,0],k_range[k,1])
             else:
                 ad_value = np.abs(vred)**2*fit(poly_k[k,:],np.abs(1/vred),k_range[k,0],k_range[k,1])
                 
-            ads.append(AerodynamicDerivative(labels[k],vred,ad_value/2 , ad_value/2 , vred*0, vred*0))
+            ads.append(AerodynamicDerivative4x4(labels[k],vred,ad_value/2 , ad_value/2 , vred*0, vred*0))
             
              
-        return cls(ads[0], ads[1], ads[2], ads[3], ads[4], ads[5], ads[6], ads[7], ads[8], ads[9], ads[10], ads[11], ads[12], ads[13], ads[14], ads[15], ads[16], ads[17])
+        return cls(ads[0],ads[1],ads[2],ads[3],ads[4],ads[5],ads[6],ads[7],ads[8],ads[9],ads[10],ads[11],ads[12],ads[13],ads[14],ads[15],ads[16],ads[17],ads[18],ads[19],ads[20],ads[21],ads[22],ads[23],ads[24],ads[25],ads[26],ads[27],ads[28],ads[29],ads[30],ads[31])
     
       
     
@@ -541,14 +564,28 @@ class AerodynamicDerivatives4x4:
         ads         : an instance of the class AerodynamicDerivatives
         
         """
-        objs1 = [self.p1, self.p2, self.p3, self.p4, self.p5, self.p6, self.h1, self.h2, self.h3, self.h4, self.h5, self.h6, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6 ]
-        objs2 = [ads.p1, ads.p2, ads.p3, ads.p4, ads.p5, ads.p6, ads.h1, ads.h2, ads.h3, ads.h4, ads.h5, ads.h6, ads.a1, ads.a2, ads.a3, ads.a4, ads.a5, ads.a6 ]
+        objs1 = [self.c_z1z1, self.c_z1theta1, self.c_z1z2, self.c_z1theta2,
+                 self.c_theta1z1, self.c_theta1theta1, self.c_theta1z2, self.c_theta1theta2,
+                 self.c_z2z1, self.c_z2theta1, self.c_z2z2, self.c_z2theta2,
+                 self.c_theta2z1, self.c_theta2theta1, self.c_theta2z2, self.c_theta2theta2,
+                 self.k_z1z1, self.k_z1theta1, self.k_z1z2, self.k_z1theta2,
+                 self.k_theta1z1, self.k_theta1theta1, self.k_theta1z2, self.k_theta1theta2,
+                 self.k_z2z1, self.k_z2theta1, self.k_z2z2, self.k_z2theta2,
+                 self.k_theta2z1, self.k_theta2theta1, self.k_theta2z2, self.k_theta2theta2]
+
+        objs2 = [ads.c_z1z1, ads.c_z1theta1, ads.c_z1z2, ads.c_z1theta2,
+                 ads.c_theta1z1, ads.c_theta1theta1, ads.c_theta1z2, ads.c_theta1theta2,
+                 ads.c_z2z1, ads.c_z2theta1, ads.c_z2z2, ads.c_z2theta2,
+                 ads.c_theta2z1, ads.c_theta2theta1, ads.c_theta2z2, ads.c_theta2theta2,
+                 ads.k_z1z1, ads.k_z1theta1, ads.k_z1z2, ads.k_z1theta2,
+                 ads.k_theta1z1, ads.k_theta1theta1, ads.k_theta1z2, ads.k_theta1theta2,
+                 ads.k_z2z1, ads.k_z2theta1, ads.k_z2z2, ads.k_z2theta2,
+                 ads.k_theta2z1, ads.k_theta2theta1, ads.k_theta2z2, ads.k_theta2theta2]
+
         
         for k in range(len(objs1)):
-            objs1[k].ad_load_cell_1 = np.append(objs1[k].ad_load_cell_1,objs2[k].ad_load_cell_1)
-            objs1[k].ad_load_cell_2 = np.append(objs1[k].ad_load_cell_2,objs2[k].ad_load_cell_2) 
-            objs1[k].ad_load_cell_3 = np.append(objs1[k].ad_load_cell_3,objs2[k].ad_load_cell_3) 
-            objs1[k].ad_load_cell_4 = np.append(objs1[k].ad_load_cell_4,objs2[k].ad_load_cell_4) 
+            objs1[k].ad_load_cell_a = np.append(objs1[k].ad_load_cell_a,objs2[k].ad_load_cell_a)
+            objs1[k].ad_load_cell_b = np.append(objs1[k].ad_load_cell_b,objs2[k].ad_load_cell_b) 
             
             objs1[k].frequencies = np.append(objs1[k].frequencies,objs2[k].frequencies) 
             objs1[k].mean_wind_speeds = np.append(objs1[k].mean_wind_speeds,objs2[k].mean_wind_speeds) 
@@ -562,62 +599,100 @@ class AerodynamicDerivatives4x4:
         -------
         ads : float
         
-        a matrix of aerodynamic derivatives [18 x N reduced velocities]
+        a matrix of aerodynamic derivatives [32 x N reduced velocities]
         
         vreds : float
         
-        a matrix of reduced velocities [18 x N reduced velocities]
+        a matrix of reduced velocities [32 x N reduced velocities]
         
         
         
         """
-        ads = np.zeros((18,self.p1.reduced_velocities.shape[0]))
-        vreds = np.zeros((18,self.p1.reduced_velocities.shape[0]))
-        ads[0,:] = self.p1.value
-        ads[1,:] = self.p2.value
-        ads[2,:] = self.p3.value
-        ads[3,:] = self.p4.value
-        ads[4,:] = self.p5.value
-        ads[5,:] = self.p6.value
+        ads = np.zeros((32,self.c_V1V1.reduced_velocities.shape[0]))
+        vreds = np.zeros((32,self.p1.reduced_velocities.shape[0]))
+        ads[0, :] = self.c_z1z1.a.value
+        ads[1, :] = self.c_z1theta1.a.value
+        ads[2, :] = self.c_z1z2.a.value
+        ads[3, :] = self.c_z1theta2.a.value
 
-        ads[6,:] = self.h1.value
-        ads[7,:] = self.h2.value
-        ads[8,:] = self.h3.value
-        ads[9,:] = self.h4.value
-        ads[10,:] = self.h5.value
-        ads[11,:] = self.h6.value
-        
-        ads[12,:] = self.a1.value
-        ads[13,:] = self.a2.value
-        ads[14,:] = self.a3.value
-        ads[15,:] = self.a4.value
-        ads[16,:] = self.a5.value
-        ads[17,:] = self.a6.value
-        
-        vreds[0,:] = self.p1.reduced_velocities
-        vreds[1,:] = self.p2.reduced_velocities
-        vreds[2,:] = self.p3.reduced_velocities
-        vreds[3,:] = self.p4.reduced_velocities
-        vreds[4,:] = self.p5.reduced_velocities
-        vreds[5,:] = self.p6.reduced_velocities
+        ads[4, :] = self.c_theta1z1.a.value
+        ads[5, :] = self.c_theta1theta1.a.value
+        ads[6, :] = self.c_theta1z2.a.value
+        ads[7, :] = self.c_theta1theta2.a.value
 
-        vreds[6,:] = self.h1.reduced_velocities
-        vreds[7,:] = self.h2.reduced_velocities
-        vreds[8,:] = self.h3.reduced_velocities
-        vreds[9,:] = self.h4.reduced_velocities
-        vreds[10,:] = self.h5.reduced_velocities
-        vreds[11,:] = self.h6.reduced_velocities
-        
-        vreds[12,:] = self.a1.reduced_velocities
-        vreds[13,:] = self.a2.reduced_velocities
-        vreds[14,:] = self.a3.reduced_velocities
-        vreds[15,:] = self.a4.reduced_velocities
-        vreds[16,:] = self.a5.reduced_velocities
-        vreds[17,:] = self.a6.reduced_velocities
-        
+        ads[8, :] = self.c_z2z1.a.value
+        ads[9, :] = self.c_z2theta1.a.value
+        ads[10, :] = self.c_z2z2.a.value
+        ads[11, :] = self.c_z2theta2.a.value
+
+        ads[12, :] = self.c_theta2z1.a.value
+        ads[13, :] = self.c_theta2theta1.a.value
+        ads[14, :] = self.c_theta2z2.a.value
+        ads[15, :] = self.c_theta2theta2.a.value
+
+        ads[16, :] = self.k_z1z1.a.value
+        ads[17, :] = self.k_z1theta1.a.value
+        ads[18, :] = self.k_z1z2.a.value
+        ads[19, :] = self.k_z1theta2.a.value
+
+        ads[20, :] = self.k_theta1z1.a.value
+        ads[21, :] = self.k_theta1theta1.a.value
+        ads[22, :] = self.k_theta1z2.a.value
+        ads[23, :] = self.k_theta1theta2.a.value
+
+        ads[24, :] = self.k_z2z1.a.value
+        ads[25, :] = self.k_z2theta1.a.value
+        ads[26, :] = self.k_z2z2.a.value
+        ads[27, :] = self.k_z2theta2.a.value
+
+        ads[28, :] = self.k_theta2z1.a.value
+        ads[29, :] = self.k_theta2theta1.a.value
+        ads[30, :] = self.k_theta2z2.a.value
+        ads[31, :] = self.k_theta2theta2.a.value
+
+        ads[0, :] = self.c_z1z1.a.value
+        ads[1, :] = self.c_z1theta1.a.value
+        ads[2, :] = self.c_z1z2.a.value
+        ads[3, :] = self.c_z1theta2.a.value
+
+        ads[4, :] = self.c_theta1z1.a.value
+        ads[5, :] = self.c_theta1theta1.a.value
+        ads[6, :] = self.c_theta1z2.a.value
+        ads[7, :] = self.c_theta1theta2.a.value
+
+        ads[8, :] = self.c_z2z1.a.value
+        ads[9, :] = self.c_z2theta1.a.value
+        ads[10, :] = self.c_z2z2.a.value
+        ads[11, :] = self.c_z2theta2.a.value
+
+        ads[12, :] = self.c_theta2z1.a.value
+        ads[13, :] = self.c_theta2theta1.a.value
+        ads[14, :] = self.c_theta2z2.a.value
+        ads[15, :] = self.c_theta2theta2.a.value
+
+        ads[16, :] = self.k_z1z1.a.value
+        ads[17, :] = self.k_z1theta1.a.value
+        ads[18, :] = self.k_z1z2.a.value
+        ads[19, :] = self.k_z1theta2.a.value
+
+        ads[20, :] = self.k_theta1z1.a.value
+        ads[21, :] = self.k_theta1theta1.a.value
+        ads[22, :] = self.k_theta1z2.a.value
+        ads[23, :] = self.k_theta1theta2.a.value
+
+        ads[24, :] = self.k_z2z1.a.value
+        ads[25, :] = self.k_z2theta1.a.value
+        ads[26, :] = self.k_z2z2.a.value
+        ads[27, :] = self.k_z2theta2.a.value
+
+        ads[28, :] = self.k_theta2z1.a.value
+        ads[29, :] = self.k_theta2theta1.a.value
+        ads[30, :] = self.k_theta2z2.a.value
+        ads[31, :] = self.k_theta2theta2.a.value
+
         return ads, vreds
     
-    
+    #Ikke endret
     def frf_mat(self,mean_wind_velocity = 1.0, section_width = 1.0, air_density = 1.25):
         
         
@@ -638,16 +713,19 @@ class AerodynamicDerivatives4x4:
         return frf_mat
     
 
-    def fit_poly_k(self,orders = np.ones(18,dtype=int)*2):
+    def fit_poly_k(self,orders = np.ones(32,dtype=int)*2):
         ad_matrix, vreds = self.ad_matrix
         
-        poly_coeff = np.zeros((18,np.max(orders)+1))
-        k_range = np.zeros((18,2))
+        poly_coeff = np.zeros(32,np.max(orders)+1)
+        k_range = np.zeros((32,2))
         
-        damping_ad = np.array([True, True, False, False, True, False,    True, True, False, False, True, False,  True, True, False, False, True, False   ])
+        damping_ad = np.array([True, True, True, True, True, True, True, True,
+                               True, True, True, True, True, True, True, True,
+                               False, False, False, False, False, False, False, False,
+                               False, False, False, False, False, False, False, False])
         
         
-        for k in range(18):
+        for k in range(32):
             k_range[k,0] = 1/np.max(vreds)
             k_range[k,1] = 1/np.min(vreds)
             
@@ -660,6 +738,7 @@ class AerodynamicDerivatives4x4:
         
         return poly_coeff, k_range
     
+    #Ikke endret
     def to_excel(self,section_name, section_height=0, section_width=0, section_length=0):
         """
         
@@ -795,47 +874,47 @@ class AerodynamicDerivatives4x4:
         
         
         axs_damping = fig_damping.get_axes()  
-        self.c_V1V1.plot(mode=mode, conv=conv, ax=axs_damping[0])
-        self.c_V1R1.plot(mode=mode, conv=conv, ax=axs_damping[1])
-        self.c_V1V2.plot(mode=mode, conv=conv, ax=axs_damping[2])
-        self.c_V1R2.plot(mode=mode, conv=conv, ax=axs_damping[3])
+        self.c_z1z1.plot(mode=mode, conv=conv, ax=axs_damping[0])
+        self.c_z1theta1.plot(mode=mode, conv=conv, ax=axs_damping[1])
+        self.c_z1z2.plot(mode=mode, conv=conv, ax=axs_damping[2])
+        self.c_z1theta2.plot(mode=mode, conv=conv, ax=axs_damping[3])
 
-        self.c_R1V1.plot(mode=mode, conv=conv, ax=axs_damping[4])
-        self.c_R1R1.plot(mode=mode, conv=conv, ax=axs_damping[5])
-        self.c_R1V2.plot(mode=mode, conv=conv, ax=axs_damping[6])
-        self.c_R1R2.plot(mode=mode, conv=conv, ax=axs_damping[7])
+        self.c_theta1z1.plot(mode=mode, conv=conv, ax=axs_damping[4])
+        self.c_theta1theta1.plot(mode=mode, conv=conv, ax=axs_damping[5])
+        self.c_theta1z2.plot(mode=mode, conv=conv, ax=axs_damping[6])
+        self.c_theta1theta2.plot(mode=mode, conv=conv, ax=axs_damping[7])
 
-        self.c_V2V1.plot(mode=mode, conv=conv, ax=axs_damping[8])
-        self.c_V2R1.plot(mode=mode, conv=conv, ax=axs_damping[9])
-        self.c_V2V2.plot(mode=mode, conv=conv, ax=axs_damping[10])
-        self.c_V2R2.plot(mode=mode, conv=conv, ax=axs_damping[11])
+        self.c_z2z1.plot(mode=mode, conv=conv, ax=axs_damping[8])
+        self.c_z2theta1.plot(mode=mode, conv=conv, ax=axs_damping[9])
+        self.c_z2z2.plot(mode=mode, conv=conv, ax=axs_damping[10])
+        self.c_z2theta2.plot(mode=mode, conv=conv, ax=axs_damping[11])
 
-        self.c_R2V1.plot(mode=mode, conv=conv, ax=axs_damping[12])
-        self.c_R2R1.plot(mode=mode, conv=conv, ax=axs_damping[13])
-        self.c_R2V2.plot(mode=mode, conv=conv, ax=axs_damping[14])
-        self.c_R2R2.plot(mode=mode, conv=conv, ax=axs_damping[15])
+        self.c_theta2z1.plot(mode=mode, conv=conv, ax=axs_damping[12])
+        self.c_theta2theta1.plot(mode=mode, conv=conv, ax=axs_damping[13])
+        self.c_theta2z2.plot(mode=mode, conv=conv, ax=axs_damping[14])
+        self.c_theta2theta2.plot(mode=mode, conv=conv, ax=axs_damping[15])
 
         
         axs_stiffness = fig_stiffness.get_axes()
-        self.k_V1V1.plot(mode=mode, conv=conv, ax=axs_stiffness[0])
-        self.k_V1R1.plot(mode=mode, conv=conv, ax=axs_stiffness[1])
-        self.k_V1V2.plot(mode=mode, conv=conv, ax=axs_stiffness[2])
-        self.k_V1R2.plot(mode=mode, conv=conv, ax=axs_stiffness[3])
+        self.k_z1z1.plot(mode=mode, conv=conv, ax=axs_stiffness[0])
+        self.k_z1theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[1])
+        self.k_z1z2.plot(mode=mode, conv=conv, ax=axs_stiffness[2])
+        self.k_z1theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[3])
 
-        self.k_R1V1.plot(mode=mode, conv=conv, ax=axs_stiffness[4])
-        self.k_R1R1.plot(mode=mode, conv=conv, ax=axs_stiffness[5])
-        self.k_R1V2.plot(mode=mode, conv=conv, ax=axs_stiffness[6])
-        self.k_R1R2.plot(mode=mode, conv=conv, ax=axs_stiffness[7])
+        self.k_theta1z1.plot(mode=mode, conv=conv, ax=axs_stiffness[4])
+        self.k_theta1theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[5])
+        self.k_theta1z2.plot(mode=mode, conv=conv, ax=axs_stiffness[6])
+        self.k_theta1theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[7])
 
-        self.k_V2V1.plot(mode=mode, conv=conv, ax=axs_stiffness[8])
-        self.k_V2R1.plot(mode=mode, conv=conv, ax=axs_stiffness[9])
-        self.k_V2V2.plot(mode=mode, conv=conv, ax=axs_stiffness[10])
-        self.k_V2R2.plot(mode=mode, conv=conv, ax=axs_stiffness[11])
+        self.k_z2z1.plot(mode=mode, conv=conv, ax=axs_stiffness[8])
+        self.k_z2theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[9])
+        self.k_z2z2.plot(mode=mode, conv=conv, ax=axs_stiffness[10])
+        self.k_z2theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[11])
 
-        self.k_R2V1.plot(mode=mode, conv=conv, ax=axs_stiffness[12])
-        self.k_R2R1.plot(mode=mode, conv=conv, ax=axs_stiffness[13])
-        self.k_R2V2.plot(mode=mode, conv=conv, ax=axs_stiffness[14])
-        self.k_R2R2.plot(mode=mode, conv=conv, ax=axs_stiffness[15])
+        self.k_theta2z1.plot(mode=mode, conv=conv, ax=axs_stiffness[12])
+        self.k_theta2theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[13])
+        self.k_theta2z2.plot(mode=mode, conv=conv, ax=axs_stiffness[14])
+        self.k_theta2theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[15])
 
         for k in range(12):
             axs_damping[k].set_xlabel("")

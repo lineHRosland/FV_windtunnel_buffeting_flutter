@@ -294,7 +294,7 @@ class Experiment:
 
         motion_normalized = motion/np.max(motion)
 
-        peak_indexes, _ = spsp.find_peaks(motion_normalized, height=0.1)
+        peak_indexes, _ = spsp.find_peaks(motion_normalized, height=0.3)
 
         difference_in_peak_spacing = np.diff(peak_indexes,2)
         #print(difference_in_peak_spacing)
@@ -340,7 +340,7 @@ class Experiment:
 
         filt_motions = spsp.sosfiltfilt(sos_hp,self.motion,axis=0)
 
-        max_hor_vert_pitch_motion = [np.max(filt_motions[:,0])*1000, np.max(filt_motions[:,1])*1000, np.max(filt_motions[:,2])*365/2/np.pi ]
+        max_hor_vert_pitch_motion = [np.max(filt_motions[:,0])*0, np.max(filt_motions[:,1])*1000, np.max(filt_motions[:,2])*365/2/np.pi ]
         motion_type = np.argmax(max_hor_vert_pitch_motion)
 
 

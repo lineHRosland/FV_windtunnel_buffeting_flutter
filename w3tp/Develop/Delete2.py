@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 from copy import deepcopy
 import h5py
 from w3t._exp import Experiment
-from w3t._functions import group_motions
+from w3tp.w3t._functions2 import group_motions
 
 #from ._exp import Experiment
 
