@@ -98,22 +98,22 @@ exp0_single, exp1_single_6 = load_experiments_from_hdf5(h5_input_path, section_n
 exp0_single, exp1_single_9= load_experiments_from_hdf5(h5_input_path, section_name, file_names_9,  upwind_in_rig=True)
 
 exp0_single.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - 0 m/s  ", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s  ", fontsize=16, y=1.1)
 exp1_single_6.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - 6 m/s ", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s ", fontsize=16, y=1.1)
 exp1_single_9.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - 9 m/s ", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s ", fontsize=16, y=1.1)
 
 exp0_single.filt_forces(6, 2)
 exp1_single_6.filt_forces(6, 2)
 exp1_single_9.filt_forces(6, 2)
 
 exp0_single.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.1)
 exp1_single_6.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - 6 m/s - With Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s - With Butterworth low-pass filter", fontsize=16, y=1.1)
 exp1_single_9.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - 9 m/s - With Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s - With Butterworth low-pass filter", fontsize=16, y=1.1)
 plt.show()
 
 
