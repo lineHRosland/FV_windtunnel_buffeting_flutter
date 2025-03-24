@@ -1728,6 +1728,7 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
         max = 0.2
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
+            fig.tight_layout()
     # Plot
 
     if coeff_down_plot is None:
@@ -1738,7 +1739,8 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
         ax.legend()
         ax.set_ylim(min,max)
         ax.set_title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
-        ax.tight_layout()
+        ax.get_tightbbox
+
         return 
 
 
@@ -1750,5 +1752,4 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
     ax.grid()
     ax.set_ylim(min, max)
     ax.legend()
-    ax.tight_layout()
     ax.set_title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
