@@ -95,7 +95,7 @@ class Experiment:
         self.forces_global_center = forces_global_center
         self.motion = motion
 
-        if self.motion_type() == 2 and np.mac(np.abs(self.motion[:,2])) > 0.1: #0.01 radians = 5.7 degrees
+        if self.motion_type() == 2 and np.max(np.abs(self.motion[:,2])) > 0.1: #0.01 radians = 5.7 degrees
             # 1. Finn første indeks med faktisk bevegelse
             motion_threshold = 0.01  # 0.01 radianer = 0.57 deg, juster etter behov
             motion_abs = np.abs(self.motion[:, 2])
