@@ -85,6 +85,7 @@ class Experiment:
           forces transformed to the center of the pitching motion
          motion : the motion applied in the wind tunnel experiment
         """
+
         self.time = time
         self.name = name
         self.temperature = temperature
@@ -93,6 +94,34 @@ class Experiment:
         self.forces_global = forces_global
         self.forces_global_center = forces_global_center
         self.motion = motion
+
+        # Find first non-zero motion in u_theta
+        nonzero_idx = np.where(~np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
+        if len(nonzero_idx) > 0:
+            start_idx = nonzero_idx[0]
+        else:
+            start_idx = 0  # fallback
+
+        # Find all indices where u_theta is (approximately) zero
+        zero_indices = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
+
+        # Find stop_idx as the 4th zero **after** start_idx
+        zero_after_start = zero_indices[zero_indices > start_idx]
+        if len(zero_after_start) >= 4:
+            stop_idx = zero_after_start[3]
+        else:
+            stop_idx = len(self.motion)  # fallback to end if not enough zero crossings
+
+        # Apply slicing
+        self.forces_global_center = self.forces_global_center[start_idx:stop_idx, :]
+        self.forces_global = self.forces_global[start_idx:stop_idx, :]
+        self.time = self.time[start_idx:stop_idx]
+        self.wind_speed = self.wind_speed[start_idx:stop_idx]
+        self.motion = self.motion[start_idx:stop_idx, :]
+
+
+
+      
     
        
        
@@ -442,71 +471,45 @@ class Experiment:
                         
         fig.set_size_inches(20/2.54,15/2.54)
 
-        # Find first non-zero motion in u_theta
-        nonzero_idx = np.where(~np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
-        if len(nonzero_idx) > 0:
-            start_idx = nonzero_idx[0]
-        else:
-            start_idx = 0  # fallback
-
-        # Find all indices where u_theta is (approximately) zero
-        zero_indices = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
-
-        # Find stop_idx as the 4th zero **after** start_idx
-        zero_after_start = zero_indices[zero_indices > start_idx]
-        if len(zero_after_start) >= 4:
-            stop_idx = zero_after_start[3]
-        else:
-            stop_idx = len(self.motion)  # fallback to end if not enough zero crossings
-
-        # Apply slicing
-        self.forces_global_center = self.forces_global_center[start_idx:stop_idx, :]
-        self.time = self.time[start_idx:stop_idx]
-        self.wind_speed = self.wind_speed[start_idx:stop_idx]
-        self.motion = self.motion[start_idx:stop_idx, :]
-
         
-        t  = self.time
-        U = self.wind_speed
-        u_x = self.motion[:,0]
-        u_z = self.motion[:,1]
-        u_tetha = self.motion[:,2]
+        
+       
         
         if mode == "all": #hver enkelt lastcelle plottes separat
 
-            axs[0].plot(t,U)
+            axs[0].plot( self.time,self.wind_speed)
              
-            axs[2].plot(t,u_x)
+            axs[2].plot( self.time,self.motion[:,0])
             #axs[2].set_title("Horizontal motion")
             axs[2].set_ylabel(r"$u_x $ [mm]")
             axs[2].grid(True)
             
-            axs[4].plot(t,u_z)
+            axs[4].plot( self.time,self.motion[:,1])
             #axs[4].set_title("Vertical motion")
             axs[4].set_ylabel(r"$u_z $ [mm]")
             axs[4].grid(True)
             
-            axs[6].plot(t,u_tetha)
+            axs[6].plot( self.time,self.motion[:,2])
             #axs[6].set_title("Pitching motion")
             axs[6].set_ylabel(r"$u_\theta$")
             axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
-            axs[3].plot(t,self.forces_global_center[:,0:24:6])
+            axs[3].plot( self.time,self.forces_global_center[:,0:24:6])
             #axs[3].set_title("Horizontal force")
             axs[3].grid(True)
             axs[3].set_ylabel(r"$F_x$")
             axs[3].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
-            axs[5].plot(t,self.forces_global_center[:,2:24:6])
+            axs[5].plot( self.time,self.forces_global_center[:,2:24:6])
             #axs[5].set_title("Vertical force")
             axs[5].grid(True)
             axs[5].set_ylabel(r"$F_z$")
             axs[5].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
-            axs[7].plot(t,self.forces_global_center[:,4:24:6])
+            axs[7].plot( self.time,self.forces_global_center[:,4:24:6])
             #axs[7].set_title("Pitching moment")
             axs[7].grid(True)
             axs[7].set_ylabel(r"$F_\theta$")
@@ -518,47 +521,47 @@ class Experiment:
         
         elif mode == "decks": # krefter og momenter summeres per brodekke
             
-            axs[0].plot(t,U)
+            axs[0].plot( self.time,self.wind_speed)
             #axs[0].set_title("Wind speed")
             axs[0].set_ylabel(r"$U(t)$ [m/s]")
             axs[0].grid(True)
             
-            axs[2].plot(t,u_x)
+            axs[2].plot( self.time,self.motion[:,0])
             #axs[2].set_title("Horizontal motion")
             axs[2].set_ylabel(r"$u_x $ [mm]")
             axs[2].grid(True)
             
-            axs[4].plot(t,u_z)
+            axs[4].plot( self.time,self.motion[:,1])
             #axs[4].set_title("Vertical motion")
             axs[4].set_ylabel(r"$u_z $ [mm]")
             axs[4].grid(True)
             
-            axs[6].plot(t,u_tetha)
+            axs[6].plot( self.time,self.motion[:,2])
             #axs[6].set_title("Pitching motion")
             axs[6].set_ylabel(r"$u_\theta [deg]$")
             axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
-            axs[3].plot(t,np.sum(self.forces_global_center[:,0:12:6],axis=1),label = "Upwind deck") # lastcelle 1 og 2 f.eks
-            axs[3].plot(t,np.sum(self.forces_global_center[:,12:24:6],axis=1),label = "Downwind deck") # lastcelle 3 og 4 f.eks
+            axs[3].plot( self.time,np.sum(self.forces_global_center[:,0:12:6],axis=1),label = "Upwind deck") # lastcelle 1 og 2 f.eks
+            axs[3].plot( self.time,np.sum(self.forces_global_center[:,12:24:6],axis=1),label = "Downwind deck") # lastcelle 3 og 4 f.eks
             #axs[3].set_title("Horizontal force")
             axs[3].grid(True)
             axs[3].set_ylabel(r"$F_x$")
             axs[3].legend()
            
             
-            #axs[2,1].plot(t,self.forces_global_center[:,2:24:6])
-            axs[5].plot(t,np.sum(self.forces_global_center[:,2:12:6],axis=1),label = "Upwind deck")
-            axs[5].plot(t,np.sum(self.forces_global_center[:,14:24:6],axis=1),label = "Downwind deck")
+            #axs[2,1].plot( self.time,self.forces_global_center[:,2:24:6])
+            axs[5].plot( self.time,np.sum(self.forces_global_center[:,2:12:6],axis=1),label = "Upwind deck")
+            axs[5].plot( self.time,np.sum(self.forces_global_center[:,14:24:6],axis=1),label = "Downwind deck")
             #axs[5].set_title("Vertical force")
             axs[5].grid(True)
             axs[5].set_ylabel(r"$F_z$")
             axs[5].legend()
            
             
-            #axs[3,1].plot(t,self.forces_global_center[:,4:24:6])
-            axs[7].plot(t,np.sum(self.forces_global_center[:,4:12:6],axis=1),label = "Upwind deck")
-            axs[7].plot(t,np.sum(self.forces_global_center[:,16:24:6],axis=1),label = "Downwind deck")
+            #axs[3,1].plot( self.time,self.forces_global_center[:,4:24:6])
+            axs[7].plot( self.time,np.sum(self.forces_global_center[:,4:12:6],axis=1),label = "Upwind deck")
+            axs[7].plot( self.time,np.sum(self.forces_global_center[:,16:24:6],axis=1),label = "Downwind deck")
             #axs[7].set_title("Pitching moment")
             axs[7].grid(True)
             axs[7].set_ylabel(r"$F_\theta$")
@@ -567,10 +570,10 @@ class Experiment:
             
         elif mode == "total":
             
-            axs[0].plot(t,U)
+            axs[0].plot( self.time,self.wind_speed)
             #axs[0].set_title("Wind speed")
-            U_mean = np.mean(U)
-            U_std = np.std(U)
+            U_mean = np.mean(self.wind_speed)
+            U_std = np.std(self.wind_speed)
             if U_mean > 0.5:  # terskelverdi    
                 TI = U_std / U_mean * 100
                 axs[0].set_title(f"Turbulence intensity: {TI:.1f}%", fontsize=12)            
@@ -578,37 +581,37 @@ class Experiment:
             axs[0].set_ylabel(r"$U(t)$ [m/s]")
             axs[0].grid(True)
             
-            axs[2].plot(t,u_x)
+            axs[2].plot( self.time,self.motion[:,0])
             #axs[2].set_title("Horizontal motion")
             axs[2].set_ylabel(r"$u_x $ [mm]")
             axs[2].grid(True)
             
-            axs[4].plot(t,u_z)
+            axs[4].plot( self.time,self.motion[:,1])
             #axs[4].set_title("Vertical motion")
             axs[4].set_ylabel(r"$u_z $ [mm]")
             axs[4].grid(True)
             
-            axs[6].plot(t,u_tetha)
+            axs[6].plot( self.time,self.motion[:,2])
             #axs[6].set_title("Pitching motion")
             axs[6].set_ylabel(r"$u_\theta$")
             axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
-            axs[3].plot(t,np.sum(self.forces_global_center[:,0:24:6], axis=1),label = "Total")
+            axs[3].plot( self.time,np.sum(self.forces_global_center[:,0:24:6], axis=1),label = "Total")
             #axs[3].set_title("Horizontal force")
             axs[3].grid(True)
             axs[3].set_ylabel(r"$F_x$")
             axs[3].legend()
            
             
-            axs[5].plot(t,np.sum(self.forces_global_center[:,2:24:6], axis=1),label = "Total")
+            axs[5].plot( self.time,np.sum(self.forces_global_center[:,2:24:6], axis=1),label = "Total")
             #axs[5].set_title("Vertical force")
             axs[5].grid(True)
             axs[5].set_ylabel(r"$F_z$")
             axs[5].legend()
            
             
-            axs[7].plot(t,np.sum(self.forces_global_center[:,4:24:6], axis=1),label = "Total")
+            axs[7].plot( self.time,np.sum(self.forces_global_center[:,4:24:6], axis=1),label = "Total")
             #axs[7].set_title("Pitching moment")
             axs[7].grid(True)
             axs[7].set_ylabel(r"$F_\theta$")
