@@ -18,22 +18,22 @@ import pandas as pd
 import matplotlib as mpl
 
 # Computer Modern Roman without latex
-mpl.rcParams['text.usetex'] = False  
+#mpl.rcParams['text.usetex'] = False  
 
 # Bruk fonten som ligner mest på Computer Modern
-mpl.rcParams['font.family'] = 'serif'
-mpl.rcParams['font.serif'] = ['cmr10', 'Computer Modern Roman', 'Times New Roman']
-mpl.rcParams['mathtext.fontset'] = 'cm' 
+#mpl.rcParams['font.family'] = 'serif'
+#mpl.rcParams['font.serif'] = ['cmr10', 'Computer Modern Roman', 'Times New Roman']
+#mpl.rcParams['mathtext.fontset'] = 'cm' 
 
 # Generelt større og mer lesbar tekst
-mpl.rcParams.update({
-    'font.size': 14,              # Generell tekststørrelse
-    'axes.labelsize': 14,         # Aksetitler
-    'axes.titlesize': 16,         # Plot-titler
-    'legend.fontsize': 12,        # Tekst i legend
-    'xtick.labelsize': 12,        # X-tick labels
-    'ytick.labelsize': 12         # Y-tick labels
-})
+#mpl.rcParams.update({
+#    'font.size': 14,              # Generell tekststørrelse
+#    'axes.labelsize': 14,         # Aksetitler
+#    'axes.titlesize': 16,         # Plot-titler
+#    'legend.fontsize': 12,        # Tekst i legend
+#    'xtick.labelsize': 12,        # X-tick labels
+#    'ytick.labelsize': 12         # Y-tick labels
+#})
 
 #from scipy import signal as spsp
 
@@ -98,11 +98,11 @@ exp0_single, exp1_single_6 = load_experiments_from_hdf5(h5_input_path, section_n
 exp0_single, exp1_single_9= load_experiments_from_hdf5(h5_input_path, section_name, file_names_9,  upwind_in_rig=True)
 
 exp0_single.plot_experiment() #
-plt.gcf().suptitle(f"Single deck - 0 m/s - Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - 0 m/s  ", fontsize=16, y=1.02)
 exp1_single_6.plot_experiment() #
-plt.gcf().suptitle(f"Single deck - 6 m/s - Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - 6 m/s ", fontsize=16, y=1.02)
 exp1_single_9.plot_experiment() #
-plt.gcf().suptitle(f"Single deck - 9 m/s - Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - 9 m/s ", fontsize=16, y=1.02)
 
 exp0_single.filt_forces(6, 2)
 exp1_single_6.filt_forces(6, 2)

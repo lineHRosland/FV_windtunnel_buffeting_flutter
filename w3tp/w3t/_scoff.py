@@ -782,7 +782,7 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down, a
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
     ax.legend()
-    ax.title("Comparison of drag coefficients")
+    ax.set_title("Comparison of drag coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 
@@ -819,7 +819,7 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, a
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
     ax.legend()
-    ax.title("Comparison of lift coefficients")
+    ax.set_title("Comparison of lift coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
@@ -856,7 +856,7 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, 
     ax.legend(loc="best", frameon=True)
 
     ax.legend()
-    ax.title("Comparison of pitch coefficients")
+    ax.set_title("Comparison of pitch coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
@@ -908,7 +908,7 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
     ax.legend()
-    ax.title("Comparison of mean drag coefficients")
+    ax.set_title("Comparison of mean drag coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
@@ -958,7 +958,7 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
     ax.legend()
-    ax.title("Comparison of mean lift coefficients")
+    ax.set_title("Comparison of mean lift coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
@@ -1008,7 +1008,7 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
     ax.legend()
-    ax.title("Comparison of mean pitch coefficients")
+    ax.set_title("Comparison of mean pitch coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Compare with single deck
@@ -1046,7 +1046,7 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.set_ylabel(r"$C_D(\alpha)$")
     ax.grid()
     ax.legend()
-    ax.title(f"{setUp_type}: Comparison of drag coefficients")
+    ax.set_title(f"{setUp_type}: Comparison of drag coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 
@@ -1080,7 +1080,7 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.set_ylabel(r"$C_L(\alpha)$")
     ax.grid()
     ax.legend()
-    ax.title(f"{setUp_type}: Comparison of lift coefficients ")
+    ax.set_title(f"{setUp_type}: Comparison of lift coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
@@ -1114,7 +1114,7 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_
     ax.set_ylabel(r"$C_M(\alpha)$")
     ax.grid()
     ax.legend()
-    ax.title(f"{setUp_type}: Comparison of pitch coefficients ")
+    ax.set_title(f"{setUp_type}: Comparison of pitch coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
@@ -1159,7 +1159,7 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind
     ax.set_ylabel(r"$C_D(\alpha)$")
     ax.grid()
     ax.legend()
-    ax.title(f"{setUp_type}: Comparison of mean drag coefficients ")
+    ax.set_title(f"{setUp_type}: Comparison of mean drag coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
@@ -1200,7 +1200,7 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind
     ax.set_ylabel(r"$C_L(\alpha)$")
     ax.grid()
     ax.legend()
-    ax.title(f"{setUp_type}: Comparison of mean lift coefficients ")
+    ax.set_title(f"{setUp_type}: Comparison of mean lift coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
@@ -1241,7 +1241,7 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     ax.set_ylabel(r"$C_M(\alpha)$")
     ax.grid()
     ax.legend()
-    ax.title(f"{setUp_type}: Comparison of mean pitch coefficients ")
+    ax.set_title(f"{setUp_type}: Comparison of mean pitch coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Wind speeds
@@ -1331,7 +1331,7 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     ax.grid(True)
     ax.legend()
     ax.set_ylim(min,max)
-    ax.title(f"Comparison of {scoff} coefficients at different wind speeds")
+    ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
 
  
 
@@ -1450,7 +1450,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     ax.grid(True)
     ax.set_ylim(min,max)
     ax.legend()
-    ax.title(f"Comparison of {scoff} coefficients at different wind speeds")
+    ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
 
  
 def filter(static_coeff, threshold=0.3, scoff="", single=True):
@@ -1737,7 +1737,7 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
         ax.grid()
         ax.legend()
         ax.set_ylim(min,max)
-        ax.title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
+        ax.set_title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
         ax.tight_layout()
         return 
 
@@ -1751,4 +1751,4 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
     ax.set_ylim(min, max)
     ax.legend()
     ax.tight_layout()
-    ax.title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
+    ax.set_title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")

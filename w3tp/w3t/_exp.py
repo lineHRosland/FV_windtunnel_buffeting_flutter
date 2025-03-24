@@ -540,6 +540,11 @@ class Experiment:
             
             axs[0].plot(self.time,self.wind_speed)
             #axs[0].set_title("Wind speed")
+            U_mean = np.mean(self.wind_speed)
+            U_std = np.std(self.wind_speed)
+            TI = U_std / U_mean * 100  # i prosent
+            axs[0].set_title(f"Turbulence intensity: {TI:.1f}%", fontsize=12)
+
             axs[0].set_ylabel(r"$U(t)$ [m/s]")
             axs[0].grid(True)
             
