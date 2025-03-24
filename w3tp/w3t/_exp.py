@@ -95,12 +95,22 @@ class Experiment:
         self.forces_global_center = forces_global_center
         self.motion = motion
 
+        print("Before trimming:")
+        print(" - motion shape:", self.motion.shape)
+        print(" - time shape:", self.time.shape)
+        print(" - wind_speed shape:", self.wind_speed.shape)
+        print(" - forces_global_center shape:", self.forces_global_center.shape)
+
         # Find first non-zero motion in u_theta
-        nonzero_idx = np.where(~np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
+        motion_threshold = 0.01  # degrees
+        nonzero_idx =  np.where(np.abs(self.motion[:, 2]) > motion_threshold)[0]
         if len(nonzero_idx) > 0:
             start_idx = nonzero_idx[0]
+            print(f" Using start_idx = {start_idx}, time = {self.time[start_idx]:.2f}s")
+
         else:
             start_idx = 0  # fallback
+            print(" No motion detected above threshold. Using start_idx = 0")
 
         # Find all indices where u_theta is (approximately) zero
         zero_indices = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
