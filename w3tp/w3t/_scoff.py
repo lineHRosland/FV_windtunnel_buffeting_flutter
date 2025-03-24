@@ -312,8 +312,8 @@ class StaticCoeff:
                 ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,k],label=("Load cell " + str(k+1)),alpha =0.5)
                 # each load cell plottet separately
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_D(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
@@ -322,24 +322,24 @@ class StaticCoeff:
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"), color=color1)
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"), color=color2)
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_D(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "total": #only total sum
             ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1))
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_D(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
             ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "single": #single deck
 
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Single deck"))
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_D(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
@@ -374,8 +374,8 @@ class StaticCoeff:
                 ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,k],label=("Load cell " + str(k+1)),alpha=0.5)
             
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_L(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
@@ -384,24 +384,24 @@ class StaticCoeff:
             ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Upwind deck"), color=color1)
             ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,2]+self.lift_coeff[:,3],label=("Downwind deck"), color=color2)
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_L(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "total":
             ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1))
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_L(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
             ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
 
         elif mode == "single": #single deck
 
             ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Single deck"))
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_L(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
@@ -432,9 +432,9 @@ class StaticCoeff:
             for k in range(self.drag_coeff.shape[1]):
                 ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,k],label=("Load cell " + str(k+1)),alpha=0.5)
             
-            axplt.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_M(\alpha)$")
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
@@ -443,24 +443,24 @@ class StaticCoeff:
             ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Upwind deck"), color=color1)
             ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,2]+self.pitch_coeff[:,3],label=("Downwind deck"), color=color2)
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_M(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "total":
             ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1))
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_M(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
             ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "single": #single deck
 
             ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Single deck"))
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_M(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
@@ -504,8 +504,8 @@ class StaticCoeff:
                 ax.plot(unique_alphas,cd_k_mean,label=("Load cell " + str(k+1)),alpha =0.5)
             
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_D(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
@@ -521,8 +521,8 @@ class StaticCoeff:
             ax.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1) # Switch upwind and downwind deck. For Downstream files the load cells are switched.
             ax.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_D(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
@@ -530,8 +530,8 @@ class StaticCoeff:
             cd_total_mean = np.array([np.nanmean(np.sum(self.drag_coeff,axis=1)[alpha == val]) for val in unique_alphas])
             ax.plot(unique_alphas,cd_total_mean,label = "Total")    
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_D(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
             ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "single": #single deck
@@ -544,8 +544,8 @@ class StaticCoeff:
             
             ax.plot(unique_alphas,cd_single_mean,label=("Single deck"))
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_D(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
@@ -587,8 +587,8 @@ class StaticCoeff:
                 ax.plot(unique_alphas,cl_k_mean,label=("Load cell " + str(k+1)),alpha=0.5)
             
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_L(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
@@ -605,8 +605,8 @@ class StaticCoeff:
             ax.plot(unique_alphas,cl_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
             
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_L(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
@@ -614,8 +614,8 @@ class StaticCoeff:
             cl_total_mean = np.array([np.nanmean(np.sum(self.lift_coeff,axis=1)[alpha == val]) for val in unique_alphas])
             ax.plot(unique_alphas,cl_total_mean)
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_L(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
             ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "single": #single deck
@@ -626,8 +626,8 @@ class StaticCoeff:
             
             ax.plot(unique_alphas,cl_single_mean,label=("Single deck"))
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_L(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
@@ -667,8 +667,8 @@ class StaticCoeff:
                 ax.plot(unique_alphas,cm_k_mean,label=("Load cell " + str(k+1)),alpha=0.5)
             
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_M(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
@@ -684,8 +684,8 @@ class StaticCoeff:
             ax.plot(unique_alphas,cm_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1)
             ax.plot(unique_alphas,cm_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_M(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
@@ -693,8 +693,8 @@ class StaticCoeff:
             cm_total_mean = np.array([np.nanmean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
             ax.plot(unique_alphas,cm_total_mean)
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_M(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
             ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
 
         elif mode == "single": #single deck
@@ -707,8 +707,8 @@ class StaticCoeff:
             
             ax.plot(unique_alphas,cm_single_mean,label=("Single deck"))
             ax.grid()
-            ax.xlabel(r"$\alpha$")
-            ax.ylabel(r"$C_M(\alpha)$")
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
             ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
@@ -779,8 +779,8 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down, a
     ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,2] + static_coeff_down.drag_coeff[:,3], label=("MDS: Downstream deck"), color = colors["mds"], linewidth = 2)
     ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,0] + static_coeff_down.drag_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"],alpha = 0.5, linewidth = 1.5)  
     
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_D(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_D(\alpha)$")
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
     ax.legend()
@@ -817,8 +817,8 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, a
     ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,2] + static_coeff_down.lift_coeff[:,3], label=("MDS: Dowstream deck"), color = colors["mds"], linewidth = 2)
     ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,0] + static_coeff_down.lift_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"], alpha = 0.5, linewidth = 1.5)
 
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_L(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_L(\alpha)$")
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
     ax.legend()
@@ -854,8 +854,8 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, 
     ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,2] + static_coeff_up.pitch_coeff[:,3], label=("MDS: Upstream deck"), color = colors["mds"],  alpha = 0.5, linewidth = 1.5)
   
     
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_M(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_M(\alpha)$")
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
 
@@ -908,8 +908,8 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
 
 
    
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_D(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_D(\alpha)$")
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
     ax.legend()
@@ -959,8 +959,8 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
     ax.plot(unique_alphas_down, cl_downwind_mean, label="MDS: Downstream deck", color = colors["mds"])
     ax.plot(unique_alphas_down, cl_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
 
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_L(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_L(\alpha)$")
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
     ax.legend()
@@ -1010,8 +1010,8 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
     ax.plot(unique_alphas_down, cm_downwind_mean, label="MDS: Downstream deck", color =colors["mds"])
     ax.plot(unique_alphas_down, cm_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
 
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_M(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_M(\alpha)$")
     ax.grid(True)
     ax.legend(loc="best", frameon=True)
     ax.legend()
@@ -1050,8 +1050,8 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1], label=("Upstream deck"), color = color1)
     ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,2] + static_coeff.drag_coeff[:,3], label=("Downstream deck"), color = color2)
 
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_D(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_D(\alpha)$")
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of drag coefficients")
@@ -1085,8 +1085,8 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1], label=("Upwind deck"), color = color1)
     ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,2] + static_coeff.lift_coeff[:,3], label=("Downwind deck"), color = color2)
 
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_L(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_L(\alpha)$")
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of lift coefficients ")
@@ -1120,8 +1120,8 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_
     ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,2] + static_coeff.pitch_coeff[:,3], label=("Downwind deck"), color = color2)
 
     
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_M(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_M(\alpha)$")
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of pitch coefficients ")
@@ -1166,8 +1166,8 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind
 
 
    
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_D(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_D(\alpha)$")
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of mean drag coefficients ")
@@ -1208,8 +1208,8 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind
     ax.plot(unique_alphas, cl_upwind_mean, label="Upwind deck", color = color)
     ax.plot(unique_alphas, cl_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
 
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_L(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_L(\alpha)$")
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of mean lift coefficients ")
@@ -1250,8 +1250,8 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     ax.plot(unique_alphas, cm_upwind_mean, label="Upwind deck", color = color)
     ax.plot(unique_alphas, cm_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
 
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(r"$C_M(\alpha)$")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_M(\alpha)$")
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of mean pitch coefficients ")
@@ -1340,8 +1340,8 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     ax.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_high, coeff)[:,2] + getattr(static_coeff_high, coeff)[:,3],
              label=f"HWS - Downstream deck", color = color3HWS)
 
-    ax.xlabel(r"$\alpha$ [deg]")
-    ax.ylabel(axis)
+    ax.set_xlabel(r"$\alpha$ [deg]")
+    ax.set_ylabel(axis)
     ax.grid(True)
     ax.legend()
     ax.ylim(min,max)
@@ -1460,8 +1460,8 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     ax.plot(unique_alphas_high, downwind_mean_high,
                 label=f"HWS - Downstream deck", color = color2HWS, linestyle='-')
     
-    ax.xlabel(r"$\alpha$ [deg]")
-    ax.ylabel(axis)
+    ax.set_xlabel(r"$\alpha$ [deg]")
+    ax.set_ylabel(axis)
     ax.grid(True)
     ax.ylim(min,max)
     ax.legend()
@@ -1748,8 +1748,8 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
 
     if coeff_down_plot is None:
         ax.plot(alpha, coeff_up_plot, label="Single deck")  # alpha is unchanged, but coeff has NaNs
-        ax.xlabel(r"$\alpha$")
-        ax.ylabel(ylabel)
+        ax.set_xlabel(r"$\alpha$")
+        ax.set_ylabel(ylabel)
         ax.grid()
         ax.legend()
         ax.ylim(min,max)
@@ -1761,8 +1761,8 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
     # Plot both decks
     ax.plot(alpha, coeff_up_plot, color = color1,label="Upwind deck")
     ax.plot(alpha, coeff_down_plot, color = color2,label="Downwind deck")
-    ax.xlabel(r"$\alpha$")
-    ax.ylabel(ylabel)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(ylabel)
     ax.grid()
     ax.ylim(min, max)
     ax.legend()
