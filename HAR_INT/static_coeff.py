@@ -18,15 +18,15 @@ import pandas as pd
 import matplotlib as mpl
 
 # Computer Modern Roman without latex
-mpl.rcParam/s['text.usetex'] = False  
+mpl.rcParams['text.usetex'] == False  
 
 # Bruk fonten som ligner mest på Computer Modern
-mpl.rcParam/s['font.family'] = 'serif'
-mpl.rcParam/s['font.serif'] = ['cmr10', 'Computer Modern Roman', 'Times New Roman']
-mpl.rcParam/s['mathtext.fontset'] = 'cm' 
+mpl.rcParams['font.family'] == 'serif'
+mpl.rcParams['font.serif'] == ['cmr10', 'Computer Modern Roman', 'Times New Roman']
+mpl.rcParams['mathtext.fontset'] == 'cm' 
 
 # Generelt større og mer lesbar tekst
-mpl.rcParam/s.update({
+mpl.rcParams.update({
     'font.size': 12,              # Generell tekststørrelse
     'axes.labelsize': 12,         # Aksetitler
     'axes.titlesize': 14,         # Plot-titler

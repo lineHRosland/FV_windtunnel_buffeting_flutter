@@ -488,6 +488,8 @@ class Experiment:
             
                         
         fig.set_size_inches(20/2.54,15/2.54)
+        fig.tight_layout()
+        fig.align_ylabels()
 
         
         
@@ -519,21 +521,21 @@ class Experiment:
             axs[4].plot( self.time,self.forces_global_center[:,0:24:6])
             axs[4].set_title("Horizontal force")
             axs[4].grid(True)
-            axs[4].set_ylabel(r"$F_x$")
+            axs[4].set_ylabel(r"$F_x$ [N]")
             axs[4].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
             axs[5].plot( self.time,self.forces_global_center[:,2:24:6])
             axs[5].set_title("Vertical force")
             axs[5].grid(True)
-            axs[5].set_ylabel(r"$F_z$")
+            axs[5].set_ylabel(r"$F_z [N]$")
             axs[5].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
             axs[6].plot( self.time,self.forces_global_center[:,4:24:6])
             axs[6].set_title("Pitching moment")
             axs[6].grid(True)
-            axs[6].set_ylabel(r"$F_\theta$")
+            axs[6].set_ylabel(r"$F_\theta [Nm]$")
             axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
@@ -567,7 +569,7 @@ class Experiment:
             axs[4].plot( self.time,np.sum(self.forces_global_center[:,12:24:6],axis=1),label = "Downwind deck") # lastcelle 3 og 4 f.eks
             axs[4].set_title("Horizontal force")
             axs[4].grid(True)
-            axs[4].set_ylabel(r"$F_x$")
+            axs[4].set_ylabel(r"$F_x [N]$")
             axs[4].legend()
            
             
@@ -576,7 +578,7 @@ class Experiment:
             axs[5].plot( self.time,np.sum(self.forces_global_center[:,14:24:6],axis=1),label = "Downwind deck")
             axs[5].set_title("Vertical force")
             axs[5].grid(True)
-            axs[5].set_ylabel(r"$F_z$")
+            axs[5].set_ylabel(r"$F_z [N]$")
             axs[5].legend()
            
             
@@ -585,7 +587,7 @@ class Experiment:
             axs[6].plot( self.time,np.sum(self.forces_global_center[:,16:24:6],axis=1),label = "Downwind deck")
             axs[6].set_title("Pitching moment")
             axs[6].grid(True)
-            axs[6].set_ylabel(r"$F_\theta$  ")
+            axs[6].set_ylabel(r"$F_\theta$ [Nm]")
             axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].legend()
             
@@ -624,23 +626,23 @@ class Experiment:
             axs[4].plot( self.time,np.sum(self.forces_global_center[:,0:24:6], axis=1),label = "Total")
             axs[4].set_title("Horizontal force")
             axs[4].grid(True)
-            axs[4].set_ylabel(r"$F_x$")
-            axs[4].legend()
+            axs[4].set_ylabel(r"$F_x$ [N]")
+            #axs[4].legend()
            
             
             axs[5].plot( self.time,np.sum(self.forces_global_center[:,2:24:6], axis=1),label = "Total")
             axs[5].set_title("Vertical force")
             axs[5].grid(True)
-            axs[5].set_ylabel(r"$F_z$")
-            axs[5].legend()
+            axs[5].set_ylabel(r"$F_z$ [N]")
+            #axs[5].legend()
            
             
             axs[6].plot( self.time,np.sum(self.forces_global_center[:,4:24:6], axis=1),label = "Total")
             axs[6].set_title("Pitching moment")
             axs[6].grid(True)
-            axs[6].set_ylabel(r"$F_\theta$")
+            axs[6].set_ylabel(r"$F_\theta$ [Nm]")
             axs[6].set_xlabel(r"$Time$ [s]")
-            axs[6].legend()
+            #axs[6].legend()
             
             fig.tight_layout()
         
