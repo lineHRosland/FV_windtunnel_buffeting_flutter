@@ -318,7 +318,6 @@ class StaticCoeff:
             ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "decks": #upwind and downwind deck + total sum
-            ax.figure(figsize=(8,6))
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1),label = "Total")
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"), color=color1)
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"), color=color2)
@@ -329,7 +328,6 @@ class StaticCoeff:
             ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "total": #only total sum
-            ax.figure(figsize=(8,6))
             ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1))
             ax.grid()
             ax.xlabel(r"$\alpha$")
@@ -338,7 +336,6 @@ class StaticCoeff:
 
         elif mode == "single": #single deck
 
-            ax.figure(figsize=(8,6))
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Single deck"))
             ax.grid()
             ax.xlabel(r"$\alpha$")
