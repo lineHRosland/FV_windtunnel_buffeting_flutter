@@ -441,14 +441,35 @@ class Experiment:
         axs = fig.get_axes()
                         
         fig.set_size_inches(20/2.54,15/2.54)
+
+        # Find first non-zero motion in u_theta
+        nonzero_idx = np.where(~np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
+        if len(nonzero_idx) > 0:
+            start_idx = nonzero_idx[0]
+        else:
+            start_idx = 0  # fallback
+
+        # Find all indices where u_theta is (approximately) zero
+        zero_indices = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
+
+        # Find stop_idx as the 4th zero **after** start_idx
+        zero_after_start = zero_indices[zero_indices > start_idx]
+        if len(zero_after_start) >= 4:
+            stop_idx = zero_after_start[3]
+        else:
+            stop_idx = len(self.motion)  # fallback to end if not enough zero crossings
+
+        # Apply slicing
+        self.forces_global_center = self.forces_global_center[start_idx:stop_idx, :]
+        self.time = self.time[start_idx:stop_idx]
+        self.wind_speed = self.wind_speed[start_idx:stop_idx]
+        self.motion = self.motion[start_idx:stop_idx, :]
+
         
         t  = self.time
         U = self.wind_speed
-        f_x = self.forces_global_center[:,0:24:6] # hent ut kolonnene 0, 6, 12, 18 (lastcelle 1,2,3,4)
         u_x = self.motion[:,0]
-        f_z = self.forces_global_center[:,2:24:6] # hent ut kolonnene 2, 8, 14, 20 (lastcelle 1,2,3,4)
         u_z = self.motion[:,1]
-        f_tetha = self.forces_global_center[:,4:24:6] # hent ut kolonnene 4, 10, 16, 22 (lastcelle 1,2,3,4)
         u_tetha = self.motion[:,2]
         
         if mode == "all": #hver enkelt lastcelle plottes separat
@@ -471,21 +492,21 @@ class Experiment:
             axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
-            axs[3].plot(t,f_x)
+            axs[3].plot(t,self.forces_global_center[:,0:24:6])
             #axs[3].set_title("Horizontal force")
             axs[3].grid(True)
             axs[3].set_ylabel(r"$F_x$")
             axs[3].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
-            axs[5].plot(t,f_z)
+            axs[5].plot(t,self.forces_global_center[:,2:24:6])
             #axs[5].set_title("Vertical force")
             axs[5].grid(True)
             axs[5].set_ylabel(r"$F_z$")
             axs[5].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
-            axs[7].plot(t,f_tetha)
+            axs[7].plot(t,self.forces_global_center[:,4:24:6])
             #axs[7].set_title("Pitching moment")
             axs[7].grid(True)
             axs[7].set_ylabel(r"$F_\theta$")
@@ -573,21 +594,21 @@ class Experiment:
             axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
-            axs[3].plot(t,np.sum(f_x, axis=1),label = "Total")
+            axs[3].plot(t,np.sum(self.forces_global_center[:,0:24:6], axis=1),label = "Total")
             #axs[3].set_title("Horizontal force")
             axs[3].grid(True)
             axs[3].set_ylabel(r"$F_x$")
             axs[3].legend()
            
             
-            axs[5].plot(t,np.sum(f_z, axis=1),label = "Total")
+            axs[5].plot(t,np.sum(self.forces_global_center[:,2:24:6], axis=1),label = "Total")
             #axs[5].set_title("Vertical force")
             axs[5].grid(True)
             axs[5].set_ylabel(r"$F_z$")
             axs[5].legend()
            
             
-            axs[7].plot(t,np.sum(f_tetha, axis=1),label = "Total")
+            axs[7].plot(t,np.sum(self.forces_global_center[:,4:24:6], axis=1),label = "Total")
             #axs[7].set_title("Pitching moment")
             axs[7].grid(True)
             axs[7].set_ylabel(r"$F_\theta$")
