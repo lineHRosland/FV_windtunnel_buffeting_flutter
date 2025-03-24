@@ -322,12 +322,12 @@ class Experiment:
         
         axs[0].plot(self.time,self.motion[:,0])
         axs[0].set_title("Horizontal motion")
-        axs[0].set_ylabel(r"$u_x [mm]$")
+        axs[0].set_ylabel(r"$u_x $ [mm]")
         axs[0].grid(True)
         
         axs[1].plot(self.time,self.motion[:,1])
         axs[1].set_title("Vertical motion")
-        axs[1].set_ylabel(r"$u_z [mm]$")
+        axs[1].set_ylabel(r"$u_z $ [mm]")
         axs[1].grid(True)
         
         axs[2].plot(self.time,self.motion[:,2])
@@ -419,7 +419,7 @@ class Experiment:
         fig.set_size_inches(20/2.54,5/2.54)
         
         axs[0].plot(self.time,self.wind_speed)
-        axs[0].set_ylabel(r"$U(t) [m/s]$")
+        axs[0].set_ylabel(r"$U(t)$ [m/s]")
         axs[0].set_xlabel(r"$Time$ [s]")
         axs[0].set_title("Wind speed")
         axs[0].grid(True)
@@ -449,12 +449,12 @@ class Experiment:
              
             axs[2].plot(self.time,self.motion[:,0])
             #axs[2].set_title("Horizontal motion")
-            axs[2].set_ylabel(r"$u_x [mm]$")
+            axs[2].set_ylabel(r"$u_x $ [mm]")
             axs[2].grid(True)
             
             axs[4].plot(self.time,self.motion[:,1])
             #axs[4].set_title("Vertical motion")
-            axs[4].set_ylabel(r"$u_z [mm]$")
+            axs[4].set_ylabel(r"$u_z $ [mm]")
             axs[4].grid(True)
             
             axs[6].plot(self.time,self.motion[:,2])
@@ -491,17 +491,17 @@ class Experiment:
             
             axs[0].plot(self.time,self.wind_speed)
             #axs[0].set_title("Wind speed")
-            axs[0].set_ylabel(r"$U(t) [m/s]$")
+            axs[0].set_ylabel(r"$U(t)$ [m/s]")
             axs[0].grid(True)
             
             axs[2].plot(self.time,self.motion[:,0])
             #axs[2].set_title("Horizontal motion")
-            axs[2].set_ylabel(r"$u_x [mm]$")
+            axs[2].set_ylabel(r"$u_x $ [mm]")
             axs[2].grid(True)
             
             axs[4].plot(self.time,self.motion[:,1])
             #axs[4].set_title("Vertical motion")
-            axs[4].set_ylabel(r"$u_z [mm]$")
+            axs[4].set_ylabel(r"$u_z $ [mm]")
             axs[4].grid(True)
             
             axs[6].plot(self.time,self.motion[:,2])
@@ -540,17 +540,17 @@ class Experiment:
             
             axs[0].plot(self.time,self.wind_speed)
             #axs[0].set_title("Wind speed")
-            axs[0].set_ylabel(r"$U(t) [m/s]$")
+            axs[0].set_ylabel(r"$U(t)$ [m/s]")
             axs[0].grid(True)
             
             axs[2].plot(self.time,self.motion[:,0])
             #axs[2].set_title("Horizontal motion")
-            axs[2].set_ylabel(r"$u_x [mm]$")
+            axs[2].set_ylabel(r"$u_x $ [mm]")
             axs[2].grid(True)
             
             axs[4].plot(self.time,self.motion[:,1])
             #axs[4].set_title("Vertical motion")
-            axs[4].set_ylabel(r"$u_z [mm]$")
+            axs[4].set_ylabel(r"$u_z $ [mm]")
             axs[4].grid(True)
             
             axs[6].plot(self.time,self.motion[:,2])
