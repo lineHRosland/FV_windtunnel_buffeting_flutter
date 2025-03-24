@@ -315,7 +315,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "decks": #upwind and downwind deck + total sum
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1),label = "Total")
@@ -325,14 +325,14 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "total": #only total sum
             ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1))
             ax.grid()
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_D(\alpha)$")
-            ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "single": #single deck
 
@@ -341,7 +341,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -377,7 +377,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "decks":
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1),label = "Total")
@@ -387,14 +387,14 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "total":
             ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1))
             ax.grid()
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_L(\alpha)$")
-            ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
 
         elif mode == "single": #single deck
 
@@ -403,7 +403,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -436,7 +436,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "decks":
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1),label = "Total")
@@ -446,14 +446,14 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "total":
             ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1))
             ax.grid()
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_M(\alpha)$")
-            ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "single": #single deck
 
@@ -462,7 +462,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -507,7 +507,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "decks": #upwind and downwind deck + total sum
             cd_upwind_mean = np.array([
@@ -524,7 +524,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "total": #only total sum
             cd_total_mean = np.array([np.nanmean(np.sum(self.drag_coeff,axis=1)[alpha == val]) for val in unique_alphas])
@@ -532,7 +532,7 @@ class StaticCoeff:
             ax.grid()
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_D(\alpha)$")
-            ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "single": #single deck
 
@@ -547,7 +547,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -590,7 +590,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "decks":
             cl_upwind_mean = np.array([
@@ -608,7 +608,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "total":
             cl_total_mean = np.array([np.nanmean(np.sum(self.lift_coeff,axis=1)[alpha == val]) for val in unique_alphas])
@@ -616,7 +616,7 @@ class StaticCoeff:
             ax.grid()
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_L(\alpha)$")
-            ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "single": #single deck
             cl_single_mean = np.array([
@@ -629,7 +629,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -670,7 +670,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "decks":
             cm_upwind_mean = np.array([
@@ -687,7 +687,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "total":
             cm_total_mean = np.array([np.nanmean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
@@ -695,7 +695,7 @@ class StaticCoeff:
             ax.grid()
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_M(\alpha)$")
-            ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
 
         elif mode == "single": #single deck
 
@@ -710,7 +710,7 @@ class StaticCoeff:
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
-            ax.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         
         else:
@@ -785,7 +785,7 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down, a
     ax.legend(loc="best", frameon=True)
     ax.legend()
     ax.title("Comparison of drag coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+    ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 
 def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
@@ -823,7 +823,7 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, a
     ax.legend(loc="best", frameon=True)
     ax.legend()
     ax.title("Comparison of lift coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+    ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
@@ -861,7 +861,7 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, 
 
     ax.legend()
     ax.title("Comparison of pitch coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
@@ -914,7 +914,7 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     ax.legend(loc="best", frameon=True)
     ax.legend()
     ax.title("Comparison of mean drag coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+    ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
@@ -965,7 +965,7 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
     ax.legend(loc="best", frameon=True)
     ax.legend()
     ax.title("Comparison of mean lift coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+    ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
@@ -1016,7 +1016,7 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
     ax.legend(loc="best", frameon=True)
     ax.legend()
     ax.title("Comparison of mean pitch coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Compare with single deck
 def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
@@ -1055,7 +1055,7 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of drag coefficients")
-    ax.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+    ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 
 def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
@@ -1090,7 +1090,7 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of lift coefficients ")
-    ax.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+    ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
@@ -1125,7 +1125,7 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of pitch coefficients ")
-    ax.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
@@ -1171,7 +1171,7 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of mean drag coefficients ")
-    ax.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+    ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
@@ -1213,7 +1213,7 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of mean lift coefficients ")
-    ax.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+    ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
 def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
@@ -1255,7 +1255,7 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     ax.grid()
     ax.legend()
     ax.title(f"{setUp_type}: Comparison of mean pitch coefficients ")
-    ax.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Wind speeds
 def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
@@ -1344,7 +1344,7 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     ax.set_ylabel(axis)
     ax.grid(True)
     ax.legend()
-    ax.ylim(min,max)
+    ax.set_ylim(min,max)
     ax.title(f"Comparison of {scoff} coefficients at different wind speeds")
 
  
@@ -1463,7 +1463,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     ax.set_xlabel(r"$\alpha$ [deg]")
     ax.set_ylabel(axis)
     ax.grid(True)
-    ax.ylim(min,max)
+    ax.set_ylim(min,max)
     ax.legend()
     ax.title(f"Comparison of {scoff} coefficients at different wind speeds")
 
@@ -1752,7 +1752,7 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
         ax.set_ylabel(ylabel)
         ax.grid()
         ax.legend()
-        ax.ylim(min,max)
+        ax.set_ylim(min,max)
         ax.title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
         ax.tight_layout()
         return 
@@ -1764,7 +1764,7 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
     ax.set_xlabel(r"$\alpha$")
     ax.set_ylabel(ylabel)
     ax.grid()
-    ax.ylim(min, max)
+    ax.set_ylim(min, max)
     ax.legend()
     ax.tight_layout()
     ax.title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
