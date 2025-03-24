@@ -95,43 +95,43 @@ class Experiment:
         self.forces_global_center = forces_global_center
         self.motion = motion
 
-   
-        # 1. Finn første indeks med faktisk bevegelse
-        motion_threshold = 0.01  # juster etter behov
-        motion_abs = np.abs(self.motion[:, 2])
-        start_candidates = np.where(motion_abs > motion_threshold)[0]
+        if self.motion_type() == 2 and np.mac(np.abs(self.motion[:,2])) > 0.1: #0.01 radians = 5.7 degrees
+            # 1. Finn første indeks med faktisk bevegelse
+            motion_threshold = 0.01  # 0.01 radianer = 0.57 deg, juster etter behov
+            motion_abs = np.abs(self.motion[:, 2])
+            start_candidates = np.where(motion_abs > motion_threshold)[0]
 
-        if len(start_candidates) > 0:
-            approx_start_idx = start_candidates[0]
-            print(f"Initial motion threshold exceeded at index {approx_start_idx}, time = {self.time[approx_start_idx]:.2f}s")
-            
-            # 2. Gå bakover og finn siste nullpunkt FØR dette
-            zero_candidates = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
-            earlier_zeros = zero_candidates[zero_candidates < approx_start_idx]
-            
-            if len(earlier_zeros) > 0:
-                start_idx = earlier_zeros[-1]  # siste null før bevegelse
+            if len(start_candidates) > 0:
+                approx_start_idx = start_candidates[0]
+                print(f"Initial motion threshold exceeded at index {approx_start_idx}, time = {self.time[approx_start_idx]:.2f}s")
+                
+                # 2. Gå bakover og finn siste nullpunkt FØR dette
+                zero_candidates = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
+                earlier_zeros = zero_candidates[zero_candidates < approx_start_idx]
+                
+                if len(earlier_zeros) > 0:
+                    start_idx = earlier_zeros[-1]  # siste null før bevegelse
+                else:
+                    start_idx = approx_start_idx  # fallback
             else:
-                start_idx = approx_start_idx  # fallback
-        else:
-            start_idx = 0  # fallback hvis aldri over terskel
-        
-        #  Find all indices where u_theta is (approximately) zero
-        zero_indices = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
+                start_idx = 0  # fallback hvis aldri over terskel
+            
+            #  Find all indices where u_theta is (approximately) zero
+            zero_indices = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
 
-        # Find stop_idx as the 4th zero **after** start_idx
-        zero_after_start = zero_indices[zero_indices > approx_start_idx]
-        if len(zero_after_start) >= 4:
-            stop_idx = zero_after_start[3]
-        else:
-            stop_idx = len(self.motion)  # fallback to end if not enough zero crossings
+            # Find stop_idx as the 4th zero **after** start_idx
+            zero_after_start = zero_indices[zero_indices > approx_start_idx]
+            if len(zero_after_start) >= 4:
+                stop_idx = zero_after_start[3]
+            else:
+                stop_idx = len(self.motion)  # fallback to end if not enough zero crossings
 
-        # Apply slicing
-        self.forces_global_center = self.forces_global_center[start_idx:stop_idx, :]
-        self.forces_global = self.forces_global[start_idx:stop_idx, :]
-        self.time = self.time[start_idx:stop_idx]
-        self.wind_speed = self.wind_speed[start_idx:stop_idx]
-        self.motion = self.motion[start_idx:stop_idx, :]
+            # Apply slicing
+            self.forces_global_center = self.forces_global_center[start_idx:stop_idx, :]
+            self.forces_global = self.forces_global[start_idx:stop_idx, :]
+            self.time = self.time[start_idx:stop_idx]
+            self.wind_speed = self.wind_speed[start_idx:stop_idx]
+            self.motion = self.motion[start_idx:stop_idx, :]
 
 
 
@@ -505,7 +505,7 @@ class Experiment:
             
             axs[6].plot( self.time,self.motion[:,2])
             #axs[6].set_title("Pitching motion")
-            axs[6].set_ylabel(r"$u_\theta$")
+            axs[6].set_ylabel(r"$u_\theta$  [radianer]")
             axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
@@ -552,7 +552,7 @@ class Experiment:
             
             axs[6].plot( self.time,self.motion[:,2])
             #axs[6].set_title("Pitching motion")
-            axs[6].set_ylabel(r"$u_\theta [deg]$")
+            axs[6].set_ylabel(r"$u_\theta [radianer]$")
             axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
@@ -578,7 +578,7 @@ class Experiment:
             axs[7].plot( self.time,np.sum(self.forces_global_center[:,16:24:6],axis=1),label = "Downwind deck")
             #axs[7].set_title("Pitching moment")
             axs[7].grid(True)
-            axs[7].set_ylabel(r"$F_\theta$")
+            axs[7].set_ylabel(r"$F_\theta$  ")
             axs[7].set_xlabel(r"$Time$ [s]")
             axs[7].legend()
             
@@ -588,7 +588,7 @@ class Experiment:
             #axs[0].set_title("Wind speed")
             U_mean = np.mean(self.wind_speed)
             U_std = np.std(self.wind_speed)
-            if U_mean > 0.5:  # terskelverdi    
+            if U_mean > 2:  # terskelverdi    
                 TI = U_std / U_mean * 100
                 axs[0].set_title(f"Turbulence intensity: {TI:.1f}%", fontsize=12)            
 
@@ -607,7 +607,7 @@ class Experiment:
             
             axs[6].plot( self.time,self.motion[:,2])
             #axs[6].set_title("Pitching motion")
-            axs[6].set_ylabel(r"$u_\theta$")
+            axs[6].set_ylabel(r"$u_\theta$ [radianer]")
             axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
