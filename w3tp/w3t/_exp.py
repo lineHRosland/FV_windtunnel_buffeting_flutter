@@ -103,7 +103,6 @@ class Experiment:
 
             if len(start_candidates) > 0:
                 approx_start_idx = start_candidates[0]
-                print(f"Initial motion threshold exceeded at index {approx_start_idx}, time = {self.time[approx_start_idx]:.2f}s")
                 
                 # 2. Gå bakover og finn siste nullpunkt FØR dette
                 zero_candidates = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
