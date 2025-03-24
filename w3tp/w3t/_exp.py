@@ -480,10 +480,10 @@ class Experiment:
             axs = []
             axs.append(fig.add_subplot(gs[0, :]))   # wind speed over both columns
             axs.append(fig.add_subplot(gs[1, 0]))   # u_x
-            axs.append(fig.add_subplot(gs[1, 1]))   # u_z
-            axs.append(fig.add_subplot(gs[2, 0]))   # u_theta
-            axs.append(fig.add_subplot(gs[2, 1]))   # F_x
-            axs.append(fig.add_subplot(gs[3, 0]))   # F_z
+            axs.append(fig.add_subplot(gs[2, 0]))   # u_z
+            axs.append(fig.add_subplot(gs[3, 0]))   # u_theta
+            axs.append(fig.add_subplot(gs[1, 1]))   # F_x
+            axs.append(fig.add_subplot(gs[2, 1]))   # F_z
             axs.append(fig.add_subplot(gs[3, 1]))   # F_theta
             
                         
