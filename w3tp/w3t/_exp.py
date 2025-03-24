@@ -332,8 +332,8 @@ class Experiment:
         
         axs[2].plot(self.time,self.motion[:,2])
         axs[2].set_title("Pitching motion")
-        axs[2].set_ylabel(r"$u_\theta [deg]$")
-        axs[2].set_xlabel(r"$Time [s]$")
+        axs[2].set_ylabel(r"$u_\theta$")
+        axs[2].set_xlabel(r"$Time$ [s]")
         axs[2].grid(True)
         
         fig.tight_layout()
@@ -398,7 +398,7 @@ class Experiment:
         axs[2].set_title("Pitching moment")
         axs[2].grid(True)
         axs[2].set_ylabel(r"$F_\theta$")
-        axs[2].set_xlabel(r"$Time [s]$")
+        axs[2].set_xlabel(r"$Time$ [s]")
         axs[2].legend()
         
         fig.tight_layout()
@@ -420,7 +420,7 @@ class Experiment:
         
         axs[0].plot(self.time,self.wind_speed)
         axs[0].set_ylabel(r"$U(t) [m/s]$")
-        axs[0].set_xlabel(r"$Time [s]$")
+        axs[0].set_xlabel(r"$Time$ [s]")
         axs[0].set_title("Wind speed")
         axs[0].grid(True)
         
@@ -459,8 +459,8 @@ class Experiment:
             
             axs[6].plot(self.time,self.motion[:,2])
             #axs[6].set_title("Pitching motion")
-            axs[6].set_ylabel(r"$u_\theta [deg]$")
-            axs[6].set_xlabel(r"$Time [s]$")
+            axs[6].set_ylabel(r"$u_\theta$")
+            axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
             axs[3].plot(self.time,self.forces_global_center[:,0:24:6])
@@ -481,7 +481,7 @@ class Experiment:
             #axs[7].set_title("Pitching moment")
             axs[7].grid(True)
             axs[7].set_ylabel(r"$F_\theta$")
-            axs[7].set_xlabel(r"$Time [s]$")
+            axs[7].set_xlabel(r"$Time$ [s]")
             axs[7].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
@@ -507,7 +507,7 @@ class Experiment:
             axs[6].plot(self.time,self.motion[:,2])
             #axs[6].set_title("Pitching motion")
             axs[6].set_ylabel(r"$u_\theta [deg]$")
-            axs[6].set_xlabel(r"$Time [s]$")
+            axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
             axs[3].plot(self.time,np.sum(self.forces_global_center[:,0:12:6],axis=1),label = "Upwind deck")
@@ -533,7 +533,7 @@ class Experiment:
             #axs[7].set_title("Pitching moment")
             axs[7].grid(True)
             axs[7].set_ylabel(r"$F_\theta$")
-            axs[7].set_xlabel(r"$Time [s]$")
+            axs[7].set_xlabel(r"$Time$ [s]")
             axs[7].legend()
             
         elif mode == "total":
@@ -555,8 +555,8 @@ class Experiment:
             
             axs[6].plot(self.time,self.motion[:,2])
             #axs[6].set_title("Pitching motion")
-            axs[6].set_ylabel(r"$u_\theta [deg]$")
-            axs[6].set_xlabel(r"$Time [s]$")
+            axs[6].set_ylabel(r"$u_\theta$")
+            axs[6].set_xlabel(r"$Time$ [s]")
             axs[6].grid(True)
             
             axs[3].plot(self.time,np.sum(self.forces_global_center[:,0:24:6],axis=1),label = "Total")
@@ -577,7 +577,7 @@ class Experiment:
             #axs[7].set_title("Pitching moment")
             axs[7].grid(True)
             axs[7].set_ylabel(r"$F_\theta$")
-            axs[7].set_xlabel(r"$Time [s]$")
+            axs[7].set_xlabel(r"$Time$ [s]")
             axs[7].legend()
             
             fig.tight_layout()

@@ -17,10 +17,13 @@ import time
 import pandas as pd
 import matplotlib as mpl
 
-# Use LaTeX font rendering (Computer Modern Roman)
-mpl.rcParams['text.usetex'] = True
+# Computer Modern Roman without latex
+mpl.rcParams['text.usetex'] = False  
+
+# Bruk fonten som ligner mest på Computer Modern
 mpl.rcParams['font.family'] = 'serif'
-mpl.rcParams['font.serif'] = ['Computer Modern Roman']
+mpl.rcParams['font.serif'] = ['cmr10', 'Computer Modern Roman', 'Times New Roman']
+mpl.rcParams['mathtext.fontset'] = 'cm' 
 
 # Generelt større og mer lesbar tekst
 mpl.rcParams.update({
@@ -95,22 +98,22 @@ exp0_single, exp1_single_6 = load_experiments_from_hdf5(h5_input_path, section_n
 exp0_single, exp1_single_9= load_experiments_from_hdf5(h5_input_path, section_name, file_names_9,  upwind_in_rig=True)
 
 exp0_single.plot_experiment() #
-plt.gcf().suptitle(f"Single deck - 0 m/s – Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - 0 m/s - Butterworth low-pass filter", fontsize=16, y=1.02)
 exp1_single_6.plot_experiment() #
-plt.gcf().suptitle(f"Single deck - 6 m/s – Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - 6 m/s - Butterworth low-pass filter", fontsize=16, y=1.02)
 exp1_single_9.plot_experiment() #
-plt.gcf().suptitle(f"Single deck - 9 m/s – Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - 9 m/s - Butterworth low-pass filter", fontsize=16, y=1.02)
 
 exp0_single.filt_forces(6, 2)
 exp1_single_6.filt_forces(6, 2)
 exp1_single_9.filt_forces(6, 2)
 
 exp0_single.plot_experiment() #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - 0 m/s - With Butterworth low-pass filter", fontsize=16, y=1.02)
 exp1_single_6.plot_experiment() #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - 6 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - 6 m/s - With Butterworth low-pass filter", fontsize=16, y=1.02)
 exp1_single_9.plot_experiment() #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - 9 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+plt.gcf().suptitle(f"Single deck - 9 m/s - With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
