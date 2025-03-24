@@ -95,28 +95,32 @@ class Experiment:
         self.forces_global_center = forces_global_center
         self.motion = motion
 
-        print("Before trimming:")
-        print(" - motion shape:", self.motion.shape)
-        print(" - time shape:", self.time.shape)
-        print(" - wind_speed shape:", self.wind_speed.shape)
-        print(" - forces_global_center shape:", self.forces_global_center.shape)
+   
+        # 1. Finn første indeks med faktisk bevegelse
+        motion_threshold = 0.01  # juster etter behov
+        motion_abs = np.abs(self.motion[:, 2])
+        start_candidates = np.where(motion_abs > motion_threshold)[0]
 
-        # Find first non-zero motion in u_theta
-        motion_threshold = 0.01  # degrees
-        nonzero_idx =  np.where(np.abs(self.motion[:, 2]) > motion_threshold)[0]
-        if len(nonzero_idx) > 0:
-            start_idx = nonzero_idx[0]
-            print(f" Using start_idx = {start_idx}, time = {self.time[start_idx]:.2f}s")
-
+        if len(start_candidates) > 0:
+            approx_start_idx = start_candidates[0]
+            print(f"Initial motion threshold exceeded at index {approx_start_idx}, time = {self.time[approx_start_idx]:.2f}s")
+            
+            # 2. Gå bakover og finn siste nullpunkt FØR dette
+            zero_candidates = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
+            earlier_zeros = zero_candidates[zero_candidates < approx_start_idx]
+            
+            if len(earlier_zeros) > 0:
+                start_idx = earlier_zeros[-1]  # siste null før bevegelse
+            else:
+                start_idx = approx_start_idx  # fallback
         else:
-            start_idx = 0  # fallback
-            print(" No motion detected above threshold. Using start_idx = 0")
-
-        # Find all indices where u_theta is (approximately) zero
+            start_idx = 0  # fallback hvis aldri over terskel
+        
+        #  Find all indices where u_theta is (approximately) zero
         zero_indices = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
 
         # Find stop_idx as the 4th zero **after** start_idx
-        zero_after_start = zero_indices[zero_indices > start_idx]
+        zero_after_start = zero_indices[zero_indices > approx_start_idx]
         if len(zero_after_start) >= 4:
             stop_idx = zero_after_start[3]
         else:
