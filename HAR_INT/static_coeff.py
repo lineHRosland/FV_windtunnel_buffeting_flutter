@@ -15,6 +15,23 @@ import h5py
 from matplotlib import pyplot as plt
 import time
 import pandas as pd
+import matplotlib as mpl
+
+# Use LaTeX font rendering (Computer Modern Roman)
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['font.family'] = 'serif'
+mpl.rcParams['font.serif'] = ['Computer Modern Roman']
+
+# Generelt større og mer lesbar tekst
+mpl.rcParams.update({
+    'font.size': 14,              # Generell tekststørrelse
+    'axes.labelsize': 14,         # Aksetitler
+    'axes.titlesize': 16,         # Plot-titler
+    'legend.fontsize': 12,        # Tekst i legend
+    'xtick.labelsize': 12,        # X-tick labels
+    'ytick.labelsize': 12         # Y-tick labels
+})
+
 #from scipy import signal as spsp
 
 def load_experiments_from_hdf5(h5_input_path, section_name, file_names,  upwind_in_rig=True):
@@ -77,23 +94,23 @@ file_names_9 = ["HAR_INT_SINGLE_02_00_003","HAR_INT_SINGLE_02_00_004"] # 9 ms, V
 exp0_single, exp1_single_6 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_6,  upwind_in_rig=True)
 exp0_single, exp1_single_9= load_experiments_from_hdf5(h5_input_path, section_name, file_names_9,  upwind_in_rig=True)
 
-exp0_single.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_single_6.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} 6 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_single_9.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} 9 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_single.plot_experiment() #
+plt.gcf().suptitle(f"Single deck - 0 m/s – Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_single_6.plot_experiment() #
+plt.gcf().suptitle(f"Single deck - 6 m/s – Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_single_9.plot_experiment() #
+plt.gcf().suptitle(f"Single deck - 9 m/s – Butterworth low-pass filter", fontsize=16, y=1.02)
 
 exp0_single.filt_forces(6, 2)
 exp1_single_6.filt_forces(6, 2)
 exp1_single_9.filt_forces(6, 2)
 
-exp0_single.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_single_6.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 6 m/s – After filtering", fontsize=16, y=1.02)
-exp1_single_9.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} 9 m/s – After filtering", fontsize=16, y=1.02)
+exp0_single.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"Single deck - 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_single_6.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"Single deck - 6 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_single_9.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"Single deck - 9 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -159,28 +176,28 @@ exp0_MDS_1D, exp1_MDS_1D_8= load_experiments_from_hdf5(h5_input_path, section_na
 exp0_MDS_1D, exp1_MDS_1D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_1D_10,  upwind_in_rig=False)
 
 
-exp0_MDS_1D.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_1D_6.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_1D_8.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_1D_10.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_MDS_1D.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s ", fontsize=16, y=1.02)
+exp1_MDS_1D_6.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_1D_8.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_1D_10.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – ", fontsize=16, y=1.02)
 
 exp0_MDS_1D.filt_forces(6, 2)
 exp1_MDS_1D_6.filt_forces(6, 2)
 exp1_MDS_1D_8.filt_forces(6, 2)
 exp1_MDS_1D_10.filt_forces(6, 2)
 
-exp0_MDS_1D.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_1D_6.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_1D_8.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_1D_10.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – After filtering", fontsize=16, y=1.02)
+exp0_MDS_1D.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_1D_6.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_1D_8.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_1D_10.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -255,28 +272,28 @@ exp0_MUS_1D, exp1_MUS_1D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 
-exp0_MUS_1D.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_1D_5.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_1D_8.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_1D_10.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_MUS_1D.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_1D_5.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_1D_8.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_1D_10.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – ", fontsize=16, y=1.02)
 
 exp0_MUS_1D.filt_forces(6, 2)
 exp1_MUS_1D_5.filt_forces(6, 2)
 exp1_MUS_1D_8.filt_forces(6, 2)
 exp1_MUS_1D_10.filt_forces(6, 2)
 
-exp0_MUS_1D.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_1D_5.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_1D_8.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_1D_10.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – After filtering", fontsize=16, y=1.02)
+exp0_MUS_1D.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_1D_5.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_1D_8.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_1D_10.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -880,28 +897,28 @@ exp0_MDS_2D, exp1_MDS_2D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 
-exp0_MDS_2D.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_2D_6.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_2D_8.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_2D_10.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_MDS_2D.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_2D_6.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_2D_8.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_2D_10.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – ", fontsize=16, y=1.02)
 
 exp0_MDS_2D.filt_forces(6, 2)
 exp1_MDS_2D_6.filt_forces(6, 2)
 exp1_MDS_2D_8.filt_forces(6, 2)
 exp1_MDS_2D_10.filt_forces(6, 2)
 
-exp0_MDS_2D.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_2D_6.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_2D_8.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_2D_10.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – After filtering", fontsize=16, y=1.02)
+exp0_MDS_2D.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_2D_6.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_2D_8.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_2D_10.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -977,28 +994,28 @@ exp0_MUS_2D, exp1_MUS_2D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 
-exp0_MUS_2D.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_2D_5.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_2D_8.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_2D_10.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_MUS_2D.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_2D_5.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_2D_8.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_2D_10.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – ", fontsize=16, y=1.02)
 
 exp0_MUS_2D.filt_forces(6, 2)
 exp1_MUS_2D_5.filt_forces(6, 2)
 exp1_MUS_2D_8.filt_forces(6, 2)
 exp1_MUS_2D_10.filt_forces(6, 2)
 
-exp0_MUS_2D.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_2D_5.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_2D_8.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_2D_10.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – After filtering", fontsize=16, y=1.02)
+exp0_MUS_2D.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_2D_5.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_2D_8.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_2D_10.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -1606,28 +1623,28 @@ exp0_MDS_3D, exp1_MDS_3D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 
-exp0_MDS_3D.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_3D_6.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_3D_8.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_3D_10.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_MDS_3D.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_3D_6.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_3D_8.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_3D_10.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – ", fontsize=16, y=1.02)
 
 exp0_MDS_3D.filt_forces(6, 2)
 exp1_MDS_3D_6.filt_forces(6, 2)
 exp1_MDS_3D_8.filt_forces(6, 2)
 exp1_MDS_3D_10.filt_forces(6, 2)
 
-exp0_MDS_3D.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_3D_6.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_3D_8.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_3D_10.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – After filtering", fontsize=16, y=1.02)
+exp0_MDS_3D.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_3D_6.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 6 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_3D_8.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_3D_10.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -1703,28 +1720,28 @@ exp0_MUS_3D, exp1_MUS_3D_8 = load_experiments_from_hdf5(h5_input_path, section_n
 exp0_MUS_3D, exp1_MUS_3D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_3D_10,  upwind_in_rig=True)
 
 
-exp0_MUS_3D.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_3D_5.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_3D_8.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_3D_10.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_MUS_3D.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_3D_5.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_3D_8.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_3D_10.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – ", fontsize=16, y=1.02)
 
 exp0_MUS_3D.filt_forces(6, 2)
 exp1_MUS_3D_5.filt_forces(6, 2)
 exp1_MUS_3D_8.filt_forces(6, 2)
 exp1_MUS_3D_10.filt_forces(6, 2)
 
-exp0_MUS_3D.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_3D_5.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_3D_8.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_3D_10.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – After filtering", fontsize=16, y=1.02)
+exp0_MUS_3D.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_3D_5.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_3D_8.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_3D_10.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -2328,28 +2345,28 @@ exp0_MDS_4D, exp1_MDS_4D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 
-exp0_MDS_4D.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_4D_55.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_4D_85.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_4D_10.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_MDS_4D.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_4D_55.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_4D_85.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_4D_10.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – ", fontsize=16, y=1.02)
 
 exp0_MDS_4D.filt_forces(6, 2)
 exp1_MDS_4D_55.filt_forces(6, 2)
 exp1_MDS_4D_85.filt_forces(6, 2)
 exp1_MDS_4D_10.filt_forces(6, 2)
 
-exp0_MDS_4D.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_4D_55.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_4D_85.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_4D_10.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – After filtering", fontsize=16, y=1.02)
+exp0_MDS_4D.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_4D_55.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_4D_85.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_4D_10.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -2423,28 +2440,28 @@ exp0_MUS_4D, exp1_MUS_4D_85 = load_experiments_from_hdf5(h5_input_path, section_
 exp0_MUS_4D, exp1_MUS_4D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_4D_10,  upwind_in_rig=True)
 
 
-exp0_MUS_4D.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_4D_5.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_4D_85.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_4D_10.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_MUS_4D.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_4D_5.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_4D_85.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_4D_10.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – ", fontsize=16, y=1.02)
 
 exp0_MUS_4D.filt_forces(6, 2)
 exp1_MUS_4D_5.filt_forces(6, 2)
 exp1_MUS_4D_85.filt_forces(6, 2)
 exp1_MUS_4D_10.filt_forces(6, 2)
 
-exp0_MUS_4D.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_4D_5.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_4D_85.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_4D_10.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – After filtering", fontsize=16, y=1.02)
+exp0_MUS_4D.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_4D_5.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 5 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_4D_85.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 8 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_4D_10.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -3047,28 +3064,28 @@ exp0_MDS_5D, exp1_MDS_5D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 
 
-exp0_MDS_5D.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_5D_55.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5.5 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_5D_85.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MDS_5D_10.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_MDS_5D.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_5D_55.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 5.5 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_5D_85.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s – ", fontsize=16, y=1.02)
+exp1_MDS_5D_10.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – ", fontsize=16, y=1.02)
 
 exp0_MDS_5D.filt_forces(6, 2)
 exp1_MDS_5D_55.filt_forces(6, 2)
 exp1_MDS_5D_85.filt_forces(6, 2)
 exp1_MDS_5D_10.filt_forces(6, 2)
 
-exp0_MDS_5D.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_5D_55.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 5.5 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_5D_85.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MDS_5D_10.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – After filtering", fontsize=16, y=1.02)
+exp0_MDS_5D.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_5D_55.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 5.5 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_5D_85.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MDS_5D_10.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 
@@ -3142,28 +3159,28 @@ exp0_MUS_5D, exp1_MUS_5D_85 = load_experiments_from_hdf5(h5_input_path, section_
 exp0_MUS_5D, exp1_MUS_5D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_5D_10,  upwind_in_rig=True)
 
 
-exp0_MUS_5D.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_5D_45.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 4.5 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_5D_85.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s – Before filtering", fontsize=16, y=1.02)
-exp1_MUS_5D_10.plot_experiment() #Before filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – Before filtering", fontsize=16, y=1.02)
+exp0_MUS_5D.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_5D_45.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 4.5 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_5D_85.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s – ", fontsize=16, y=1.02)
+exp1_MUS_5D_10.plot_experiment() #
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – ", fontsize=16, y=1.02)
 
 exp0_MUS_5D.filt_forces(6, 2)
 exp1_MUS_5D_45.filt_forces(6, 2)
 exp1_MUS_5D_85.filt_forces(6, 2)
 exp1_MUS_5D_10.filt_forces(6, 2)
 
-exp0_MUS_5D.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_5D_45.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 4.5 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_5D_85.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s – After filtering", fontsize=16, y=1.02)
-exp1_MUS_5D_10.plot_experiment() #After filtering
-plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – After filtering", fontsize=16, y=1.02)
+exp0_MUS_5D.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 0 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_5D_45.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 4.5 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_5D_85.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 8.5 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
+exp1_MUS_5D_10.plot_experiment() #With Butterworth low-pass filter
+plt.gcf().suptitle(f"{section_name} (ref excel) 10 m/s – With Butterworth low-pass filter", fontsize=16, y=1.02)
 plt.show()
 
 

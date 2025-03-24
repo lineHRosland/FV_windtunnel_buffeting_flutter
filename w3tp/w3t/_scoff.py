@@ -19,7 +19,6 @@ import pandas as pd
 import os
 import copy  
 
-
 __all__ = ["StaticCoeff",]
   
             
@@ -771,7 +770,6 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down, a
     }
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
-    ax.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
 
     ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
     ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,0] + static_coeff_up.drag_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2) #MUS er her riktig, altså motsatt av i excel arket.
@@ -809,7 +807,6 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, a
         "mus": "#F15854",
         "mds": "#60BD68"
     }
-    ax.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
 
     ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
     ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,0] + static_coeff_up.lift_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2)
@@ -846,7 +843,6 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, 
         "mds": "#60BD68"
     }
 
-    ax.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
     ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
     ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,0] + static_coeff_up.pitch_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2)
     ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,0] + static_coeff_down.pitch_coeff[:,1], label=("MUS: Downstream deck"), color = colors["mus"],  alpha = 0.5, linewidth = 1.5)
@@ -898,7 +894,6 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     cd_downUp_mean = np.array([np.nanmean(static_coeff_down.drag_coeff[:,0][alpha_down == val]) + np.nanmean(static_coeff_down.drag_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
    
 
-    ax.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
 
     ax.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = colors["single"])
     ax.plot(unique_alphas_up, cd_upwind_mean, label="MUS: Upstream deck ", color = colors["mus"])
@@ -951,7 +946,6 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
     cl_upDown_mean = np.array([np.nanmean(static_coeff_up.lift_coeff[:,2][alpha_up == val]) + np.nanmean(static_coeff_up.lift_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
     cl_downUp_mean = np.array([np.nanmean(static_coeff_down.lift_coeff[:,0][alpha_down == val]) + np.nanmean(static_coeff_down.lift_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
 
-    ax.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
 
     ax.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = colors["single"])
     ax.plot(unique_alphas_up, cl_upwind_mean, label="MUS: Upstream deck", color = colors["mus"])
@@ -1001,7 +995,6 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
         "mus": "#F15854",
         "mds": "#60BD68"
     }
-    ax.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
 
     ax.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = colors["single"])
     ax.plot(unique_alphas_up, cm_upwind_mean, label="MUS: Upstream deck", color =colors["mus"])
@@ -1044,7 +1037,6 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_r
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))   
 
-    ax.rcParams.update({'font.size': 14}) 
 
     ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
     ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1], label=("Upstream deck"), color = color1)
@@ -1079,7 +1071,6 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_r
         color2 ="#60BD68"
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
-    ax.rcParams.update({'font.size': 14}) 
 
     ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
     ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1], label=("Upwind deck"), color = color1)
@@ -1113,7 +1104,6 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_
         color2 ="#60BD68"
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))   
-    ax.rcParams.update({'font.size': 14}) 
 
     ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
     ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,0] + static_coeff.pitch_coeff[:,1], label=("Upwind deck"), color = color1)
@@ -1158,7 +1148,6 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind
     cd_downwind_mean = np.array([np.nanmean(static_coeff.drag_coeff[:,2][alpha == val]) + np.nanmean(static_coeff.drag_coeff[:,3][alpha== val]) for val in unique_alphas])
 
 
-    ax.rcParams.update({'font.size': 14}) 
     
     ax.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = "#5DA5DA")
     ax.plot(unique_alphas, cd_upwind_mean, label="Upwind deck", color = color)
@@ -1202,7 +1191,6 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind
     cl_upwind_mean = np.array([np.nanmean(static_coeff.lift_coeff[:,0][alpha == val]) + np.nanmean(static_coeff.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
     cl_downwind_mean = np.array([np.nanmean(static_coeff.lift_coeff[:,2][alpha == val]) + np.nanmean(static_coeff.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
    
-    ax.rcParams.update({'font.size': 14}) 
 
     ax.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = "#5DA5DA")
     ax.plot(unique_alphas, cl_upwind_mean, label="Upwind deck", color = color)
@@ -1244,7 +1232,6 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     cm_upwind_mean = np.array([np.nanmean(static_coeff.pitch_coeff[:,0][alpha == val]) + np.nanmean(static_coeff.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
     cm_downwind_mean = np.array([np.nanmean(static_coeff.pitch_coeff[:,2][alpha == val]) + np.nanmean(static_coeff.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
     
-    ax.rcParams.update({'font.size': 14}) 
 
     ax.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = "#5DA5DA")
     ax.plot(unique_alphas, cm_upwind_mean, label="Upwind deck", color = color)
@@ -1314,7 +1301,6 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
         min = -0.175
         max = 0.2
 
-    ax.rcParams.update({'font.size': 14}) 
 
     # Plot low wind speed
    
@@ -1434,7 +1420,6 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
 
 
-    ax.rcParams.update({'font.size': 14}) 
 
     # Plot low wind speed
     ax.plot(unique_alphas_single_low, single_mean_low,
@@ -1744,7 +1729,6 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
     # Plot
-    ax.rcParams.update({'font.size': 14}) 
 
     if coeff_down_plot is None:
         ax.plot(alpha, coeff_up_plot, label="Single deck")  # alpha is unchanged, but coeff has NaNs
