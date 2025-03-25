@@ -1535,7 +1535,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
         alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
         return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
     
-    def remove_after_jump(alpha_vals, coeff_array, col1=0, col2=1, threshold_jump=0.1):
+    def remove_after_jump(alpha_vals, coeff_array, col1=0, col2=1, threshold_jump=0.05):
         """
         Fjerner alle verdier med alpha høyere enn der det først skjer et hopp
         i verdien mellom to etterfølgende alphas.
