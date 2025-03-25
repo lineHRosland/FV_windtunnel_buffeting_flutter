@@ -167,7 +167,7 @@ w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_sin
 plt.suptitle(f"Single deck - Wind speed: 9 m/s",  y=0.95)
 
 #%%  Filter and plot ALT 2
-section_name = "Single_Static"
+section_name = "Single_Static_filtered"
 
 static_coeff_single_6_filtered, static_coeff_single_9_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_6,static_coeff_2=static_coeff_single_9,threshold=0.05,  threshold_low=[0.07, 0.05,0.005], threshold_high=[0.019,0.05,0.01],single=True)
 
@@ -276,7 +276,7 @@ plt.suptitle(f"MDS 1D - Wind speed: 10 m/s",  y=0.95)
 
 
 #%%  Filter and plot ALT 2
-section_name = "MUS_1D_Static"
+section_name = "MUS_1D_Static_filtered" 
 
 static_coeff_MDS_1D_6_filtered, static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_1D_6, static_coeff_2=static_coeff_MDS_1D_8, static_coeff_3=static_coeff_MDS_1D_10, threshold=0.05, threshold_low=[0.06,0.05,0.05],threshold_med = [0.005,0.03,0.05],threshold_high=[0.05,0.01,0.05],single=False)
 
@@ -381,7 +381,7 @@ plt.suptitle(f"MUS 1D - Wind speed: 10 m/s",  y=0.95)
 
 
 #%%  Filter and plot ALT 2
-section_name = "MDS_1D_Static"
+section_name = "MDS_1D_Static_filtered"
 
 static_coeff_MUS_1D_5_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MUS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_1D_5, static_coeff_2=static_coeff_MUS_1D_8, static_coeff_3=static_coeff_MUS_1D_10, threshold=0.019, threshold_low=[0.06,0.04,0.01],threshold_med = [0.01,0.04,0.01],threshold_high=[0.02,0.04,0.01],single=False)
 
@@ -396,36 +396,36 @@ section_name = "1D"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_MDS_1D_6.to_excel(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_5.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_6.to_excel(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_5.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_1D_8.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_8.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_8.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_8.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_1D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_10.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_10.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "1D_mean"
 
 # Low wind speed
-static_coeff_MDS_1D_6.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_5.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_6.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_5.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_1D_8.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_8.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_8.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_8.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_1D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_10.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_10.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
 #%% Save all experiments to excel filtered
@@ -433,36 +433,36 @@ section_name = "1D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_MDS_1D_6_filtered.to_excel(section_name, sheet_name="MDS - 6 - m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_5_filtered.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_6_filtered.to_excel(section_name, sheet_name="MDS - 6 - m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_5_filtered.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_1D_8_filtered.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_8_filtered.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_8_filtered.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_8_filtered.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_1D_10_filtered.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_10_filtered.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_10_filtered.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_10_filtered.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "1D_mean_filtered"
 
 # Low wind speed
-static_coeff_MDS_1D_6_filtered.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_5_filtered.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_6_filtered.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_5_filtered.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_1D_8_filtered.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_8_filtered.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_8_filtered.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_8_filtered.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_1D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_1D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_1D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 #%% Compare all experiments (MUS vs MDS vs Single)
 section_name = "1D"
@@ -470,139 +470,139 @@ section_name = "1D"
 #Low wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_6, static_coeff_MUS_1D_5, static_coeff_MDS_1D_6)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_drag" + ".png"))
 w3t._scoff.plot_compare_lift(static_coeff_single_6, static_coeff_MUS_1D_5, static_coeff_MDS_1D_6)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_lift" + ".png"))
 w3t._scoff.plot_compare_pitch(static_coeff_single_6, static_coeff_MUS_1D_5, static_coeff_MDS_1D_6)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_pitch" + ".png"))
 # Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_6, static_coeff_MUS_1D_5, static_coeff_MDS_1D_6)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_drag_mean" + ".png"))
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_6, static_coeff_MUS_1D_5, static_coeff_MDS_1D_6)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_lift_mean" + ".png"))
 w3t._scoff.plot_compare_pitch_mean(static_coeff_single_6, static_coeff_MUS_1D_5, static_coeff_MDS_1D_6)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_pitch_mean" + ".png"))
 
-#Medium wind speed
-w3t._scoff.plot_compare_drag(static_coeff_single_6, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
-w3t._scoff.plot_compare_lift(static_coeff_single_6, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
-w3t._scoff.plot_compare_pitch(static_coeff_single_6, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
+# #Medium wind speed
+# w3t._scoff.plot_compare_drag(static_coeff_single_6, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
+# w3t._scoff.plot_compare_lift(static_coeff_single_6, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
+# w3t._scoff.plot_compare_pitch(static_coeff_single_6, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
 
-# Mean
-w3t._scoff.plot_compare_drag_mean(static_coeff_single_9, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
-w3t._scoff.plot_compare_lift_mean(static_coeff_single_9, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
-w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
+# # Mean
+# w3t._scoff.plot_compare_drag_mean(static_coeff_single_9, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
+# w3t._scoff.plot_compare_lift_mean(static_coeff_single_9, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
+# w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
 
 
 #High wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_9, static_coeff_MUS_1D_10, static_coeff_MDS_1D_10)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_drag" + ".png"))
 w3t._scoff.plot_compare_lift(static_coeff_single_9, static_coeff_MUS_1D_10, static_coeff_MDS_1D_10)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_lift" + ".png"))
 w3t._scoff.plot_compare_pitch(static_coeff_single_9, static_coeff_MUS_1D_10, static_coeff_MDS_1D_10)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_pitch" + ".png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_9, static_coeff_MUS_1D_10, static_coeff_MDS_1D_10)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_drag_mean" + ".png"))
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_9, static_coeff_MUS_1D_10, static_coeff_MDS_1D_10)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_lift_mean" + ".png"))
 w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9, static_coeff_MUS_1D_10, static_coeff_MDS_1D_10)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_pitch_mean" + ".png"))
 
 plt.show()
 
 #%% Compare all experiments (MUS vs MDS vs Single) filtered
-section_name = "1D"
+section_name = "1D_filtered"
 
 #Low wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered, static_coeff_MDS_1D_6_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_drag_filt" + ".png"))
 w3t._scoff.plot_compare_lift(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered, static_coeff_MDS_1D_6_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_lift_filt" + ".png"))
 w3t._scoff.plot_compare_pitch(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered, static_coeff_MDS_1D_6_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_pitch_filt" + ".png"))
 # Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered, static_coeff_MDS_1D_6_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_drag_filt_mean" + ".png"))
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered, static_coeff_MDS_1D_6_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_lift_filt_mean" + ".png"))
 w3t._scoff.plot_compare_pitch_mean(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered, static_coeff_MDS_1D_6_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_pitch_filt_mean" + ".png"))
 
 #Medium wind speed
-w3t._scoff.plot_compare_drag(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
-w3t._scoff.plot_compare_lift(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
-w3t._scoff.plot_compare_pitch(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
+# w3t._scoff.plot_compare_drag(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
+# w3t._scoff.plot_compare_lift(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
+# w3t._scoff.plot_compare_pitch(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
 
-# Mean
-w3t._scoff.plot_compare_drag_mean(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
-w3t._scoff.plot_compare_lift_mean(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
-w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
-plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
-plt.savefig()
+# # Mean
+# w3t._scoff.plot_compare_drag_mean(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
+# w3t._scoff.plot_compare_lift_mean(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
+# w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MDS_1D_8_filtered)
+# plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
+# plt.savefig()
 
 
 #High wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered, static_coeff_MDS_1D_10_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_drag_filt" + ".png"))
 w3t._scoff.plot_compare_lift(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered, static_coeff_MDS_1D_10_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_lift_filt" + ".png"))
 w3t._scoff.plot_compare_pitch(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered, static_coeff_MDS_1D_10_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_pitch_filt" + ".png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered, static_coeff_MDS_1D_10_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_drag_filt_mean" + ".png"))
 w3t._scoff.plot_compare_lift_mean(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered, static_coeff_MDS_1D_10_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_lift_filt_mean" + ".png"))
 w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered, static_coeff_MDS_1D_10_filtered)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig()
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_pitch_filt_mean" + ".png"))
 
 plt.show()
 
@@ -611,42 +611,42 @@ plt.show()
 #Low wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_low_drag.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_low_drag.png"))
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_1D_6,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_drag.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_drag.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_low_lift.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_low_lift.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_1D_6,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_lift.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_lift.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_low_pitch.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_low_pitch.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_1D_6,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig(  os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_pitch.png"))
+plt.savefig(  os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_pitch.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_low_drag_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_low_drag_mean.png"))
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6, static_coeff_MDS_1D_6, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_drag_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_drag_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig(  os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_low_lift_mean.png"))
+plt.savefig(  os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_low_lift_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6, static_coeff_MDS_1D_6,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_lift_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_lift_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_low_pitch_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_low_pitch_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MDS_1D_6, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_pitch_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_pitch_mean.png"))
 #Medium wind speed
 #w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_1D_8, upwind_in_rig=True)
 #plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
@@ -690,43 +690,43 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_1D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_high_drag.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_high_drag.png"))
 
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_1D_10, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_drag.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_drag.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_1D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_high_lift.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_high_lift.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_1D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_lift.png") )
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_lift.png") )
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_1D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_high_pitch.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_high_pitch.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_1D_10, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_pitch.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_pitch.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_1D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_high_drag_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_high_drag_mean.png"))
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_1D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_drag_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_drag_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_1D_10,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_high_lift_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_high_lift_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_1D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_lift_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_lift_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_1D_10,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_high_pitch_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_1D_high_pitch_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_1D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_pitch_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_pitch_mean.png"))
 plt.show()
 
 #%% Compare all experiments - only with single deck filtered
@@ -734,42 +734,42 @@ plt.show()
 #Low wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_low_drag_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_low_drag_filt.png"))
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6_filtered, static_coeff_MDS_1D_6_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_drag_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_drag_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_low_lift_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_low_lift_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6_filtered, static_coeff_MDS_1D_6_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_lift_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_lift_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_low_pitch_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_low_pitch_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6_filtered, static_coeff_MDS_1D_6_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_pitch_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_pitch_filt.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_low_drag_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_low_drag_filt_mean.png"))
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_1D_6_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_drag_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_drag_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_low_lift_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_low_lift_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_1D_6_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_lift_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_lift_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_1D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_low_pitch_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_low_pitch_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_1D_6_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_low_pitch_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_low_pitch_filt_mean.png"))
 
 #Medium wind speed
 # w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_1D_8_filtered,upwind_in_rig=True)
@@ -814,41 +814,41 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_high_drag_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_high_drag_filt.png"))
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_1D_10_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_drag_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_drag_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_high_lift_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_high_lift_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_1D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_lift_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_lift_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_high_pitch_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_high_pitch_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_1D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_pitch_filt.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_pitch_filt.png"))
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_high_drag_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_high_drag_filt_mean.png"))
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_1D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_drag_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_drag_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_high_lift_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_high_lift_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_1D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_lift_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_lift_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_1D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_high_pitch_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDU", "Single_MUS_1D_high_pitch_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_1D_10_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_high_pitch_filt_mean.png"))
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_pitch_filt_mean.png"))
 plt.show()
 # %% Compare all experiments (Wind speed)
 #drag
@@ -858,14 +858,15 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_1D_8, static_coeff_MUS_1D_10,
                              scoff = "drag")                        
 plt.gcf().suptitle(f"1D: MUS ",  y=0.95)
-plt.savefig()
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_1D_drag.png"))
+
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_1D_6,
                                static_coeff_MDS_1D_8, static_coeff_MDS_1D_10,
                                 scoff = "drag")                        
 plt.gcf().suptitle(f"1D: MDS ",  y=0.95)
-plt.savefig()
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_1D_drag.png"))
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -873,14 +874,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_1D_8, static_coeff_MUS_1D_10,
                             scoff = "lift")                        
 plt.gcf().suptitle(f"1D: MUS  ",  y=0.95)
-plt.savefig()
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_1D_lift.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9,static_coeff_MDS_1D_6,
                                static_coeff_MDS_1D_8, static_coeff_MDS_1D_10,
                                scoff = "lift")                        
 plt.gcf().suptitle(f"1D: MDS  ",  y=0.95)
-plt.savefig()
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_1D_lift.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -888,14 +889,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_1D_8, static_coeff_MUS_1D_10,
                               scoff = "pitch")                        
 plt.gcf().suptitle(f"1D: MUS  ",  y=0.95)
-plt.savefig()
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_1D_pitch.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_1D_6,
                                static_coeff_MDS_1D_8, static_coeff_MDS_1D_10,
                           scoff = "pitch")                        
 plt.gcf().suptitle(f"1D: MDS  ",  y=0.95)
-plt.savefig()
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_1D_pitch.png"))
 #MEAN
 #drag
 # MUS
@@ -904,14 +905,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_1D_8, static_coeff_MUS_1D_10,
                            scoff = "drag")                        
 plt.gcf().suptitle(f"1D: MUS ",  y=0.95)
-plt.savefig()
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_1D_drag_mean.png"))
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_1D_6,
                                static_coeff_MDS_1D_8, static_coeff_MDS_1D_10,
                               scoff = "drag")                        
 plt.gcf().suptitle(f"1D: MDS  ",  y=0.95)
-plt.savefig()
+plt.savefig( )
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
@@ -1146,7 +1147,7 @@ plt.savefig()
 
 
 #%%  Filter and plot ALT 2
-section_name = "MUS_2D_Static"
+section_name = "MUS_2D_Static_filtered"
 
 static_coeff_MDS_2D_6_filtered,static_coeff_MDS_2D_8_filtered,static_coeff_MDS_2D_10_filtered  = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_2D_6, static_coeff_2=static_coeff_MDS_2D_8, static_coeff_3=static_coeff_MDS_2D_10, threshold=0.05, threshold_low=[0.05,0.05,0.05],threshold_med = [0.0199,0.02,0.01],threshold_high=[0.05,0.01,0.05],single=False)
 
@@ -1262,7 +1263,7 @@ plt.suptitle(f"MUS_2D_Static, 10 m/s",  y=0.95)
 plt.savefig()
 
 #%%  Filter and plot ALT 2
-section_name = "MDS_2D_Static"
+section_name = "MDS_2D_Static_filtered"
 
 static_coeff_MUS_2D_5_filtered, static_coeff_MUS_2D_8_filtered, static_coeff_MUS_2D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_2D_5, static_coeff_2=static_coeff_MUS_2D_8, static_coeff_3=static_coeff_MUS_2D_10, threshold=0.019, threshold_low=[0.05,0.025,0.005],threshold_med = [0.04,0.03,0.02],threshold_high=[0.02,0.04,0.01],single=False)
 
@@ -1277,36 +1278,36 @@ section_name = "2D"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_MDS_2D_6.to_excel(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_5.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_6.to_excel(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_5.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_2D_8.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_8.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_8.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_8.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_2D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_10.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_10.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "2D_mean"
 
 # Low wind speed
-static_coeff_MDS_2D_6.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_5.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_6.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_5.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_2D_8.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_8.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_8.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_8.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_2D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_10.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_10.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
 #%% Save all experiments to excel filtered
@@ -1314,36 +1315,36 @@ section_name = "2D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_MDS_2D_6_filtered.to_excel(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_5_filtered.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_6_filtered.to_excel(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_5_filtered.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_2D_8_filtered.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_8_filtered.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_8_filtered.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_8_filtered.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_2D_10_filtered.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_10_filtered.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_10_filtered.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_10_filtered.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "2D_mean_filtered"
 
 # Low wind speed
-static_coeff_MDS_2D_6_filtered.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_5_filtered.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_6_filtered.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_5_filtered.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_2D_8_filtered.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_8_filtered.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_8_filtered.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_8_filtered.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_2D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_2D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_2D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_2D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 #%% Compare all experiments (MUS vs MDS vs Single)
 section_name = "2D"
@@ -1417,7 +1418,7 @@ plt.savefig()
 plt.show()
 
 #%% Compare all experiments (MUS vs MDS vs Single) filtered
-section_name = "2D"
+section_name = "2D_filtered"
 
 #Low wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_6_filtered, static_coeff_MUS_2D_5_filtered, static_coeff_MDS_2D_6_filtered)
@@ -1499,33 +1500,33 @@ plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MDS_2D_6, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
 
-#Medium wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_2D_8, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_2D_8, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_2D_8, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_2D_8, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_2D_8,  upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_2D_8, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# #Medium wind speed
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_2D_8, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_2D_8, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_2D_8, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_2D_8, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_2D_8,  upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_2D_8, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
 
-# Mean
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_2D_8,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_2D_8, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_2D_8, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_2D_8,upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_2D_8, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_2D_8, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# # Mean
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_2D_8,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_2D_8, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_2D_8, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_2D_8,upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_2D_8, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_2D_8, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
                                                
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_2D_10, upwind_in_rig=True)
@@ -1586,33 +1587,33 @@ plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_2D_6_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
 
-#Medium wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# #Medium wind speed
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
 
-# Mean
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered,upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# # Mean
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered,upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_8_filtered,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_2D_8_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
                                                
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_2D_10_filtered,upwind_in_rig=True)
@@ -1919,7 +1920,7 @@ plt.suptitle(f"MDS_3D_Static, 10 m/s",  y=0.95)
 
 
 #%%  Filter and plot ALT 2
-section_name = "MUS_3D_Static"
+section_name = "MUS_3D_Static_filtered"
 
 static_coeff_MDS_3D_6_filtered, static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_3D_6, static_coeff_2=static_coeff_MDS_3D_8, static_coeff_3=static_coeff_MDS_3D_10, threshold=0.05, threshold_low=[0.06,0.05,0.05],threshold_med = [0.005,0.03,0.05],threshold_high=[0.05,0.01,0.05],single=False)
 
@@ -2025,7 +2026,7 @@ plt.suptitle(f"MUS_3D_Static, 10 m/s",  y=0.95)
 
 
 #%%  Filter and plot ALT 2
-section_name = "MDS_3D_Static"
+section_name = "MDS_3D_Static_filtered"
 
 static_coeff_MUS_3D_5_filtered, static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_3D_5, static_coeff_2=static_coeff_MUS_3D_8, static_coeff_3=static_coeff_MUS_3D_10, threshold=0.019, threshold_low=[0.05,0.025,0.005],threshold_med = [0.04,0.03,0.02],threshold_high=[0.02,0.04,0.01],single=False)
 
@@ -2040,36 +2041,36 @@ section_name = "3D"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_MDS_3D_6.to_excel(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_5.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_6.to_excel(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_5.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_3D_8.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_8.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_8.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_8.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_3D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_10.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_10.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "3D_mean"
 
 # Low wind speed
-static_coeff_MDS_3D_6.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_5.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_6.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_5.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_3D_8.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_8.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_8.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_8.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_3D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_10.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_10.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
 #%% Save all experiments to excel filtered
@@ -2077,36 +2078,36 @@ section_name = "3D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_MDS_3D_6_filtered.to_excel(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_5_filtered.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_6_filtered.to_excel(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_5_filtered.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_3D_8_filtered.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_8_filtered.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_8_filtered.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_8_filtered.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_3D_10_filtered.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_10_filtered.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_10_filtered.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_10_filtered.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "3D_mean_filtered"
 
 # Low wind speed
-static_coeff_MDS_3D_6_filtered.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_5_filtered.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_6_filtered.to_excel_mean(section_name, sheet_name="MDS - 6 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_5_filtered.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_3D_8_filtered.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_8_filtered.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_8_filtered.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_8_filtered.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_3D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_3D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_3D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_3D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 #%% Compare all experiments (MUS vs MDS vs Single)
 section_name = "3D"
@@ -2162,7 +2163,7 @@ plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", f
 plt.show()
 
 #%% Compare all experiments (MUS vs MDS vs Single) filtered
-section_name = "3D"
+section_name = "3D_filtered"
 
 #Low wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_6_filtered, static_coeff_MUS_3D_5_filtered, static_coeff_MDS_3D_6_filtered)
@@ -2244,33 +2245,33 @@ plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MDS_3D_6, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
 
-#Medium wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_3D_8, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_3D_8, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_3D_8, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_3D_8, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_3D_8,  upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_3D_8, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# #Medium wind speed
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_3D_8, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_3D_8, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_3D_8, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_3D_8, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_3D_8,  upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_3D_8, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
 
-# Mean
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_3D_8,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_3D_8, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_3D_8, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_3D_8,upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_3D_8, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_3D_8, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# # Mean
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_3D_8,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_3D_8, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_3D_8, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_3D_8,upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_3D_8, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_3D_8, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
                                                
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_3D_10, upwind_in_rig=True)
@@ -2331,33 +2332,33 @@ plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_3D_6_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
 
-#Medium wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# #Medium wind speed
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
 
-# Mean
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered,upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# # Mean
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered,upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_8_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8 m/s", fontsize=16)
                                                
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_10_filtered,upwind_in_rig=True)
@@ -2662,7 +2663,7 @@ plt.suptitle(f"MDS_4D_Static, 10 m/s",  y=0.95)
 
 
 #%%  Filter and plot ALT 2
-section_name = "MUS_4D_Static"
+section_name = "MUS_4D_Static_filtered"
 
 static_coeff_MDS_4D_55_filtered, static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_4D_55, static_coeff_2=static_coeff_MDS_4D_85, static_coeff_3=static_coeff_MDS_4D_10, threshold=0.05, threshold_low=[0.06,0.05,0.05],threshold_med = [0.005,0.03,0.05],threshold_high=[0.05,0.01,0.05],single=False)
 
@@ -2767,7 +2768,7 @@ plt.suptitle(f"MUS_4D_Static, 10 m/s",  y=0.95)
 
 
 #%%  Filter and plot ALT 2
-section_name = "MDS_4D_Static"
+section_name = "MDS_4D_Static_filtered"
 
 static_coeff_MUS_4D_5_filtered, static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_4D_5, static_coeff_2=static_coeff_MUS_4D_85, static_coeff_3=static_coeff_MUS_4D_10, threshold=0.019, threshold_low=[0.05,0.025,0.005],threshold_med = [0.04,0.03,0.02],threshold_high=[0.02,0.04,0.01],single=False)
 
@@ -2782,36 +2783,36 @@ section_name = "4D"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_MDS_4D_55.to_excel(section_name, sheet_name="MDS - 5.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_5.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_55.to_excel(section_name, sheet_name="MDS - 5.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_5.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_4D_85.to_excel(section_name, sheet_name="MDS - 8.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_85.to_excel(section_name, sheet_name='MUS - 8.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_85.to_excel(section_name, sheet_name="MDS - 8.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_85.to_excel(section_name, sheet_name='MUS - 8.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_4D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_10.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_10.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "4D_mean"
 
 # Low wind speed
-static_coeff_MDS_4D_55.to_excel_mean(section_name, sheet_name="MDS - 5.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_5.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_55.to_excel_mean(section_name, sheet_name="MDS - 5.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_5.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_4D_85.to_excel_mean(section_name, sheet_name="MDS - 8.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_85.to_excel_mean(section_name, sheet_name='MUS - 8.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_85.to_excel_mean(section_name, sheet_name="MDS - 8.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_85.to_excel_mean(section_name, sheet_name='MUS - 8.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_4D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_10.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_10.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
 #%% Save all experiments to excel filtered
@@ -2819,36 +2820,36 @@ section_name = "4D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_MDS_4D_55_filtered.to_excel(section_name, sheet_name="MDS - 5.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_5_filtered.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_55_filtered.to_excel(section_name, sheet_name="MDS - 5.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_5_filtered.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_4D_85_filtered.to_excel(section_name, sheet_name="MDS - 8.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_85_filtered.to_excel(section_name, sheet_name='MUS - 8.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_85_filtered.to_excel(section_name, sheet_name="MDS - 8.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_85_filtered.to_excel(section_name, sheet_name='MUS - 8.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_4D_10_filtered.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_10_filtered.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_10_filtered.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_10_filtered.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "4D_mean_filtered"
 
 # Low wind speed
-static_coeff_MDS_4D_55_filtered.to_excel_mean(section_name, sheet_name="MDS - 5.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_5_filtered.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_55_filtered.to_excel_mean(section_name, sheet_name="MDS - 5.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_5_filtered.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_4D_85_filtered.to_excel_mean(section_name, sheet_name="MDS - 8.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_85_filtered.to_excel_mean(section_name, sheet_name='MUS - 8.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_85_filtered.to_excel_mean(section_name, sheet_name="MDS - 8.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_85_filtered.to_excel_mean(section_name, sheet_name='MUS - 8.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_4D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_4D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_4D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_4D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 #%% Compare all experiments (MUS vs MDS vs Single)
 section_name = "4D"
@@ -2904,7 +2905,7 @@ plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", f
 plt.show()
 
 #%% Compare all experiments (MUS vs MDS vs Single) filtered
-section_name = "4D"
+section_name = "4D_filtered"
 
 #Low wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_6_filtered, static_coeff_MUS_4D_5_filtered, static_coeff_MDS_4D_55_filtered)
@@ -2986,33 +2987,33 @@ plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MDS_4D_55, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
 
-#Medium wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_4D_85, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_4D_85, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_4D_85, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_4D_85, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_4D_85,  upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_4D_85, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# #Medium wind speed
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_4D_85, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_4D_85, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_4D_85, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_4D_85, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_4D_85,  upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_4D_85, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
 
-# Mean
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_4D_85,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_4D_85, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_4D_85, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_4D_85,upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_4D_85, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_4D_85, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# # Mean
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_4D_85,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_4D_85, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_4D_85, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_4D_85,upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_4D_85, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_4D_85, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
                                                
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True)
@@ -3073,33 +3074,33 @@ plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_4D_55_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
 
-#Medium wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# #Medium wind speed
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
 
-# Mean
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered,upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# # Mean
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered,upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_85_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
                                                
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_10_filtered,upwind_in_rig=True)
@@ -3403,7 +3404,7 @@ plt.suptitle(f"MDS_5D_Static, 10 m/s",  y=0.95)
 
 
 #%%  Filter and plot ALT 2
-section_name = "MUS_5D_Static"
+section_name = "MUS_5D_Static_filtered"
 
 static_coeff_MDS_5D_55_filtered, static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_5D_55, static_coeff_2=static_coeff_MDS_5D_85, static_coeff_3=static_coeff_MDS_5D_10, threshold=0.05, threshold_low=[0.06,0.05,0.05],threshold_med = [0.005,0.03,0.05],threshold_high=[0.05,0.01,0.05],single=False)
 
@@ -3508,7 +3509,7 @@ plt.suptitle(f"MUS_5D_Static, 10 m/s",  y=0.95)
 
 
 #%%  Filter and plot ALT 2
-section_name = "MDS_5D_Static"
+section_name = "MDS_5D_Static_filtered"
 
 static_coeff_MUS_5D_45_filtered, static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_5D_45, static_coeff_2=static_coeff_MUS_5D_85, static_coeff_3=static_coeff_MUS_5D_10, threshold=0.019, threshold_low=[0.05,0.025,0.005],threshold_med = [0.04,0.03,0.02],threshold_high=[0.02,0.04,0.01],single=False)
 
@@ -3523,36 +3524,36 @@ section_name = "5D"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_MDS_5D_55.to_excel(section_name, sheet_name="MDS - 5.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_45.to_excel(section_name, sheet_name='MUS - 4.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_55.to_excel(section_name, sheet_name="MDS - 5.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_45.to_excel(section_name, sheet_name='MUS - 4.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_5D_85.to_excel(section_name, sheet_name="MDS - 8.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_85.to_excel(section_name, sheet_name='MUS - 8.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_85.to_excel(section_name, sheet_name="MDS - 8.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_85.to_excel(section_name, sheet_name='MUS - 8.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_5D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_10.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_10.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "5D_mean"
 
 # Low wind speed
-static_coeff_MDS_5D_55.to_excel_mean(section_name, sheet_name="MDS - 5.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_45.to_excel_mean(section_name, sheet_name='MUS - 4.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_55.to_excel_mean(section_name, sheet_name="MDS - 5.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_45.to_excel_mean(section_name, sheet_name='MUS - 4.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_5D_85.to_excel_mean(section_name, sheet_name="MDS - 8.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_85.to_excel_mean(section_name, sheet_name='MUS - 8.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_85.to_excel_mean(section_name, sheet_name="MDS - 8.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_85.to_excel_mean(section_name, sheet_name='MUS - 8.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_5D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_10.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_10.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
 #%% Save all experiments to excel filtered
@@ -3560,36 +3561,36 @@ section_name = "5D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
 # Low wind speed
-static_coeff_MDS_5D_55_filtered.to_excel(section_name, sheet_name="MDS - 5.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_45_filtered.to_excel(section_name, sheet_name='MUS - 4.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_55_filtered.to_excel(section_name, sheet_name="MDS - 5.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_45_filtered.to_excel(section_name, sheet_name='MUS - 4.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_5D_85_filtered.to_excel(section_name, sheet_name="MDS - 8.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_85_filtered.to_excel(section_name, sheet_name='MUS - 8.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_85_filtered.to_excel(section_name, sheet_name="MDS - 8.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_85_filtered.to_excel(section_name, sheet_name='MUS - 8.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_5D_10_filtered.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_10_filtered.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_10_filtered.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_10_filtered.to_excel(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 section_name = "5D_mean_filtered"
 
 # Low wind speed
-static_coeff_MDS_5D_55_filtered.to_excel_mean(section_name, sheet_name="MDS - 5.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_45_filtered.to_excel_mean(section_name, sheet_name='MUS - 4.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_55_filtered.to_excel_mean(section_name, sheet_name="MDS - 5.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_45_filtered.to_excel_mean(section_name, sheet_name='MUS - 4.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-static_coeff_MDS_5D_85_filtered.to_excel_mean(section_name, sheet_name="MDS - 8.5 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_85_filtered.to_excel_mean(section_name, sheet_name='MUS - 8.5 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_85_filtered.to_excel_mean(section_name, sheet_name="MDS - 8.5 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_85_filtered.to_excel_mean(section_name, sheet_name='MUS - 8.5 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
-static_coeff_MDS_5D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_5D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width=18.3/100,section_height=3.33/100,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_MDS_5D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MUS_5D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 #%% Compare all experiments (MUS vs MDS vs Single)
 section_name = "5D"
@@ -3645,7 +3646,7 @@ plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", f
 plt.show()
 
 #%% Compare all experiments (MUS vs MDS vs Single) filtered
-section_name = "5D"
+section_name = "5D_filtered"
 
 #Low wind speed
 w3t._scoff.plot_compare_drag(static_coeff_single_6_filtered, static_coeff_MUS_5D_45_filtered, static_coeff_MDS_5D_55_filtered)
@@ -3727,33 +3728,33 @@ plt.gcf().suptitle(f"Single: 6 m/s, MUS:  4.5 m/s", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MDS_5D_55, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
 
-#Medium wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_5D_85, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_5D_85, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_5D_85, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_5D_85, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_5D_85,  upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_5D_85, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# #Medium wind speed
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_5D_85, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_5D_85, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_5D_85, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_5D_85, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_5D_85,  upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_5D_85, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
 
-# Mean
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_5D_85,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_5D_85, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_5D_85, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_5D_85,upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_5D_85, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_5D_85, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# # Mean
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_5D_85,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_5D_85, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_5D_85, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_5D_85,upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_5D_85, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_5D_85, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
                                                
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True)
@@ -3814,33 +3815,33 @@ plt.gcf().suptitle(f"Single: 6 m/s, MUS: 4.5 m/s", fontsize=16)
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_5D_55_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
 
-#Medium wind speed
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# #Medium wind speed
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
 
-# Mean
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered, upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered,upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered,upwind_in_rig=True)
-plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
-w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered, upwind_in_rig=False)
-plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# # Mean
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered, upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered,upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered,upwind_in_rig=True)
+# plt.gcf().suptitle(f"Single: 9 m/s, MUS: 8.5 m/s", fontsize=16)
+# w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_85_filtered, upwind_in_rig=False)
+# plt.gcf().suptitle(f"Single: 9 m/s, MDS: 8.5 m/s", fontsize=16)
                                                
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_10_filtered,upwind_in_rig=True)
