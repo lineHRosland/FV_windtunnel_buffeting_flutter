@@ -1519,13 +1519,11 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
     return alpha, coeff_up_plot, coeff_down_plot
 
 
-def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None,
-                        threshold=0.1,
-                        threshold_low=[0.05, 0.05, 0.05],
-                        threshold_med=[None, None, None],
-                        threshold_high=[0.05, 0.05, 0.05],
-                        single=False):
-    
+
+def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1,
+                        threshold_low=[0.05, 0.05, 0.05], threshold_med=[None, None, None],
+                        threshold_high=[0.05, 0.05, 0.05], single=False):
+
     def get_coeffs(static_coeff):
         alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
         return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
@@ -1563,24 +1561,11 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None,
                 coeff_array[mask, cols[0]] = np.nan
                 coeff_array[mask, cols[1]] = np.nan
                 break
+
         return coeff_array
 
-    def has_jump_before(alpha_vals, coeff_array, alpha_now, cols=(0, 1), threshold_jump=0.1):
-        alpha_rounded = np.round(alpha_vals, 1)
-        prev_alphas = np.sort(np.unique(alpha_rounded[alpha_rounded < alpha_now]))[::-1]
-        prev_mean = None
-        for val in prev_alphas[:3]:
-            idx = np.where(alpha_rounded == val)[0]
-            if len(idx) == 0:
-                continue
-            vals = coeff_array[idx, cols[0]] + coeff_array[idx, cols[1]]
-            this_mean = np.nanmean(vals)
-            if np.isnan(this_mean):
-                continue
-            if prev_mean is not None and abs(this_mean - prev_mean) > threshold_jump:
-                return True
-            prev_mean = this_mean
-        return False
+    def spread(vals):
+        return np.nanmax(vals) - np.nanmin(vals)
 
     alpha_1, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
     alpha_2, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
@@ -1602,7 +1587,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None,
         coeffs_3 = [drag_3, lift_3, pitch_3]
         coeffs_3_filt = [drag_3_filt, lift_3_filt, pitch_3_filt]
 
-    unique_alpha = np.sort(np.unique(alpha_1))
+    unique_alpha = np.unique(alpha_1)
 
     for val in unique_alpha:
         idx1 = np.where(alpha_1 == val)[0]
@@ -1615,60 +1600,89 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None,
             continue
 
         for i, name in enumerate(coeff_names):
-            t_low = threshold_low[i] if threshold_low[i] is not None else threshold
-            t_med = threshold_med[i] if threshold_med[i] is not None else threshold
-            t_high = threshold_high[i] if threshold_high[i] is not None else threshold
+            this_threshold_low = threshold_low[i] if threshold_low[i] is not None else threshold
+            this_threshold_med = threshold_med[i] if threshold_med[i] is not None else threshold
+            this_threshold_high = threshold_high[i] if threshold_high[i] is not None else threshold
 
+            # get values
+            get_sum = lambda c, idx, cols: c[idx, cols[0]] + c[idx, cols[1]]
             cols_up = (0, 1)
             cols_down = (2, 3)
 
-            datasets = [(alpha_1, coeffs_1[i], coeffs_1_filt[i], idx1, t_low),
-                        (alpha_2, coeffs_2[i], coeffs_2_filt[i], idx2, t_med)]
             if not single:
-                datasets.append((alpha_3, coeffs_3[i], coeffs_3_filt[i], idx3, t_high))
+                vals = [
+                    get_sum(coeffs_1[i], idx1, cols_up),
+                    get_sum(coeffs_2[i], idx2, cols_up),
+                    get_sum(coeffs_3[i], idx3, cols_up)
+                ]
+                spreads = [spread(v) for v in vals]
+                nan_mask = [np.any(np.isnan(v)) for v in vals]
+                ref_idx = None
 
-            for cols in [cols_up] if single else [cols_up, cols_down]:
-                for j, (a, c, cf, idx, t) in enumerate(datasets):
-                    if len(idx) == 0:
-                        continue
-                    vals = c[idx, cols[0]] + c[idx, cols[1]]
-                    if np.any(np.isnan(vals)):
-                        continue
-                    if has_jump_before(a, c, val, cols=cols, threshold_jump=t):
-                        continue
+                if sum(~np.array(nan_mask)) == 1:
+                    ref_idx = (~np.array(nan_mask)).index(True)
+                elif sum(~np.array(nan_mask)) >= 2:
+                    candidates = [j for j, ok in enumerate(nan_mask) if not ok]
+                    ref_idx = min(candidates, key=lambda j: spreads[j])
 
-                    ref_mean = np.mean(vals)
-                    # Fjern avvik i ALLE dataset ut fra denne referansen
-                    for _, _, cfilt, idx_check, _ in datasets:
-                        if len(idx_check) == 0:
-                            continue
-                        current = cfilt[idx_check, cols[0]] + cfilt[idx_check, cols[1]]
-                        mask = np.abs(current - ref_mean) > t
-                        cfilt[idx_check[mask], cols[0]] = np.nan
-                        cfilt[idx_check[mask], cols[1]] = np.nan
-                    break  # Kun bruk første gyldige som referanse
+                if ref_idx is None:
+                    continue
 
-    # Fjern etter hopp
+                ref_mean = np.nanmean(vals[ref_idx])
+                for idx, c_f in zip([idx1, idx2, idx3], [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]):
+                    summed = get_sum(c_f, idx, cols_up)
+                    mask = np.abs(summed - ref_mean) > threshold
+                    c_f[idx[mask], cols_up[0]] = np.nan
+                    c_f[idx[mask], cols_up[1]] = np.nan
+
+                # downwind
+                vals_d = [
+                    get_sum(coeffs_1[i], idx1, cols_down),
+                    get_sum(coeffs_2[i], idx2, cols_down),
+                    get_sum(coeffs_3[i], idx3, cols_down)
+                ]
+                spreads_d = [spread(v) for v in vals_d]
+                nan_mask_d = [np.any(np.isnan(v)) for v in vals_d]
+
+                ref_idx_d = None
+                if sum(~np.array(nan_mask_d)) == 1:
+                    ref_idx_d = (~np.array(nan_mask_d)).index(True)
+                elif sum(~np.array(nan_mask_d)) >= 2:
+                    candidates = [j for j, ok in enumerate(nan_mask_d) if not ok]
+                    ref_idx_d = min(candidates, key=lambda j: spreads_d[j])
+
+                if ref_idx_d is None:
+                    continue
+
+                ref_mean_d = np.nanmean(vals_d[ref_idx_d])
+                for idx, c_f in zip([idx1, idx2, idx3], [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]):
+                    summed = get_sum(c_f, idx, cols_down)
+                    mask = np.abs(summed - ref_mean_d) > threshold
+                    c_f[idx[mask], cols_down[0]] = np.nan
+                    c_f[idx[mask], cols_down[1]] = np.nan
+
     for i, alpha in enumerate([alpha_1, alpha_2] if single else [alpha_1, alpha_2, alpha_3]):
         for coeff_array in ([coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]):
             remove_after_jump(alpha, coeff_array, threshold_jump=threshold, cols=(0, 1))
             if not single:
                 remove_after_jump(alpha, coeff_array, threshold_jump=threshold, cols=(2, 3))
 
-    # Returner filtrerte objekter
-    import copy
-    sc1f = copy.deepcopy(static_coeff_1)
-    sc2f = copy.deepcopy(static_coeff_2)
+    static_coeff_1_f = copy.deepcopy(static_coeff_1)
+    static_coeff_2_f = copy.deepcopy(static_coeff_2)
     for name, data in zip(coeff_names, [drag_1_filt, lift_1_filt, pitch_1_filt]):
-        setattr(sc1f, f"{name}_coeff", data)
+        setattr(static_coeff_1_f, f"{name}_coeff", data)
     for name, data in zip(coeff_names, [drag_2_filt, lift_2_filt, pitch_2_filt]):
-        setattr(sc2f, f"{name}_coeff", data)
+        setattr(static_coeff_2_f, f"{name}_coeff", data)
+
     if single:
-        return sc1f, sc2f
-    sc3f = copy.deepcopy(static_coeff_3)
+        return static_coeff_1_f, static_coeff_2_f
+
+    static_coeff_3_f = copy.deepcopy(static_coeff_3)
     for name, data in zip(coeff_names, [drag_3_filt, lift_3_filt, pitch_3_filt]):
-        setattr(sc3f, f"{name}_coeff", data)
-    return sc1f, sc2f, sc3f
+        setattr(static_coeff_3_f, f"{name}_coeff", data)
+
+    return static_coeff_1_f, static_coeff_2_f, static_coeff_3_f
+
 
 
 
