@@ -1535,32 +1535,28 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
         alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
         return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
     
-    def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.1):
+    def remove_after_jump(alpha_vals, coeff_array, col1=0, col2=1, threshold_jump=0.1):
         """
-        Iterates through unique alpha values in sorted order.
-        If the mean coefficient jumps more than the threshold compared to previous,
-        all higher alpha values are set to NaN.
+        Fjerner alle verdier med alpha høyere enn der det først skjer et hopp
+        i verdien mellom to etterfølgende alphas.
+        Kolonnene col1 og col2 angir hvilke kolonner som skal summeres (f.eks. 0+1 for upwind, 2+3 for downwind).
         """
         alpha_sorted = np.round(alpha_vals, 1)
-        unique_alpha = np.sort(np.unique(alpha_sorted))
+        idx_sorted = np.argsort(alpha_sorted)
+        alpha_sorted_vals = alpha_sorted[idx_sorted]
+        coeff_summed = coeff_array[:, col1] + coeff_array[:, col2]
+        coeff_sorted_vals = coeff_summed[idx_sorted]
 
-        prev_mean = None
-        for val in unique_alpha:
-            idx = np.where(alpha_sorted == val)[0]
-            if idx.size == 0:
-                continue
-            current_vals = coeff_array[idx, 0] + coeff_array[idx, 1]
-            current_mean = np.nanmean(current_vals)
-            if prev_mean is not None and abs(current_mean - prev_mean) > threshold_jump:
-                # Set all values with alpha > val to NaN
-                mask = alpha_sorted > val
-                coeff_array[mask, 0] = np.nan
-                coeff_array[mask, 1] = np.nan
-                break  # Only act on first detected jump
-            prev_mean = current_mean
+        for i in range(1, len(alpha_sorted_vals)):
+            if np.abs(coeff_sorted_vals[i] - coeff_sorted_vals[i-1]) > threshold_jump:
+                cutoff = alpha_sorted_vals[i]
+                mask = alpha_vals >= cutoff
+                coeff_array[mask, col1] = np.nan
+                coeff_array[mask, col2] = np.nan
+                break
 
         return coeff_array
-
+    
     alpha_1, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
     alpha_2, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
 
@@ -1716,13 +1712,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
             remove_after_jump(alpha, coeff_array)  # upwind deck
             if not single:
                 # downwind deck (col 2 and 3)
-                current = coeff_array[:, [2, 3]]
-                dummy_array = np.zeros_like(coeff_array)
-                dummy_array[:, 0] = current[:, 0]
-                dummy_array[:, 1] = current[:, 1]
-                remove_after_jump(alpha, dummy_array)
-                coeff_array[:, 2] = dummy_array[:, 0]
-                coeff_array[:, 3] = dummy_array[:, 1]       
+                remove_after_jump(alpha, coeff_array, col1=2, col2=3)      
     
     # Return updated objects
     static_coeff_1_f = copy.deepcopy(static_coeff_1)
