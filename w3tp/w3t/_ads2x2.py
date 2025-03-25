@@ -234,6 +234,35 @@ class AerodynamicDerivative2x2:
                 ax.set_ylabel(("$" + K_label + self.label + "$"))
                 ax.set_xlabel(r"Reduced velocity $\hat{V}$")
         #plt.tight_layout()
+
+    def plot2(self, mode = "compare", conv = "normal", ax=[], damping=True, order=2, label='i', ADlabel='i'):
+        #Poly fit
+        poly_coeff, k_range = self.poly_fit(damping=damping, order=order)
+        if poly_coeff is None:
+            V = 0
+            y = 0
+        else: 
+            p = np.poly1d(poly_coeff)
+            V = np.linspace(1/k_range[1], 1/k_range[0], 200)
+            y = p(V)
+
+        if bool(ax) == False:
+            fig = plt.figure()
+            ax = fig.add_subplot(1,1,1)  
+
+        if label == 'no':
+            ax.plot(0,0, label='Single')
+            ax.set_ylabel(("$" + ADlabel + "$"))
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.legend()
+            ax.grid(True) 
+        else:
+            ax.plot(V, y, label='Single')
+            #ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_1, "o", label='Single')
+            ax.set_ylabel(("$" + ADlabel + "$"))
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.legend()
+            ax.grid(True)               
                 
 
 class AerodynamicDerivatives2x2:
@@ -595,6 +624,29 @@ class AerodynamicDerivatives2x2:
         
         return poly_coeff, k_range
     
+
+    def fit_poly(self,orders = np.ones(8,dtype=int)*2):
+        ad_matrix, vreds = self.ad_matrix
+        
+        poly_coeff = np.zeros((8,np.max(orders)+1))
+        v_range = np.zeros((8,2))
+        
+        damping_ad = np.array([True, True, False, False,  True, True, False, False])
+
+
+        for k in range(8):
+            v_range[k,1] = np.max(vreds)
+            v_range[k,0] = np.min(vreds)
+            
+            if damping_ad[k] == True:
+                poly_coeff[k,:] = np.polyfit(vreds[k,:],ad_matrix[k,:],orders[k])
+            elif damping_ad[k] == False:
+                poly_coeff[k,:] = np.polyfit(vreds[k,:],ad_matrix[k,:],orders[k])
+                
+        return poly_coeff, v_range  
+
+
+    
     def to_excel(self,section_name, section_height=0, section_width=0, section_length=0):
         """
         
@@ -719,4 +771,84 @@ class AerodynamicDerivatives2x2:
         fig_damping.tight_layout()
         fig_stiffness.tight_layout()
          
-      
+    
+    def plot_to_compare(self, fig_damping=[],fig_stiffness=[], conv='compare', mode='total', orders = np.ones(8,dtype=int)*2, label='i'):
+        # Make figure objects if not given
+        if bool(fig_damping) == False:
+            fig_damping = plt.figure()
+            for k in range(16):
+                fig_damping.add_subplot(4,4,k+1)
+        
+        if bool(fig_stiffness) == False:
+            fig_stiffness = plt.figure()
+            for k in range(16):
+                fig_stiffness.add_subplot(4,4,k+1)
+
+        damping_ad = np.array([True, True, False, False,  True, True, False, False])
+
+        
+        axs_damping = fig_damping.get_axes()
+#        
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[0], damping=damping_ad[0], order=orders[0], label=label, ADlabel="c_{z_1z_1}^*")
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[10], damping=damping_ad[0], order=orders[0], label=label, ADlabel="c_{z_2z_2}^*")
+
+        self.h2.plot2(mode=mode, conv=conv, ax=axs_damping[1], damping=damping_ad[1], order=orders[1], label=label, ADlabel="c_{z_1\\theta_1}^*")
+        self.h2.plot2(mode=mode, conv=conv, ax=axs_damping[11], damping=damping_ad[1], order=orders[1], label=label, ADlabel="c_{z_2\\theta_2}^*")
+
+        self.a1.plot2(mode=mode, conv=conv, ax=axs_damping[4], damping=damping_ad[2], order=orders[2], label=label, ADlabel="c_{\\theta_1z_1}^*")
+        self.a1.plot2(mode=mode, conv=conv, ax=axs_damping[14], damping=damping_ad[2], order=orders[2], label=label, ADlabel="c_{\\theta_2z_2}^*")
+
+        self.a2.plot2(mode=mode, conv=conv, ax=axs_damping[5], damping=damping_ad[3], order=orders[3], label=label, ADlabel="c_{\\theta_1\\theta_1}^*")
+        self.a2.plot2(mode=mode, conv=conv, ax=axs_damping[15], damping=damping_ad[3], order=orders[3], label=label, ADlabel="c_{\\theta_2\\theta_2}^*")
+        
+        axs_stiffness = fig_stiffness.get_axes()
+
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[0], damping=damping_ad[4], order=orders[4], label=label, ADlabel="k_{z_1z_1}^*")
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[10], damping=damping_ad[4], order=orders[4], label=label, ADlabel="k_{z_2z_2}^*")
+
+        self.h3.plot2(mode=mode, conv=conv, ax=axs_stiffness[1], damping=damping_ad[5], order=orders[5], label=label, ADlabel="k_{z_1\\theta_1}^*")
+        self.h3.plot2(mode=mode, conv=conv, ax=axs_stiffness[11], damping=damping_ad[5], order=orders[5], label=label, ADlabel="k_{z_2\\theta_2}^*")
+        
+        self.a4.plot2(mode=mode, conv=conv, ax=axs_stiffness[4], damping=damping_ad[6], order=orders[6], label=label, ADlabel="k_{\\theta_1z_1}^*")
+        self.a4.plot2(mode=mode, conv=conv, ax=axs_stiffness[14], damping=damping_ad[6], order=orders[6], label=label, ADlabel="k_{\\theta_2z_2}^*")
+
+        self.a3.plot2(mode=mode, conv=conv, ax=axs_stiffness[5], damping=damping_ad[7], order=orders[7], label=label, ADlabel="k_{\\theta_1\\theta_1}^*")
+        self.a3.plot2(mode=mode, conv=conv, ax=axs_stiffness[15], damping=damping_ad[7], order=orders[7], label=label, ADlabel="k_{\\theta_2\\theta_2}^*")
+
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[2], label='no', ADlabel="c_{z_1z_2}^*")
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[3], label='no', ADlabel="c_{z_1\\theta_2}^*")
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[6], label='no', ADlabel="c_{\\theta_1z_2}^*")
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[7], label='no', ADlabel="c_{\\theta_1\\theta_2}^*")
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[8], label='no', ADlabel="c_{z_2z_1}^*")
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[9], label='no', ADlabel="c_{z_2\\theta_1}^*")
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[12], label='no', ADlabel="c_{\\theta_2z_1}^*")
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[13], label='no', ADlabel="c_{\\theta_2\\theta_1}^*")
+
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[2], label='no', ADlabel="k_{z_1z_2}^*")
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[3], label='no', ADlabel="k_{z_1\\theta_2}^*")
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[6], label='no', ADlabel="k_{\\theta_1z_2}^*")
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[7], label='no', ADlabel="k_{\\theta_1\\theta_2}^*")
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[8], label='no', ADlabel="k_{z_2z_1}^*")
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[9], label='no', ADlabel="k_{z_2\\theta_1}^*")
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[12], label='no', ADlabel="k_{\\theta_2z_1}^*")
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[13], label='no', ADlabel="k_{\\theta_2\\theta_1}^*")
+        
+
+
+        
+        for k in range(12):
+            axs_damping[k].set_xlabel("")
+            axs_stiffness[k].set_xlabel("")
+
+        scal = 1.8
+        fig_damping.set_size_inches(20/scal,15/scal)
+        fig_stiffness.set_size_inches(20/scal,15/scal)
+
+        '''
+        fig_damping.set_size_inches(20/2.54,15/2.54)
+        fig_stiffness.set_size_inches(20/2.54,15/2.54)
+        '''
+        
+        fig_damping.tight_layout()
+        fig_stiffness.tight_layout()
+
