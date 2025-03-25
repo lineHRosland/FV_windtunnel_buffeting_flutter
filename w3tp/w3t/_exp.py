@@ -648,7 +648,7 @@ class Experiment:
             axs[6].set_xlabel(r"$Time$ [s]")
             #axs[6].legend()
             
-            fig.tight_layout(rect=[0, 0, 1, 0.85])
+            #fig.tight_layout(rect=[0, 0, 1, 0.85])
 
         
 
