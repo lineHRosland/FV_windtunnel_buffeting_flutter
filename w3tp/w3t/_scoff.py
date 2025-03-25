@@ -1536,18 +1536,29 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
         return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
     
     def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.1):
+        """
+        Iterates through unique alpha values in sorted order.
+        If the mean coefficient jumps more than the threshold compared to previous,
+        all higher alpha values are set to NaN.
+        """
         alpha_sorted = np.round(alpha_vals, 1)
-        unique_alpha = np.unique(alpha_sorted)
-        mean_vals = np.array([
-            np.nanmean(coeff_array[alpha_sorted == val, 0] + coeff_array[alpha_sorted == val, 1])
-            for val in unique_alpha
-        ])
-        diffs = np.abs(np.diff(mean_vals))
-        jump_idx = np.argmax(diffs > threshold_jump) + 1 if np.any(diffs > threshold_jump) else None
-        if jump_idx is not None:
-            cutoff = unique_alpha[jump_idx]
-            coeff_array[alpha_vals > cutoff, 0] = np.nan
-            coeff_array[alpha_vals > cutoff, 1] = np.nan
+        unique_alpha = np.sort(np.unique(alpha_sorted))
+
+        prev_mean = None
+        for val in unique_alpha:
+            idx = np.where(alpha_sorted == val)[0]
+            if idx.size == 0:
+                continue
+            current_vals = coeff_array[idx, 0] + coeff_array[idx, 1]
+            current_mean = np.nanmean(current_vals)
+            if prev_mean is not None and abs(current_mean - prev_mean) > threshold_jump:
+                # Set all values with alpha > val to NaN
+                mask = alpha_sorted > val
+                coeff_array[mask, 0] = np.nan
+                coeff_array[mask, 1] = np.nan
+                break  # Only act on first detected jump
+            prev_mean = current_mean
+
         return coeff_array
 
     alpha_1, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
@@ -1700,38 +1711,18 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     coeff_array[idx[mask], 3] = np.nan
     
     # Fjern etter hopp i graf
-    for i, alpha in enumerate([alpha_1, alpha_2, alpha_3] if not single else [alpha_1, alpha_2]):
-    arrays = [coeffs_1_filt[i], coeffs_2_filt[i]]
-    if not single:
-        arrays.append(coeffs_3_filt[i])
-
-    for coeff_array in arrays:
-        # Upwind (kolonne 0+1)
-        alpha_sorted = np.round(alpha, 1)
-        unique_alpha = np.unique(alpha_sorted)
-        mean_vals = np.array([
-            np.nanmean(coeff_array[alpha_sorted == val, 0] + coeff_array[alpha_sorted == val, 1])
-            for val in unique_alpha
-        ])
-        diffs = np.abs(np.diff(mean_vals))
-        jump_idx = np.argmax(diffs > 0.1) + 1 if np.any(diffs > 0.1) else None
-        if jump_idx is not None:
-            cutoff = unique_alpha[jump_idx]
-            coeff_array[alpha > cutoff, 0] = np.nan
-            coeff_array[alpha > cutoff, 1] = np.nan
-
-        # Downwind (kolonne 2+3), kun hvis not single
-        if not single:
-            mean_vals = np.array([
-                np.nanmean(coeff_array[alpha_sorted == val, 2] + coeff_array[alpha_sorted == val, 3])
-                for val in unique_alpha
-            ])
-            diffs = np.abs(np.diff(mean_vals))
-            jump_idx = np.argmax(diffs > 0.1) + 1 if np.any(diffs > 0.1) else None
-            if jump_idx is not None:
-                cutoff = unique_alpha[jump_idx]
-                coeff_array[alpha > cutoff, 2] = np.nan
-                coeff_array[alpha > cutoff, 3] = np.nan              
+    for i, alpha in enumerate([alpha_1, alpha_2] if single else [alpha_1, alpha_2, alpha_3]):
+        for coeff_array in ([coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]):
+            remove_after_jump(alpha, coeff_array)  # upwind deck
+            if not single:
+                # downwind deck (col 2 and 3)
+                current = coeff_array[:, [2, 3]]
+                dummy_array = np.zeros_like(coeff_array)
+                dummy_array[:, 0] = current[:, 0]
+                dummy_array[:, 1] = current[:, 1]
+                remove_after_jump(alpha, dummy_array)
+                coeff_array[:, 2] = dummy_array[:, 0]
+                coeff_array[:, 3] = dummy_array[:, 1]       
     
     # Return updated objects
     static_coeff_1_f = copy.deepcopy(static_coeff_1)
