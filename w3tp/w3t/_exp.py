@@ -378,7 +378,7 @@ class Experiment:
         axs[2].set_xlabel(r"$Time$ [s]")
         axs[2].grid(True)
         
-        fig.tight_layout(rect=[0, 0, 1, 0.95])
+        fig.tight_layout(rect=[0, 0, 1, 0.85])
 
         
         fig.show()
@@ -444,7 +444,7 @@ class Experiment:
         axs[2].set_xlabel(r"$Time$ [s]")
         axs[2].legend()
         
-        fig.tight_layout(rect=[0, 0, 1, 0.95])
+        fig.tight_layout(rect=[0, 0, 1, 0.85])
 
     
     def plot_wind_velocity(self,fig=[]):
@@ -490,7 +490,7 @@ class Experiment:
             
                         
         fig.set_size_inches(20/2.54,15/2.54)
-        fig.tight_layout(rect=[0, 0, 1, 0.95])
+        fig.tight_layout(rect=[0, 0, 1, 0.85])
 
         fig.align_ylabels()
 
@@ -543,7 +543,7 @@ class Experiment:
             axs[6].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
-            fig.tight_layout(rect=[0, 0, 1, 0.95])
+            fig.tight_layout(rect=[0, 0, 1, 0.85])
 
         
         elif mode == "decks": # krefter og momenter summeres per brodekke
@@ -648,7 +648,7 @@ class Experiment:
             axs[6].set_xlabel(r"$Time$ [s]")
             #axs[6].legend()
             
-            fig.tight_layout(rect=[0, 0, 1, 0.95])
+            fig.tight_layout(rect=[0, 0, 1, 0.85])
 
         
 
