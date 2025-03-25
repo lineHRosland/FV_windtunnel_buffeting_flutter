@@ -143,8 +143,8 @@ plot_static_coeff_summary(static_coeff_single_9, section_name, 9, mode="single",
 
 #%% Filter and plot ALT 1
 #drag
-alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_6, threshold=0.05, scoff="drag", single = True)
-w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.05, scoff="drag")
+alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_6, threshold=0.07, scoff="drag", single = True)
+w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.07, scoff="drag")
 plt.suptitle(f"Single deck - Wind speed: 6 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\drag", "Single_6_drag_clean.png"))
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_9, threshold=0.05, scoff="drag", single = True)
