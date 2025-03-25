@@ -517,8 +517,8 @@ class StaticCoeff:
                 np.nanmean(self.drag_coeff[:,2][alpha == val]) + np.nanmean(self.drag_coeff[:,3][alpha == val])
                 for val in unique_alphas
             ])
-            ax.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1) # Switch upwind and downwind deck. For Downstream files the load cells are switched.
-            ax.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
+            ax.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1, drawstyle='default') # Switch upwind and downwind deck. For Downstream files the load cells are switched.
+            ax.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2, drawstyle='default')
             ax.grid()
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_D(\alpha)$")
@@ -1534,7 +1534,31 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
     def get_coeffs(static_coeff):
         alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
         return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
+    
+    def remove_after_jump(alpha_vals, coeff_array, col1=0, col2=1, threshold_jump=0.03):
+        """
+        Fjerner alle verdier med alpha høyere enn der det først skjer et hopp
+        i verdien mellom to etterfølgende alphas.
+        Kolonnene col1 og col2 angir hvilke kolonner som skal summeres (f.eks. 0+1 for upwind, 2+3 for downwind).
+        """
+        alpha_sorted = np.round(alpha_vals, 1)
+        idx_sorted = np.argsort(alpha_sorted)
+        alpha_sorted_vals = alpha_sorted[idx_sorted]
+        coeff_summed = coeff_array[:, col1] + coeff_array[:, col2]
+        coeff_sorted_vals = coeff_summed[idx_sorted]
 
+        for i in range(1, len(alpha_sorted_vals)):
+            if np.abs(coeff_sorted_vals[i] - coeff_sorted_vals[i-1]) > threshold_jump:
+                cutoff = alpha_sorted_vals[i]
+                print(f"Jump detected at alpha = {cutoff}, ΔC = {np.abs(coeff_sorted_vals[i] - coeff_sorted_vals[i-1]):.3f}")
+
+                mask = alpha_vals >= cutoff
+                coeff_array[mask, col1] = np.nan
+                coeff_array[mask, col2] = np.nan
+                break
+
+        return coeff_array
+    
     alpha_1, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
     alpha_2, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
 
@@ -1683,7 +1707,16 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     mask = np.abs(summed - ref_mean_down) > threshold
                     coeff_array[idx[mask], 2] = np.nan
                     coeff_array[idx[mask], 3] = np.nan
-
+    
+    # Fjern etter hopp i graf
+    for i, alpha in enumerate([alpha_1, alpha_2] if single else [alpha_1, alpha_2, alpha_3]):
+        for coeff_array in ([coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]):
+            remove_after_jump(alpha, coeff_array)  # upwind deck
+            if not single:
+                # downwind deck (col 2 and 3)
+                remove_after_jump(alpha, coeff_array, col1=2, col2=3)      
+    
+    # Return updated objects
     static_coeff_1_f = copy.deepcopy(static_coeff_1)
     static_coeff_2_f = copy.deepcopy(static_coeff_2)
     for name, data in zip(coeff_names, [drag_1_filt, lift_1_filt, pitch_1_filt]):

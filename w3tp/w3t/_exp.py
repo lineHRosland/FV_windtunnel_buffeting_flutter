@@ -598,16 +598,7 @@ class Experiment:
         elif mode == "total":
             
             axs[0].plot( self.time,self.wind_speed)
-            axs[0].set_title("Wind speed")
-            
-            U_mean = np.mean(self.wind_speed)
-            U_std = np.std(self.wind_speed)
-            if U_mean > 2:  # terskelverdi    
-                TI = U_std / U_mean * 100
-                axs[0].set_title(f"Wind speed - Turbulence intensity: {TI:.1f}%", fontsize=12)            
-            else:
-                axs[0].set_title("Wind speed")
-            
+            axs[0].set_title("Wind speed")            
             axs[0].set_ylabel(r"$U(t)$ [m/s]")
             axs[0].grid(True)
             
