@@ -59,24 +59,24 @@ def plot_static_coeff_summary(static_coeff, section_name, wind_speed, mode="deck
 
     static_coeff.plot_drag(mode=mode,upwind_in_rig=upwind_in_rig)
     plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig()
+    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\drag" , section_name + f"_{wind_speed}" + ".png"))
     static_coeff.plot_lift(mode=mode, upwind_in_rig=upwind_in_rig)
     plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig()
+    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\lift", section_name + f"_{wind_speed}" + ".png"))
     static_coeff.plot_pitch(mode=mode, upwind_in_rig=upwind_in_rig)
     plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig()
+    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\pitch", section_name + f"_{wind_speed}" + ".png"))
 
     #mean
     static_coeff.plot_drag_mean(mode=mode, upwind_in_rig=upwind_in_rig)
     plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig()
+    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\drag", section_name + f"_{wind_speed}_mean" + ".png"))
     static_coeff.plot_lift_mean(mode=mode, upwind_in_rig=upwind_in_rig)
     plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig()
+    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\lift", section_name + f"_{wind_speed}_mean" + ".png"))
     static_coeff.plot_pitch_mean(mode=mode, upwind_in_rig=upwind_in_rig)
     plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig()
+    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\pitch", section_name + f"_{wind_speed}_mean" + ".png"))
 
     plt.tight_layout()
     plt.show()
@@ -105,15 +105,15 @@ exp0_single, exp1_single_9= load_experiments_from_hdf5(h5_input_path, section_na
 
 exp0_single.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_0" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_0" + ".png"))
 
 exp1_single_6.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_6" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_6" + ".png"))
 
 exp1_single_9.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9" + ".png"))
 
 exp0_single.filt_forces(6, 2)
 exp1_single_6.filt_forces(6, 2)
@@ -121,13 +121,13 @@ exp1_single_9.filt_forces(6, 2)
 
 exp0_single.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.1)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_0_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_0_filter" + ".png"))
 exp1_single_6.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s - With Butterworth low-pass filter",  y=1.1)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_6_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_6_filter" + ".png"))
 exp1_single_9.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s - With Butterworth low-pass filter",  y=1.1)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9_filter" + ".png"))
 plt.show()
 
 
@@ -195,16 +195,16 @@ exp0_MDS_1D, exp1_MDS_1D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 exp0_MDS_1D.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 1D - Wind speed: 0 m/s",  y=1.03)
-plt.savefig(  r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_0" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_0" + ".png"))
 exp1_MDS_1D_6.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 1D - Wind speed: 6 m/s",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_6" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_6" + ".png"))
 exp1_MDS_1D_8.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 1D - Wind speed: 8 m/s",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_8" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_8" + ".png"))
 exp1_MDS_1D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 1D - Wind speed: 10 m/s",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_10" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_10" + ".png"))
 
 exp0_MDS_1D.filt_forces(6, 2)
 exp1_MDS_1D_6.filt_forces(6, 2)
@@ -213,16 +213,16 @@ exp1_MDS_1D_10.filt_forces(6, 2)
 
 exp0_MDS_1D.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 1D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_0_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_0_filter" + ".png"))
 exp1_MDS_1D_6.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 1D - Wind speed:) 6 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_6_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_6_filter" + ".png"))
 exp1_MDS_1D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 1D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_8_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_8_filter" + ".png"))
 exp1_MDS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 1D - Wind speed:) 10 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_10_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_10_filter" + ".png"))
 plt.show()
 
 
@@ -299,16 +299,16 @@ exp0_MUS_1D, exp1_MUS_1D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 exp0_MUS_1D.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 0 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_0" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_0" + ".png"))
 exp1_MUS_1D_5.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 5 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_5" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_5" + ".png"))
 exp1_MUS_1D_8.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 8 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_8" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_8" + ".png"))
 exp1_MUS_1D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_10" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_10" + ".png"))
 
 exp0_MUS_1D.filt_forces(6, 2)
 exp1_MUS_1D_5.filt_forces(6, 2)
@@ -317,16 +317,16 @@ exp1_MUS_1D_10.filt_forces(6, 2)
 
 exp0_MUS_1D.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_0_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_0_filter" + ".png"))
 exp1_MUS_1D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_5_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_5_filter" + ".png"))
 exp1_MUS_1D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_8_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_8_filter" + ".png"))
 exp1_MUS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_10_filter" + ".png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_10_filter" + ".png"))
 plt.show()
 
 
@@ -1053,16 +1053,16 @@ exp0_MDS_2D, exp1_MDS_2D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 exp0_MDS_2D.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 2D - Wind speed: 0 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_0.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_0.png"))
 exp1_MDS_2D_6.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 2D - Wind speed: 6 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_6.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_6.png"))
 exp1_MDS_2D_8.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 2D - Wind speed: 8 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_8.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_8.png"))
 exp1_MDS_2D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 2D - Wind speed: 10 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_10.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_10.png"))
 
 exp0_MDS_2D.filt_forces(6, 2)
 exp1_MDS_2D_6.filt_forces(6, 2)
@@ -1071,16 +1071,16 @@ exp1_MDS_2D_10.filt_forces(6, 2)
 
 exp0_MDS_2D.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 2D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_0_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_0_filter.png"))
 exp1_MDS_2D_6.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 2D - Wind speed: 6 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_6_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_6_filter.png"))
 exp1_MDS_2D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 2D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_8_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_8_filter.png"))
 exp1_MDS_2D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 2D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_10_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_10_filter.png"))
 plt.show()
 
 
@@ -1167,16 +1167,16 @@ exp0_MUS_2D, exp1_MUS_2D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 exp0_MUS_2D.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 2D - Wind speed: 0 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_0.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_0.png"))
 exp1_MUS_2D_5.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 2D - Wind speed: 5 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_5.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_5.png"))
 exp1_MUS_2D_8.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 2D - Wind speed: 8 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_8.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_8.png"))
 exp1_MUS_2D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 2D - Wind speed: 10 m/s - ",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_10.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_10.png"))
 
 exp0_MUS_2D.filt_forces(6, 2)
 exp1_MUS_2D_5.filt_forces(6, 2)
@@ -1185,16 +1185,16 @@ exp1_MUS_2D_10.filt_forces(6, 2)
 
 exp0_MUS_2D.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 2D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_0_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_0_filter.png"))
 exp1_MUS_2D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 2D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_5_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_5_filter.png"))
 exp1_MUS_2D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 2D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_8_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_8_filter.png"))
 exp1_MUS_2D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 2D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig( r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_10_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_10_filter.png"))
 plt.show()
 
 
@@ -1830,16 +1830,16 @@ exp0_MDS_3D, exp1_MDS_3D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 exp0_MDS_3D.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 3D - Wind speed: 0 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_0.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_0.png"))
 exp1_MDS_3D_6.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 3D - Wind speed: 6 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_6.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_6.png"))
 exp1_MDS_3D_8.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 3D - Wind speed: 8 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_8.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_8.png"))
 exp1_MDS_3D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 3D - Wind speed: 10 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_10.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_10.png"))
 
 exp0_MDS_3D.filt_forces(6, 2)
 exp1_MDS_3D_6.filt_forces(6, 2)
@@ -1848,16 +1848,16 @@ exp1_MDS_3D_10.filt_forces(6, 2)
 
 exp0_MDS_3D.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 3D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_0_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_0_filter.png"))
 exp1_MDS_3D_6.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 3D - Wind speed: 6 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_6_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_6_filter.png"))
 exp1_MDS_3D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 3D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_8_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_8_filter.png"))
 exp1_MDS_3D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 3D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_10_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_10_filter.png"))
 plt.show()
 
 
@@ -1935,16 +1935,16 @@ exp0_MUS_3D, exp1_MUS_3D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 exp0_MUS_3D.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 3D - Wind speed: 0 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_0.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_0.png"))
 exp1_MUS_3D_5.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 3D - Wind speed: 5 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_5.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_5.png"))
 exp1_MUS_3D_8.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 3D - Wind speed: 8 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_8.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_8.png"))
 exp1_MUS_3D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 3D - Wind speed: 10 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_10.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_10.png"))
 
 exp0_MUS_3D.filt_forces(6, 2)
 exp1_MUS_3D_5.filt_forces(6, 2)
@@ -1953,16 +1953,16 @@ exp1_MUS_3D_10.filt_forces(6, 2)
 
 exp0_MUS_3D.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 3D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_0_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_0_filter.png"))
 exp1_MUS_3D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 3D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_5_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_5_filter.png"))
 exp1_MUS_3D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 3D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_8_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_8_filter.png"))
 exp1_MUS_3D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 3D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_10_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_10_filter.png"))
 plt.show()
 
 
@@ -2568,16 +2568,16 @@ exp0_MDS_4D, exp1_MDS_4D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 exp0_MDS_4D.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 0 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_0.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_0.png"))
 exp1_MDS_4D_55.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 5 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_55.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_55.png"))
 exp1_MDS_4D_85.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 8 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_85.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_85.png"))
 exp1_MDS_4D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 10 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_10.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_10.png"))
 plt.show()
 
 exp0_MDS_4D.filt_forces(6, 2)
@@ -2587,16 +2587,16 @@ exp1_MDS_4D_10.filt_forces(6, 2)
 
 exp0_MDS_4D.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_0_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_0_filter.png"))
 exp1_MDS_4D_55.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_55_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_55_filter.png"))
 exp1_MDS_4D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_85_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_85_filter.png"))
 exp1_MDS_4D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_10_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_10_filter.png"))
 plt.show()
 
 
@@ -2672,16 +2672,16 @@ exp0_MUS_4D, exp1_MUS_4D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 exp0_MUS_4D.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 0 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_0.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_0.png"))
 exp1_MUS_4D_5.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 5 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_5.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_5.png"))
 exp1_MUS_4D_85.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 8.5 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_85.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_85.png"))
 exp1_MUS_4D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 10 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_10.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_10.png"))
 plt.show()
 
 exp0_MUS_4D.filt_forces(6, 2)
@@ -2691,16 +2691,16 @@ exp1_MUS_4D_10.filt_forces(6, 2)
 
 exp0_MUS_4D.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_0_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_0_filter.png"))
 exp1_MUS_4D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_5_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_5_filter.png"))
 exp1_MUS_4D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 8.5 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_85_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_85_filter.png"))
 exp1_MUS_4D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_10_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_10_filter.png"))
 plt.show()
 
 
@@ -3305,17 +3305,17 @@ exp0_MDS_5D, exp1_MDS_5D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 exp0_MDS_5D.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 0 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_0.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_0.png"))
 
 exp1_MDS_5D_55.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 5.5 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_55.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_55.png"))
 exp1_MDS_5D_85.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 8.5 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_85.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_85.png"))
 exp1_MDS_5D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 10 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_10.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_10.png"))
 plt.show()
 
 exp0_MDS_5D.filt_forces(6, 2)
@@ -3325,16 +3325,16 @@ exp1_MDS_5D_10.filt_forces(6, 2)
 
 exp0_MDS_5D.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_0_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_0_filter.png"))
 exp1_MDS_5D_55.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 5.5 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_55_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_55_filter.png"))
 exp1_MDS_5D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 8.5 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_85_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_85_filter.png"))
 exp1_MDS_5D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_10_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_10_filter.png"))
 plt.show()
 
 
@@ -3410,16 +3410,16 @@ exp0_MUS_5D, exp1_MUS_5D_10 = load_experiments_from_hdf5(h5_input_path, section_
 
 exp0_MUS_5D.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 5D - Wind speed: 0 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_0.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_0.png"))
 exp1_MUS_5D_45.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 5D - Wind speed: 4.5 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_45.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_45.png"))
 exp1_MUS_5D_85.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 5D - Wind speed: 8.5 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_85.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_85.png"))
 exp1_MUS_5D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 5D - Wind speed: 10 m/s - ",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_10.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_10.png"))
 
 exp0_MUS_5D.filt_forces(6, 2)
 exp1_MUS_5D_45.filt_forces(6, 2)
@@ -3428,16 +3428,16 @@ exp1_MUS_5D_10.filt_forces(6, 2)
 
 exp0_MUS_5D.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 5D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_0_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_0_filter.png"))
 exp1_MUS_5D_45.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 5D - Wind speed: 4.5 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_45_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_45_filter.png"))
 exp1_MUS_5D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 5D - Wind speed: 8.5 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_85_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_85_filter.png"))
 exp1_MUS_5D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 5D - Wind speed:) 10 m/s - With Butterworth low-pass filter",  y=1.03)
-plt.savefig(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_10_filter.png")
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_10_filter.png"))
 plt.show()
 
 

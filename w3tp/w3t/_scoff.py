@@ -1728,7 +1728,8 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
         max = 0.2
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
-            fig.tight_layout()
+            fig.tight_layout(rect=[0, 0, 1, 0.95])
+
     # Plot
 
     if coeff_down_plot is None:
