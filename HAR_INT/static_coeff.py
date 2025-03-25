@@ -104,15 +104,15 @@ exp0_single, exp1_single_6 = load_experiments_from_hdf5(h5_input_path, section_n
 exp0_single, exp1_single_9= load_experiments_from_hdf5(h5_input_path, section_name, file_names_9,  upwind_in_rig=True)
 
 exp0_single.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s",  y=1.03)
+plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s",  y=1.01)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_0" + ".png"))
 
 exp1_single_6.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s",  y=1.03)
+plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s",  y=1.01)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_6" + ".png"))
 
 exp1_single_9.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s",  y=1.03)
+plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s",  y=1.01)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9" + ".png"))
 
 exp0_single.filt_forces(6, 2)
@@ -120,13 +120,13 @@ exp1_single_6.filt_forces(6, 2)
 exp1_single_9.filt_forces(6, 2)
 
 exp0_single.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.1)
+plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=1.01)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_0_filter" + ".png"))
 exp1_single_6.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s - With Butterworth low-pass filter",  y=1.1)
+plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s - With Butterworth low-pass filter",  y=1.01)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_6_filter" + ".png"))
 exp1_single_9.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s - With Butterworth low-pass filter",  y=1.1)
+plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s - With Butterworth low-pass filter",  y=1.01)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9_filter" + ".png"))
 plt.show()
 
