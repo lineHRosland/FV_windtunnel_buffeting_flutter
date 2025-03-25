@@ -90,9 +90,31 @@ class AerodynamicDerivative4x4:
     @property    
     def value(self):
         return self.ad_load_cell_a + self.ad_load_cell_b
+    
+    def poly_fit(self, damping=True, order=2):
+        ads = np.zeros(self.reduced_velocities.shape[0])
+        vreds = np.zeros(self.reduced_velocities.shape[0])
         
-        
-    def plot(self, mode = "all", conv = "normal", ax=[], poly_coeff=[], k_range=[]):
+        ads = self.value
+        vreds = self.reduced_velocities
+
+        if ads.size > 0:
+            poly_coeff = np.zeros(np.max(order)+1)
+            k_range = np.zeros(2)
+            
+            k_range[0] = 1/np.max(vreds)
+            k_range[1] = 1/np.min(vreds)
+                
+            if damping == True:
+                poly_coeff = np.polyfit(vreds,ads,order)
+            elif damping == False:
+                poly_coeff = np.polyfit(vreds,ads,order)    
+                    
+            return poly_coeff, k_range
+        else:
+            return None, None
+ 
+    def plot(self, mode = "all", conv = "normal", ax=[], damping=True, order=2):
         """ plots the aerodynamic derivative
         
         The method plots the aerodynamic derivative as function of the mean 
@@ -109,12 +131,14 @@ class AerodynamicDerivative4x4:
         
         """
         #Poly fit
-        p = np.poly1d(poly_coeff)
-        V = np.linspace(1/k_range[1], 1/k_range[0], 200)
-        y = p(V)
-        #print(V,y)
-
-        print(self.reduced_velocities.shape)
+        poly_coeff, k_range = self.poly_fit(damping=damping, order=order)
+        if poly_coeff is None:
+            V = 0
+            y = 0
+        else: 
+            p = np.poly1d(poly_coeff)
+            V = np.linspace(1/k_range[1], 1/k_range[0], 200)
+            y = p(V)
 
         if bool(ax) == False:
             fig = plt.figure()
@@ -751,8 +775,33 @@ class AerodynamicDerivatives4x4:
                 poly_coeff[k,-orders[k]-1:] = np.polyfit(1/vreds[k,:],(1/vreds[k,:])**2*ad_matrix[k,:],orders[k])
             
                 
-        
         return poly_coeff, k_range
+    
+
+    
+    def fit_poly(self,orders = np.ones(32,dtype=int)*2):
+        ad_matrix, vreds = self.ad_matrix
+        
+        poly_coeff = np.zeros((32,np.max(orders)+1))
+        v_range = np.zeros((32,2))
+        
+        damping_ad = np.array([True, True, True, True, True, True, True, True,
+                               True, True, True, True, True, True, True, True,
+                               False, False, False, False, False, False, False, False,
+                               False, False, False, False, False, False, False, False])
+        
+        
+        for k in range(32):
+            v_range[k,1] = np.max(vreds)
+            v_range[k,0] = np.min(vreds)
+            
+            if damping_ad[k] == True:
+                poly_coeff[k,:] = np.polyfit(vreds[k,:],ad_matrix[k,:],orders[k])
+            elif damping_ad[k] == False:
+                poly_coeff[k,:] = np.polyfit(vreds[k,:],ad_matrix[k,:],orders[k])
+            
+                
+        return poly_coeff, v_range  
     
     #Ikke endret
     def to_excel(self,section_name, section_height=0, section_width=0, section_length=0):
@@ -856,7 +905,7 @@ class AerodynamicDerivatives4x4:
                 writer, sheet_name='Mean wind velocity')
 
 
-    def plot(self, fig_damping=[],fig_stiffness=[],conv='normal', mode='total', poly_order=2):
+    def plot(self, fig_damping=[],fig_stiffness=[],conv='normal', mode='total', orders = np.ones(32,dtype=int)*2):
         
         """ plots all aerodynamic derivatives
         
@@ -884,50 +933,53 @@ class AerodynamicDerivatives4x4:
                 fig_stiffness.add_subplot(4,4,k+1)
         
         #Get the poly fit for the ADs
-        poly_coeff, k_range = self.fit_poly_k(orders=np.ones(32, dtype=int) * poly_order)
-        print(poly_coeff, k_range)
+        damping_ad = np.array([True, True, True, True, True, True, True, True,
+                            True, True, True, True, True, True, True, True,
+                            False, False, False, False, False, False, False, False,
+                            False, False, False, False, False, False, False, False])
+ 
 
         axs_damping = fig_damping.get_axes()
-        self.c_z1z1.plot(mode=mode, conv=conv, ax=axs_damping[0], poly_coeff=poly_coeff[0], k_range=k_range[0])
-        self.c_z1theta1.plot(mode=mode, conv=conv, ax=axs_damping[1], poly_coeff=poly_coeff[1], k_range=k_range[1])
-        self.c_z1z2.plot(mode=mode, conv=conv, ax=axs_damping[2], poly_coeff=poly_coeff[2], k_range=k_range[2])
-        self.c_z1theta2.plot(mode=mode, conv=conv, ax=axs_damping[3], poly_coeff=poly_coeff[3], k_range=k_range[3])
+        self.c_z1z1.plot(mode=mode, conv=conv, ax=axs_damping[0], damping=damping_ad[0], order=orders[0])
+        self.c_z1theta1.plot(mode=mode, conv=conv, ax=axs_damping[1], damping=damping_ad[1], order=orders[1])
+        self.c_z1z2.plot(mode=mode, conv=conv, ax=axs_damping[2], damping=damping_ad[2], order=orders[2])
+        self.c_z1theta2.plot(mode=mode, conv=conv, ax=axs_damping[3], damping=damping_ad[3], order=orders[3])
 
-        self.c_theta1z1.plot(mode=mode, conv=conv, ax=axs_damping[4], poly_coeff=poly_coeff[4], k_range=k_range[4])
-        self.c_theta1theta1.plot(mode=mode, conv=conv, ax=axs_damping[5], poly_coeff=poly_coeff[5], k_range=k_range[5])
-        self.c_theta1z2.plot(mode=mode, conv=conv, ax=axs_damping[6], poly_coeff=poly_coeff[6], k_range=k_range[6])
-        self.c_theta1theta2.plot(mode=mode, conv=conv, ax=axs_damping[7], poly_coeff=poly_coeff[7], k_range=k_range[7])
+        self.c_theta1z1.plot(mode=mode, conv=conv, ax=axs_damping[4], damping=damping_ad[4], order=orders[4])
+        self.c_theta1theta1.plot(mode=mode, conv=conv, ax=axs_damping[5], damping=damping_ad[5], order=orders[5])
+        self.c_theta1z2.plot(mode=mode, conv=conv, ax=axs_damping[6], damping=damping_ad[6], order=orders[6])
+        self.c_theta1theta2.plot(mode=mode, conv=conv, ax=axs_damping[7], damping=damping_ad[7], order=orders[7])
 
-        self.c_z2z1.plot(mode=mode, conv=conv, ax=axs_damping[8], poly_coeff=poly_coeff[8], k_range=k_range[8])
-        self.c_z2theta1.plot(mode=mode, conv=conv, ax=axs_damping[9], poly_coeff=poly_coeff[9], k_range=k_range[9])
-        self.c_z2z2.plot(mode=mode, conv=conv, ax=axs_damping[10], poly_coeff=poly_coeff[10], k_range=k_range[10])
-        self.c_z2theta2.plot(mode=mode, conv=conv, ax=axs_damping[11], poly_coeff=poly_coeff[11], k_range=k_range[11])
+        self.c_z2z1.plot(mode=mode, conv=conv, ax=axs_damping[8], damping=damping_ad[8], order=orders[8])
+        self.c_z2theta1.plot(mode=mode, conv=conv, ax=axs_damping[9], damping=damping_ad[9], order=orders[9])
+        self.c_z2z2.plot(mode=mode, conv=conv, ax=axs_damping[10], damping=damping_ad[10], order=orders[10])
+        self.c_z2theta2.plot(mode=mode, conv=conv, ax=axs_damping[11], damping=damping_ad[11], order=orders[11])
 
-        self.c_theta2z1.plot(mode=mode, conv=conv, ax=axs_damping[12], poly_coeff=poly_coeff[12], k_range=k_range[12])
-        self.c_theta2theta1.plot(mode=mode, conv=conv, ax=axs_damping[13], poly_coeff=poly_coeff[13], k_range=k_range[13])
-        self.c_theta2z2.plot(mode=mode, conv=conv, ax=axs_damping[14], poly_coeff=poly_coeff[14], k_range=k_range[14])
-        self.c_theta2theta2.plot(mode=mode, conv=conv, ax=axs_damping[15], poly_coeff=poly_coeff[15], k_range=k_range[15])
+        self.c_theta2z1.plot(mode=mode, conv=conv, ax=axs_damping[12], damping=damping_ad[12], order=orders[12])
+        self.c_theta2theta1.plot(mode=mode, conv=conv, ax=axs_damping[13], damping=damping_ad[13], order=orders[13])
+        self.c_theta2z2.plot(mode=mode, conv=conv, ax=axs_damping[14], damping=damping_ad[14], order=orders[14])
+        self.c_theta2theta2.plot(mode=mode, conv=conv, ax=axs_damping[15], damping=damping_ad[15], order=orders[15])
 
         axs_stiffness = fig_stiffness.get_axes()
-        self.k_z1z1.plot(mode=mode, conv=conv, ax=axs_stiffness[0], poly_coeff=poly_coeff[16], k_range=k_range[16])
-        self.k_z1theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[1], poly_coeff=poly_coeff[17], k_range=k_range[17])
-        self.k_z1z2.plot(mode=mode, conv=conv, ax=axs_stiffness[2], poly_coeff=poly_coeff[18], k_range=k_range[18])
-        self.k_z1theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[3], poly_coeff=poly_coeff[19], k_range=k_range[19])
+        self.k_z1z1.plot(mode=mode, conv=conv, ax=axs_stiffness[0], damping=damping_ad[16], order=orders[16])
+        self.k_z1theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[1], damping=damping_ad[17], order=orders[17])
+        self.k_z1z2.plot(mode=mode, conv=conv, ax=axs_stiffness[2], damping=damping_ad[18], order=orders[18])
+        self.k_z1theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[3], damping=damping_ad[19], order=orders[19])
 
-        self.k_theta1z1.plot(mode=mode, conv=conv, ax=axs_stiffness[4], poly_coeff=poly_coeff[20], k_range=k_range[20])
-        self.k_theta1theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[5], poly_coeff=poly_coeff[21], k_range=k_range[21])
-        self.k_theta1z2.plot(mode=mode, conv=conv, ax=axs_stiffness[6], poly_coeff=poly_coeff[22], k_range=k_range[22])
-        self.k_theta1theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[7], poly_coeff=poly_coeff[23], k_range=k_range[23])
+        self.k_theta1z1.plot(mode=mode, conv=conv, ax=axs_stiffness[4], damping=damping_ad[20], order=orders[20])
+        self.k_theta1theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[5], damping=damping_ad[21], order=orders[21])
+        self.k_theta1z2.plot(mode=mode, conv=conv, ax=axs_stiffness[6], damping=damping_ad[22], order=orders[22])
+        self.k_theta1theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[7], damping=damping_ad[23], order=orders[23])
 
-        self.k_z2z1.plot(mode=mode, conv=conv, ax=axs_stiffness[8], poly_coeff=poly_coeff[24], k_range=k_range[24])
-        self.k_z2theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[9], poly_coeff=poly_coeff[25], k_range=k_range[25])
-        self.k_z2z2.plot(mode=mode, conv=conv, ax=axs_stiffness[10], poly_coeff=poly_coeff[26], k_range=k_range[26])
-        self.k_z2theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[11], poly_coeff=poly_coeff[27], k_range=k_range[27])
+        self.k_z2z1.plot(mode=mode, conv=conv, ax=axs_stiffness[8], damping=damping_ad[24], order=orders[24])
+        self.k_z2theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[9], damping=damping_ad[25], order=orders[25])
+        self.k_z2z2.plot(mode=mode, conv=conv, ax=axs_stiffness[10], damping=damping_ad[26], order=orders[26])
+        self.k_z2theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[11], damping=damping_ad[27], order=orders[27])
 
-        self.k_theta2z1.plot(mode=mode, conv=conv, ax=axs_stiffness[12], poly_coeff=poly_coeff[28], k_range=k_range[28])
-        self.k_theta2theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[13], poly_coeff=poly_coeff[29], k_range=k_range[29])
-        self.k_theta2z2.plot(mode=mode, conv=conv, ax=axs_stiffness[14], poly_coeff=poly_coeff[30], k_range=k_range[30])
-        self.k_theta2theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[15], poly_coeff=poly_coeff[31], k_range=k_range[31])
+        self.k_theta2z1.plot(mode=mode, conv=conv, ax=axs_stiffness[12], damping=damping_ad[28], order=orders[28])
+        self.k_theta2theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[13], damping=damping_ad[29], order=orders[29])
+        self.k_theta2z2.plot(mode=mode, conv=conv, ax=axs_stiffness[14], damping=damping_ad[30], order=orders[30])
+        self.k_theta2theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[15], damping=damping_ad[31], order=orders[31])
 
         for k in range(12):
             axs_damping[k].set_xlabel("")

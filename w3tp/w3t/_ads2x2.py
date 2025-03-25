@@ -91,10 +91,34 @@ class AerodynamicDerivative2x2:
     
     @property    
     def value(self):
-        return self.ad_load_cell_1 + self.ad_load_cell_2 + self.ad_load_cell_3 + self.ad_load_cell_4
+        return self.ad_load_cell_1 + self.ad_load_cell_2
+    
+    def poly_fit(self, damping=True, order=2):
+        ads = np.zeros(self.reduced_velocities.shape[0])
+        vreds = np.zeros(self.reduced_velocities.shape[0])
+        
+        ads = self.value
+        vreds = self.reduced_velocities
+
+        if ads.size > 0:
+            poly_coeff = np.zeros(np.max(order)+1)
+            k_range = np.zeros(2)
+            
+            k_range[0] = 1/np.max(vreds)
+            k_range[1] = 1/np.min(vreds)
+                
+            if damping == True:
+                poly_coeff = np.polyfit(vreds,ads,order)
+            elif damping == False:
+                poly_coeff = np.polyfit(vreds,ads,order)    
+                    
+            return poly_coeff, k_range
+        else:
+            return None, None
+    
         
         
-    def plot(self, mode = "all", conv = "normal", ax=[], V=1.0):
+    def plot(self, mode = "all", conv = "normal", ax=[], V=1.0, damping=True, order=2):
         """ plots the aerodynamic derivative
         
         The method plots the aerodynamic derivative as function of the mean 
@@ -110,6 +134,17 @@ class AerodynamicDerivative2x2:
         ---------        
         
         """
+        #Poly fit
+        poly_coeff, k_range = self.poly_fit(damping=True, order=2)
+        if poly_coeff is None:
+            V = 0
+            y = 0
+        else: 
+            p = np.poly1d(poly_coeff)
+            V = np.linspace(1/k_range[1], 1/k_range[0], 200)
+            y = p(V)
+
+
         if bool(ax) == False:
             fig = plt.figure()
             ax = fig.add_subplot(1,1,1)
@@ -137,17 +172,24 @@ class AerodynamicDerivative2x2:
                 ax.legend()
                 
             elif mode == "total":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4, "o", label="Total")
+                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2, "o", label="Total")
                 ax.set_ylabel(("$" + self.label + "$"))
                 ax.set_xlabel(r"Reduced velocity $\hat{V}$")
                 ax.grid(True)
 
             elif mode == "velocity":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4, "o", label=f"V = {V:.1f} m/s")
+                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2, "o", label=f"V = {V:.1f} m/s")
                 ax.set_ylabel(("$" + self.label + "$"))
                 ax.set_xlabel(r"Reduced velocity $\hat{V}$")
                 ax.legend()
                 ax.grid(True)
+
+            elif mode == "total+poly":
+                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_1, "o", label="Total")
+                ax.plot(V, y)
+                ax.set_ylabel(("$" + self.label + "$"))
+                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+                ax.grid(True)            
 
             #plt.tight_layout()
                 
@@ -621,12 +663,8 @@ class AerodynamicDerivatives2x2:
                 writer, sheet_name='Mean wind velocity')
 
 
-
         
-        
-        
-            
-    def plot(self, fig_damping=[],fig_stiffness=[],conv='normal', mode='total'):
+    def plot(self, fig_damping=[],fig_stiffness=[],conv='normal', mode='total', orders = np.ones(8,dtype=int)*2):
         
         """ plots all aerodynamic derivatives
         
@@ -652,25 +690,24 @@ class AerodynamicDerivatives2x2:
             fig_stiffness = plt.figure()
             for k in range(4):
                 fig_stiffness.add_subplot(2,2,k+1)
-        
+
+        damping_ad = np.array([True, True, False, False,  True, True, False, False])
         
         axs_damping = fig_damping.get_axes()
 #        
-        self.h1.plot(mode=mode, conv=conv, ax=axs_damping[0], V=self.meanV)
-        self.h2.plot(mode=mode, conv=conv, ax=axs_damping[1], V=self.meanV)
+        self.h1.plot(mode=mode, conv=conv, ax=axs_damping[0], V=self.meanV, damping=damping_ad[0], order=orders[0])
+        self.h2.plot(mode=mode, conv=conv, ax=axs_damping[1], V=self.meanV, damping=damping_ad[1], order=orders[1])
 
-        self.a1.plot(mode=mode, conv=conv, ax=axs_damping[2], V=self.meanV)
-        self.a2.plot(mode=mode, conv=conv, ax=axs_damping[3], V=self.meanV)
+        self.a1.plot(mode=mode, conv=conv, ax=axs_damping[2], V=self.meanV, damping=damping_ad[2], order=orders[2])
+        self.a2.plot(mode=mode, conv=conv, ax=axs_damping[3], V=self.meanV, damping=damping_ad[3], order=orders[3])
         
         axs_stiffness = fig_stiffness.get_axes()
 
-        self.h4.plot(mode=mode, conv=conv, ax=axs_stiffness[0], V=self.meanV)
-        self.h3.plot(mode=mode, conv=conv, ax=axs_stiffness[1], V=self.meanV)
+        self.h4.plot(mode=mode, conv=conv, ax=axs_stiffness[0], V=self.meanV, damping=damping_ad[4], order=orders[4])
+        self.h3.plot(mode=mode, conv=conv, ax=axs_stiffness[1], V=self.meanV, damping=damping_ad[5], order=orders[5])
         
-        self.a4.plot(mode=mode, conv=conv, ax=axs_stiffness[2], V=self.meanV)
-        self.a3.plot(mode=mode, conv=conv, ax=axs_stiffness[3], V=self.meanV)
-        
-        
+        self.a4.plot(mode=mode, conv=conv, ax=axs_stiffness[2], V=self.meanV, damping=damping_ad[6], order=orders[6])
+        self.a3.plot(mode=mode, conv=conv, ax=axs_stiffness[3], V=self.meanV, damping=damping_ad[7], order=orders[7])
         
         for k in range(2):
             axs_damping[k].set_xlabel("")
