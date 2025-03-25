@@ -1550,6 +1550,8 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
         for i in range(1, len(alpha_sorted_vals)):
             if np.abs(coeff_sorted_vals[i] - coeff_sorted_vals[i-1]) > threshold_jump:
                 cutoff = alpha_sorted_vals[i]
+                print(f"Jump detected at alpha = {cutoff}, ΔC = {np.abs(coeff_sorted_vals[i] - coeff_sorted_vals[i-1]):.3f}")
+
                 mask = alpha_vals >= cutoff
                 coeff_array[mask, col1] = np.nan
                 coeff_array[mask, col2] = np.nan
