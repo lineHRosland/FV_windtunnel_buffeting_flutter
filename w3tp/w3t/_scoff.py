@@ -1535,7 +1535,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
         alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
         return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
     
-    def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.08):
+    def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.12):
         alpha_vals_rounded = np.round(alpha_vals, 1)
         unique_alpha = np.sort(np.unique(alpha_vals_rounded))
 
