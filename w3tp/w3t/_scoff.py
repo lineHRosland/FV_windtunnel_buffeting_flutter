@@ -1535,26 +1535,38 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
         alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
         return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
     
-    def remove_after_jump(alpha_vals, coeff_array, col1=0, col2=1, threshold_jump=0.08):
-        """
-        Fjerner alle verdier med alpha høyere enn der det først skjer et hopp
-        i verdien mellom to etterfølgende alphas.
-        Kolonnene col1 og col2 angir hvilke kolonner som skal summeres (f.eks. 0+1 for upwind, 2+3 for downwind).
-        """
-        alpha_sorted = np.round(alpha_vals, 1)
-        idx_sorted = np.argsort(alpha_sorted)
-        alpha_sorted_vals = alpha_sorted[idx_sorted]
-        coeff_summed = coeff_array[:, col1] + coeff_array[:, col2]
-        coeff_sorted_vals = coeff_summed[idx_sorted]
+    def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.08):
+        alpha_vals_rounded = np.round(alpha_vals, 1)
+        unique_alpha = np.sort(np.unique(alpha_vals_rounded))
 
-        for i in range(1, len(alpha_sorted_vals)):
-            if np.abs(coeff_sorted_vals[i] - coeff_sorted_vals[i-1]) > threshold_jump:
-                cutoff = alpha_sorted_vals[i]
-                print(f"Jump detected at alpha = {cutoff}, ΔC = {np.abs(coeff_sorted_vals[i] - coeff_sorted_vals[i-1]):.3f}")
+        for i, alpha in enumerate(unique_alpha):
+            idx = np.where(alpha_vals_rounded == alpha)[0]
+            if len(idx) == 0:
+                continue
 
-                mask = alpha_vals >= cutoff
-                coeff_array[mask, col1] = np.nan
-                coeff_array[mask, col2] = np.nan
+            current_vals = coeff_array[idx, 0] + coeff_array[idx, 1]
+            current_mean = np.nanmean(current_vals)
+            if np.isnan(current_mean):
+                continue
+
+            p = 1
+            while i - p >= 0:
+                prev_idx = np.where(alpha_vals_rounded == unique_alpha[i - p])[0]
+                if len(prev_idx) == 0:
+                    p += 1
+                    continue
+                prev_vals = coeff_array[prev_idx, 0] + coeff_array[prev_idx, 1]
+                prev_mean = np.nanmean(prev_vals)
+                if not np.isnan(prev_mean):
+                    break
+                p += 1
+            else:
+                continue
+
+            if np.abs(current_mean - prev_mean) > threshold_jump:
+                cutoff = alpha
+                coeff_array[alpha_vals_rounded > cutoff, 0] = np.nan
+                coeff_array[alpha_vals_rounded > cutoff, 1] = np.nan
                 break
 
         return coeff_array
@@ -1708,13 +1720,18 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     coeff_array[idx[mask], 2] = np.nan
                     coeff_array[idx[mask], 3] = np.nan
     
-    # Fjern etter hopp i graf
+    # Remove after jump logic for both upwind and downwind
     for i, alpha in enumerate([alpha_1, alpha_2] if single else [alpha_1, alpha_2, alpha_3]):
         for coeff_array in ([coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]):
-            remove_after_jump(alpha, coeff_array)  # upwind deck
+            remove_after_jump(alpha, coeff_array)  # Upwind deck
             if not single:
-                # downwind deck (col 2 and 3)
-                remove_after_jump(alpha, coeff_array, col1=2, col2=3)      
+                # Downwind deck (col 2 and 3)
+                dummy_array = np.zeros_like(coeff_array)
+                dummy_array[:, 0] = coeff_array[:, 2]
+                dummy_array[:, 1] = coeff_array[:, 3]
+                remove_after_jump(alpha, dummy_array)
+                coeff_array[:, 2] = dummy_array[:, 0]
+                coeff_array[:, 3] = dummy_array[:, 1]      
     
     # Return updated objects
     static_coeff_1_f = copy.deepcopy(static_coeff_1)
