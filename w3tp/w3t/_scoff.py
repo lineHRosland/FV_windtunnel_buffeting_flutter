@@ -517,8 +517,8 @@ class StaticCoeff:
                 np.nanmean(self.drag_coeff[:,2][alpha == val]) + np.nanmean(self.drag_coeff[:,3][alpha == val])
                 for val in unique_alphas
             ])
-            ax.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1) # Switch upwind and downwind deck. For Downstream files the load cells are switched.
-            ax.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
+            ax.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1, drawstyle='default') # Switch upwind and downwind deck. For Downstream files the load cells are switched.
+            ax.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2, drawstyle='default')
             ax.grid()
             ax.set_xlabel(r"$\alpha$")
             ax.set_ylabel(r"$C_D(\alpha)$")
@@ -1534,6 +1534,21 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
     def get_coeffs(static_coeff):
         alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
         return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
+    
+    def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.1):
+        alpha_sorted = np.round(alpha_vals, 1)
+        unique_alpha = np.unique(alpha_sorted)
+        mean_vals = np.array([
+            np.nanmean(coeff_array[alpha_sorted == val, 0] + coeff_array[alpha_sorted == val, 1])
+            for val in unique_alpha
+        ])
+        diffs = np.abs(np.diff(mean_vals))
+        jump_idx = np.argmax(diffs > threshold_jump) + 1 if np.any(diffs > threshold_jump) else None
+        if jump_idx is not None:
+            cutoff = unique_alpha[jump_idx]
+            coeff_array[alpha_vals > cutoff, 0] = np.nan
+            coeff_array[alpha_vals > cutoff, 1] = np.nan
+        return coeff_array
 
     alpha_1, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
     alpha_2, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
@@ -1683,7 +1698,42 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     mask = np.abs(summed - ref_mean_down) > threshold
                     coeff_array[idx[mask], 2] = np.nan
                     coeff_array[idx[mask], 3] = np.nan
+    
+    # Fjern etter hopp i graf
+    for i, alpha in enumerate([alpha_1, alpha_2, alpha_3] if not single else [alpha_1, alpha_2]):
+    arrays = [coeffs_1_filt[i], coeffs_2_filt[i]]
+    if not single:
+        arrays.append(coeffs_3_filt[i])
 
+    for coeff_array in arrays:
+        # Upwind (kolonne 0+1)
+        alpha_sorted = np.round(alpha, 1)
+        unique_alpha = np.unique(alpha_sorted)
+        mean_vals = np.array([
+            np.nanmean(coeff_array[alpha_sorted == val, 0] + coeff_array[alpha_sorted == val, 1])
+            for val in unique_alpha
+        ])
+        diffs = np.abs(np.diff(mean_vals))
+        jump_idx = np.argmax(diffs > 0.1) + 1 if np.any(diffs > 0.1) else None
+        if jump_idx is not None:
+            cutoff = unique_alpha[jump_idx]
+            coeff_array[alpha > cutoff, 0] = np.nan
+            coeff_array[alpha > cutoff, 1] = np.nan
+
+        # Downwind (kolonne 2+3), kun hvis not single
+        if not single:
+            mean_vals = np.array([
+                np.nanmean(coeff_array[alpha_sorted == val, 2] + coeff_array[alpha_sorted == val, 3])
+                for val in unique_alpha
+            ])
+            diffs = np.abs(np.diff(mean_vals))
+            jump_idx = np.argmax(diffs > 0.1) + 1 if np.any(diffs > 0.1) else None
+            if jump_idx is not None:
+                cutoff = unique_alpha[jump_idx]
+                coeff_array[alpha > cutoff, 2] = np.nan
+                coeff_array[alpha > cutoff, 3] = np.nan              
+    
+    # Return updated objects
     static_coeff_1_f = copy.deepcopy(static_coeff_1)
     static_coeff_2_f = copy.deepcopy(static_coeff_2)
     for name, data in zip(coeff_names, [drag_1_filt, lift_1_filt, pitch_1_filt]):

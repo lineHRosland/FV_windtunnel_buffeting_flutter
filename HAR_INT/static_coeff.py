@@ -1733,6 +1733,8 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                              scoff = "drag")                        
 plt.gcf().suptitle(f"2D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_drag.png"))
+
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -1740,6 +1742,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                                 scoff = "drag")                        
 plt.gcf().suptitle(f"2D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_drag.png"))
 
 #lift
 #MUS
@@ -1748,6 +1751,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                             scoff = "lift")                        
 plt.gcf().suptitle(f"2D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_lift.png"))
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -1755,6 +1759,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                                scoff = "lift")                        
 plt.gcf().suptitle(f"2D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_lift.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -1762,12 +1767,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                               scoff = "pitch")                        
 plt.gcf().suptitle(f"2D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_pitch.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_2D_6,
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                           scoff = "pitch")                        
 plt.gcf().suptitle(f"2D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_pitch.png"))
 
 #MEAN
 #drag
@@ -1777,12 +1784,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                            scoff = "drag")                        
 plt.gcf().suptitle(f"2D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_drag_mean.png"))
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_2D_6,
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                               scoff = "drag")                        
 plt.gcf().suptitle(f"2D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_drag_mean.png"))
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
@@ -1790,12 +1799,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"2D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_lift_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_2D_6,
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"2D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_lift_mean.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
@@ -1803,12 +1814,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_2D_8, static_coeff_MUS_2D_10,
                                 scoff = "pitch")                        
 plt.gcf().suptitle(f"2D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_pitch_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_2D_6,
                                static_coeff_MDS_2D_8, static_coeff_MDS_2D_10,
                                scoff = "pitch")                        
 plt.gcf().suptitle(f"2D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_pitch_mean.png"))
 
 
 # %% Compare all experiments (Wind speed) filtered
@@ -1819,6 +1832,8 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_2D_8_filtered, static_coeff_MUS_2D_10_filtered,
                              scoff = "drag")                        
 plt.gcf().suptitle(f"2D: MUS  ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_drag_filt.png"))
+
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -1826,6 +1841,8 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MDS_2D_8_filtered, static_coeff_MDS_2D_10_filtered,
                                 scoff = "drag")                        
 plt.gcf().suptitle(f"2D: MDS  ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_drag_filt.png"))
+
 
 #lift
 #MUS
@@ -1834,6 +1851,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_2D_8_filtered, static_coeff_MUS_2D_10_filtered,
                             scoff = "lift")                        
 plt.gcf().suptitle(f"2D: MUS  ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_lift_filt.png"))
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -1841,6 +1859,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MDS_2D_8_filtered, static_coeff_MDS_2D_10_filtered,
                                scoff = "lift")                        
 plt.gcf().suptitle(f"2D: MDS  ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_lift_filt.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -1848,12 +1867,15 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_2D_8_filtered, static_coeff_MUS_2D_10_filtered,
                               scoff = "pitch")                        
 plt.gcf().suptitle(f"2D: MUS ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_pitch_filt.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_2D_6_filtered,
                                static_coeff_MDS_2D_8_filtered, static_coeff_MDS_2D_10_filtered,
                           scoff = "pitch")                        
 plt.gcf().suptitle(f"2D: MDS ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_pitch_filt.png"))
+
 
 #MEAN
 #drag
@@ -1863,12 +1885,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_2D_8_filtered, static_coeff_MUS_2D_10_filtered,
                            scoff = "drag")                        
 plt.gcf().suptitle(f"2D: MUS  ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_drag_filt_mean.png"))
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_2D_6_filtered,
                                static_coeff_MDS_2D_8_filtered, static_coeff_MDS_2D_10_filtered,
                               scoff = "drag")                        
 plt.gcf().suptitle(f"2D: MDS  ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_drag_filt_mean.png"))
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -1876,12 +1900,16 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_2D_8_filtered, static_coeff_MUS_2D_10_filtered,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"2D: MUS ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_lift_filt_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_2D_6_filtered,
                                static_coeff_MDS_2D_8_filtered, static_coeff_MDS_2D_10_filtered,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"2D: MDS ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_lift_filt_mean.png"))
+
+
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -1889,12 +1917,15 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_2D_8_filtered, static_coeff_MUS_2D_10_filtered,
                                 scoff = "pitch")                        
 plt.gcf().suptitle(f"2D: MUS ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_2D_drag_filt_mean.png"))
+
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_2D_6_filtered,
                                static_coeff_MDS_2D_8_filtered, static_coeff_MDS_2D_10_filtered,
                                scoff = "pitch")                        
 plt.gcf().suptitle(f"2D: MDS  ", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_2D_pitch_filt_mean.png"))
 
 
 
@@ -2361,12 +2392,15 @@ plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_low_lift.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_3D_6,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_low_lift.png"))
 
 
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_low_pitch.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_3D_6,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_low_pitch.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True)
@@ -2375,14 +2409,19 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6, static_coeff_MDS_3D_6, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_3D_low_drag_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_low_lift_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6, static_coeff_MDS_3D_6,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_3D_low_lift_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_low_pitch_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MDS_3D_6, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_3D_low_pitch_mean.png"))
 
 # #Medium wind speed
 # w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_3D_8, upwind_in_rig=True)
@@ -2419,14 +2458,21 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_3D_10, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_drag.png"))
+
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_3D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_high_lift.png"))
+
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_3D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_lift.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_3D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_high_pitch.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_3D_10, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_pitch.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_3D_10, upwind_in_rig=True)
@@ -2435,14 +2481,19 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_3D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_drag_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_3D_10,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_high_lift_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_3D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_lift_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_3D_10,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_high_pitch_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_3D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_pitch_mean.png"))
 plt.show()
 
 #%% Compare all experiments - only with single deck filtered
@@ -2454,28 +2505,39 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6_filtered, static_coeff_MDS_3D_6_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_3D_low_drag_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6_filtered, static_coeff_MUS_3D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_low_lift_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6_filtered, static_coeff_MDS_3D_6_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_low_lift_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6_filtered, static_coeff_MUS_3D_5_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_low_pitch_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6_filtered, static_coeff_MDS_3D_6_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_low_pitch_filt.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_3D_5_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_low_drag_filt_mean.png"))
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_3D_6_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_3D_low_drag_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_3D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_low_lift_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_3D_6_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_3D_low_lift_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_3D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_low_pitch_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_3D_6_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_3D_low_pitch_filt_mean.png"))
 
 # #Medium wind speed
 # w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_8_filtered,upwind_in_rig=True)
@@ -2508,30 +2570,43 @@ plt.gcf().suptitle(f"Single: 6 m/s, MDS: 6 m/s", fontsize=16)
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_high_drag_filt.png"))
+
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_10_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_drag_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_high_lift_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_lift_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_high_pitch_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_pitch_filt.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_high_drag_filt_mean.png"))
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_3D_high_drag_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_high_lift_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_lift_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_3D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_3D_high_pitch_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_3D_10_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_3D_high_pitch_filt_mean.png"))
 plt.show()
 # %% Compare all experiments (Wind speed)
 #drag
@@ -2541,6 +2616,8 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                              scoff = "drag")                        
 plt.gcf().suptitle(f"3D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_drag.png"))
+
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -2548,6 +2625,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                                 scoff = "drag")                        
 plt.gcf().suptitle(f"3D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_drag.png"))
 
 #lift
 #MUS
@@ -2556,6 +2634,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                             scoff = "lift")                        
 plt.gcf().suptitle(f"3D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_lift.png"))
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -2563,6 +2642,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                                scoff = "lift")                        
 plt.gcf().suptitle(f"3D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_lift.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -2570,12 +2650,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                               scoff = "pitch")                        
 plt.gcf().suptitle(f"3D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_pitch.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_3D_6,
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                           scoff = "pitch")                        
 plt.gcf().suptitle(f"3D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_pitch.png"))
 
 #MEAN
 #drag
@@ -2585,12 +2667,15 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                            scoff = "drag")                        
 plt.gcf().suptitle(f"3D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_drag_mean.png"))
+
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_3D_6,
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                               scoff = "drag")                        
 plt.gcf().suptitle(f"3D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_drag_mean.png"))
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
@@ -2598,12 +2683,16 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"3D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_lift_mean.png"))
+
+
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_3D_6,
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"3D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_lift_mean.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
@@ -2611,12 +2700,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_3D_8, static_coeff_MUS_3D_10,
                                 scoff = "pitch")                        
 plt.gcf().suptitle(f"3D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_pitch_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_3D_6,
                                static_coeff_MDS_3D_8, static_coeff_MDS_3D_10,
                                scoff = "pitch")                        
 plt.gcf().suptitle(f"3D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_pitch_mean.png"))
 
 
 # %% Compare all experiments (Wind speed) filtered
@@ -2627,6 +2718,8 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                              scoff = "drag")                        
 plt.gcf().suptitle(f"3D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_drag_filt.png"))
+
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -2634,6 +2727,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                                 scoff = "drag")                        
 plt.gcf().suptitle(f"3D: MDS  ",  y=0.95)
+plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_drag_filt.png"))
 
 #lift
 #MUS
@@ -2642,6 +2736,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                             scoff = "lift")                        
 plt.gcf().suptitle(f"3D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_lift_filt.png"))
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -2649,6 +2744,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                                scoff = "lift")                        
 plt.gcf().suptitle(f"3D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_lift_filt.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -2656,12 +2752,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                               scoff = "pitch")                        
 plt.gcf().suptitle(f"3D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_pitch_filt.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_3D_6_filtered,
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                           scoff = "pitch")                        
 plt.gcf().suptitle(f"3D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_pitch_filt.png"))
 
 #MEAN
 #drag
@@ -2671,12 +2769,15 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                            scoff = "drag")                        
 plt.gcf().suptitle(f"3D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_drag_filt_mean.png"))
+
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_3D_6_filtered,
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                               scoff = "drag")                        
 plt.gcf().suptitle(f"3D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_drag_filt_mean.png"))
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -2684,12 +2785,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"3D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_lift_filt_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_3D_6_filtered,
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"3D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_lift_filt_mean.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -2697,12 +2800,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered,
                                 scoff = "pitch")                        
 plt.gcf().suptitle(f"3D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_3D_pitch_filt_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_3D_6_filtered,
                                static_coeff_MDS_3D_8_filtered, static_coeff_MDS_3D_10_filtered,
                                scoff = "pitch")                        
 plt.gcf().suptitle(f"3D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_3D_pitch_filt_mean.png"))
 
 
 
@@ -3157,30 +3262,45 @@ plt.show()
 #Low wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_drag.png"))
+
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_4D_55,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_low_drag.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_lift.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_4D_55,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_low_lift.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_pitch.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_4D_55,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_low_pitch.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_drag_mean.png"))
+
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6, static_coeff_MDS_4D_55, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_4D_low_drag_mean.png"))
+
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_lift_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6, static_coeff_MDS_4D_55,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_low_lift_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_pitch_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MDS_4D_55, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_low_pitch_mean.png"))
 
 # #Medium wind speed
 # w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_4D_85, upwind_in_rig=True)
@@ -3213,30 +3333,48 @@ plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_drag.png"))
+
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_4D_10, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_drag.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_lift.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_4D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_lift.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_pitch.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_4D_10, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_pitch.png"))
+
+
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_drag_mean.png"))
+
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_4D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_4D_high_drag_mean.png"))
+
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_4D_10,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_lift_mean.png"))
+
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_4D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_lift_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_4D_10,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_pitch_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_4D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_pitch_mean.png"))
 plt.show()
 
 #%% Compare all experiments - only with single deck filtered
@@ -3244,30 +3382,54 @@ plt.show()
 #Low wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6_filtered, static_coeff_MUS_4D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_drag_filt.png"))
+
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6_filtered, static_coeff_MDS_4D_55_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_low_drag_filt.png"))
+
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6_filtered, static_coeff_MUS_4D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_lift_filt.png"))
+
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6_filtered, static_coeff_MDS_4D_55_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_low_lift_filt.png"))
+
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6_filtered, static_coeff_MUS_4D_5_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_pitch_filt.png"))
+
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6_filtered, static_coeff_MDS_4D_55_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_low_pitch_filt.png"))
+
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_4D_5_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_drag_filt_mean.png"))
+
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_4D_55_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_4D_low_drag_filt_mean.png"))
+
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_4D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_lift_filt_mean.png"))
+
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_4D_55_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_low_lift_filt_mean.png"))
+
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_4D_5_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_low_pitch_filt_mean.png"))
+
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_4D_55_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_low_pitch_filt_mean.png"))
+
 
 # #Medium wind speed
 # w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_85_filtered,upwind_in_rig=True)
@@ -3300,30 +3462,45 @@ plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_drag_filt.png"))
+
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_10_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_drag_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_lift_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_lift_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_pitch_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_pitch_filt.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_drag_filt_mean.png"))
+
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_drag_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_lift_filt_mean.png"))
+
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_lift_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_4D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_4D_high_pitch_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_4D_10_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_pitch_filt_mean.png"))
 plt.show()
 # %% Compare all experiments (Wind speed)
 #drag
@@ -3333,6 +3510,8 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                              scoff = "drag")                        
 plt.gcf().suptitle(f"4D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_drag.png"))
+
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -3340,6 +3519,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                                 scoff = "drag")                        
 plt.gcf().suptitle(f"4D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_drag.png"))
 
 #lift
 #MUS
@@ -3348,6 +3528,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                             scoff = "lift")                        
 plt.gcf().suptitle(f"4D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_lift.png"))
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -3355,6 +3536,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                                scoff = "lift")                        
 plt.gcf().suptitle(f"4D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_lift.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -3362,12 +3544,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                               scoff = "pitch")                        
 plt.gcf().suptitle(f"4D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_pitch.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_4D_55,
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                           scoff = "pitch")                        
 plt.gcf().suptitle(f"4D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_pitch.png"))
 
 #MEAN
 #drag
@@ -3377,12 +3561,15 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                            scoff = "drag")                        
 plt.gcf().suptitle(f"4D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_drag_mean.png"))
+
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_4D_55,
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                               scoff = "drag")                        
 plt.gcf().suptitle(f"4D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_drag_mean.png"))
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
@@ -3390,12 +3577,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"4D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_lift_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_4D_55,
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"4D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_lift_mean.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
@@ -3403,12 +3592,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_4D_85, static_coeff_MUS_4D_10,
                                 scoff = "pitch")                        
 plt.gcf().suptitle(f"4D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_pitch_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_4D_55,
                                static_coeff_MDS_4D_85, static_coeff_MDS_4D_10,
                                scoff = "pitch")                        
 plt.gcf().suptitle(f"4D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_pitch_mean.png"))
 
 # %% Compare all experiments (Wind speed) filtered
 #drag
@@ -3418,6 +3609,8 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                              scoff = "drag")                        
 plt.gcf().suptitle(f"4D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_drag_filt.png"))
+
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -3425,6 +3618,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                                 scoff = "drag")                        
 plt.gcf().suptitle(f"4D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_drag_filt.png"))
 
 #lift
 #MUS
@@ -3433,6 +3627,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                             scoff = "lift")                        
 plt.gcf().suptitle(f"4D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_lift_filt.png"))
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -3440,6 +3635,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                                scoff = "lift")                        
 plt.gcf().suptitle(f"4D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_lift_filt.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -3447,12 +3643,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                               scoff = "pitch")                        
 plt.gcf().suptitle(f"4D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_pitch_filt.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_4D_55_filtered,
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                           scoff = "pitch")                        
 plt.gcf().suptitle(f"4D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_pitch_filt.png"))
 
 #MEAN
 #drag
@@ -3462,12 +3660,15 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                            scoff = "drag")                        
 plt.gcf().suptitle(f"4D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_drag_filt_mean.png"))
+
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_4D_55_filtered,
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                               scoff = "drag")                        
 plt.gcf().suptitle(f"4D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_drag_filt_mean.png"))
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -3475,12 +3676,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"4D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_lift_filt_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_4D_55_filtered,
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                               scoff = "lift")                        
 plt.gcf().suptitle(f"4D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_lift_filt_mean.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -3488,12 +3691,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_4D_85_filtered, static_coeff_MUS_4D_10_filtered,
                                 scoff = "pitch")                        
 plt.gcf().suptitle(f"4D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_4D_pitch_filt_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_4D_55_filtered,
                                static_coeff_MDS_4D_85_filtered, static_coeff_MDS_4D_10_filtered,
                                scoff = "pitch")                        
 plt.gcf().suptitle(f"4D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_4D_pitch_filt_mean.png"))
 
 
 
@@ -3947,30 +4152,44 @@ plt.show()
 #Low wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_drag.png"))
+
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_5D_55,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_drag.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS:  4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_lift.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_5D_55,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_lift.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS:  4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_pitch.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_5D_55,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_pitch.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS:  4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_drag_mean.png"))
+
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6, static_coeff_MDS_5D_55, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_drag_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS:  4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_lift_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6, static_coeff_MDS_5D_55,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_lift_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS:  4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_pitch_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6, static_coeff_MDS_5D_55, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_pitch_mean.png"))
 
 # #Medium wind speed
 # w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_5D_85, upwind_in_rig=True)
@@ -4003,30 +4222,44 @@ plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_drag.png"))
+
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_5D_10, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_drag.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_lift.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_5D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_lift.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_pitch.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_5D_10, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_pitch.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_drag_mean.png"))
+
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9, static_coeff_MDS_5D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_drag_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MUS_5D_10,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_lift_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9, static_coeff_MDS_5D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_lift_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MUS_5D_10,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_pitch_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_5D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_pitch_mean.png"))
 plt.show()
 
 #%% Compare all experiments - only with single deck filtered
@@ -4034,30 +4267,43 @@ plt.show()
 #Low wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6_filtered, static_coeff_MUS_5D_45_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_drag_filt.png"))
+
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6_filtered, static_coeff_MDS_5D_55_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_drag_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6_filtered, static_coeff_MUS_5D_45_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_lift_filt.png"))
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6_filtered, static_coeff_MDS_5D_55_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_lift_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6_filtered, static_coeff_MUS_5D_45_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_pitch_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6_filtered, static_coeff_MDS_5D_55_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_pitch_filt.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_5D_45_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_drag_filt_mean.png"))
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_5D_55_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_drag_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_5D_45_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_lift_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_5D_55_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_lift_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MUS_5D_45_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 6 m/s, MUS: 4.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_low_pitch_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_6_filtered, static_coeff_MDS_5D_55_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_low_pitch_filt_mean.png"))
 
 # #Medium wind speed
 # w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_85_filtered,upwind_in_rig=True)
@@ -4090,30 +4336,46 @@ plt.gcf().suptitle(f"Single: 6 m/s, MDS: 5.5 m/s", fontsize=16)
 #High wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_drag_filt.png"))
+
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_10_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_5D_high_drag_filt.png"))
+
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_lift_filt.png"))
+
 w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_lift_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_pitch_filt.png"))
 w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_pitch_filt.png"))
 
 # Mean
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_drag_filt_mean.png"))
+
 w3t._scoff.plot_compare_drag_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_drag_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_10_filtered, upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_lift_filt_mean.png"))
 w3t._scoff.plot_compare_lift_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_10_filtered, upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s,  MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_lift_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MUS_5D_10_filtered,upwind_in_rig=True)
 plt.gcf().suptitle(f"Single: 9 m/s, MUS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MUS_5D_high_pitch_filt_mean.png"))
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9_filtered, static_coeff_MDS_5D_10_filtered,upwind_in_rig=False)
 plt.gcf().suptitle(f"Single: 9 m/s, MDS: 10 m/s", fontsize=16)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_pitch_filt_mean.png"))
 plt.show()
 # %% Compare all experiments (Wind speed)
 #drag
@@ -4123,6 +4385,8 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                              scoff = "drag")                        
 plt.gcf().suptitle(f"5D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_drag.png"))
+
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -4130,6 +4394,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                                 scoff = "drag")                        
 plt.gcf().suptitle(f"5D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_drag.png"))
 
 #lift
 #MUS
@@ -4138,6 +4403,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                             scoff = "lift")                        
 plt.gcf().suptitle(f"5D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_lift.png"))
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -4145,6 +4411,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                                scoff = "lift")                        
 plt.gcf().suptitle(f"5D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_lift.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
@@ -4152,12 +4419,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                               scoff = "pitch")                        
 plt.gcf().suptitle(f"5D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_pitch.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_5D_55,
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                           scoff = "pitch")                        
 plt.gcf().suptitle(f"5D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_pitch.png"))
 
 #MEAN
 #drag
@@ -4167,12 +4436,15 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                            scoff = "drag")                        
 plt.gcf().suptitle(f"5D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_drag_mean.png"))
+
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_5D_55,
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                               scoff = "drag")                        
 plt.gcf().suptitle(f"5D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_drag_mean.png"))
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
@@ -4180,12 +4452,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"5D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_lift_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_5D_55,
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"5D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_lift_mean.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
@@ -4193,12 +4467,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_sin
                                static_coeff_MUS_5D_85, static_coeff_MUS_5D_10,
                                 scoff = "pitch")                        
 plt.gcf().suptitle(f"5D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_pitch_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6, static_coeff_single_9,
                                static_coeff_single_9, static_coeff_MDS_5D_55,
                                static_coeff_MDS_5D_85, static_coeff_MDS_5D_10,
                                scoff = "pitch")                        
 plt.gcf().suptitle(f"5D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_pitch_mean.png"))
 
 
 # %% Compare all experiments (Wind speed) filtered
@@ -4209,6 +4485,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                              scoff = "drag")                        
 plt.gcf().suptitle(f"5D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_drag_filt.png"))
 
 # MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -4216,6 +4493,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                                 scoff = "drag")                        
 plt.gcf().suptitle(f"5D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_drag_filt.png"))
 
 #lift
 #MUS
@@ -4224,6 +4502,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                             scoff = "lift")                        
 plt.gcf().suptitle(f"5D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_lift_filt.png"))
 
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -4231,6 +4510,7 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                                scoff = "lift")                        
 plt.gcf().suptitle(f"5D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_lift_filt.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -4238,12 +4518,14 @@ w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                               scoff = "pitch")                        
 plt.gcf().suptitle(f"5D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_pitch_filt.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_5D_55_filtered,
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                           scoff = "pitch")                        
 plt.gcf().suptitle(f"5D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_pitch_filt.png"))
 
 #MEAN
 #drag
@@ -4253,12 +4535,15 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                            scoff = "drag")                        
 plt.gcf().suptitle(f"5D: MUS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_drag_filt_mean.png"))
+
 # MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_5D_55_filtered,
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                               scoff = "drag")                        
 plt.gcf().suptitle(f"5D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_drag_filt_mean.png"))
 #lift
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -4266,12 +4551,14 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                                 scoff = "lift")                        
 plt.gcf().suptitle(f"5D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_lift_filt_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_5D_55_filtered,
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                               scoff = "lift")                        
 plt.gcf().suptitle(f"5D: MDS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_lift_filt_mean.png"))
 #pitch
 #MUS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
@@ -4279,26 +4566,28 @@ w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_
                                static_coeff_MUS_5D_85_filtered, static_coeff_MUS_5D_10_filtered,
                                 scoff = "pitch")                        
 plt.gcf().suptitle(f"5D: MUS ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_5D_pitch_filt_mean.png"))
 #MDS
 w3t._scoff.plot_compare_wind_speeds_mean(static_coeff_single_6_filtered, static_coeff_single_9_filtered,
                                static_coeff_single_9_filtered, static_coeff_MDS_5D_55_filtered,
                                static_coeff_MDS_5D_85_filtered, static_coeff_MDS_5D_10_filtered,
                                scoff = "pitch")                        
 plt.gcf().suptitle(f"5D: MDS  ",  y=0.95)
+plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_pitch_filt_mean.png"))
 
 ##########################################################################333
 
-static_coeff_list = [static_coeff_1D, static_coeff_2D, static_coeff_3D, static_coeff_4D]
-titles = ["1D", "2D", "3D", "4D"]
+# static_coeff_list = [static_coeff_1D, static_coeff_2D, static_coeff_3D, static_coeff_4D]
+# titles = ["1D", "2D", "3D", "4D"]
 
-fig, axs = plt.subplots(nrows=1, ncols=4, figsize=(20, 5), sharex=True, sharey=True)
+# fig, axs = plt.subplots(nrows=1, ncols=4, figsize=(20, 5), sharex=True, sharey=True)
 
-for i, static_coeff in enumerate(static_coeff_list):
-    static_coeff.plot_drag(mode="decks", upwind_in_rig=True, ax=axs[i])
-    axs[i].set_title(f"Gap {titles[i]}")
+# for i, static_coeff in enumerate(static_coeff_list):
+#     static_coeff.plot_drag(mode="decks", upwind_in_rig=True, ax=axs[i])
+#     axs[i].set_title(f"Gap {titles[i]}")
 
-fig.suptitle("Drag coefficient comparison", fontsize=18)
-plt.tight_layout()
-plt.subplots_adjust(top=0.88)  # juster plass for suptitle
-plt.savefig("overview_drag_subplots.png", dpi=300)
-plt.show()
+# fig.suptitle("Drag coefficient comparison", fontsize=18)
+# plt.tight_layout()
+# plt.subplots_adjust(top=0.88)  # juster plass for suptitle
+# plt.savefig("overview_drag_subplots.png", dpi=300)
+# plt.show()
