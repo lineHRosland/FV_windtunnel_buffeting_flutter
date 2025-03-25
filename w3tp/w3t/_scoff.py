@@ -1519,11 +1519,159 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
     return alpha, coeff_up_plot, coeff_down_plot
 
 
-
-
-
-
 def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1, threshold_low=[0.05, 0.05, 0.05], threshold_med=[None, None, None], threshold_high=[0.05, 0.05, 0.05], single=False):
+    """
+    Filters drag, lift, and pitch coefficients in each dataset where values deviate too much from reference at a given alpha.
+    Reference is chosen based on dataset with first valid value and no jump in previous alphas.
+    If single=True, filters only static_coeff_1 and static_coeff_2.
+    Returns filtered StaticCoeff objects.
+    """
+
+    def get_coeffs(static_coeff):
+        alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
+        return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
+
+    def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.1, cols=(0, 1)):
+        alpha_vals_rounded = np.round(alpha_vals, 1)
+        unique_alpha = np.sort(np.unique(alpha_vals_rounded))
+
+        for i, alpha in enumerate(unique_alpha):
+            idx = np.where(alpha_vals_rounded == alpha)[0]
+            if len(idx) == 0:
+                continue
+
+            current_vals = coeff_array[idx, cols[0]] + coeff_array[idx, cols[1]]
+            current_mean = np.nanmean(current_vals)
+            if np.isnan(current_mean):
+                continue
+
+            # Finn forrige gyldige mean (ikke NaN)
+            p = 1
+            while i - p >= 0:
+                prev_idx = np.where(alpha_vals_rounded == unique_alpha[i - p])[0]
+                if len(prev_idx) == 0:
+                    p += 1
+                    continue
+                prev_vals = coeff_array[prev_idx, cols[0]] + coeff_array[prev_idx, cols[1]]
+                prev_mean = np.nanmean(prev_vals)
+                if not np.isnan(prev_mean):
+                    break
+                p += 1
+            else:
+                continue  # Fant ingen gyldig forrige verdi
+
+            # Hvis hopp, sett alt etter til NaN
+            if np.abs(current_mean - prev_mean) > threshold_jump:
+                mask = alpha_vals_rounded > alpha
+                coeff_array[mask, cols[0]] = np.nan
+                coeff_array[mask, cols[1]] = np.nan
+                break  # Bare første hopp
+
+        return coeff_array
+
+    def has_jump_before(alpha_vals, coeff_array, alpha_now, cols=(0, 1), threshold_jump=0.1):
+        alpha_rounded = np.round(alpha_vals, 1)
+        prev_alphas = np.sort(np.unique(alpha_rounded[alpha_rounded < alpha_now]))[::-1]
+
+        prev_mean = None
+        for val in prev_alphas[:3]:
+            idx = np.where(alpha_rounded == val)[0]
+            if len(idx) == 0:
+                continue
+            this_vals = coeff_array[idx, cols[0]] + coeff_array[idx, cols[1]]
+            this_mean = np.nanmean(this_vals)
+            if np.isnan(this_mean):
+                continue
+
+            if prev_mean is not None and abs(this_mean - prev_mean) > threshold_jump:
+                return True
+            prev_mean = this_mean
+        return False
+
+    alpha_1, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
+    alpha_2, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
+
+    drag_1_filt, lift_1_filt, pitch_1_filt = drag_1.copy(), lift_1.copy(), pitch_1.copy()
+    drag_2_filt, lift_2_filt, pitch_2_filt = drag_2.copy(), lift_2.copy(), pitch_2.copy()
+
+    if not single:
+        alpha_3, drag_3, lift_3, pitch_3 = get_coeffs(static_coeff_3)
+        drag_3_filt, lift_3_filt, pitch_3_filt = drag_3.copy(), lift_3.copy(), pitch_3.copy()
+
+    coeff_names = ["drag", "lift", "pitch"]
+    coeffs_1 = [drag_1, lift_1, pitch_1]
+    coeffs_2 = [drag_2, lift_2, pitch_2]
+    coeffs_1_filt = [drag_1_filt, lift_1_filt, pitch_1_filt]
+    coeffs_2_filt = [drag_2_filt, lift_2_filt, pitch_2_filt]
+
+    if not single:
+        coeffs_3 = [drag_3, lift_3, pitch_3]
+        coeffs_3_filt = [drag_3_filt, lift_3_filt, pitch_3_filt]
+
+    unique_alpha = np.unique(alpha_1)
+
+    for val in unique_alpha:
+        idx1 = np.where(alpha_1 == val)[0]
+        idx2 = np.where(alpha_2 == val)[0]
+
+        if single:
+            if not (len(idx1) and len(idx2)):
+                continue
+
+            for i, name in enumerate(coeff_names):
+                this_threshold_low  = threshold_low[i] if threshold_low[i] is not None else threshold
+                this_threshold_high = threshold_high[i] if threshold_high[i] is not None else threshold
+
+                coeff_1 = coeffs_1[i]
+                coeff_2 = coeffs_2[i]
+                coeff_1_f = coeffs_1_filt[i]
+                coeff_2_f = coeffs_2_filt[i]
+
+                vals_1 = coeff_1[idx1, 0] + coeff_1[idx1, 1]
+                vals_2 = coeff_2[idx2, 0] + coeff_2[idx2, 1]
+
+                jump_1 = has_jump_before(alpha_1, coeff_1, val, cols=(0,1), threshold_jump=threshold)
+                jump_2 = has_jump_before(alpha_2, coeff_2, val, cols=(0,1), threshold_jump=threshold)
+
+                if not jump_1:
+                    ref_mean = np.mean(vals_1)
+                elif not jump_2:
+                    ref_mean = np.mean(vals_2)
+                else:
+                    continue  # Ingen gyldig referanse
+
+                for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
+                    summed = coeff_array[idx, 0] + coeff_array[idx, 1]
+                    mask = np.abs(summed - ref_mean) > threshold
+                    coeff_array[idx[mask], 0] = np.nan
+                    coeff_array[idx[mask], 1] = np.nan
+
+    # Fjerner etter hopp (upwind)
+    for i, alpha in enumerate([alpha_1, alpha_2] if single else [alpha_1, alpha_2, alpha_3]):
+        for coeff_array in ([coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]):
+            remove_after_jump(alpha, coeff_array, threshold_jump=threshold, cols=(0, 1))
+            if not single:
+                remove_after_jump(alpha, coeff_array, threshold_jump=threshold, cols=(2, 3))
+
+    static_coeff_1_f = copy.deepcopy(static_coeff_1)
+    static_coeff_2_f = copy.deepcopy(static_coeff_2)
+    for name, data in zip(coeff_names, [drag_1_filt, lift_1_filt, pitch_1_filt]):
+        setattr(static_coeff_1_f, f"{name}_coeff", data)
+    for name, data in zip(coeff_names, [drag_2_filt, lift_2_filt, pitch_2_filt]):
+        setattr(static_coeff_2_f, f"{name}_coeff", data)
+
+    if single:
+        return static_coeff_1_f, static_coeff_2_f
+
+    static_coeff_3_f = copy.deepcopy(static_coeff_3)
+    for name, data in zip(coeff_names, [drag_3_filt, lift_3_filt, pitch_3_filt]):
+        setattr(static_coeff_3_f, f"{name}_coeff", data)
+
+    return static_coeff_1_f, static_coeff_2_f, static_coeff_3_f
+
+
+
+def filter_by_reference_gammel(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1, threshold_low=[0.05, 0.05, 0.05], threshold_med=[None, None, None], threshold_high=[0.05, 0.05, 0.05], single=False):
     """
     Filters drag, lift, and pitch coefficients in each dataset where values deviate too much from reference at a given alpha.
     Reference is chosen based on dataset with lowest spread per alpha.
