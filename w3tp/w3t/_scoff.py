@@ -1677,6 +1677,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                 vals_up = [coeff_1[idx1, 0] + coeff_1[idx1, 1],
                            coeff_2[idx2, 0] + coeff_2[idx2, 1],
                            coeff_3[idx3, 0] + coeff_3[idx3, 1]]
+                print(f"Upwind vals: {[np.mean(v) for v in vals_up]}")
                 spreads_up = [np.max(v) - np.min(v) for v in vals_up]
  
  
@@ -1722,16 +1723,23 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                    ref_idx_up = np.argmin(spreads_up) 
                 else: #Alle datasett er for dårlig
                     ref_idx_up = None
+                    print("alle datasett er for dårlig")
                     for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
                         coeff_array[idx, 0] = np.nan
                         coeff_array[idx, 1] = np.nan
+                
+                print(f"Ref idx up = {ref_idx_up}, spreads = {spreads_up}")
+
                 if ref_idx_up is not None:
                     ref_mean_up = np.mean(vals_up[ref_idx_up])
     
-    
+                    print(f"Ref mean up = {ref_mean_up:.3f}")
+
                     for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
                         summed = coeff_array[idx, 0] + coeff_array[idx, 1]
                         mask = np.abs(summed - ref_mean_up) > threshold
+                        print(f"Deck {i+1} — alpha = {val:.1f} — Removed {np.sum(mask)} points due to threshold filtering.")
+
                         coeff_array[idx[mask], 0] = np.nan
                         coeff_array[idx[mask], 1] = np.nan
     
