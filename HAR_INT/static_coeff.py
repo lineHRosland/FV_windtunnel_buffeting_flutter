@@ -294,7 +294,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 #%%  Filter and plot ALT 2
 section_name = "MUS_1D_Static_filtered" 
 
-static_coeff_MDS_1D_6_filtered, static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_1D_6, static_coeff_2=static_coeff_MDS_1D_8, static_coeff_3=static_coeff_MDS_1D_10, threshold=0.08, threshold_low=[0.04,0.05,0.05],threshold_med = [0.04,0.03,0.05],threshold_high=[0.05,0.05,0.05],single=False)
+static_coeff_MDS_1D_6_filtered, static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_1D_6, static_coeff_2=static_coeff_MDS_1D_8, static_coeff_3=static_coeff_MDS_1D_10, threshold=0.08, threshold_low=[0.08,0.05,0.05],threshold_med = [0.02,0.03,0.05],threshold_high=[0.05,0.05,0.05],single=False)
 
 plot_static_coeff_summary(static_coeff_MDS_1D_6_filtered, section_name, 6, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_1D_8_filtered, section_name, 8, mode="decks", upwind_in_rig=False)
@@ -409,7 +409,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 #%%  Filter and plot ALT 2
 section_name = "MDS_1D_Static_filtered"
 
-static_coeff_MUS_1D_5_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MUS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_1D_5, static_coeff_2=static_coeff_MUS_1D_8, static_coeff_3=static_coeff_MUS_1D_10, threshold=0.019, threshold_low=[0.06,0.04,0.01],threshold_med = [0.01,0.04,0.01],threshold_high=[0.02,0.04,0.01],single=False)
+static_coeff_MUS_1D_5_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MUS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_1D_5, static_coeff_2=static_coeff_MUS_1D_8, static_coeff_3=static_coeff_MUS_1D_10, threshold=0.038, threshold_low=[0.06,0.03,0.02],threshold_med = [0.008,0.02,0.03],threshold_high=[0.06,0.04,0.02],single=False)
 
 
 plot_static_coeff_summary(static_coeff_MUS_1D_5_filtered, section_name, 5, mode="decks", upwind_in_rig=True)
