@@ -1566,7 +1566,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
     Returns filtered StaticCoeff objects.
     """
     # Antall trinn bakover du vil sjekke (i grader)
-    alpha_lookback_range = 0.5  # f.eks. 5 trinn på 0.1
+    alpha_lookback_range = 2  # f.eks. 5 trinn på 0.1
     alpha_step = 0.1
     alpha_tolerance = 1e-6  # for å unngå float-problemer
 
