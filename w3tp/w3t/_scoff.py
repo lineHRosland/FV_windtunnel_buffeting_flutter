@@ -1523,7 +1523,7 @@ def get_coeffs(static_coeff):
     alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
     return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
      
-def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.1, cols=(0, 1)):
+def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.85, cols=(0, 1)):
     alpha_vals_rounded = np.round(alpha_vals, 1)
     unique_alpha = np.sort(np.unique(alpha_vals_rounded)) # Lager en sortert liste av unike α-verdier (avrundet til én desimal).
 
