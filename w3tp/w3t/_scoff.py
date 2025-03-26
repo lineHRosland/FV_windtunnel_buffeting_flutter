@@ -1728,7 +1728,6 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                         coeff_array[idx, 0] = np.nan
                         coeff_array[idx, 1] = np.nan
                 
-                print(f"Ref idx up = {ref_idx_up}, spreads = {spreads_up}")
 
                 if ref_idx_up is not None:
                     ref_mean_up = np.mean(vals_up[ref_idx_up])
@@ -1787,6 +1786,8 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     ref_idx_down = clean_idxs_down[0]
                 elif len(clean_idxs_down) == 2:
                     ref_idx_down = clean_idxs_down[0] if spreads_down[clean_idxs_down[0]] < spreads_down[clean_idxs_down[1]] else clean_idxs_down[1]
+                elif len(clean_idxs_down) == 3: # alle signaler ok
+                   ref_idx_down = np.argmin(spreads_down)
                 else:
                     ref_idx_down = None
                     for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
