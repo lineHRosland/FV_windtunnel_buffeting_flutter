@@ -1175,7 +1175,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 #%%  Filter and plot ALT 2
 section_name = "MUS_2D_Static_filtered"
 
-static_coeff_MDS_2D_6_filtered,static_coeff_MDS_2D_8_filtered,static_coeff_MDS_2D_10_filtered  = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_2D_6, static_coeff_2=static_coeff_MDS_2D_8, static_coeff_3=static_coeff_MDS_2D_10, threshold=0.08, threshold_low=[0.05,0.05,0.05],threshold_med = [0.05,0.05,0.05],threshold_high=[0.05,0.05,0.05],single=False)
+static_coeff_MDS_2D_6_filtered,static_coeff_MDS_2D_8_filtered,static_coeff_MDS_2D_10_filtered  = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_2D_6, static_coeff_2=static_coeff_MDS_2D_8, static_coeff_3=static_coeff_MDS_2D_10, threshold=0.05, threshold_low=[0.05,0.05,0.05],threshold_med = [0.05,0.05,0.05],threshold_high=[0.05,0.05,0.05],single=False)
 
 plot_static_coeff_summary(static_coeff_MDS_2D_6_filtered, section_name, 6, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_2D_8_filtered, section_name, 8, mode="decks", upwind_in_rig=False)

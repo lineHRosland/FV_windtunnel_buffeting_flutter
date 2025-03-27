@@ -1807,9 +1807,9 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
     for i, alpha in enumerate([alpha_1, alpha_2] if single else [alpha_1, alpha_2, alpha_3]):
         target_arrays = [coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]
         for coeff_array in target_arrays:
-            remove_after_jump(alpha, coeff_array, threshold_jump=0.15, cols=(0, 1))
+            remove_after_jump(alpha, coeff_array, threshold_jump=0.25, cols=(0, 1))
             if not single:
-                remove_after_jump(alpha, coeff_array, threshold_jump=0.15, cols=(2, 3))
+                remove_after_jump(alpha, coeff_array, threshold_jump=0.25, cols=(2, 3))
 
     #samler sammen alt etter filtreringer
     static_coeff_1_f = copy.deepcopy(static_coeff_1)
