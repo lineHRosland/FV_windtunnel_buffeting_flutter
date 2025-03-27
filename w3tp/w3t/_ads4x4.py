@@ -63,14 +63,10 @@ class AerodynamicDerivative4x4:
         ---------
         reduced_velocities  : float
             reduced velocities
-        ad_load_cell_1      : float
-            contribution to aerodynamic derivative from load cell 1
-        ad_load_cell_2      : float
-            contribution to aerodynamic derivative from load cell 2
-        ad_load_cell_3      : float
-            contribution to aerodynamic derivative from load cell 3
-        ad_load_cell_4      : float
-            contribution to aerodynamic derivative from load cell 4
+        ad_load_cell_a      : float
+            contribution to aerodynamic derivative from load cell a
+        ad_load_cell_b      : float
+            contribution to aerodynamic derivative from load cell b
         mean_wind_speeds    : float
             mean wind velocities
         frequencies         : float
@@ -91,6 +87,7 @@ class AerodynamicDerivative4x4:
     def value(self):
         return self.ad_load_cell_a + self.ad_load_cell_b
     
+    #Definining a function which fits a polynomial to the aerodynamic derivative
     def poly_fit(self, damping=True, order=2):
         ads = np.zeros(self.reduced_velocities.shape[0])
         vreds = np.zeros(self.reduced_velocities.shape[0])
@@ -100,25 +97,26 @@ class AerodynamicDerivative4x4:
 
         if ads.size > 0:
             poly_coeff = np.zeros(np.max(order)+1)
-            k_range = np.zeros(2)
+            v_range = np.zeros(2)
             
-            k_range[0] = 1/np.max(vreds)
-            k_range[1] = 1/np.min(vreds)
+            v_range[1] = np.max(vreds)
+            v_range[0] = np.min(vreds)
                 
             if damping == True:
                 poly_coeff = np.polyfit(vreds,ads,order)
             elif damping == False:
                 poly_coeff = np.polyfit(vreds,ads,order)    
                     
-            return poly_coeff, k_range
+            return poly_coeff, v_range
         else:
             return None, None
  
-    def plot(self, mode = "all", conv = "normal", ax=[], damping=True, order=2):
+    #Defining a function which plots the aerodynamic derivative
+    def plot(self, mode = "total", conv = "normal", ax=[], damping=True, order=2):
         """ plots the aerodynamic derivative
         
-        The method plots the aerodynamic derivative as function of the mean 
-        wind speed. Four optimal modes are abailable.
+        The method plots the aerodynamic derivative as function of the reduced 
+        velocity. Two optimal modes are available.
         
         parameters:
         ----------
@@ -126,115 +124,49 @@ class AerodynamicDerivative4x4:
             selects the plot mode
         conv: str, optional
             selects which convention to use when plotting
-        fig : pyplot figure instance    
+        ax : pyplot figure instance
+        damping : bool, optional
+            selects to clarify if the AD is associated with damping or stiffness if a polynomial fit is to be performed 
+        order : int, optional
+            selects the order of the polynomial fit if a polynomial fit is to be performed 
         ---------        
         
         """
-        #Poly fit
-        poly_coeff, k_range = self.poly_fit(damping=damping, order=order)
+        #Using the poly_fit function to fit a polynomial to the aerodynamic derivative
+        poly_coeff, v_range = self.poly_fit(damping=damping, order=order)
         if poly_coeff is None:
             V = 0
             y = 0
         else: 
             p = np.poly1d(poly_coeff)
-            V = np.linspace(1/k_range[1], 1/k_range[0], 200)
+            V = np.linspace(v_range[0], v_range[1], 200)
             y = p(V)
 
         if bool(ax) == False:
             fig = plt.figure()
             ax = fig.add_subplot(1,1,1)
+
+        #Plotting of the aerodynamic derivative found from each test 
+        if mode == "total":
+            ax.plot(self.reduced_velocities,self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
+            ax.set_ylabel(("$" + self.label + "$"))
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.grid(True)
+
+        #Plotting of the aerodynamic derivative found from each test and the polynomial fit
+        elif mode == "total+poly":
+            ax.plot(self.reduced_velocities,self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
+            ax.plot(V, y)
+            ax.set_ylabel(("$" + self.label + "$"))
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.grid(True)            
+
+    #Defining a function which plots only the polynomial fit of the aerodynamic derivative
+    def plot2(self, mode = "poly only", conv = "normal", ax=[], damping=True, order=2, label='i'):
+        """ plots the polynomial fit of the aerodynamic derivative
         
-        
-        if conv == "normal":
-            if mode == "all":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4, "o", label="Total")
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1, "o", label="Load cell 1", alpha = 0.5)
-                ax.plot(self.reduced_velocities,self.ad_load_cell_2, "o", label="Load cell 2", alpha = 0.5)
-                ax.plot(self.reduced_velocities,self.ad_load_cell_3, "o", label="Load cell 3", alpha = 0.5)
-                ax.plot(self.reduced_velocities,self.ad_load_cell_4, "o", label="Load cell 4", alpha = 0.5)
-                ax.set_ylabel(("$" + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.legend()
-                ax.grid(True)
-            
-            elif mode == "decks":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4, "o", label="Total")
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2, "o", label="Upwind deck", alpha = 0.5)
-                ax.plot(self.reduced_velocities,self.ad_load_cell_3 + self.ad_load_cell_4, "o", label="Downwind deck", alpha = 0.5)
-                ax.set_ylabel(("$" + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.grid(True)
-                ax.legend()
-
-            #Eneste plottingen som er endret    
-            elif mode == "total":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
-                ax.set_ylabel(("$" + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.grid(True)
-
-            elif mode == "total+poly":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
-                ax.plot(V, y)
-                ax.set_ylabel(("$" + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.grid(True)            
-                
-        elif conv == "zasso" and len(self.reduced_velocities) != 0:
-            damping_ads = ["c_{z_1z_1}^*", "c_{z_1\\theta_1}^*", "c_{z_1z_2}^*", "c_{z_1\\theta_2}^*", 
-                        "c_{\\theta_1z_1}^*", "c_{\\theta_1\\theta_1}^*", "c_{\\theta_1z_2}^*", "c_{\\theta_1\\theta_2}^*",
-                        "c_{z_2z_1}^*", "c_{z_2\\theta_1}^*", "c_{z_2z_2}^*", "c_{z_2\\theta_2}^*", 
-                        "c_{\\theta_2z_1}^*", "c_{\\theta_2\\theta_1}^*", "c_{\\theta_2z_2}^*", "c_{\\theta_2\\theta_2}^*"]
-
-            stiffness_ads = ["k_{z_1z_1}^*", "k_{z_1\\theta_1}^*", "k_{z_1z_2}^*", "k_{z_1\\theta_2}^*", 
-                            "k_{\\theta_1z_1}^*", "k_{\\theta_1\\theta_1}^*", "k_{\\theta_1z_2}^*", "k_{\\theta_1\\theta_2}^*",
-                            "k_{z_2z_1}^*", "k_{z_2\\theta_1}^*", "k_{z_2z_2}^*", "k_{z_2\\theta_2}^*", 
-                            "k_{\\theta_2z_1}^*", "k_{\\theta_2\\theta_1}^*", "k_{\\theta_2z_2}^*", "k_{\\theta_2\\theta_2}^*"]
-             
-            if self.label in damping_ads:
-                factor = 1.0/self.reduced_velocities
-                K_label = "K"
-            elif self.label in stiffness_ads:
-                factor = 1.0/self.reduced_velocities**2
-                K_label = "K^2"
-            else:
-                print("ERROR")
-
-            
-            if mode == "all":
-                ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4), "o", label="Total")
-                ax.plot(self.reduced_velocities,factor*self.ad_load_cell_1, "o", label="Load cell 1", alpha = 0.5)
-                ax.plot(self.reduced_velocities,factor*self.ad_load_cell_2, "o", label="Load cell 2", alpha = 0.5)
-                ax.plot(self.reduced_velocities,factor*self.ad_load_cell_3, "o", label="Load cell 3", alpha = 0.5)
-                ax.plot(self.reduced_velocities,factor*self.ad_load_cell_4, "o", label="Load cell 4", alpha = 0.5)
-                ax.set_ylabel(("$" + K_label + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.legend()
-                ax.grid(True)
-            
-            elif mode == "decks":
-                ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4), "o", label="Total")
-                ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_1 + self.ad_load_cell_2), "o", label="Upwind deck", alpha = 0.5)
-                ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_3 + self.ad_load_cell_4), "o", label="Downwind deck", alpha = 0.5)
-                ax.set_ylabel(("$" + K_label + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.legend()
-                ax.grid(True)
-                
-            elif mode == "total":
-                ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4), "o", label="Total")
-                ax.set_ylabel(("$" + K_label + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.grid(True)
-        
-        #plt.tight_layout()
-
-
-    def plot2(self, mode = "compare", conv = "normal", ax=[], damping=True, order=2, label='i'):
-        """ plots the aerodynamic derivative
-        
-        The method plots the aerodynamic derivative as function of the mean 
-        wind speed. Four optimal modes are abailable.
+        The method plots the polynomial fit of the aerodynamic derivative as function of the 
+        reduced velocity. One optimal mode is available.
         
         parameters:
         ----------
@@ -242,47 +174,49 @@ class AerodynamicDerivative4x4:
             selects the plot mode
         conv: str, optional
             selects which convention to use when plotting
-        fig : pyplot figure instance    
+        ax : pyplot figure instance
+        damping : bool, optional
+            selects to clarify if the AD is associated with damping or stiffness if a polynomial fit is to be performed 
+        order : int, optional
+            selects the order of the polynomial fit if a polynomial fit is to be performed
+        label : str, optional
+            selects the label of the plot 
         ---------        
         
         """
-        #Poly fit
-        poly_coeff, k_range = self.poly_fit(damping=damping, order=order)
+        #Using the poly_fit function to fit a polynomial to the aerodynamic derivative
+        poly_coeff, v_range = self.poly_fit(damping=damping, order=order)
         if poly_coeff is None:
             V = 0
             y = 0
         else: 
             p = np.poly1d(poly_coeff)
-            V = np.linspace(1/k_range[1], 1/k_range[0], 200)
+            V = np.linspace(v_range[0], v_range[1], 200)
             y = p(V)
 
         if bool(ax) == False:
             fig = plt.figure()
             ax = fig.add_subplot(1,1,1)
-        
-        
-        if conv == "normal":
-            if mode == "compare":
-                ax.plot(V, y, label=f'{label}')
-                ax.set_ylabel(("$" + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.legend()
-                ax.grid(True)            
+    
+        #Plotting of only the polynomial fit of the aerodynamic derivative
+        if mode == "poly only":
+            ax.plot(V, y, label=f'{label}')
+            ax.set_ylabel(("$" + self.label + "$"))
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.legend()
+            ax.grid(True)            
                 
 
 class AerodynamicDerivatives4x4:
     """
-    A class used to represent all aerodynamic derivatives for a 3 dof motion
+    A class used to represent all aerodynamic derivatives for a 4 dof motion
     
     parameters:
     ----------
-    p1...p6 : obj
-        aerodynamic derivatives related to the horizontal self-excited force
-    h1...h6 : obj
-        aerodynamic derivatives related to the vertical self-excited force
-    a1...a6 : obj
-        aerodynamic derivative related to the pitchingmoment
-    ---------   
+    c_z1z1 ... c_theta2theta2 : obj
+        aerodynamic derivatives related to the self-excited force asociated with damping
+    k_z1z1 ... k_theta2theta2 : obj
+        aerodynamic derivatives related to the self-excited force asociated with stiffness
     
     methods:
     -------
@@ -309,15 +243,12 @@ class AerodynamicDerivatives4x4:
         """
         parameters:
         ----------
-        p1...p6 : obj
-         aerodynamic derivatives related to the horizontal self-excited force
-        h1...h6 : obj
-         aerodynamic derivatives related to the vertical self-excited force
-        a1...a6 : obj
-         aerodynamic derivative related to the pitchingmoment
+        c_z1z1 ... c_theta2theta2 : obj
+            aerodynamic derivatives related to the self-excited force asociated with damping
+        k_z1z1 ... k_theta2theta2 : obj
+            aerodynamic derivatives related to the self-excited force asociated with stiffness
         ---------
         """
-        
         
         self.c_z1z1 = c_z1z1 or AerodynamicDerivative4x4(label="c_{z_1z_1}^*")
         self.c_z1theta1 = c_z1theta1 or AerodynamicDerivative4x4(label="c_{z_1\\theta_1}^*")
@@ -369,14 +300,21 @@ class AerodynamicDerivatives4x4:
         parameters:
         ----------
         experiment_in_still_air : instance of the class experiment
-        experiment_in_wind   : instance of the class experiment
-        section_width        : width of the bridge deck section model
-        section_length       : length of the section model
+        experiment_in_wind      : instance of the class experiment
+        section_width           : width of the bridge deck section model
+        section_length_1        : length of the upstream section model
+        section_length_2        : length of the downstream section model
+        upstream_in_rig         : bool
+            determines if the upstream section is in the rig or not
+        filter_order            : int
+            order of the butterworth filter
+        cutoff_frequency        : float
+            cutoff frequency of the butterworth filter
         ---------
         
         returns:
         --------
-        an instance of the class AerodynamicDerivatives
+        an instance of the class AerodynamicDerivatives4x4
         to instances of the class Experiment, one for model predictions and one for data used to fit the model
         
         
@@ -601,7 +539,7 @@ class AerodynamicDerivatives4x4:
         return cls(c_z1z1, c_z1theta1, c_z1z2, c_z1theta2, c_theta1z1, c_theta1theta1, c_theta1z2, c_theta1theta2, c_z2z1, c_z2theta1, c_z2z2, c_z2theta2, c_theta2z1, c_theta2theta1, c_theta2z2, c_theta2theta2, k_z1z1, k_z1theta1, k_z1z2, k_z1theta2, k_theta1z1, k_theta1theta1, k_theta1z2, k_theta1theta2, k_z2z1, k_z2theta1, k_z2z2, k_z2theta2, k_theta2z1, k_theta2theta1, k_theta2z2, k_theta2theta2), model_prediction, experiment_in_wind_still_air_forces_removed
     
     @classmethod
-    def from_poly_k(cls,poly_k,k_range, vred):
+    def from_poly_k(cls,poly_k, k_range, vred):
         vred[vred==0] = 1.0e-10
         uit_step = lambda k,kc: 1./(1 + np.exp(-2*20*(k-kc)))
         fit = lambda p,k,k1c,k2c : np.polyval(p,k)*uit_step(k,k1c)*(1-uit_step(k,k2c)) + np.polyval(p,k1c)*(1-uit_step(k,k1c)) + np.polyval(p,k2c)*(uit_step(k,k2c))
@@ -633,14 +571,12 @@ class AerodynamicDerivatives4x4:
              
         return cls(ads[0],ads[1],ads[2],ads[3],ads[4],ads[5],ads[6],ads[7],ads[8],ads[9],ads[10],ads[11],ads[12],ads[13],ads[14],ads[15],ads[16],ads[17],ads[18],ads[19],ads[20],ads[21],ads[22],ads[23],ads[24],ads[25],ads[26],ads[27],ads[28],ads[29],ads[30],ads[31])
     
-      
-    
     def append(self,ads):
-        """ appends and instance of AerodynamicDerivatives to self
+        """ appends and instance of AerodynamicDerivatives2x2 to self
         
         Arguments:
         ----------
-        ads         : an instance of the class AerodynamicDerivatives
+        ads         : an instance of the class AerodynamicDerivatives2x2
         
         """
         objs1 = [self.c_z1z1, self.c_z1theta1, self.c_z1z2, self.c_z1theta2,
@@ -770,28 +706,7 @@ class AerodynamicDerivatives4x4:
         vreds[30, :] = self.k_theta2z2.reduced_velocities
         vreds[31, :] = self.k_theta2theta2.reduced_velocities
 
-        return ads, vreds
-    
-    #Ikke endret
-    def frf_mat(self,mean_wind_velocity = 1.0, section_width = 1.0, air_density = 1.25):
-        
-        
-        frf_mat = np.zeros((3,3,len(self.p1.reduced_velocities)),dtype=complex)
-        
-        frf_mat[0,0,:] = 1/2*air_density*mean_wind_velocity**2 * (1/self.p1.reduced_velocities)**2 * (self.p1.value*1j + self.p4.value)
-        frf_mat[0,1,:] = 1/2*air_density*mean_wind_velocity**2 * (1/self.p5.reduced_velocities)**2 * (self.p5.value*1j + self.p6.value)
-        frf_mat[0,2,:] = 1/2*air_density*mean_wind_velocity**2 * section_width*(1/self.p2.reduced_velocities)**2 * (self.p2.value*1j + self.p3.value)
-        
-        frf_mat[1,0,:] = 1/2*air_density*mean_wind_velocity**2 * (1/self.h5.reduced_velocities)**2 * (self.h5.value*1j + self.h6.value)
-        frf_mat[1,1,:] = 1/2*air_density*mean_wind_velocity**2 * (1/self.h1.reduced_velocities)**2 * (self.h1.value*1j + self.h4.value)
-        frf_mat[1,2,:] = 1/2*air_density*mean_wind_velocity**2 * section_width*(1/self.h3.reduced_velocities)**2 * (self.h2.value*1j + self.h3.value)
-        
-        frf_mat[2,0,:] = 1/2*air_density*mean_wind_velocity**2 * section_width*(1/self.a5.reduced_velocities)**2 * (self.a5.value*1j + self.a6.value)
-        frf_mat[2,1,:] = 1/2*air_density*mean_wind_velocity**2 * section_width*(1/self.a1.reduced_velocities)**2 * (self.a1.value*1j + self.a4.value)
-        frf_mat[2,2,:] = 1/2*air_density*mean_wind_velocity**2 * section_width**2*(1/self.a2.reduced_velocities)**2 * (self.a2.value*1j + self.a3.value)
-        
-        return frf_mat
-    
+        return ads, vreds   
 
     def fit_poly_k(self,orders = np.ones(32,dtype=int)*2):
         ad_matrix, vreds = self.ad_matrix
@@ -816,8 +731,6 @@ class AerodynamicDerivatives4x4:
             
                 
         return poly_coeff, k_range
-    
-
     
     def fit_poly(self,orders = np.ones(32,dtype=int)*2):
         ad_matrix, vreds = self.ad_matrix
@@ -1037,7 +950,7 @@ class AerodynamicDerivatives4x4:
         fig_damping.tight_layout()
         fig_stiffness.tight_layout()
 
-    def plot_to_compare(self, fig_damping=[],fig_stiffness=[],conv='normal', mode='compare', orders = np.ones(32,dtype=int)*2, label='i'):
+    def plot_to_compare(self, fig_damping=[],fig_stiffness=[],conv='normal', mode='poly only', orders = np.ones(32,dtype=int)*2, label='i'):
         # Make figure objects if not given
         if bool(fig_damping) == False:
             fig_damping = plt.figure()
