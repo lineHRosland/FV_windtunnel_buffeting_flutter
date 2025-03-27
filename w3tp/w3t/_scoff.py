@@ -1523,7 +1523,7 @@ def get_coeffs(static_coeff):
     alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
     return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
      
-def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.85, cols=(0, 1)):
+def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.2, cols=(0, 1)):
     alpha_vals_rounded = np.round(alpha_vals, 1)
     unique_alpha = np.sort(np.unique(alpha_vals_rounded)) # Lager en sortert liste av unike α-verdier (avrundet til én desimal).
 
@@ -1807,9 +1807,9 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
     for i, alpha in enumerate([alpha_1, alpha_2] if single else [alpha_1, alpha_2, alpha_3]):
         target_arrays = [coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]
         for coeff_array in target_arrays:
-            remove_after_jump(alpha, coeff_array, threshold_jump=threshold, cols=(0, 1))
+            remove_after_jump(alpha, coeff_array, threshold_jump=0.15, cols=(0, 1))
             if not single:
-                remove_after_jump(alpha, coeff_array, threshold_jump=threshold, cols=(2, 3))
+                remove_after_jump(alpha, coeff_array, threshold_jump=0.15, cols=(2, 3))
 
     #samler sammen alt etter filtreringer
     static_coeff_1_f = copy.deepcopy(static_coeff_1)
