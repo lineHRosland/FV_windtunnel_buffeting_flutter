@@ -1519,9 +1519,44 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
     return alpha, coeff_up_plot, coeff_down_plot
 
 
+def get_coeffs(static_coeff):
+    alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
+    return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
+     
+def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.2, cols=(0, 1)):
+    alpha_vals_rounded = np.round(alpha_vals, 1)
+    unique_alpha = np.sort(np.unique(alpha_vals_rounded)) # Lager en sortert liste av unike α-verdier (avrundet til én desimal).
 
+    for i, alpha in enumerate(unique_alpha): # fra lav til høy alpha
+        idx = np.where(alpha_vals_rounded == alpha)[0]
+        if len(idx) == 0:
+            continue
 
+        current_vals = coeff_array[idx, cols[0]] + coeff_array[idx, cols[1]] #upwind or downwind
+        current_mean = np.nanmean(current_vals) #Tar mean i tilfelle ikke begge cellene har verdier for akkurat denne alpha verdien
+        if np.isnan(current_mean):
+            continue
 
+        p = 1
+        while i - p >= 0: #Går bakover i α-verdiene til den finner siste gyldige (ikke-NaN) datapunkt.
+            prev_idx = np.where(alpha_vals_rounded == unique_alpha[i - p])[0]
+            if len(prev_idx) == 0:
+                p += 1
+                continue
+            prev_vals = coeff_array[prev_idx, cols[0]] + coeff_array[prev_idx, cols[1]]
+            prev_mean = np.nanmean(prev_vals)
+            if not np.isnan(prev_mean):
+                break
+            p += 1
+        else:
+            continue
+
+        if np.abs(current_mean - prev_mean) > threshold_jump: #et hopp er oppdaget
+            mask = alpha_vals_rounded > alpha # Fjerner alle verdier med høyere α enn der hoppet oppstod
+            coeff_array[mask, cols[0]] = np.nan
+            coeff_array[mask, cols[1]] = np.nan
+            break # tar kun første hopp (dette er greit etter å ha studert datasettenes oppførsel)
+    return coeff_array
 
 def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1, threshold_low=[0.05, 0.05, 0.05], threshold_med=[None, None, None], threshold_high=[0.05, 0.05, 0.05], single=False):
     """
@@ -1530,224 +1565,267 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
     If single=True, filters only static_coeff_1 and static_coeff_2.
     Returns filtered StaticCoeff objects.
     """
+    # Antall trinn bakover du vil sjekke (i grader)
+    alpha_lookback_range = 2  # f.eks. 5 trinn på 0.1
+    alpha_step = 0.1
+    alpha_tolerance = 1e-6  # for å unngå float-problemer
 
-    def get_coeffs(static_coeff):
-        alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
-        return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
-    
-    def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.1):
-        alpha_vals_rounded = np.round(alpha_vals, 1)
-        unique_alpha = np.sort(np.unique(alpha_vals_rounded))
 
-        for i, alpha in enumerate(unique_alpha):
-            idx = np.where(alpha_vals_rounded == alpha)[0]
-            if len(idx) == 0:
-                continue
-
-            current_vals = coeff_array[idx, 0] + coeff_array[idx, 1]
-            current_mean = np.nanmean(current_vals)
-            if np.isnan(current_mean):
-                continue
-
-            p = 1
-            while i - p >= 0:
-                prev_idx = np.where(alpha_vals_rounded == unique_alpha[i - p])[0]
-                if len(prev_idx) == 0:
-                    p += 1
-                    continue
-                prev_vals = coeff_array[prev_idx, 0] + coeff_array[prev_idx, 1]
-                prev_mean = np.nanmean(prev_vals)
-                if not np.isnan(prev_mean):
-                    break
-                p += 1
-            else:
-                continue
-
-            if np.abs(current_mean - prev_mean) > threshold_jump:
-                cutoff = alpha
-                coeff_array[alpha_vals_rounded > cutoff, 0] = np.nan
-                coeff_array[alpha_vals_rounded > cutoff, 1] = np.nan
-                break
-
-        return coeff_array
-    
+ 
     alpha_1, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
+    #ettersom alpha er rundet opp til 1 desimal, er alle alphaer til hver tidsserie like, og man trenger egt ikke skille mellom alphaene i forsøket. Men koden blir litt mer robust.
     alpha_2, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
-
+ 
     drag_1_filt, lift_1_filt, pitch_1_filt = drag_1.copy(), lift_1.copy(), pitch_1.copy()
     drag_2_filt, lift_2_filt, pitch_2_filt = drag_2.copy(), lift_2.copy(), pitch_2.copy()
-
+ 
     if not single:
         alpha_3, drag_3, lift_3, pitch_3 = get_coeffs(static_coeff_3)
         drag_3_filt, lift_3_filt, pitch_3_filt = drag_3.copy(), lift_3.copy(), pitch_3.copy()
-
+ 
     coeff_names = ["drag", "lift", "pitch"]
     coeffs_1 = [drag_1, lift_1, pitch_1]
     coeffs_2 = [drag_2, lift_2, pitch_2]
-    coeffs_1_filt = [drag_1_filt, lift_1_filt, pitch_1_filt]
+    coeffs_1_filt = [drag_1_filt, lift_1_filt, pitch_1_filt] # I første omgang kun en kopi
     coeffs_2_filt = [drag_2_filt, lift_2_filt, pitch_2_filt]
-
+ 
     if not single:
         coeffs_3 = [drag_3, lift_3, pitch_3]
         coeffs_3_filt = [drag_3_filt, lift_3_filt, pitch_3_filt]
-
+ 
     unique_alpha = np.unique(alpha_1)
-
+ 
     for val in unique_alpha:
         idx1 = np.where(alpha_1 == val)[0]
         idx2 = np.where(alpha_2 == val)[0]
-
+ 
         if single:
             if not (len(idx1) and len(idx2)):
                 continue
-
+ 
             for i, name in enumerate(coeff_names):
                 this_threshold_low  = threshold_low[i] if threshold_low[i] is not None else threshold
                 this_threshold_high = threshold_high[i] if threshold_high[i] is not None else threshold
-                
+ 
                 coeff_1 = coeffs_1[i]
                 coeff_2 = coeffs_2[i]
                 coeff_1_f = coeffs_1_filt[i]
                 coeff_2_f = coeffs_2_filt[i]
-
-                vals_1 = coeff_1[idx1, 0] + coeff_1[idx1, 1]
-                vals_2 = coeff_2[idx2, 0] + coeff_2[idx2, 1]
+ 
+                vals_1 = coeff_1[idx1, 0] + coeff_1[idx1, 1] #drag eller lift eller pitch totalen for ett helt brudekke
+                vals_2 = coeff_2[idx2, 0] + coeff_2[idx2, 1] #samme for et annet forsøk
                 spread_1 = np.max(vals_1) - np.min(vals_1)
                 spread_2 = np.max(vals_2) - np.min(vals_2)
-
+ 
                 coeff_check1 = filter(static_coeff_1, this_threshold_low, scoff=name, single=True)[1]
                 coeff_check2 = filter(static_coeff_2, this_threshold_high, scoff=name, single=True)[1]
-                
+ 
+                nan_flags = []
 
+                for check_array, idx_array, alpha_array in zip([coeff_check1, coeff_check2], [idx1, idx2], [alpha_1, alpha_2]):
+                    has_nan_now = np.any(np.isnan(check_array[idx_array]))
 
-                has_nan_1 = np.any(np.isnan(coeff_check1[idx1]))
-                has_nan_2 = np.any(np.isnan(coeff_check2[idx2]))
+                    if has_nan_now:
+                        nan_flags.append(True)
+                        continue
 
+                    has_nan_back = False
+                    current_alpha = np.round(val, 1)
+
+                    for delta in np.arange(alpha_step, alpha_lookback_range + alpha_step, alpha_step):
+                        prev_alpha = np.round(current_alpha - delta, 1)
+                        idx_prev = np.where(np.abs(np.round(alpha_array, 1) - prev_alpha) < alpha_tolerance)[0]
+                        if len(idx_prev) > 0 and np.any(np.isnan(check_array[idx_prev])):
+                            has_nan_back = True
+                            break
+
+                    nan_flags.append(has_nan_back)
+
+                has_nan_1, has_nan_2 = nan_flags
+ 
                 if has_nan_1 and not has_nan_2:
                     ref_mean = np.mean(vals_2)
                 elif has_nan_2 and not has_nan_1:
                     ref_mean = np.mean(vals_1)
                 else:
                     ref_mean = np.mean(vals_1) if spread_1 <= spread_2 else np.mean(vals_2)
-
+ 
                 for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
-                    summed = coeff_array[idx, 0] + coeff_array[idx, 1]
-                    mask = np.abs(summed - ref_mean) > threshold
-                    coeff_array[idx[mask], 0] = np.nan
+                    summed = coeff_array[idx, 0] + coeff_array[idx, 1] #når singel, kun ett enkelt brudekke (val_1 og val_2)
+                    mask = np.abs(summed - ref_mean) > threshold #markerer verdier som er for langt unna referansen
+                    coeff_array[idx[mask], 0] = np.nan # setter verdien til nan dersom mask er true
                     coeff_array[idx[mask], 1] = np.nan
-
+ 
         else:
             idx3 = np.where(alpha_3 == val)[0]
             if not (len(idx1) and len(idx2) and len(idx3)):
                 continue
-
+ 
             for i, name in enumerate(coeff_names):
                 this_threshold_low  = threshold_low[i] if threshold_low[i] is not None else threshold
                 this_threshold_med  = threshold_med[i] if threshold_med[i] is not None else threshold
                 this_threshold_high = threshold_high[i] if threshold_high[i] is not None else threshold
-
+ 
                 coeff_1 = coeffs_1[i]
                 coeff_2 = coeffs_2[i]
                 coeff_3 = coeffs_3[i]
                 coeff_1_f = coeffs_1_filt[i]
                 coeff_2_f = coeffs_2_filt[i]
                 coeff_3_f = coeffs_3_filt[i]
-
+ 
                 #UP
                 vals_up = [coeff_1[idx1, 0] + coeff_1[idx1, 1],
                            coeff_2[idx2, 0] + coeff_2[idx2, 1],
                            coeff_3[idx3, 0] + coeff_3[idx3, 1]]
+                #print(f"Upwind vals: {[np.mean(v) for v in vals_up]}")
                 spreads_up = [np.max(v) - np.min(v) for v in vals_up]
-
-                
+ 
+ 
                 coeff_up_checks = [
                     filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[1],
                     filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[1],
                     filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[1],
                 ]
-              
-                nan_flags_up = [np.any(np.isnan(check[idx])) for check, idx in zip(coeff_up_checks, [idx1, idx2, idx3])]
-                clean_idxs_up = [i for i, nan in enumerate(nan_flags_up) if not nan]
+ 
+                nan_flags_up = []
 
-                if len(clean_idxs_up) == 1:
-                    ref_idx_up = clean_idxs_up[0]
-                elif len(clean_idxs_up) == 2:
+                for check_array, idx_array, alpha_array in zip(coeff_up_checks, [idx1, idx2, idx3], [alpha_1, alpha_2, alpha_3]):
+                    has_nan_now = np.any(np.isnan(check_array[idx_array]))  #Sjekker om det er for stor spredning i en av de tre forsøkene. Hvis spredningen er for stor er det et dårlig signal med denne vinkelen.
+
+                    if has_nan_now:
+                        nan_flags_up.append(True)
+                        continue  # trenger ikke sjekke historikken hvis det allerede er dårlig nå
+
+                    # --- Sjekk bakover i alpha ---
+                    has_nan_back = False
+                    current_alpha = np.round(val, 1)  # val = current alpha value in loop
+
+                    for delta in np.arange(alpha_step, alpha_lookback_range + alpha_step, alpha_step):
+                        prev_alpha = np.round(current_alpha - delta, 1)
+                        idx_prev = np.where(np.abs(np.round(alpha_array, 1) - prev_alpha) < alpha_tolerance)[0]
+                        if len(idx_prev) > 0:
+                            if np.any(np.isnan(check_array[idx_prev])):
+                                has_nan_back = True
+                                break  # vi trenger bare én dårlig α bakover
+
+                    nan_flags_up.append(has_nan_now or has_nan_back)
+
+                # Liste med de datasett som er “clean” nå og tidligere
+                clean_idxs_up = [i for i, nan in enumerate(nan_flags_up) if not nan]  #liste med index til de som ikke har nan (ok spredning i data), nå og litt tidligere
+
+               
+ 
+                if len(clean_idxs_up) == 1: #velger datasettet med minst spredning eller ingen nan
+                    ref_idx_up = clean_idxs_up[0] #eneste signal uten for mye spredning 
+                elif len(clean_idxs_up) == 2: # to signaler uten for mye spredning, lavest spredning best
                     ref_idx_up = clean_idxs_up[0] if spreads_up[clean_idxs_up[0]] < spreads_up[clean_idxs_up[1]] else clean_idxs_up[1]
-                else:
-                    ref_idx_up = np.argmin(spreads_up)
+                elif len(clean_idxs_up) == 3: # alle signaler ok
+                   ref_idx_up = np.argmin(spreads_up) 
+                else: #Alle datasett er for dårlig
+                    ref_idx_up = None
+                    #print("alle datasett er for dårlig")
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
+                        coeff_array[idx, 0] = np.nan
+                        coeff_array[idx, 1] = np.nan
+                
 
-                ref_mean_up = np.mean(vals_up[ref_idx_up])
+                if ref_idx_up is not None:
+                    ref_mean_up = np.mean(vals_up[ref_idx_up])
+    
+                    #print(f"Ref mean up = {ref_mean_up:.3f}")
 
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
+                        summed = coeff_array[idx, 0] + coeff_array[idx, 1]
+                        mask = np.abs(summed - ref_mean_up) > threshold
+                        #print(f"Deck {i+1} — alpha = {val:.1f} — Removed {np.sum(mask)} points due to threshold filtering.")
 
-                for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
-                    summed = coeff_array[idx, 0] + coeff_array[idx, 1]
-                    mask = np.abs(summed - ref_mean_up) > threshold
-                    coeff_array[idx[mask], 0] = np.nan
-                    coeff_array[idx[mask], 1] = np.nan
-
-                filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[1]
-                filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[1]
-                filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[1]
-
+                        coeff_array[idx[mask], 0] = np.nan
+                        coeff_array[idx[mask], 1] = np.nan
+    
+                    
                 # Same logic for downwind
                 vals_down = [coeff_1[idx1, 2] + coeff_1[idx1, 3],
                              coeff_2[idx2, 2] + coeff_2[idx2, 3],
                              coeff_3[idx3, 2] + coeff_3[idx3, 3]]
                 spreads_down = [np.max(v) - np.min(v) for v in vals_down]
-
+ 
                 coeff_down_checks = [
                     filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[2],
                     filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[2],
                     filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[2],
                 ]
+ 
+                nan_flags_down = []
 
-                nan_flags_down = [np.any(np.isnan(check[idx])) for check, idx in zip(coeff_down_checks, [idx1, idx2, idx3])]
+                for check_array, idx_array, alpha_array in zip(coeff_down_checks, [idx1, idx2, idx3], [alpha_1, alpha_2, alpha_3]):
+                    has_nan_now = np.any(np.isnan(check_array[idx_array]))  #Sjekker om det er for stor spredning i en av de tre forsøkene. Hvis spredningen er for stor er det et dårlig signal med denne vinkelen.
 
-                clean_idxs_down = [i for i, nan in enumerate(nan_flags_down) if not nan]
+                    if has_nan_now:
+                        nan_flags_down.append(True)
+                        continue  # trenger ikke sjekke historikken hvis det allerede er dårlig nå
 
+                    # --- Sjekk bakover i alpha ---
+                    has_nan_back = False
+                    current_alpha = np.round(val, 1)  # val = current alpha value in loop
+
+                    for delta in np.arange(alpha_step, alpha_lookback_range + alpha_step, alpha_step):
+                        prev_alpha = np.round(current_alpha - delta, 1)
+                        idx_prev = np.where(np.abs(np.round(alpha_array, 1) - prev_alpha) < alpha_tolerance)[0]
+                        if len(idx_prev) > 0:
+                            if np.any(np.isnan(check_array[idx_prev])):
+                                has_nan_back = True
+                                break  # vi trenger bare én dårlig α bakover
+
+                    nan_flags_down.append(has_nan_now or has_nan_back)
+
+                # Liste med de datasett som er “clean” nå og tidligere
+                clean_idxs_down = [i for i, nan in enumerate(nan_flags_down) if not nan]  #liste med index til de som ikke har nan (ok spredning i data), nå og litt tidligere
+
+ 
                 if len(clean_idxs_down) == 1:
                     ref_idx_down = clean_idxs_down[0]
                 elif len(clean_idxs_down) == 2:
                     ref_idx_down = clean_idxs_down[0] if spreads_down[clean_idxs_down[0]] < spreads_down[clean_idxs_down[1]] else clean_idxs_down[1]
+                elif len(clean_idxs_down) == 3: # alle signaler ok
+                   ref_idx_down = np.argmin(spreads_down)
                 else:
-                    ref_idx_down = np.argmin(spreads_down)
-
-                ref_mean_down = np.mean(vals_down[ref_idx_down])
-
-                for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
-                    summed = coeff_array[idx, 2] + coeff_array[idx, 3]
-                    mask = np.abs(summed - ref_mean_down) > threshold
-                    coeff_array[idx[mask], 2] = np.nan
-                    coeff_array[idx[mask], 3] = np.nan
+                    ref_idx_down = None
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
+                       coeff_array[idx, 2] = np.nan
+                       coeff_array[idx, 3] = np.nan
+                 
+                if ref_idx_down is not None:
+ 
+                    ref_mean_down = np.mean(vals_down[ref_idx_down])
     
-    # Remove after jump logic for both upwind and downwind
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
+                        summed = coeff_array[idx, 2] + coeff_array[idx, 3]
+                        mask = np.abs(summed - ref_mean_down) > threshold
+                        coeff_array[idx[mask], 2] = np.nan
+                        coeff_array[idx[mask], 3] = np.nan
+
     for i, alpha in enumerate([alpha_1, alpha_2] if single else [alpha_1, alpha_2, alpha_3]):
-        for coeff_array in ([coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]):
-            remove_after_jump(alpha, coeff_array)  # Upwind deck
+        target_arrays = [coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]
+        for coeff_array in target_arrays:
+            remove_after_jump(alpha, coeff_array, threshold_jump=0.8, cols=(0, 1))
             if not single:
-                # Downwind deck (col 2 and 3)
-                dummy_array = np.zeros_like(coeff_array)
-                dummy_array[:, 0] = coeff_array[:, 2]
-                dummy_array[:, 1] = coeff_array[:, 3]
-                remove_after_jump(alpha, dummy_array)
-                coeff_array[:, 2] = dummy_array[:, 0]
-                coeff_array[:, 3] = dummy_array[:, 1]      
-    
-    # Return updated objects
+                remove_after_jump(alpha, coeff_array, threshold_jump=0.8, cols=(2, 3))
+
+    #samler sammen alt etter filtreringer
     static_coeff_1_f = copy.deepcopy(static_coeff_1)
     static_coeff_2_f = copy.deepcopy(static_coeff_2)
-    for name, data in zip(coeff_names, [drag_1_filt, lift_1_filt, pitch_1_filt]):
+    for name, data in zip(coeff_names, [drag_1_filt, lift_1_filt, pitch_1_filt]): #legger til nan verdier
         setattr(static_coeff_1_f, f"{name}_coeff", data)
     for name, data in zip(coeff_names, [drag_2_filt, lift_2_filt, pitch_2_filt]):
         setattr(static_coeff_2_f, f"{name}_coeff", data)
-
+ 
     if single:
         return static_coeff_1_f, static_coeff_2_f
-
+ 
     static_coeff_3_f = copy.deepcopy(static_coeff_3)
     for name, data in zip(coeff_names, [drag_3_filt, lift_3_filt, pitch_3_filt]):
         setattr(static_coeff_3_f, f"{name}_coeff", data)
-
+ 
     return static_coeff_1_f, static_coeff_2_f, static_coeff_3_f
 
 
