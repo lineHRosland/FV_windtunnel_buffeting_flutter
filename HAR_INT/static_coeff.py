@@ -4730,7 +4730,7 @@ arrays_to_save={
     "cm_5D_mus_low_downwind_deck": static_coeff_MUS_5D_45.plot_pitch_mean( mode="decks", upwind_in_rig=True)[1],
     "cm_alpha_5D_mus_high": static_coeff_MUS_5D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[2],
     "cm_alpha_5D_mus_low": static_coeff_MUS_5D_45.plot_pitch_mean( mode="decks", upwind_in_rig=True)[2],
-
+    
     "cl_5D_mus_high_upwind_deck_filtered": static_coeff_MUS_5D_10_filtered.plot_lift_mean( mode="decks", upwind_in_rig=True)[0],
     "cl_5D_mus_low_upwind_deck_filtered": static_coeff_MUS_5D_45_filtered.plot_lift_mean( mode="decks", upwind_in_rig=True)[0],
     "cl_5D_mus_high_downwind_deck_filtered": static_coeff_MUS_5D_10_filtered.plot_lift_mean( mode="decks", upwind_in_rig=True)[1],
@@ -4746,46 +4746,52 @@ arrays_to_save={
     
 }
 # %%
+
+for name,array in arrays_to_save.items():
+    np.save(os.path.join(file_path, f"{name}.npy"), array)
+
+
+#%%
 # Data hentet ut:
-static_coeff_single_6
-static_coeff_single_9 #
-static_coeff_single_6_filtered
-static_coeff_single_9_filtered #
+# static_coeff_single_6
+# static_coeff_single_9 #
+# static_coeff_single_6_filtered
+# static_coeff_single_9_filtered #
 
-static_coeff_MDS_1D_6
-static_coeff_MDS_1D_8 #for å vise at 8 m/s er dårlig
-static_coeff_MDS_1D_10 # 
-static_coeff_MDS_1D_6_filtered
-static_coeff_MDS_1D_10_filtered #
-static_coeff_MUS_1D_5
-static_coeff_MUS_1D_10 #
-static_coeff_MUS_1D_5_filtered
-static_coeff_MUS_1D_10_filtered #
+# static_coeff_MDS_1D_6
+# static_coeff_MDS_1D_8 #for å vise at 8 m/s er dårlig
+# static_coeff_MDS_1D_10 # 
+# static_coeff_MDS_1D_6_filtered
+# static_coeff_MDS_1D_10_filtered #
+# static_coeff_MUS_1D_5
+# static_coeff_MUS_1D_10 #
+# static_coeff_MUS_1D_5_filtered
+# static_coeff_MUS_1D_10_filtered #
 
-static_coeff_MDS_2D_6
-static_coeff_MDS_2D_10 #
-static_coeff_MUS_2D_5
-static_coeff_MUS_2D_10 #
-static_coeff_MUS_2D_5_filtered
-static_coeff_MUS_2D_10_filtered #
+# static_coeff_MDS_2D_6
+# static_coeff_MDS_2D_10 #
+# static_coeff_MUS_2D_5
+# static_coeff_MUS_2D_10 #
+# static_coeff_MUS_2D_5_filtered
+# static_coeff_MUS_2D_10_filtered #
 
-static_coeff_MDS_3D_6
-static_coeff_MDS_3D_10 #
-static_coeff_MUS_3D_5
-static_coeff_MUS_3D_10 #
-static_coeff_MUS_3D_5_filtered
-static_coeff_MUS_3D_10_filtered #
+# static_coeff_MDS_3D_6
+# static_coeff_MDS_3D_10 #
+# static_coeff_MUS_3D_5
+# static_coeff_MUS_3D_10 #
+# static_coeff_MUS_3D_5_filtered
+# static_coeff_MUS_3D_10_filtered #
 
-static_coeff_MDS_4D_55
-static_coeff_MDS_4D_10 #
-static_coeff_MUS_4D_5
-static_coeff_MUS_4D_10 #
-static_coeff_MUS_4D_5_filtered
-static_coeff_MUS_4D_10_filtered #
+# static_coeff_MDS_4D_55
+# static_coeff_MDS_4D_10 #
+# static_coeff_MUS_4D_5
+# static_coeff_MUS_4D_10 #
+# static_coeff_MUS_4D_5_filtered
+# static_coeff_MUS_4D_10_filtered #
 
-static_coeff_MDS_5D_55
-static_coeff_MDS_5D_10
-static_coeff_MUS_5D_45
-static_coeff_MUS_5D_10
-static_coeff_MUS_5D_45_filtered #drag dårlig data her
-static_coeff_MUS_5D_10_filtered #drag dårlig data her
+# static_coeff_MDS_5D_55
+# static_coeff_MDS_5D_10
+# static_coeff_MUS_5D_45
+# static_coeff_MUS_5D_10
+# static_coeff_MUS_5D_45_filtered #drag dårlig data her
+# static_coeff_MUS_5D_10_filtered #drag dårlig data her

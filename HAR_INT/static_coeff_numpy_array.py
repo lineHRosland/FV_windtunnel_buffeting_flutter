@@ -105,7 +105,6 @@ array_names = [
     "cd_2D_mus_high_upwind_deck_filtered","cd_alpha_2D_mus_high_filtered",
     "cd_3D_mus_high_upwind_deck_filtered", "cd_alpha_3D_mus_high_filtered",
     "cd_4D_mus_high_upwind_deck_filtered", "cd_alpha_4D_mus_high_filtered",
-    "cd_5D_mus_high_upwind_deck_filtered", "cd_alpha_5D_mus_high_filtered",
 
     "cd_1D_mds_high_upwind_deck_filtered", "cd_alpha_1D_mds_high_filtered",
  
@@ -250,7 +249,6 @@ array_names = [
     "cd_2D_mus_low_upwind_deck_filtered","cd_alpha_2D_mus_low_filtered",
     "cd_3D_mus_low_upwind_deck_filtered", "cd_alpha_3D_mus_low_filtered",
     "cd_4D_mus_low_upwind_deck_filtered", "cd_alpha_4D_mus_low_filtered",
-    "cd_5D_mus_low_upwind_deck_filtered", "cd_alpha_5D_mus_low_filtered",
 
     "cd_1D_mds_low_upwind_deck_filtered", "cd_alpha_1D_mds_low_filtered",
  
