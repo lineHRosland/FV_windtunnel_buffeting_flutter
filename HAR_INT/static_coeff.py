@@ -140,7 +140,6 @@ plot_static_coeff_summary(static_coeff_single_9, section_name, 9, mode="single",
 
 
 
-
 #%% Filter and plot ALT 1
 #drag
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_6, threshold=0.05, scoff="drag", single = True)
@@ -175,7 +174,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 #%%  Filter and plot ALT 2
 section_name = "Single_Static_filtered"
 
-static_coeff_single_6_filtered, static_coeff_single_9_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_6,static_coeff_2=static_coeff_single_9,threshold=0.05,  threshold_low=[0.07, 0.05,0.05], threshold_high=[0.05,0.05,0.05],single=True)
+static_coeff_single_6_filtered, static_coeff_single_9_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_6,static_coeff_2=static_coeff_single_9,threshold=0.05,  threshold_low=[0.07, 0.05,0.05], threshold_high=[0.025,0.05,0.05],single=True)
 
 plot_static_coeff_summary(static_coeff_single_6_filtered, section_name, 6, mode="single", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_single_9_filtered, section_name, 9, mode="single", upwind_in_rig=True)
@@ -245,6 +244,8 @@ plot_static_coeff_summary(static_coeff_MDS_1D_8, section_name, 8, mode="decks", 
 plot_static_coeff_summary(static_coeff_MDS_1D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
 
+
+
 #%% Filter and plot ALT 1
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_1D_6, threshold=0.05, scoff="drag", single = False)
@@ -291,6 +292,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 
+
 #%%  Filter and plot ALT 2
 section_name = "MUS_1D_Static_filtered" 
 
@@ -307,11 +309,11 @@ plot_static_coeff_summary(static_coeff_MDS_1D_10_filtered, section_name, 10, mod
 
 section_name = "MDS_1D_Static"
 file_names_MUS_1D_5 = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_001"] # 5 m/s
-file_names_MUS_1D_8 = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_002"] # 8 m/s, vibrations
+#file_names_MUS_1D_8 = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_002"] # 8 m/s, vibrations
 file_names_MUS_1D_10 = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_003"] # 10 m/s, vibrations
 
 exp0_MUS_1D, exp1_MUS_1D_5= load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_1D_5,  upwind_in_rig=True)
-exp0_MUS_1D, exp1_MUS_1D_8 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_1D_8,  upwind_in_rig=True)
+#exp0_MUS_1D, exp1_MUS_1D_8 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_1D_8,  upwind_in_rig=True)
 exp0_MUS_1D, exp1_MUS_1D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_1D_10,  upwind_in_rig=True)
 
 
@@ -322,16 +324,16 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MUS_1D_5.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 5 m/s ",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_5" + ".png"))
-exp1_MUS_1D_8.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"MUS 1D - Wind speed: 8 m/s ",  y=0.95)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_8" + ".png"))
+#exp1_MUS_1D_8.plot_experiment(mode="total") #
+#plt.gcf().suptitle(f"MUS 1D - Wind speed: 8 m/s ",  y=0.95)
+#plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_8" + ".png"))
 exp1_MUS_1D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s ",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_10" + ".png"))
 
 exp0_MUS_1D.filt_forces(6, 2)
 exp1_MUS_1D_5.filt_forces(6, 2)
-exp1_MUS_1D_8.filt_forces(6, 2)
+#exp1_MUS_1D_8.filt_forces(6, 2)
 exp1_MUS_1D_10.filt_forces(6, 2)
 
 exp0_MUS_1D.plot_experiment(mode="total") #With Butterworth low-pass filter
@@ -340,9 +342,9 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MUS_1D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_5_filter" + ".png"))
-exp1_MUS_1D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"MUS 1D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=0.95)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_8_filter" + ".png"))
+#exp1_MUS_1D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
+#plt.gcf().suptitle(f"MUS 1D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=0.95)
+#plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_8_filter" + ".png"))
 exp1_MUS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_10_filter" + ".png"))
@@ -351,12 +353,12 @@ plt.show()
 
 static_coeff_MUS_1D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_1D, exp1_MUS_1D_5, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
-static_coeff_MUS_1D_8 = w3t.StaticCoeff.fromWTT(exp0_MUS_1D, exp1_MUS_1D_8, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
+#static_coeff_MUS_1D_8 = w3t.StaticCoeff.fromWTT(exp0_MUS_1D, exp1_MUS_1D_8, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
 static_coeff_MUS_1D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_1D, exp1_MUS_1D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
 plot_static_coeff_summary(static_coeff_MUS_1D_5, section_name, 5, mode="decks", upwind_in_rig=True)
-plot_static_coeff_summary(static_coeff_MUS_1D_8, section_name, 8, mode="decks", upwind_in_rig=True)
+#plot_static_coeff_summary(static_coeff_MUS_1D_8, section_name, 8, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_1D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
 
@@ -368,10 +370,10 @@ w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_u
 plt.suptitle(f"MUS 1D - Wind speed: 5 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\drag", "MUS_1D_6_drag_clean.png"))
 
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_1D_8, threshold=0.05, scoff="drag", single = False)
-w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="drag")
-plt.suptitle(f"MUS 1D - Wind speed: 8 m/s",  y=0.95)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\drag", "MUS_1D_8_drag_clean.png"))
+#alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_1D_8, threshold=0.05, scoff="drag", single = False)
+#w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="drag")
+#plt.suptitle(f"MUS 1D - Wind speed: 8 m/s",  y=0.95)
+#plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\drag", "MUS_1D_8_drag_clean.png"))
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_1D_10, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="drag")
 plt.suptitle(f"MUS 1D - Wind speed: 10 m/s",  y=0.95)
@@ -382,10 +384,10 @@ alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="lift")
 plt.suptitle(f"MUS 1D - Wind speed: 5 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\lift", "MUS_1D_6_lift_clean.png"))
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_1D_8, threshold=0.05, scoff="lift", single = False)
-w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med,upwind_in_rig=True, threshold=0.05, scoff="lift")
-plt.suptitle(f"MUS 1D - Wind speed: 8 m/s",  y=0.95)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\lift", "MUS_1D_8_lift_clean.png"))
+#alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_1D_8, threshold=0.05, scoff="lift", single = False)
+#w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med,upwind_in_rig=True, threshold=0.05, scoff="lift")
+#plt.suptitle(f"MUS 1D - Wind speed: 8 m/s",  y=0.95)
+#plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\lift", "MUS_1D_8_lift_clean.png"))
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_1D_10, threshold=0.05, scoff="lift", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="lift")
 plt.suptitle(f"MUS 1D - Wind speed: 10 m/s",  y=0.95)
@@ -396,24 +398,28 @@ alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="pitch")
 plt.suptitle(f"MUS 1D - Wind speed: 5 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\pitch", "MUS_1D_6_pitch_clean.png"))
-alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_1D_8, threshold=0.05, scoff="pitch", single = False)
-w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="pitch")
-plt.suptitle(f"MUS 1D - Wind speed: 8 m/s",  y=0.95)
-plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\pitch", "MUS_1D_8_pitch_clean.png"))
+#alpha_med, coeff_plot_up_med, coeff_plot_down_med=w3t._scoff.filter(static_coeff_MUS_1D_8, threshold=0.05, scoff="pitch", single = False)
+#w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_med,coeff_plot_up_med,coeff_plot_down_med, upwind_in_rig=True, threshold=0.05, scoff="pitch")
+#plt.suptitle(f"MUS 1D - Wind speed: 8 m/s",  y=0.95)
+#plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\pitch", "MUS_1D_8_pitch_clean.png"))
 alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_coeff_MUS_1D_10, threshold=0.05, scoff="pitch", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="pitch")
 plt.suptitle(f"MUS 1D - Wind speed: 10 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\pitch", "MUS_1D_10_pitch_clean.png"))
 
 
+
+
+
+
 #%%  Filter and plot ALT 2
 section_name = "MDS_1D_Static_filtered"
 
-static_coeff_MUS_1D_5_filtered, static_coeff_MUS_1D_8_filtered, static_coeff_MUS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_1D_5, static_coeff_2=static_coeff_MUS_1D_8, static_coeff_3=static_coeff_MUS_1D_10, threshold=0.038, threshold_low=[0.06,0.03,0.02],threshold_med = [0.008,0.02,0.03],threshold_high=[0.06,0.04,0.02],single=False)
+static_coeff_MUS_1D_5_filtered, static_coeff_MUS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_1D_5, static_coeff_2=None, static_coeff_3=static_coeff_MUS_1D_10, threshold=0.038, threshold_low=[0.06,0.03,0.02],threshold_med = [None,None,None],threshold_high=[0.03,0.06,0.008],single=False)
 
 
 plot_static_coeff_summary(static_coeff_MUS_1D_5_filtered, section_name, 5, mode="decks", upwind_in_rig=True)
-plot_static_coeff_summary(static_coeff_MUS_1D_8_filtered, section_name, 8, mode="decks", upwind_in_rig=True)
+#plot_static_coeff_summary(static_coeff_MUS_1D_8_filtered, section_name, 8, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_1D_10_filtered, section_name, 10, mode="decks", upwind_in_rig=True)
 
 
@@ -428,7 +434,7 @@ static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,sectio
 
 # Medium wind speed
 static_coeff_MDS_1D_8.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_8.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+#static_coeff_MUS_1D_8.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
@@ -445,7 +451,7 @@ static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,s
 
 # Medium wind speed
 static_coeff_MDS_1D_8.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_8.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+#static_coeff_MUS_1D_8.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
@@ -465,7 +471,7 @@ static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s
 
 # Medium wind speed
 static_coeff_MDS_1D_8_filtered.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_8_filtered.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+#static_coeff_MUS_1D_8_filtered.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
@@ -482,7 +488,7 @@ static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 
 
 # Medium wind speed
 static_coeff_MDS_1D_8_filtered.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_8_filtered.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+#static_coeff_MUS_1D_8_filtered.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
