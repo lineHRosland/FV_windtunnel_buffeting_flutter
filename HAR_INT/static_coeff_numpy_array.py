@@ -11,7 +11,6 @@ sys.path.append(r"C:\Users\liner\Documents\Github\Masteroppgave\w3tp")
 import w3t as w3t
 import os
 
-import 
 
 
 # Define the path where arrays are stored
@@ -302,14 +301,3 @@ cm_alpha_4D_mds_high = arrays_loaded["cm_alpha_4D_mds_high"]
 cm_5D_mds_high_downwind_deck = arrays_loaded["cm_5D_mds_high_downwind_deck"]
 cm_alpha_5D_mds_high = arrays_loaded["cm_alpha_5D_mds_high"]
 
-
-
-
-# v_range --> [v_min, v_max] (reduced velocity range)
-# poly_coeff --> number of ADs x [a0, a1, a2], AD(v) = a0 + a1*v + a2*v^2
-
-# Single order: H_1*, H_2*, H_3*, H_4*, A_1*, A_2*, A_3*, A_4*
-# Tandem order: c_z1z1*, c_z1θ1*, c_z1z2*, c_z1θ2*, c_θ1z1*, c_θ1θ1*, c_θ1z2*, c_θ1θ2*, 
-#               c_z2z1*, c_z2θ1*, c_z2z2*, c_z2θ2*, c_θ2z1*, c_θ2θ1*, c_θ2z2*, c_θ2θ2*, 
-#               k_z1z1*, k_z1θ1*, k_z1z2*, k_z1θ2*, k_θ1z1*, k_θ1θ1*, k_θ1z2*, k_θ1θ2*, 
-#               k_z2z1*, k_z2θ1*, k_z2z2*, k_z2θ2*, k_θ2z1*, k_θ2θ1*, k_θ2z2*, k_θ2

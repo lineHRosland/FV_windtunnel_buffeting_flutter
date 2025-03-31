@@ -296,7 +296,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 #%%  Filter and plot ALT 2
 section_name = "MUS_1D_Static_filtered" 
 
-static_coeff_MDS_1D_6_filtered, static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_1D_6, static_coeff_2=static_coeff_MDS_1D_8, static_coeff_3=static_coeff_MDS_1D_10, threshold=0.08, threshold_low=[0.08,0.05,0.05],threshold_med = [0.02,0.03,0.05],threshold_high=[0.05,0.05,0.05],single=False)
+static_coeff_MDS_1D_6_filtered, static_coeff_MDS_1D_8_filtered, static_coeff_MDS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_1D_6, static_coeff_2=static_coeff_MDS_1D_8, static_coeff_3=static_coeff_MDS_1D_10, threshold=0.1, threshold_low=[0.05,0.05,0.05],threshold_med = [0.02,0.03,0.05],threshold_high=[0.05,0.05,0.05],single=False)
 
 plot_static_coeff_summary(static_coeff_MDS_1D_6_filtered, section_name, 6, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_1D_8_filtered, section_name, 8, mode="decks", upwind_in_rig=False)
@@ -411,11 +411,10 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 
-
 #%%  Filter and plot ALT 2
 section_name = "MDS_1D_Static_filtered"
 
-static_coeff_MUS_1D_5_filtered, static_coeff_MUS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_1D_5, static_coeff_2=None, static_coeff_3=static_coeff_MUS_1D_10, threshold=0.038, threshold_low=[0.06,0.03,0.02],threshold_med = [None,None,None],threshold_high=[0.03,0.06,0.008],single=False)
+static_coeff_MUS_1D_5_filtered, static_coeff_MUS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_1D_5, static_coeff_2=static_coeff_MUS_1D_10, threshold=0.05, threshold_low=[0.08,0.02,0.005],threshold_high=[0.08,0.02,0.005],single=False)
 
 
 plot_static_coeff_summary(static_coeff_MUS_1D_5_filtered, section_name, 5, mode="decks", upwind_in_rig=True)
@@ -1294,14 +1293,15 @@ w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_
 plt.suptitle(f"MUS_2D_Static, 10 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\with_vibration\pitch", "MUS_2D_10_pitch_clean.png"))
 
+
 #%%  Filter and plot ALT 2
 section_name = "MDS_2D_Static_filtered"
 
-static_coeff_MUS_2D_5_filtered, static_coeff_MUS_2D_8_filtered, static_coeff_MUS_2D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_2D_5, static_coeff_2=static_coeff_MUS_2D_8, static_coeff_3=static_coeff_MUS_2D_10, threshold=0.019, threshold_low=[0.05,0.025,0.005],threshold_med = [0.04,0.03,0.02],threshold_high=[0.02,0.04,0.01],single=False)
+static_coeff_MUS_2D_5_filtered, static_coeff_MUS_2D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_2D_5, static_coeff_2=static_coeff_MUS_2D_10, threshold=0.04, threshold_low=[0.05,0.025,0.005],threshold_high=[0.05,0.025,0.005],single=False)
 
 
 plot_static_coeff_summary(static_coeff_MUS_2D_5_filtered, section_name, 5, mode="decks", upwind_in_rig=True)
-plot_static_coeff_summary(static_coeff_MUS_2D_8_filtered, section_name, 8, mode="decks", upwind_in_rig=True)
+#plot_static_coeff_summary(static_coeff_MUS_2D_8_filtered, section_name, 8, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_2D_10_filtered, section_name, 10, mode="decks", upwind_in_rig=True)
 
 
@@ -2167,11 +2167,11 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 #%%  Filter and plot ALT 2
 section_name = "MDS_3D_Static_filtered"
 
-static_coeff_MUS_3D_5_filtered, static_coeff_MUS_3D_8_filtered, static_coeff_MUS_3D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_3D_5, static_coeff_2=static_coeff_MUS_3D_8, static_coeff_3=static_coeff_MUS_3D_10, threshold=0.019, threshold_low=[0.05,0.025,0.005],threshold_med = [0.04,0.03,0.02],threshold_high=[0.02,0.04,0.01],single=False)
+static_coeff_MUS_3D_5_filtered, static_coeff_MUS_3D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_3D_5, static_coeff_2=static_coeff_MUS_3D_10, threshold=0.05, threshold_low=[0.04,0.03,0.005],threshold_high=[0.04,0.03,0.005],single=False)
 
 
 plot_static_coeff_summary(static_coeff_MUS_3D_5_filtered, section_name, 5, mode="decks", upwind_in_rig=True)
-plot_static_coeff_summary(static_coeff_MUS_3D_8_filtered, section_name, 8, mode="decks", upwind_in_rig=True)
+#plot_static_coeff_summary(static_coeff_MUS_3D_8_filtered, section_name, 8, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_3D_10_filtered, section_name, 10, mode="decks", upwind_in_rig=True)
 
 
@@ -3041,6 +3041,7 @@ alpha_high, coeff_plot_up_high, coeff_plot_down_high=w3t._scoff.filter(static_co
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_high,coeff_plot_up_high,coeff_plot_down_high, upwind_in_rig=True, threshold=0.05, scoff="pitch")
 plt.suptitle(f"MUS_4D_Static, 10 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\pitch", "MDS_4D_10_pitch_clean.png"))
+
 
 
 #%%  Filter and plot ALT 2
@@ -4582,18 +4583,118 @@ plt.gcf().suptitle(f"5D: MDS  ",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MDS_5D_pitch_filt_mean.png"))
 
 ##########################################################################333
+#%% Save arrays to .npy files
+#numpy array
+file_path = ".\\Arrays_Static_coeff\\"
 
-# static_coeff_list = [static_coeff_1D, static_coeff_2D, static_coeff_3D, static_coeff_4D]
-# titles = ["1D", "2D", "3D", "4D"]
+#Dictionary of arrays to save
+arrays_to_save={
+    "cd_single_high": static_coeff_single_9_filtered.plot_drag_mean( mode="single", upwind_in_rig=True)[0],
+    "cd_alpha_single_high": static_coeff_single_9_filtered.plot_drag_mean( mode="single", upwind_in_rig=True)[1],
+    "cl_single_high": static_coeff_single_9.plot_lift_mean( mode="single", upwind_in_rig=True)[0],
+    "cl_alpha_single_high": static_coeff_single_9.plot_lift_mean( mode="single", upwind_in_rig=True)[1],
+    "cm_single_high": static_coeff_single_9.plot_pitch_mean( mode="single", upwind_in_rig=True)[0],
+    "cm_alpha_single_high": static_coeff_single_9.plot_pitch_mean( mode="single", upwind_in_rig=True)[1],
 
-# fig, axs = plt.subplots(nrows=1, ncols=4, figsize=(20, 5), sharex=True, sharey=True)
+    "cd_1D_mds_high_upwind_deck": static_coeff_MDS_1D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[0],
+    "cd_1D_mds_high_downwind_deck": static_coeff_MDS_1D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[1],
+    "cd_alpha_1D_mds_high": static_coeff_MDS_1D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[2],
+    "cl_1D_mds_high_upwind_deck": static_coeff_MDS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[0],
+    "cl_1D_mds_high_downwind_deck": static_coeff_MDS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[1],
+    "cl_alpha_1D_mds_high": static_coeff_MDS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[2],
+    "cm_1D_mds_high_upwind_deck": static_coeff_MDS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[0],
+    "cm_1D_mds_high_downwind_deck": static_coeff_MDS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[1],
+    "cm_alpha_1D_mds_high": static_coeff_MDS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[2],
 
-# for i, static_coeff in enumerate(static_coeff_list):
-#     static_coeff.plot_drag(mode="decks", upwind_in_rig=True, ax=axs[i])
-#     axs[i].set_title(f"Gap {titles[i]}")
+    "cd_1D_mus_high_upwind_deck": static_coeff_MUS_1D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[0],
+    "cd_1D_mus_high_downwind_deck": static_coeff_MUS_1D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[1],
+    "cd_alpha_1D_mus_high": static_coeff_MUS_1D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[2],
+    "cl_1D_mus_high_upwind_deck": static_coeff_MUS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[0],
+    "cl_1D_mus_high_downwind_deck": static_coeff_MUS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[1],
+    "cl_alpha_1D_mus_high": static_coeff_MUS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[2],
+    "cm_1D_mus_high_upwind_deck": static_coeff_MUS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[0],
+    "cm_1D_mus_high_downwind_deck": static_coeff_MUS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[1],
+    "cm_alpha_1D_mus_high": static_coeff_MUS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[2],
 
-# fig.suptitle("Drag coefficient comparison", fontsize=18)
-# plt.tight_layout()
-# plt.subplots_adjust(top=0.88)  # juster plass for suptitle
-# plt.savefig("overview_drag_subplots.png", dpi=300)
-# plt.show()
+    "cd_2D_mds_high_upwind_deck": static_coeff_MDS_2D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[0],
+    "cd_2D_mds_high_downwind_deck": static_coeff_MDS_2D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[1],
+    "cd_alpha_2D_mds_high": static_coeff_MDS_2D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[2],
+    "cl_2D_mds_high_upwind_deck": static_coeff_MDS_2D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[0],
+    "cl_2D_mds_high_downwind_deck": static_coeff_MDS_2D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[1],
+    "cl_alpha_2D_mds_high": static_coeff_MDS_2D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[2],
+    "cm_2D_mds_high_upwind_deck": static_coeff_MDS_2D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[0],
+    "cm_2D_mds_high_downwind_deck": static_coeff_MDS_2D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[1],
+    "cm_alpha_2D_mds_high": static_coeff_MDS_2D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[2],
+
+    "cd_2D_mus_high_upwind_deck": static_coeff_MUS_2D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[0],
+    "cd_2D_mus_high_downwind_deck": static_coeff_MUS_2D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[1],
+    "cd_alpha_2D_mus_high": static_coeff_MUS_2D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[2],
+    "cl_2D_mus_high_upwind_deck": static_coeff_MUS_2D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[0],
+    "cl_2D_mus_high_downwind_deck": static_coeff_MUS_2D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[1],
+    "cl_alpha_2D_mus_high": static_coeff_MUS_2D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[2],
+    "cm_2D_mus_high_upwind_deck": static_coeff_MUS_2D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[0],
+    "cm_2D_mus_high_downwind_deck": static_coeff_MUS_2D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[1],
+    "cm_alpha_2D_mus_high": static_coeff_MUS_2D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[2],
+
+    "cd_3D_mds_high_upwind_deck": static_coeff_MDS_3D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[0],
+    "cd_3D_mds_high_downwind_deck": static_coeff_MDS_3D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[1],
+    "cd_alpha_3D_mds_high": static_coeff_MDS_3D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[2],
+    "cl_3D_mds_high_upwind_deck": static_coeff_MDS_3D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[0],
+    "cl_3D_mds_high_downwind_deck": static_coeff_MDS_3D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[1],
+    "cl_alpha_3D_mds_high": static_coeff_MDS_3D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[2],
+    "cm_3D_mds_high_upwind_deck": static_coeff_MDS_3D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[0],
+    "cm_3D_mds_high_downwind_deck": static_coeff_MDS_3D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[1],
+    "cm_alpha_3D_mds_high": static_coeff_MDS_3D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[2],
+
+    "cd_3D_mus_high_upwind_deck": static_coeff_MUS_3D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[0],
+    "cd_3D_mus_high_downwind_deck": static_coeff_MUS_3D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[1],
+    "cd_alpha_3D_mus_high": static_coeff_MUS_3D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[2],
+    "cl_3D_mus_high_upwind_deck": static_coeff_MUS_3D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[0],
+    "cl_3D_mus_high_downwind_deck": static_coeff_MUS_3D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[1],
+    "cl_alpha_3D_mus_high": static_coeff_MUS_3D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[2],
+    "cm_3D_mus_high_upwind_deck": static_coeff_MUS_3D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[0],
+    "cm_3D_mus_high_downwind_deck": static_coeff_MUS_3D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[1],
+    "cm_alpha_3D_mus_high": static_coeff_MUS_3D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[2],
+
+    "cd_4D_mds_high_upwind_deck": static_coeff_MDS_4D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[0],
+    "cd_4D_mds_high_downwind_deck": static_coeff_MDS_4D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[1],
+    "cd_alpha_4D_mds_high": static_coeff_MDS_4D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[2],
+    "cl_4D_mds_high_upwind_deck": static_coeff_MDS_4D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[0],
+    "cl_4D_mds_high_downwind_deck": static_coeff_MDS_4D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[1],
+    "cl_alpha_4D_mds_high": static_coeff_MDS_4D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[2],
+    "cm_4D_mds_high_upwind_deck": static_coeff_MDS_4D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[0],
+    "cm_4D_mds_high_downwind_deck": static_coeff_MDS_4D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[1],
+    "cm_alpha_4D_mds_high": static_coeff_MDS_4D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[2],
+
+    "cd_4D_mus_high_upwind_deck": static_coeff_MUS_4D_10.plot_drag_mean( mode="decks", upwind_in_rig=True)[0],
+    "cd_4D_mus_high_downwind_deck": static_coeff_MUS_4D_10.plot_drag_mean( mode="decks", upwind_in_rig=True)[1],
+    "cd_alpha_4D_mus_high": static_coeff_MUS_4D_10.plot_drag_mean( mode="decks", upwind_in_rig=True)[2],
+    "cl_4D_mus_high_upwind_deck": static_coeff_MUS_4D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[0],
+    "cl_4D_mus_high_downwind_deck": static_coeff_MUS_4D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[1],
+    "cl_alpha_4D_mus_high": static_coeff_MUS_4D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[2],
+    "cm_4D_mus_high_upwind_deck": static_coeff_MUS_4D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[0],
+    "cm_4D_mus_high_downwind_deck": static_coeff_MUS_4D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[1],
+    "cm_alpha_4D_mus_high": static_coeff_MUS_4D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[2],
+
+    "cd_5D_mds_high_upwind_deck": static_coeff_MDS_5D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[0],
+    "cd_5D_mds_high_downwind_deck": static_coeff_MDS_5D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[1],
+    "cd_alpha_5D_mds_high": static_coeff_MDS_5D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[2],
+    "cl_5D_mds_high_upwind_deck": static_coeff_MDS_5D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[0],
+    "cl_5D_mds_high_downwind_deck": static_coeff_MDS_5D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[1],
+    "cl_alpha_5D_mds_high": static_coeff_MDS_5D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[2],
+    "cm_5D_mds_high_upwind_deck": static_coeff_MDS_5D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[0],
+    "cm_5D_mds_high_downwind_deck": static_coeff_MDS_5D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[1],
+    "cm_alpha_5D_mds_high": static_coeff_MDS_5D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[2],
+
+    "cd_5D_mus_high_upwind_deck": static_coeff_MUS_5D_10.plot_drag_mean( mode="decks", upwind_in_rig=True)[0],
+    "cd_5D_mus_high_downwind_deck": static_coeff_MUS_5D_10.plot_drag_mean( mode="decks", upwind_in_rig=True)[1],
+    "cd_alpha_5D_mus_high": static_coeff_MUS_5D_10.plot_drag_mean( mode="decks", upwind_in_rig=True)[2],
+    "cl_5D_mus_high_upwind_deck": static_coeff_MUS_5D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[0],
+    "cl_5D_mus_high_downwind_deck": static_coeff_MUS_5D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[1],
+    "cl_alpha_5D_mus_high": static_coeff_MUS_5D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[2],
+    "cm_5D_mus_high_upwind_deck": static_coeff_MUS_5D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[0],
+    "cm_5D_mus_high_downwind_deck": static_coeff_MUS_5D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[1],
+    "cm_alpha_5D_mus_high": static_coeff_MUS_5D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[2],
+    
+}
+# %%

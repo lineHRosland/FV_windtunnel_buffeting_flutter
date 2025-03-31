@@ -1506,6 +1506,8 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         for val in unique_alphas:
             idx = np.where(alpha == val)[0]
             spread = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
+            print(f"Alpha = {val}, Spread = {spread:.3f}")
+
             if spread > threshold:
                 coeff_up_plot[idx] = np.nan
         return alpha, coeff_up_plot
@@ -1563,7 +1565,7 @@ def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.2, cols=(0, 1)):
             break # tar kun første hopp (dette er greit etter å ha studert datasettenes oppførsel)
     return coeff_array
 
-def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1, threshold_low=[0.05, 0.05, 0.05], threshold_med=[None, None, None], threshold_high=[0.05, 0.05, 0.05], single=False):
+def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold_low=[0.05, 0.05, 0.05], threshold_high=[0.05, 0.05, 0.05], single=False):
     """
     Filters drag, lift, and pitch coefficients in each dataset where values deviate too much from reference at a given alpha.
     Reference is chosen based on dataset with lowest spread per alpha.
@@ -1579,24 +1581,17 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
  
     alpha, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
     #ettersom alpha er rundet opp til 1 desimal, er alle alphaer til hver tidsserie like, og man trenger egt ikke skille mellom alphaene i forsøket. Men koden blir litt mer robust.
-    drag_2, lift_2, pitch_2 = static_coeff_2.drag_coeff.copy(), static_coeff_2.lift_coeff.copy(), static_coeff_2.pitch_coeff.copy()
+    _, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
  
     drag_1_filt, lift_1_filt, pitch_1_filt = drag_1.copy(), lift_1.copy(), pitch_1.copy()
     drag_2_filt, lift_2_filt, pitch_2_filt = drag_2.copy(), lift_2.copy(), pitch_2.copy()
  
-    if not single:
-        drag_3, lift_3, pitch_3=static_coeff_3.drag_coeff.copy(), static_coeff_3.lift_coeff.copy(), static_coeff_3.pitch_coeff.copy()
-        drag_3_filt, lift_3_filt, pitch_3_filt = drag_3.copy(), lift_3.copy(), pitch_3.copy()
- 
+  
     coeff_names = ["drag", "lift", "pitch"]
     coeffs_1 = [drag_1, lift_1, pitch_1]
     coeffs_2 = [drag_2, lift_2, pitch_2]
     coeffs_1_filt = [drag_1_filt, lift_1_filt, pitch_1_filt] # I første omgang kun en kopi
     coeffs_2_filt = [drag_2_filt, lift_2_filt, pitch_2_filt]
- 
-    if not single:
-        coeffs_3 = [drag_3, lift_3, pitch_3]
-        coeffs_3_filt = [drag_3_filt, lift_3_filt, pitch_3_filt]
  
     unique_alpha = np.unique(alpha)
  
@@ -1627,7 +1622,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
  
                 nan_flags = []
 
-                for check_array, idx_array, alpha_array in zip([coeff_check1, coeff_check2], [idx1, idx2], [alpha_1, alpha_2]):
+                for check_array, idx_array, alpha_array in zip([coeff_check1, coeff_check2], [idx1, idx2], [alpha, alpha]):
                     has_nan_now = np.any(np.isnan(check_array[idx_array]))
 
                     if has_nan_now:
@@ -1668,28 +1663,23 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
  
             for i, name in enumerate(coeff_names):
                 this_threshold_low  = threshold_low[i] if threshold_low[i] is not None else threshold
-                this_threshold_med  = threshold_med[i] if threshold_med[i] is not None else threshold
                 this_threshold_high = threshold_high[i] if threshold_high[i] is not None else threshold
  
                 coeff_1 = coeffs_1[i]
                 coeff_2 = coeffs_2[i]
-                coeff_3 = coeffs_3[i]
                 coeff_1_f = coeffs_1_filt[i]
                 coeff_2_f = coeffs_2_filt[i]
-                coeff_3_f = coeffs_3_filt[i]
  
                 #UP
                 vals_up = [coeff_1[idx1, 0] + coeff_1[idx1, 1],
-                           coeff_2[idx2, 0] + coeff_2[idx2, 1],
-                           coeff_3[idx3, 0] + coeff_3[idx3, 1]]
+                           coeff_2[idx2, 0] + coeff_2[idx2, 1]]
                 #print(f"Upwind vals: {[np.mean(v) for v in vals_up]}")
                 spreads_up = [np.max(v) - np.min(v) for v in vals_up]
  
  
                 coeff_up_checks = [
                     filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[1],
-                    filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[1],
-                    filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[1],
+                    filter(static_coeff_2, this_threshold_high, scoff=name, single=False)[1],
                 ]
  
                 nan_flags_up = []
@@ -1729,7 +1719,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                 else: #Alle datasett er for dårlig
                     ref_idx_up = None
                     #print("alle datasett er for dårlig")
-                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f]):
                         coeff_array[idx, 0] = np.nan
                         coeff_array[idx, 1] = np.nan
                 
@@ -1739,7 +1729,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
     
                     #print(f"Ref mean up = {ref_mean_up:.3f}")
 
-                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f]):
                         summed = coeff_array[idx, 0] + coeff_array[idx, 1]
                         mask = np.abs(summed - ref_mean_up) > threshold
                         #print(f"Deck {i+1} — alpha = {val:.1f} — Removed {np.sum(mask)} points due to threshold filtering.")
@@ -1750,14 +1740,12 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     
                 # Same logic for downwind
                 vals_down = [coeff_1[idx1, 2] + coeff_1[idx1, 3],
-                             coeff_2[idx2, 2] + coeff_2[idx2, 3],
-                             coeff_3[idx3, 2] + coeff_3[idx3, 3]]
+                             coeff_2[idx2, 2] + coeff_2[idx2, 3]]
                 spreads_down = [np.max(v) - np.min(v) for v in vals_down]
  
                 coeff_down_checks = [
                     filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[2],
-                    filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[2],
-                    filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[2],
+                    filter(static_coeff_2, this_threshold_high, scoff=name, single=False)[2],
                 ]
  
                 nan_flags_down = []
@@ -1795,7 +1783,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                    ref_idx_down = np.argmin(spreads_down)
                 else:
                     ref_idx_down = None
-                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f]):
                        coeff_array[idx, 2] = np.nan
                        coeff_array[idx, 3] = np.nan
                  
@@ -1803,14 +1791,14 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
  
                     ref_mean_down = np.mean(vals_down[ref_idx_down])
     
-                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f]):
                         summed = coeff_array[idx, 2] + coeff_array[idx, 3]
                         mask = np.abs(summed - ref_mean_down) > threshold
                         coeff_array[idx[mask], 2] = np.nan
                         coeff_array[idx[mask], 3] = np.nan
 
     for i, alpha in enumerate([alpha, alpha] if single else [alpha, alpha, alpha]):
-        target_arrays = [coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]
+        target_arrays = [coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i]]
         for coeff_array in target_arrays:
             remove_after_jump(alpha, coeff_array, threshold_jump=1.2, cols=(0, 1))
             if not single:
@@ -1824,14 +1812,8 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
     for name, data in zip(coeff_names, [drag_2_filt, lift_2_filt, pitch_2_filt]):
         setattr(static_coeff_2_f, f"{name}_coeff", data)
  
-    if single:
-        return static_coeff_1_f, static_coeff_2_f
+    return static_coeff_1_f, static_coeff_2_f
  
-    static_coeff_3_f = copy.deepcopy(static_coeff_3)
-    for name, data in zip(coeff_names, [drag_3_filt, lift_3_filt, pitch_3_filt]):
-        setattr(static_coeff_3_f, f"{name}_coeff", data)
- 
-    return static_coeff_1_f, static_coeff_2_f, static_coeff_3_f
 
 
 
