@@ -19,13 +19,11 @@ from matplotlib import pyplot as plt
 from copy import deepcopy
 from ._exp import Experiment
 import pandas as pd
-
-
+import os
 
 __all__ = ["AerodynamicDerivatives4x4","AerodynamicDerivative4x4",]
 
-    
-   
+
 class AerodynamicDerivative4x4:
     """ 
     A class used to represent a aerodynamic derivative
@@ -52,8 +50,18 @@ class AerodynamicDerivative4x4:
     
     Methods:
     --------
-    plot()
-        plots the aerodynamic derivative        
+    value : property
+        Returns the total aerodynamic derivative (sum of contributions from both load cells).
+        
+    poly_fit(damping=True, order=2)
+        Fits a polynomial of specified order to the aerodynamic derivative vs reduced velocity data.
+        
+    plot(mode="total", conv="normal", ax=[], V=1.0, damping=True, order=2)
+        Plots the aerodynamic derivative and optionally overlays a polynomial fit.
+
+    plot2(mode="poly only", conv="normal", ax=[], damping=True, order=2, valid=True, ADlabel='i')
+        Alternative plotting method focused on polynomial fit and support for invalid results.
+    --------     
     
     """
     def __init__(self,label="x",reduced_velocities=[],ad_load_cell_a=[],ad_load_cell_b=[],mean_wind_speeds=[], frequencies=[]):
@@ -63,14 +71,10 @@ class AerodynamicDerivative4x4:
         ---------
         reduced_velocities  : float
             reduced velocities
-        ad_load_cell_1      : float
-            contribution to aerodynamic derivative from load cell 1
-        ad_load_cell_2      : float
-            contribution to aerodynamic derivative from load cell 2
-        ad_load_cell_3      : float
-            contribution to aerodynamic derivative from load cell 3
-        ad_load_cell_4      : float
-            contribution to aerodynamic derivative from load cell 4
+        ad_load_cell_a      : float
+            contribution to aerodynamic derivative from load cell a
+        ad_load_cell_b      : float
+            contribution to aerodynamic derivative from load cell b
         mean_wind_speeds    : float
             mean wind velocities
         frequencies         : float
@@ -90,135 +94,167 @@ class AerodynamicDerivative4x4:
     @property    
     def value(self):
         return self.ad_load_cell_a + self.ad_load_cell_b
-        
-        
-    def plot(self, mode = "all", conv = "normal", ax=[], poly_coeff=[], k_range=[]):
-        """ plots the aerodynamic derivative
-        
-        The method plots the aerodynamic derivative as function of the mean 
-        wind speed. Four optimal modes are abailable.
-        
-        parameters:
-        ----------
-        mode : str, optional
-            selects the plot mode
-        conv: str, optional
-            selects which convention to use when plotting
-        fig : pyplot figure instance    
-        ---------        
-        
+    
+    def poly_fit(self, damping=True, order=2):
         """
-        #Poly fit
-        p = np.poly1d(poly_coeff)
-        V = np.linspace(1/k_range[1], 1/k_range[0], 200)
-        y = p(V)
-        #print(V,y)
+        Fits a polynomial to the aerodynamic derivative data.
 
-        print(self.reduced_velocities.shape)
+        Parameters:
+        -----------
+        damping : bool, optional
+            Indicates whether the AD corresponds to a damping term (True) or a stiffness term (False).
+            (Currently used for potential future differentiation.)
 
-        if bool(ax) == False:
+        order : int, optional
+            Order of the polynomial to fit.
+
+        Returns:
+        --------
+        poly_coeff : np.ndarray or None
+            Polynomial coefficients of the fitted curve.
+
+        v_range : np.ndarray or None
+            Min and max reduced velocity used in the fitting.
+        """
+        # Initialize arrays to store aerodynamic derivatives and reduced velocities
+        ads = self.value
+        vreds = self.reduced_velocities
+
+        # Proceed only if data is available
+        if ads.size > 0:
+            poly_coeff = np.zeros(np.max(order) + 1)
+            v_range = np.zeros(2)
+
+            # Store range of reduced velocities
+            v_range[0] = np.min(vreds)
+            v_range[1] = np.max(vreds)
+
+            # Fit a polynomial to the data
+            poly_coeff = np.polyfit(vreds, ads, order)
+
+            return poly_coeff, v_range
+        else:
+            # Return None if there’s no data to fit
+            return None, None
+
+    
+
+    def plot(self, mode="total", conv="normal", ax=[], damping=True, order=2):
+        """
+        Plots the aerodynamic derivative as a function of reduced velocity,
+        with optional polynomial fitting overlay.
+
+        Parameters:
+        -----------
+        mode : str, optional
+            Selects the plotting mode: "total" for raw data only, or "total+poly" to include polynomial fit.
+
+        conv : str, optional
+            Convention flag for how data is interpreted (currently unused).
+
+        ax : matplotlib.axes.Axes, optional
+            Axes object to plot on. If not provided, a new figure and axes are created.
+
+        damping : bool, optional
+            Indicates whether the AD is associated with damping (True) or stiffness (False).
+
+        order : int, optional
+            Order of the polynomial fit if enabled.
+        """
+        # Fit a polynomial to the data
+        poly_coeff, v_range = self.poly_fit(damping=damping, order=order)
+
+        # If no data is available, use placeholders
+        if poly_coeff is None:
+            V = 0
+            y = 0
+        else:
+            # Evaluate polynomial over a fine velocity range
+            p = np.poly1d(poly_coeff)
+            V = np.linspace(v_range[0], v_range[1], 200)
+            y = p(V)
+
+        # If no axis is provided, create a new figure and axis
+        if not bool(ax):
             fig = plt.figure()
-            ax = fig.add_subplot(1,1,1)
-        
-        
-        if conv == "normal":
-            if mode == "all":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4, "o", label="Total")
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1, "o", label="Load cell 1", alpha = 0.5)
-                ax.plot(self.reduced_velocities,self.ad_load_cell_2, "o", label="Load cell 2", alpha = 0.5)
-                ax.plot(self.reduced_velocities,self.ad_load_cell_3, "o", label="Load cell 3", alpha = 0.5)
-                ax.plot(self.reduced_velocities,self.ad_load_cell_4, "o", label="Load cell 4", alpha = 0.5)
-                ax.set_ylabel(("$" + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.legend()
-                ax.grid(True)
-            
-            elif mode == "decks":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4, "o", label="Total")
-                ax.plot(self.reduced_velocities,self.ad_load_cell_1 + self.ad_load_cell_2, "o", label="Upwind deck", alpha = 0.5)
-                ax.plot(self.reduced_velocities,self.ad_load_cell_3 + self.ad_load_cell_4, "o", label="Downwind deck", alpha = 0.5)
-                ax.set_ylabel(("$" + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.grid(True)
-                ax.legend()
+            ax = fig.add_subplot(1, 1, 1)
 
-            #Eneste plottingen som er endret    
-            elif mode == "total":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
-                ax.set_ylabel(("$" + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.grid(True)
+        # Plot total measured aerodynamic derivative
+        if mode == "total":
+            ax.plot(self.reduced_velocities, self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
+            ax.set_ylabel(f"${self.label}$")
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.grid(True)
 
-            elif mode == "total+poly":
-                ax.plot(self.reduced_velocities,self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
-                ax.plot(V, y)
-                ax.set_ylabel(("$" + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.grid(True)            
-                
-        elif conv == "zasso" and len(self.reduced_velocities) != 0:
-            damping_ads = ["c_{z_1z_1}^*", "c_{z_1\\theta_1}^*", "c_{z_1z_2}^*", "c_{z_1\\theta_2}^*", 
-                        "c_{\\theta_1z_1}^*", "c_{\\theta_1\\theta_1}^*", "c_{\\theta_1z_2}^*", "c_{\\theta_1\\theta_2}^*",
-                        "c_{z_2z_1}^*", "c_{z_2\\theta_1}^*", "c_{z_2z_2}^*", "c_{z_2\\theta_2}^*", 
-                        "c_{\\theta_2z_1}^*", "c_{\\theta_2\\theta_1}^*", "c_{\\theta_2z_2}^*", "c_{\\theta_2\\theta_2}^*"]
+        # Plot both total values and polynomial fit
+        elif mode == "total+poly":
+            ax.plot(self.reduced_velocities, self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
+            ax.plot(V, y, label="Poly Fit")
+            ax.set_ylabel(f"${self.label}$")
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.grid(True)
 
-            stiffness_ads = ["k_{z_1z_1}^*", "k_{z_1\\theta_1}^*", "k_{z_1z_2}^*", "k_{z_1\\theta_2}^*", 
-                            "k_{\\theta_1z_1}^*", "k_{\\theta_1\\theta_1}^*", "k_{\\theta_1z_2}^*", "k_{\\theta_1\\theta_2}^*",
-                            "k_{z_2z_1}^*", "k_{z_2\\theta_1}^*", "k_{z_2z_2}^*", "k_{z_2\\theta_2}^*", 
-                            "k_{\\theta_2z_1}^*", "k_{\\theta_2\\theta_1}^*", "k_{\\theta_2z_2}^*", "k_{\\theta_2\\theta_2}^*"]
-             
-            if self.label in damping_ads:
-                factor = 1.0/self.reduced_velocities
-                K_label = "K"
-            elif self.label in stiffness_ads:
-                factor = 1.0/self.reduced_velocities**2
-                K_label = "K^2"
-            else:
-                print("ERROR")
 
-            
-            if mode == "all":
-                ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4), "o", label="Total")
-                ax.plot(self.reduced_velocities,factor*self.ad_load_cell_1, "o", label="Load cell 1", alpha = 0.5)
-                ax.plot(self.reduced_velocities,factor*self.ad_load_cell_2, "o", label="Load cell 2", alpha = 0.5)
-                ax.plot(self.reduced_velocities,factor*self.ad_load_cell_3, "o", label="Load cell 3", alpha = 0.5)
-                ax.plot(self.reduced_velocities,factor*self.ad_load_cell_4, "o", label="Load cell 4", alpha = 0.5)
-                ax.set_ylabel(("$" + K_label + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.legend()
-                ax.grid(True)
-            
-            elif mode == "decks":
-                ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4), "o", label="Total")
-                ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_1 + self.ad_load_cell_2), "o", label="Upwind deck", alpha = 0.5)
-                ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_3 + self.ad_load_cell_4), "o", label="Downwind deck", alpha = 0.5)
-                ax.set_ylabel(("$" + K_label + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.legend()
-                ax.grid(True)
-                
-            elif mode == "total":
-                ax.plot(self.reduced_velocities,factor*(self.ad_load_cell_1 + self.ad_load_cell_2+ self.ad_load_cell_3 + self.ad_load_cell_4), "o", label="Total")
-                ax.set_ylabel(("$" + K_label + self.label + "$"))
-                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-                ax.grid(True)
-        
-        #plt.tight_layout()
+    def plot2(self, mode="poly only", conv="normal", ax=[], damping=True, order=2, label='i'):
+        """
+        Plots only the polynomial fit of the aerodynamic derivative.
+
+        Parameters:
+        -----------
+        mode : str, optional
+            Plotting mode: "poly only" is the default and only supported option.
+
+        conv : str, optional
+            Convention flag for how data is interpreted (currently unused).
+
+        ax : matplotlib.axes.Axes, optional
+            Axes object to plot on. If not provided, a new figure and axes are created.
+
+        damping : bool, optional
+            Indicates whether the AD is associated with damping (True) or stiffness (False).
+
+        order : int, optional
+            Order of the polynomial fit.
+
+        label : str, optional
+            Label to be used in the plot legend (useful for comparisons).
+        """
+        # Fit a polynomial to the data
+        poly_coeff, v_range = self.poly_fit(damping=damping, order=order)
+
+        if poly_coeff is None:
+            V = 0
+            y = 0
+        else:
+            # Evaluate polynomial over reduced velocity range
+            p = np.poly1d(poly_coeff)
+            V = np.linspace(v_range[0], v_range[1], 200)
+            y = p(V)
+
+        # Create plot if no axes were provided
+        if not bool(ax):
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1)
+
+        # Plot only the polynomial fit
+        if mode == "poly only":
+            ax.plot(V, y, label=f'{label}')
+            ax.set_ylabel(f"${self.label}$")
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.legend()
+            ax.grid(True)
                 
 
 class AerodynamicDerivatives4x4:
     """
-    A class used to represent all aerodynamic derivatives for a 3 dof motion
+    A class used to represent all aerodynamic derivatives for a 4 dof motion
     
     parameters:
     ----------
-    p1...p6 : obj
-        aerodynamic derivatives related to the horizontal self-excited force
-    h1...h6 : obj
-        aerodynamic derivatives related to the vertical self-excited force
-    a1...a6 : obj
-        aerodynamic derivative related to the pitchingmoment
-    ---------   
+    c_z1z1 ... c_theta2theta2 : obj
+        aerodynamic derivatives related to the self-excited force asociated with damping
+    k_z1z1 ... k_theta2theta2 : obj
+        aerodynamic derivatives related to the self-excited force asociated with stiffness
     
     methods:
     -------
@@ -245,15 +281,12 @@ class AerodynamicDerivatives4x4:
         """
         parameters:
         ----------
-        p1...p6 : obj
-         aerodynamic derivatives related to the horizontal self-excited force
-        h1...h6 : obj
-         aerodynamic derivatives related to the vertical self-excited force
-        a1...a6 : obj
-         aerodynamic derivative related to the pitchingmoment
+        c_z1z1 ... c_theta2theta2 : obj
+            aerodynamic derivatives related to the self-excited force asociated with damping
+        k_z1z1 ... k_theta2theta2 : obj
+            aerodynamic derivatives related to the self-excited force asociated with stiffness
         ---------
         """
-        
         
         self.c_z1z1 = c_z1z1 or AerodynamicDerivative4x4(label="c_{z_1z_1}^*")
         self.c_z1theta1 = c_z1theta1 or AerodynamicDerivative4x4(label="c_{z_1\\theta_1}^*")
@@ -296,129 +329,142 @@ class AerodynamicDerivatives4x4:
         self.k_theta2theta2 = k_theta2theta2 or AerodynamicDerivative4x4(label="k_{\\theta_2\\theta_2}^*")
 
 
-    
-        
     @classmethod
-    def fromWTT(cls,experiment_in_still_air,experiment_in_wind,section_width, section_length_1, section_length_2, upstream_in_rig = True, filter_order = 6, cutoff_frequency = 7):
-        """ obtains an instance of the class Aerodynamic derivatives from a wind tunnel experiment
-        
-        parameters:
-        ----------
-        experiment_in_still_air : instance of the class experiment
-        experiment_in_wind   : instance of the class experiment
-        section_width        : width of the bridge deck section model
-        section_length       : length of the section model
-        ---------
-        
-        returns:
-        --------
-        an instance of the class AerodynamicDerivatives
-        to instances of the class Experiment, one for model predictions and one for data used to fit the model
-        
-        
+    def fromWTT(cls, experiment_in_still_air, experiment_in_wind, section_width, section_length_1, section_length_2, upstream_in_rig=True, filter_order=6, cutoff_frequency=7):
         """
+        Creates an instance of AerodynamicDerivatives4x4 from wind tunnel experiments.
+
+        Parameters:
+        ----------
+        experiment_in_still_air : Experiment
+            Experiment object containing test data in still air.
+        experiment_in_wind : Experiment
+            Experiment object containing test data in wind.
+        section_width : float
+            Width of the bridge deck section model.
+        section_length_1 : float
+            Length of the upstream section model.
+        section_length_2 : float
+            Length of the downstream section model.
+        upstream_in_rig : bool, optional
+            Indicates whether the upstream section is placed in the rig (default is True).
+        filter_order : int, optional
+            Order of the Butterworth filter used for signal processing (default is 6).
+        cutoff_frequency : float, optional
+            Cutoff frequency of the Butterworth filter (default is 7 Hz).
+
+        Returns:
+        --------
+        tuple:
+            - An instance of AerodynamicDerivatives4x4 containing identified coefficients.
+            - An Experiment object for model predictions.
+            - An Experiment object with wind-only forces (still-air subtracted).
+        """
+
+        # Align wind experiment with still air
         experiment_in_wind.align_with(experiment_in_still_air)
+        
+        # Copy and subtract still-air forces from wind test to isolate aerodynamic forces
         experiment_in_wind_still_air_forces_removed = deepcopy(experiment_in_wind)
         experiment_in_wind_still_air_forces_removed.substract(experiment_in_still_air)
+
+        # Get harmonic test intervals
         starts, stops = experiment_in_wind_still_air_forces_removed.harmonic_groups()
-        
-        
+
+        # Preallocate arrays for output data
         frequencies_of_motion = np.zeros(len(starts))
         reduced_velocities = np.zeros(len(starts))
         mean_wind_speeds = np.zeros(len(starts))
-        
-        normalized_coefficient_matrix = np.zeros((2,3,len(starts),4))
-        
-        forces_predicted_by_ads = np.zeros((experiment_in_wind_still_air_forces_removed.forces_global_center.shape[0],24))
-        #model_forces = np.zeros((experiment_in_wind_still_air_forces_removed.forces_global_center.shape[0],3))
-        
-        # loop over all single harmonic test in the time series
-        # 6 single harmonic tests are performed for each motion type
-        for k in range(len(starts)):           
 
-            sampling_frequency = 1/(experiment_in_still_air.time[1]- experiment_in_still_air.time[0])
-       
-            sos = spsp.butter(filter_order,cutoff_frequency, fs=sampling_frequency, output="sos")
-           
-            #r_x,1 r_z,1 r_theta,1 (bru i rigg, avlest av riggen)
-            motions_bridge_in_rig = experiment_in_wind_still_air_forces_removed.motion 
+        # Shape: [damping/stiffness, force type, test index, load cell index]
+        normalized_coefficient_matrix = np.zeros((2, 3, len(starts), 4))
 
-            #r_x,2 r_z,2 r_theta,2 (bru på vegg, ingen bevegelser)
+        # Storage for predicted forces
+        forces_predicted_by_ads = np.zeros((experiment_in_wind_still_air_forces_removed.forces_global_center.shape[0], 24))
+
+        # Loop over all single harmonic tests in the time series
+        for k in range(len(starts)):
+            # Compute sampling frequency based on time step
+            sampling_frequency = 1 / (experiment_in_still_air.time[1] - experiment_in_still_air.time[0])
+
+            # Design Butterworth filter
+            sos = spsp.butter(filter_order, cutoff_frequency, fs=sampling_frequency, output="sos")
+
+            # Motions of the section in the rig: [r_x1, r_z1, r_theta1]
+            motions_bridge_in_rig = experiment_in_wind_still_air_forces_removed.motion
+
+            # Motions of the section on the wall: [r_x2, r_z2, r_theta2] (assumed zero)
             motions_bridge_on_wall = np.zeros_like(motions_bridge_in_rig)
 
-            #r_x,1 r_z,1 r_theta,1 r_x,2 r_z,2 r_theta,2
+            # Full motion vector: [r_x1, r_z1, r_theta1, r_x2, r_z2, r_theta2]
             motions = np.hstack((motions_bridge_in_rig, motions_bridge_on_wall))
-            
-            motions = spsp.sosfiltfilt(sos,motions,axis=0)
 
-            #r_x,1\dot r_z,1\dot r_theta,1\dot r_x,2\dot r_z,2\dot r_theta,2\dot
-            time_derivative_motions = np.vstack((np.array([0,0,0,0,0,0]),np.diff(motions,axis=0)))*sampling_frequency
-            
+            # Filter the motions
+            motions = spsp.sosfiltfilt(sos, motions, axis=0)
+
+            # Compute time derivatives of the motions
+            time_derivative_motions = np.vstack((np.array([0, 0, 0, 0, 0, 0]), np.diff(motions, axis=0))) * sampling_frequency
+
+            # Identify motion type (0 = horizontal, 1 = vertical, 2 = torsional)
             motion_type = experiment_in_wind_still_air_forces_removed.motion_type()
 
-            #print("Motion type: " + str(motion_type))
-            fourier_amplitudes = np.fft.fft(motions[starts[k]:stops[k],motion_type]-np.mean(motions[starts[k]:stops[k],motion_type]))
-            
-            
-            time_step = experiment_in_wind_still_air_forces_removed.time[1]- experiment_in_wind_still_air_forces_removed.time[0]
-            
+            # Perform FFT to extract motion frequency
+            fourier_amplitudes = np.fft.fft(motions[starts[k]:stops[k], motion_type] - np.mean(motions[starts[k]:stops[k], motion_type]))
+            time_step = experiment_in_wind_still_air_forces_removed.time[1] - experiment_in_wind_still_air_forces_removed.time[0]
+            frequencies = np.fft.fftfreq(len(fourier_amplitudes), time_step)
+
+            # Find dominant motion frequency
             peak_index = np.argmax(np.abs(fourier_amplitudes[0:int(len(fourier_amplitudes)/2)]))
-            
-            frequencies = np.fft.fftfreq(len(fourier_amplitudes),time_step)
-            
             frequency_of_motion = frequencies[peak_index]
             frequencies_of_motion[k] = frequency_of_motion
-         
-            #X-matrise, men bare det som ikke er null --> r_i\dot r_i, i er motion type for testen som behandles
-            regressor_matrix = np.vstack((time_derivative_motions[starts[k]:stops[k],motion_type],motions[starts[k]:stops[k],motion_type])).T
 
-            #Pseudoinvers av X-matrise  --> X^+           
-            pseudo_inverse_regressor_matrix = spla.pinv(regressor_matrix) 
-            selected_forces = np.array([0,2,4])
-            
+            # Regressor matrix: [motion_dot, motion] for the active motion
+            regressor_matrix = np.vstack((time_derivative_motions[starts[k]:stops[k], motion_type], motions[starts[k]:stops[k], motion_type])).T
+
+            # Compute pseudoinverse of the regressor matrix (X^+)
+            pseudo_inverse_regressor_matrix = spla.pinv(regressor_matrix)
+            selected_forces = np.array([0, 2, 4])  # q_x, q_z, q_theta indices per load cell
+
+            # Compute mean wind speed in current segment
             mean_wind_speed = np.mean(experiment_in_wind_still_air_forces_removed.wind_speed[starts[k]:stops[k]])
             mean_wind_speeds[k] = mean_wind_speed
-                
-            reduced_frequency  = frequency_of_motion*2*np.pi*section_width/mean_wind_speed
-            
-            reduced_velocities[k] = 1/reduced_frequency
 
-            section_length = 0
-            
-            #model_forces = np.zeros((experiment_in_wind_still_air_forces_removed.forces_global_center.shape))
-            
-            # Loop over all load cells
+            # Compute reduced frequency and reduced velocity
+            reduced_frequency = frequency_of_motion * 2 * np.pi * section_width / mean_wind_speed
+            reduced_velocities[k] = 1 / reduced_frequency
+
+            # Loop through each load cell (4 total)
             for m in range(4):
-                if m == 0 or m == 1:
-                    section_length = section_length_1
-                elif m == 2 or m == 3:
-                    section_length = section_length_2
+                section_length = section_length_1 if m in [0, 1] else section_length_2
 
-                #q_x, q_z, q_theta for the cell being considered
-                forces = experiment_in_wind_still_air_forces_removed.forces_global_center[starts[k]:stops[k],selected_forces + 6*m]
-                forces_mean_wind_removed = forces - np.mean(experiment_in_wind_still_air_forces_removed.forces_global_center[0:400,selected_forces + 6*m],axis= 0)
+                # Extract forces for current load cell
+                forces = experiment_in_wind_still_air_forces_removed.forces_global_center[starts[k]:stops[k], selected_forces + 6 * m]
 
-                #E = X^+ * q
+                # Remove mean wind force component
+                forces_mean_wind_removed = forces - np.mean(experiment_in_wind_still_air_forces_removed.forces_global_center[0:400, selected_forces + 6 * m], axis=0)
+
+                # Compute raw coefficients: E = X^+ * q
                 coefficient_matrix = pseudo_inverse_regressor_matrix @ forces_mean_wind_removed
-                                
-                #Normalisering av koeffiesienter --> løse ut c^* og k^* fra E-matrisen
-                normalized_coefficient_matrix[:,:,k,m] = np.copy(coefficient_matrix)
-                normalized_coefficient_matrix[0,:,k,m] = normalized_coefficient_matrix[0,:,k,m]*2  / experiment_in_wind_still_air_forces_removed.air_density / mean_wind_speed / reduced_frequency / section_width / section_length
-                normalized_coefficient_matrix[1,:,k,m] = normalized_coefficient_matrix[1,:,k,m]*2  /experiment_in_wind_still_air_forces_removed.air_density / mean_wind_speed**2 / reduced_frequency**2 /section_length
-                normalized_coefficient_matrix[:,2,k,m] = normalized_coefficient_matrix[:,2,k,m]/section_width
-                
-                if motion_type ==2:
-                    normalized_coefficient_matrix[:,:,k,m] = normalized_coefficient_matrix[:,:,k,m]/section_width 
-                
-                forces_predicted_by_ads[starts[k]:stops[k],selected_forces + 6*m] = forces_predicted_by_ads[starts[k]:stops[k],selected_forces + 6*m]  + regressor_matrix @ coefficient_matrix + np.mean(experiment_in_wind_still_air_forces_removed.forces_global_center[0:400,selected_forces + 6*m],axis= 0)
-            
-               
-        # Make Experiment object for simulation of model
+
+                # Normalize coefficients to obtain c* and k*
+                normalized_coefficient_matrix[:, :, k, m] = coefficient_matrix
+                normalized_coefficient_matrix[0, :, k, m] *= 2 / experiment_in_wind_still_air_forces_removed.air_density / mean_wind_speed / reduced_frequency / section_width / section_length
+                normalized_coefficient_matrix[1, :, k, m] *= 2 / experiment_in_wind_still_air_forces_removed.air_density / mean_wind_speed**2 / reduced_frequency**2 / section_length
+                normalized_coefficient_matrix[:, 2, k, m] /= section_width
+
+                if motion_type == 2:
+                    # Special case: normalize all terms by section width for torsional tests
+                    normalized_coefficient_matrix[:, :, k, m] /= section_width
+
+                # Compute predicted forces from the model and add wind mean
+                forces_predicted_by_ads[starts[k]:stops[k], selected_forces + 6 * m] += regressor_matrix @ coefficient_matrix + np.mean(experiment_in_wind_still_air_forces_removed.forces_global_center[0:400, selected_forces + 6 * m], axis=0)
+
+        # Construct Experiment object for model prediction based on fitted aerodynamic model
         obj1 = experiment_in_wind_still_air_forces_removed
         obj2 = experiment_in_still_air
         model_prediction = Experiment(obj1.name, obj1.time, obj1.temperature, obj1.air_density, obj1.wind_speed,[],forces_predicted_by_ads,obj2.motion)
                  
-        
+        # Instantiate empty derivative objects
         c_z1z1 = AerodynamicDerivative4x4()
         c_z1theta1 = AerodynamicDerivative4x4()
         c_z1z2 = AerodynamicDerivative4x4()
@@ -537,7 +583,7 @@ class AerodynamicDerivatives4x4:
         return cls(c_z1z1, c_z1theta1, c_z1z2, c_z1theta2, c_theta1z1, c_theta1theta1, c_theta1z2, c_theta1theta2, c_z2z1, c_z2theta1, c_z2z2, c_z2theta2, c_theta2z1, c_theta2theta1, c_theta2z2, c_theta2theta2, k_z1z1, k_z1theta1, k_z1z2, k_z1theta2, k_theta1z1, k_theta1theta1, k_theta1z2, k_theta1theta2, k_z2z1, k_z2theta1, k_z2z2, k_z2theta2, k_theta2z1, k_theta2theta1, k_theta2z2, k_theta2theta2), model_prediction, experiment_in_wind_still_air_forces_removed
     
     @classmethod
-    def from_poly_k(cls,poly_k,k_range, vred):
+    def from_poly_k(cls,poly_k, k_range, vred):
         vred[vred==0] = 1.0e-10
         uit_step = lambda k,kc: 1./(1 + np.exp(-2*20*(k-kc)))
         fit = lambda p,k,k1c,k2c : np.polyval(p,k)*uit_step(k,k1c)*(1-uit_step(k,k2c)) + np.polyval(p,k1c)*(1-uit_step(k,k1c)) + np.polyval(p,k2c)*(uit_step(k,k2c))
@@ -569,16 +615,21 @@ class AerodynamicDerivatives4x4:
              
         return cls(ads[0],ads[1],ads[2],ads[3],ads[4],ads[5],ads[6],ads[7],ads[8],ads[9],ads[10],ads[11],ads[12],ads[13],ads[14],ads[15],ads[16],ads[17],ads[18],ads[19],ads[20],ads[21],ads[22],ads[23],ads[24],ads[25],ads[26],ads[27],ads[28],ads[29],ads[30],ads[31])
     
-      
-    
     def append(self,ads):
-        """ appends and instance of AerodynamicDerivatives to self
-        
-        Arguments:
-        ----------
-        ads         : an instance of the class AerodynamicDerivatives
-        
         """
+        Appends the aerodynamic data from another AerodynamicDerivatives4x4 instance to the current instance.
+
+        This method combines the time-series data and test parameters (load cell measurements, frequencies,
+        mean wind speeds, and reduced velocities) from a second `AerodynamicDerivatives2x2` object into the 
+        corresponding attributes of the current object. The data from each of the 32 aerodynamic derivatives 
+        (16 damping terms and 16 stiffness terms) is concatenated element-wise.
+
+        Parameters:
+        -----------
+        ads : AerodynamicDerivatives4x4
+            An instance of the AerodynamicDerivatives2x2 class whose data will be appended to this instance.
+        """
+
         objs1 = [self.c_z1z1, self.c_z1theta1, self.c_z1z2, self.c_z1theta2,
                  self.c_theta1z1, self.c_theta1theta1, self.c_theta1z2, self.c_theta1theta2,
                  self.c_z2z1, self.c_z2theta1, self.c_z2z2, self.c_z2theta2,
@@ -597,7 +648,6 @@ class AerodynamicDerivatives4x4:
                  ads.k_z2z1, ads.k_z2theta1, ads.k_z2z2, ads.k_z2theta2,
                  ads.k_theta2z1, ads.k_theta2theta1, ads.k_theta2z2, ads.k_theta2theta2]
 
-        
         for k in range(len(objs1)):
             objs1[k].ad_load_cell_a = np.append(objs1[k].ad_load_cell_a,objs2[k].ad_load_cell_a)
             objs1[k].ad_load_cell_b = np.append(objs1[k].ad_load_cell_b,objs2[k].ad_load_cell_b) 
@@ -608,99 +658,91 @@ class AerodynamicDerivatives4x4:
             
     @property
     def ad_matrix(self):
-        """ Returns a matrix of aerodynamic derivatives and reduced velocities
-        
-        Returns
-        -------
-        ads : float
-        
-        a matrix of aerodynamic derivatives [32 x N reduced velocities]
-        
-        vreds : float
-        
-        a matrix of reduced velocities [32 x N reduced velocities]
-        
-        
-        
         """
-        ads = np.zeros((32,self.c_z1z1.reduced_velocities.shape[0]))
-        vreds = np.zeros((32,self.c_z1z1.reduced_velocities.shape[0]))
-        
+        Returns:
+        --------
+        ads : np.ndarray
+            A matrix of aerodynamic derivative values of shape (32, N), where each row corresponds
+            to one of the 32 aerodynamic derivatives and each column to a test point (reduced velocity).
+
+        vreds : np.ndarray
+            A matrix of reduced velocities with shape (32, N), corresponding to each aerodynamic derivative.
+        """
+
+        # Number of data points (assumed the same for all derivatives)
+        N = self.c_z1z1.reduced_velocities.shape[0]
+
+        # Initialize matrices for aerodynamic derivatives and reduced velocities
+        ads = np.zeros((32, N))
+        vreds = np.zeros((32, N))
+
+        # Fill damping aerodynamic derivatives (0–15)
         ads[0, :] = self.c_z1z1.value
         ads[1, :] = self.c_z1theta1.value
         ads[2, :] = self.c_z1z2.value
         ads[3, :] = self.c_z1theta2.value
-
         ads[4, :] = self.c_theta1z1.value
         ads[5, :] = self.c_theta1theta1.value
         ads[6, :] = self.c_theta1z2.value
         ads[7, :] = self.c_theta1theta2.value
-
         ads[8, :] = self.c_z2z1.value
         ads[9, :] = self.c_z2theta1.value
         ads[10, :] = self.c_z2z2.value
         ads[11, :] = self.c_z2theta2.value
-
         ads[12, :] = self.c_theta2z1.value
         ads[13, :] = self.c_theta2theta1.value
         ads[14, :] = self.c_theta2z2.value
         ads[15, :] = self.c_theta2theta2.value
 
+        # Fill stiffness aerodynamic derivatives (16–31)
         ads[16, :] = self.k_z1z1.value
         ads[17, :] = self.k_z1theta1.value
         ads[18, :] = self.k_z1z2.value
         ads[19, :] = self.k_z1theta2.value
-
         ads[20, :] = self.k_theta1z1.value
         ads[21, :] = self.k_theta1theta1.value
         ads[22, :] = self.k_theta1z2.value
         ads[23, :] = self.k_theta1theta2.value
-
         ads[24, :] = self.k_z2z1.value
         ads[25, :] = self.k_z2theta1.value
         ads[26, :] = self.k_z2z2.value
         ads[27, :] = self.k_z2theta2.value
-
         ads[28, :] = self.k_theta2z1.value
         ads[29, :] = self.k_theta2theta1.value
         ads[30, :] = self.k_theta2z2.value
         ads[31, :] = self.k_theta2theta2.value
 
+        # Fill reduced velocities for damping terms
         vreds[0, :] = self.c_z1z1.reduced_velocities
         vreds[1, :] = self.c_z1theta1.reduced_velocities
         vreds[2, :] = self.c_z1z2.reduced_velocities
         vreds[3, :] = self.c_z1theta2.reduced_velocities
-
         vreds[4, :] = self.c_theta1z1.reduced_velocities
         vreds[5, :] = self.c_theta1theta1.reduced_velocities
         vreds[6, :] = self.c_theta1z2.reduced_velocities
         vreds[7, :] = self.c_theta1theta2.reduced_velocities
-
         vreds[8, :] = self.c_z2z1.reduced_velocities
         vreds[9, :] = self.c_z2theta1.reduced_velocities
         vreds[10, :] = self.c_z2z2.reduced_velocities
         vreds[11, :] = self.c_z2theta2.reduced_velocities
-
         vreds[12, :] = self.c_theta2z1.reduced_velocities
         vreds[13, :] = self.c_theta2theta1.reduced_velocities
         vreds[14, :] = self.c_theta2z2.reduced_velocities
         vreds[15, :] = self.c_theta2theta2.reduced_velocities
 
+        # Fill reduced velocities for stiffness terms
         vreds[16, :] = self.k_z1z1.reduced_velocities
         vreds[17, :] = self.k_z1theta1.reduced_velocities
         vreds[18, :] = self.k_z1z2.reduced_velocities
         vreds[19, :] = self.k_z1theta2.reduced_velocities
-
         vreds[20, :] = self.k_theta1z1.reduced_velocities
         vreds[21, :] = self.k_theta1theta1.reduced_velocities
         vreds[22, :] = self.k_theta1z2.reduced_velocities
         vreds[23, :] = self.k_theta1theta2.reduced_velocities
-
         vreds[24, :] = self.k_z2z1.reduced_velocities
         vreds[25, :] = self.k_z2theta1.reduced_velocities
         vreds[26, :] = self.k_z2z2.reduced_velocities
         vreds[27, :] = self.k_z2theta2.reduced_velocities
-
         vreds[28, :] = self.k_theta2z1.reduced_velocities
         vreds[29, :] = self.k_theta2theta1.reduced_velocities
         vreds[30, :] = self.k_theta2z2.reduced_velocities
@@ -708,27 +750,47 @@ class AerodynamicDerivatives4x4:
 
         return ads, vreds
     
-    #Ikke endret
-    def frf_mat(self,mean_wind_velocity = 1.0, section_width = 1.0, air_density = 1.25):
-        
-        
-        frf_mat = np.zeros((3,3,len(self.p1.reduced_velocities)),dtype=complex)
-        
-        frf_mat[0,0,:] = 1/2*air_density*mean_wind_velocity**2 * (1/self.p1.reduced_velocities)**2 * (self.p1.value*1j + self.p4.value)
-        frf_mat[0,1,:] = 1/2*air_density*mean_wind_velocity**2 * (1/self.p5.reduced_velocities)**2 * (self.p5.value*1j + self.p6.value)
-        frf_mat[0,2,:] = 1/2*air_density*mean_wind_velocity**2 * section_width*(1/self.p2.reduced_velocities)**2 * (self.p2.value*1j + self.p3.value)
-        
-        frf_mat[1,0,:] = 1/2*air_density*mean_wind_velocity**2 * (1/self.h5.reduced_velocities)**2 * (self.h5.value*1j + self.h6.value)
-        frf_mat[1,1,:] = 1/2*air_density*mean_wind_velocity**2 * (1/self.h1.reduced_velocities)**2 * (self.h1.value*1j + self.h4.value)
-        frf_mat[1,2,:] = 1/2*air_density*mean_wind_velocity**2 * section_width*(1/self.h3.reduced_velocities)**2 * (self.h2.value*1j + self.h3.value)
-        
-        frf_mat[2,0,:] = 1/2*air_density*mean_wind_velocity**2 * section_width*(1/self.a5.reduced_velocities)**2 * (self.a5.value*1j + self.a6.value)
-        frf_mat[2,1,:] = 1/2*air_density*mean_wind_velocity**2 * section_width*(1/self.a1.reduced_velocities)**2 * (self.a1.value*1j + self.a4.value)
-        frf_mat[2,2,:] = 1/2*air_density*mean_wind_velocity**2 * section_width**2*(1/self.a2.reduced_velocities)**2 * (self.a2.value*1j + self.a3.value)
-        
-        return frf_mat
-    
+    def ad_matrix_jagged(self):
+        """
+        Constructs jagged arrays of aerodynamic derivatives and corresponding reduced velocities, accommodating derivatives with varying lengths.
 
+        This property iterates through a predefined list of aerodynamic derivative objects, extracting their values and reduced velocities 
+        into two separate lists. Each entry in these lists can vary in length, effectively creating jagged arrays to handle non-uniform data.
+
+        Returns:
+        --------
+        ads : List[np.ndarray]
+            A list containing 32 arrays of aerodynamic derivative values. Each array can have a different length, corresponding to each aerodynamic derivative.
+
+        vreds : List[np.ndarray]
+            A list containing 32 arrays of reduced velocities, corresponding to each aerodynamic derivative.
+        """
+
+        # Initialize lists for aerodynamic derivatives and reduced velocities
+        ads = []
+        vreds = []
+
+        # List of aerodynamic derivative objects
+        derivatives = [
+            self.c_z1z1, self.c_z1theta1, self.c_z1z2, self.c_z1theta2,
+            self.c_theta1z1, self.c_theta1theta1, self.c_theta1z2, self.c_theta1theta2,
+            self.c_z2z1, self.c_z2theta1, self.c_z2z2, self.c_z2theta2,
+            self.c_theta2z1, self.c_theta2theta1, self.c_theta2z2, self.c_theta2theta2,
+            self.k_z1z1, self.k_z1theta1, self.k_z1z2, self.k_z1theta2,
+            self.k_theta1z1, self.k_theta1theta1, self.k_theta1z2, self.k_theta1theta2,
+            self.k_z2z1, self.k_z2theta1, self.k_z2z2, self.k_z2theta2,
+            self.k_theta2z1, self.k_theta2theta1, self.k_theta2z2, self.k_theta2theta2
+        ]
+
+        # Populate the jagged arrays
+        for derivative in derivatives:
+            ads.append(np.array(derivative.value))
+            vreds.append(np.array(derivative.reduced_velocities))
+
+        return ads, vreds
+
+
+    #Ikke benyttet
     def fit_poly_k(self,orders = np.ones(32,dtype=int)*2):
         ad_matrix, vreds = self.ad_matrix
         
@@ -751,10 +813,43 @@ class AerodynamicDerivatives4x4:
                 poly_coeff[k,-orders[k]-1:] = np.polyfit(1/vreds[k,:],(1/vreds[k,:])**2*ad_matrix[k,:],orders[k])
             
                 
-        
         return poly_coeff, k_range
     
-    #Ikke endret
+
+    def fit_poly(self, orders=np.ones(32, dtype=int)*2):
+        """
+        Fits polynomial curves to each of the 32 aerodynamic derivative components in the ad_matrix
+        as a function of reduced velocity. The polynomial order for each component can be specified.
+
+        Parameters:
+            orders (np.ndarray): Array of length 32 specifying the polynomial order for each component.
+                                Defaults to second-order (2) for all components.
+
+        Returns:
+            poly_coeff (List[np.ndarray]): List containing arrays of polynomial coefficients for each component.
+            v_range (np.ndarray): Min and max reduced velocity values used for fitting, for each component.
+        """
+
+        ad_matrix, vreds = self.ad_matrix_jagged()  # jagged arrays (lists of np.ndarray)
+
+        poly_coeff = np.zeros((32, np.max(orders) + 1))                     # list to store polynomial coefficients for each component
+        v_range = np.zeros((32, 2))         # Initialize velocity range array
+
+        for k in range(32):
+            v_k = vreds[k]        # Reduced velocities for current component
+            ad_k = ad_matrix[k]   # Aerodynamic derivative data for current component
+
+            # Store the min and max reduced velocity for each component
+            v_range[k, 0] = np.min(v_k)
+            v_range[k, 1] = np.max(v_k)
+
+            # Fit polynomial of specified order to current component
+            poly_coeff[k, :] = np.polyfit(v_k, ad_k, orders[k])
+
+        return poly_coeff, v_range
+
+
+    #Ikke endret og ikke benyttet
     def to_excel(self,section_name, section_height=0, section_width=0, section_length=0):
         """
         
@@ -856,93 +951,335 @@ class AerodynamicDerivatives4x4:
                 writer, sheet_name='Mean wind velocity')
 
 
-    def plot(self, fig_damping=[],fig_stiffness=[],conv='normal', mode='total', poly_order=2):
-        
-        """ plots all aerodynamic derivatives
-        
-        Arguments:
-        ----------
-        fig_damping     : figure object
-        
-        fig_stiffness   : figure object
-        
-        conv            : normal or zasso
-        
-        mode            : total, all or decks        
-        
+    def polyfit_to_excel(self, test_name, save_path, orders=np.ones(32, dtype=int)*2):
         """
+        Fits polynomial models to aerodynamic derivatives and exports the coefficients to an Excel file.
+
+        Parameters:
+        -----------
+        test_name : str
+            Name of the test case, used in the Excel file title.
+        save_path : str
+            Directory path where the Excel file will be saved.
+        orders : np.ndarray of int, optional
+            Polynomial order for each aerodynamic derivative (default is second-order for all 32 terms).
+
+        The resulting Excel file will contain:
+            - Label of each aerodynamic derivative (AD)
+            - Polynomial order used
+            - Fitting range of reduced velocity (V̂_min, V̂_max)
+            - Polynomial coefficients (a₀, a₁, ..., aₙ)
+        """
+
+        # Fit polynomials to all aerodynamic derivatives using the specified polynomial orders
+        poly_coeff, v_range = self.fit_poly(orders=orders)
+
+        # Labels for the aerodynamic damping (c_*) and stiffness (k_*) coefficients
+        labels = ["c_z1z1*", "c_z1θ1*", "c_z1z2*", "c_z1θ2*",
+                "c_θ1z1*", "c_θ1θ1*", "c_θ1z2*", "c_θ1θ2*",
+                "c_z2z1*", "c_z2θ1*", "c_z2z2*", "c_z2θ2*",
+                "c_θ2z1*", "c_θ2θ1*", "c_θ2z2*", "c_θ2θ2*",
+                "k_z1z1*", "k_z1θ1*", "k_z1z2*", "k_z1θ2*",
+                "k_θ1z1*", "k_θ1θ1*", "k_θ1z2*", "k_θ1θ2*",
+                "k_z2z1*", "k_z2θ1*", "k_z2z2*", "k_z2θ2*",
+                "k_θ2z1*", "k_θ2θ1*", "k_θ2z2*", "k_θ2θ2*"]
+
+        data = []
+        for i, label in enumerate(labels):
+            # Get the polynomial coefficients for the i-th derivative and reverse their order (highest degree first)
+            coeff_row = list(poly_coeff[i])[::-1]
+            # Get the reduced velocity fitting range for this derivative
+            vmin, vmax = v_range[i]
+            # Create a row with label, polynomial order, velocity range, and coefficients
+            row = [label, orders[i], vmin, vmax] + coeff_row
+            data.append(row)
+
+        # Determine the maximum polynomial order used (to know how many coefficient columns to create)
+        max_order = max(orders)
+        # Define column names including coefficient names a0, a1, ..., an
+        col_names = ["AD label", "Order", "V̂_min", "V̂_max"] + [f"a{i}" for i in range(max_order + 1)]
+        # Create a pandas DataFrame from the data
+        df = pd.DataFrame(data, columns=col_names)
+
+        # Define filename and full output path
+        filename = f"{test_name}_AD_polyfit.xlsx"
+        full_path = os.path.join(save_path, filename)
+
+        # Write DataFrame to Excel with some metadata and formula description
+        with pd.ExcelWriter(full_path, engine="openpyxl") as writer:
+            df.to_excel(writer, index=False, startrow=2)  # Write data starting from row 3 (0-based index)
+            worksheet = writer.sheets["Sheet1"]
+            worksheet.cell(row=1, column=1).value = f"Test Name: {test_name}"  # Add test name in row 1
+            worksheet.cell(row=1, column=4).value = "f(V̂) = a₀ + a₁·V̂ + a₂·V̂² + ..."  # Add formula description
+
+        print(f"Saved polynomial fit data to {full_path}")
         
-        # Make figure objects if not given
-        if bool(fig_damping) == False:
+
+    def plot(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='total', orders=np.ones(32, dtype=int)*2):
+        """
+        Plots all 32 aerodynamic derivatives (16 damping + 16 stiffness) with optional polynomial fits.
+
+        Parameters:
+        -----------
+        fig_damping : matplotlib.figure.Figure or list (optional)
+            Figure object for damping plots. If not provided, a new figure is created with 4x4 subplots.
+
+        fig_stiffness : matplotlib.figure.Figure or list (optional)
+            Figure object for stiffness plots. If not provided, a new figure is created with 4x4 subplots.
+
+        conv : str, optional
+            String that controls the type of data conversion ('normal' is default).
+
+        mode : str, optional
+            Plot mode: 'total' for raw data only or 'total+poly' to also include polynomial fits.
+
+        orders : np.ndarray, optional
+            Array of polynomial orders for each aerodynamic derivative (length 32).
+        """
+
+        # Create new figure and subplots for damping if not supplied
+        if not bool(fig_damping):
             fig_damping = plt.figure()
             for k in range(16):
-                fig_damping.add_subplot(4,4,k+1)
-        
-        if bool(fig_stiffness) == False:
+                fig_damping.add_subplot(4, 4, k+1)
+
+        # Create new figure and subplots for stiffness if not supplied
+        if not bool(fig_stiffness):
             fig_stiffness = plt.figure()
             for k in range(16):
-                fig_stiffness.add_subplot(4,4,k+1)
-        
-        #Get the poly fit for the ADs
-        poly_coeff, k_range = self.fit_poly_k(orders=np.ones(32, dtype=int) * poly_order)
-        print(poly_coeff, k_range)
+                fig_stiffness.add_subplot(4, 4, k+1)
 
+        # Boolean array indicating whether each component is a damping (True) or stiffness (False) term
+        damping_ad = np.array([True]*16 + [False]*16)
+
+        # Get axes from both figures
         axs_damping = fig_damping.get_axes()
-        self.c_z1z1.plot(mode=mode, conv=conv, ax=axs_damping[0], poly_coeff=poly_coeff[0], k_range=k_range[0])
-        self.c_z1theta1.plot(mode=mode, conv=conv, ax=axs_damping[1], poly_coeff=poly_coeff[1], k_range=k_range[1])
-        self.c_z1z2.plot(mode=mode, conv=conv, ax=axs_damping[2], poly_coeff=poly_coeff[2], k_range=k_range[2])
-        self.c_z1theta2.plot(mode=mode, conv=conv, ax=axs_damping[3], poly_coeff=poly_coeff[3], k_range=k_range[3])
-
-        self.c_theta1z1.plot(mode=mode, conv=conv, ax=axs_damping[4], poly_coeff=poly_coeff[4], k_range=k_range[4])
-        self.c_theta1theta1.plot(mode=mode, conv=conv, ax=axs_damping[5], poly_coeff=poly_coeff[5], k_range=k_range[5])
-        self.c_theta1z2.plot(mode=mode, conv=conv, ax=axs_damping[6], poly_coeff=poly_coeff[6], k_range=k_range[6])
-        self.c_theta1theta2.plot(mode=mode, conv=conv, ax=axs_damping[7], poly_coeff=poly_coeff[7], k_range=k_range[7])
-
-        self.c_z2z1.plot(mode=mode, conv=conv, ax=axs_damping[8], poly_coeff=poly_coeff[8], k_range=k_range[8])
-        self.c_z2theta1.plot(mode=mode, conv=conv, ax=axs_damping[9], poly_coeff=poly_coeff[9], k_range=k_range[9])
-        self.c_z2z2.plot(mode=mode, conv=conv, ax=axs_damping[10], poly_coeff=poly_coeff[10], k_range=k_range[10])
-        self.c_z2theta2.plot(mode=mode, conv=conv, ax=axs_damping[11], poly_coeff=poly_coeff[11], k_range=k_range[11])
-
-        self.c_theta2z1.plot(mode=mode, conv=conv, ax=axs_damping[12], poly_coeff=poly_coeff[12], k_range=k_range[12])
-        self.c_theta2theta1.plot(mode=mode, conv=conv, ax=axs_damping[13], poly_coeff=poly_coeff[13], k_range=k_range[13])
-        self.c_theta2z2.plot(mode=mode, conv=conv, ax=axs_damping[14], poly_coeff=poly_coeff[14], k_range=k_range[14])
-        self.c_theta2theta2.plot(mode=mode, conv=conv, ax=axs_damping[15], poly_coeff=poly_coeff[15], k_range=k_range[15])
-
         axs_stiffness = fig_stiffness.get_axes()
-        self.k_z1z1.plot(mode=mode, conv=conv, ax=axs_stiffness[0], poly_coeff=poly_coeff[16], k_range=k_range[16])
-        self.k_z1theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[1], poly_coeff=poly_coeff[17], k_range=k_range[17])
-        self.k_z1z2.plot(mode=mode, conv=conv, ax=axs_stiffness[2], poly_coeff=poly_coeff[18], k_range=k_range[18])
-        self.k_z1theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[3], poly_coeff=poly_coeff[19], k_range=k_range[19])
 
-        self.k_theta1z1.plot(mode=mode, conv=conv, ax=axs_stiffness[4], poly_coeff=poly_coeff[20], k_range=k_range[20])
-        self.k_theta1theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[5], poly_coeff=poly_coeff[21], k_range=k_range[21])
-        self.k_theta1z2.plot(mode=mode, conv=conv, ax=axs_stiffness[6], poly_coeff=poly_coeff[22], k_range=k_range[22])
-        self.k_theta1theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[7], poly_coeff=poly_coeff[23], k_range=k_range[23])
+        # --- Plot Damping Derivatives ---
+        self.c_z1z1.plot(mode=mode, conv=conv, ax=axs_damping[0], damping=damping_ad[0], order=orders[0])
+        self.c_z1theta1.plot(mode=mode, conv=conv, ax=axs_damping[1], damping=damping_ad[1], order=orders[1])
+        self.c_z1z2.plot(mode=mode, conv=conv, ax=axs_damping[2], damping=damping_ad[2], order=orders[2])
+        self.c_z1theta2.plot(mode=mode, conv=conv, ax=axs_damping[3], damping=damping_ad[3], order=orders[3])
 
-        self.k_z2z1.plot(mode=mode, conv=conv, ax=axs_stiffness[8], poly_coeff=poly_coeff[24], k_range=k_range[24])
-        self.k_z2theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[9], poly_coeff=poly_coeff[25], k_range=k_range[25])
-        self.k_z2z2.plot(mode=mode, conv=conv, ax=axs_stiffness[10], poly_coeff=poly_coeff[26], k_range=k_range[26])
-        self.k_z2theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[11], poly_coeff=poly_coeff[27], k_range=k_range[27])
+        self.c_theta1z1.plot(mode=mode, conv=conv, ax=axs_damping[4], damping=damping_ad[4], order=orders[4])
+        self.c_theta1theta1.plot(mode=mode, conv=conv, ax=axs_damping[5], damping=damping_ad[5], order=orders[5])
+        self.c_theta1z2.plot(mode=mode, conv=conv, ax=axs_damping[6], damping=damping_ad[6], order=orders[6])
+        self.c_theta1theta2.plot(mode=mode, conv=conv, ax=axs_damping[7], damping=damping_ad[7], order=orders[7])
 
-        self.k_theta2z1.plot(mode=mode, conv=conv, ax=axs_stiffness[12], poly_coeff=poly_coeff[28], k_range=k_range[28])
-        self.k_theta2theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[13], poly_coeff=poly_coeff[29], k_range=k_range[29])
-        self.k_theta2z2.plot(mode=mode, conv=conv, ax=axs_stiffness[14], poly_coeff=poly_coeff[30], k_range=k_range[30])
-        self.k_theta2theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[15], poly_coeff=poly_coeff[31], k_range=k_range[31])
+        self.c_z2z1.plot(mode=mode, conv=conv, ax=axs_damping[8], damping=damping_ad[8], order=orders[8])
+        self.c_z2theta1.plot(mode=mode, conv=conv, ax=axs_damping[9], damping=damping_ad[9], order=orders[9])
+        self.c_z2z2.plot(mode=mode, conv=conv, ax=axs_damping[10], damping=damping_ad[10], order=orders[10])
+        self.c_z2theta2.plot(mode=mode, conv=conv, ax=axs_damping[11], damping=damping_ad[11], order=orders[11])
 
+        self.c_theta2z1.plot(mode=mode, conv=conv, ax=axs_damping[12], damping=damping_ad[12], order=orders[12])
+        self.c_theta2theta1.plot(mode=mode, conv=conv, ax=axs_damping[13], damping=damping_ad[13], order=orders[13])
+        self.c_theta2z2.plot(mode=mode, conv=conv, ax=axs_damping[14], damping=damping_ad[14], order=orders[14])
+        self.c_theta2theta2.plot(mode=mode, conv=conv, ax=axs_damping[15], damping=damping_ad[15], order=orders[15])
+
+        # --- Plot Stiffness Derivatives ---
+        self.k_z1z1.plot(mode=mode, conv=conv, ax=axs_stiffness[0], damping=damping_ad[16], order=orders[16])
+        self.k_z1theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[1], damping=damping_ad[17], order=orders[17])
+        self.k_z1z2.plot(mode=mode, conv=conv, ax=axs_stiffness[2], damping=damping_ad[18], order=orders[18])
+        self.k_z1theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[3], damping=damping_ad[19], order=orders[19])
+
+        self.k_theta1z1.plot(mode=mode, conv=conv, ax=axs_stiffness[4], damping=damping_ad[20], order=orders[20])
+        self.k_theta1theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[5], damping=damping_ad[21], order=orders[21])
+        self.k_theta1z2.plot(mode=mode, conv=conv, ax=axs_stiffness[6], damping=damping_ad[22], order=orders[22])
+        self.k_theta1theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[7], damping=damping_ad[23], order=orders[23])
+
+        self.k_z2z1.plot(mode=mode, conv=conv, ax=axs_stiffness[8], damping=damping_ad[24], order=orders[24])
+        self.k_z2theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[9], damping=damping_ad[25], order=orders[25])
+        self.k_z2z2.plot(mode=mode, conv=conv, ax=axs_stiffness[10], damping=damping_ad[26], order=orders[26])
+        self.k_z2theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[11], damping=damping_ad[27], order=orders[27])
+
+        self.k_theta2z1.plot(mode=mode, conv=conv, ax=axs_stiffness[12], damping=damping_ad[28], order=orders[28])
+        self.k_theta2theta1.plot(mode=mode, conv=conv, ax=axs_stiffness[13], damping=damping_ad[29], order=orders[29])
+        self.k_theta2z2.plot(mode=mode, conv=conv, ax=axs_stiffness[14], damping=damping_ad[30], order=orders[30])
+        self.k_theta2theta2.plot(mode=mode, conv=conv, ax=axs_stiffness[15], damping=damping_ad[31], order=orders[31])
+
+        # Remove x-axis labels from top 12 subplots for visual clarity
         for k in range(12):
             axs_damping[k].set_xlabel("")
             axs_stiffness[k].set_xlabel("")
 
+        # Resize figures for better layout
         scal = 1.8
-        fig_damping.set_size_inches(20/scal,15/scal)
-        fig_stiffness.set_size_inches(20/scal,15/scal)
+        fig_damping.set_size_inches(20/scal, 15/scal)
+        fig_stiffness.set_size_inches(20/scal, 15/scal)
 
-        '''
-        fig_damping.set_size_inches(20/2.54,15/2.54)
-        fig_stiffness.set_size_inches(20/2.54,15/2.54)
-        '''
-        
+        # Adjust layout to avoid overlap
         fig_damping.tight_layout()
         fig_stiffness.tight_layout()
 
-      
+
+    def plot_to_compare(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly only', orders=np.ones(32, dtype=int)*2, label='i'):
+        """
+        Plots aerodynamic derivatives for comparison purposes using polynomial fits only.
+
+        This method is useful for comparing multiple datasets or polynomial fits by plotting them
+        on the same axes. Each aerodynamic derivative is plotted using a custom label indicating 
+        what test the data corresponds to.
+
+        Parameters:
+        -----------
+        fig_damping : matplotlib.figure.Figure or list (optional)
+            Figure object for damping plots. If not provided, a new 4x4 subplot figure is created.
+
+        fig_stiffness : matplotlib.figure.Figure or list (optional)
+            Figure object for stiffness plots. If not provided, a new 4x4 subplot figure is created.
+
+        conv : str, optional
+            String that controls the type of data conversion ('normal' is default).
+
+        mode : str, optional
+            Plot mode 'poly only' for comparison of polynomial fits.
+
+        orders : np.ndarray, optional
+            Array of length 32 specifying the polynomial fit order for each derivative.
+
+        label : str, optional
+            Label for the plotted data (used in legends to distinguish different datasets).
+        """
+
+        # Create new damping figure with 16 subplots if none is provided
+        if not bool(fig_damping):
+            fig_damping = plt.figure()
+            for k in range(16):
+                fig_damping.add_subplot(4, 4, k+1)
+
+        # Create new stiffness figure with 16 subplots if none is provided
+        if not bool(fig_stiffness):
+            fig_stiffness = plt.figure()
+            for k in range(16):
+                fig_stiffness.add_subplot(4, 4, k+1)
+
+        # Boolean array defining which derivatives are damping (first 16) and which are stiffness (last 16)
+        damping_ad = np.array([True]*16 + [False]*16)
+
+        # Retrieve subplot axes for both damping and stiffness figures
+        axs_damping = fig_damping.get_axes()
+        axs_stiffness = fig_stiffness.get_axes()
+
+        # --- Damping Plots ---
+        self.c_z1z1.plot2(mode=mode, conv=conv, ax=axs_damping[0], damping=damping_ad[0], order=orders[0], label=label)
+        self.c_z1theta1.plot2(mode=mode, conv=conv, ax=axs_damping[1], damping=damping_ad[1], order=orders[1], label=label)
+        self.c_z1z2.plot2(mode=mode, conv=conv, ax=axs_damping[2], damping=damping_ad[2], order=orders[2], label=label)
+        self.c_z1theta2.plot2(mode=mode, conv=conv, ax=axs_damping[3], damping=damping_ad[3], order=orders[3], label=label)
+
+        self.c_theta1z1.plot2(mode=mode, conv=conv, ax=axs_damping[4], damping=damping_ad[4], order=orders[4], label=label)
+        self.c_theta1theta1.plot2(mode=mode, conv=conv, ax=axs_damping[5], damping=damping_ad[5], order=orders[5], label=label)
+        self.c_theta1z2.plot2(mode=mode, conv=conv, ax=axs_damping[6], damping=damping_ad[6], order=orders[6], label=label)
+        self.c_theta1theta2.plot2(mode=mode, conv=conv, ax=axs_damping[7], damping=damping_ad[7], order=orders[7], label=label)
+
+        self.c_z2z1.plot2(mode=mode, conv=conv, ax=axs_damping[8], damping=damping_ad[8], order=orders[8], label=label)
+        self.c_z2theta1.plot2(mode=mode, conv=conv, ax=axs_damping[9], damping=damping_ad[9], order=orders[9], label=label)
+        self.c_z2z2.plot2(mode=mode, conv=conv, ax=axs_damping[10], damping=damping_ad[10], order=orders[10], label=label)
+        self.c_z2theta2.plot2(mode=mode, conv=conv, ax=axs_damping[11], damping=damping_ad[11], order=orders[11], label=label)
+
+        self.c_theta2z1.plot2(mode=mode, conv=conv, ax=axs_damping[12], damping=damping_ad[12], order=orders[12], label=label)
+        self.c_theta2theta1.plot2(mode=mode, conv=conv, ax=axs_damping[13], damping=damping_ad[13], order=orders[13], label=label)
+        self.c_theta2z2.plot2(mode=mode, conv=conv, ax=axs_damping[14], damping=damping_ad[14], order=orders[14], label=label)
+        self.c_theta2theta2.plot2(mode=mode, conv=conv, ax=axs_damping[15], damping=damping_ad[15], order=orders[15], label=label)
+
+        # --- Stiffness Plots ---
+        self.k_z1z1.plot2(mode=mode, conv=conv, ax=axs_stiffness[0], damping=damping_ad[16], order=orders[16], label=label)
+        self.k_z1theta1.plot2(mode=mode, conv=conv, ax=axs_stiffness[1], damping=damping_ad[17], order=orders[17], label=label)
+        self.k_z1z2.plot2(mode=mode, conv=conv, ax=axs_stiffness[2], damping=damping_ad[18], order=orders[18], label=label)
+        self.k_z1theta2.plot2(mode=mode, conv=conv, ax=axs_stiffness[3], damping=damping_ad[19], order=orders[19], label=label)
+
+        self.k_theta1z1.plot2(mode=mode, conv=conv, ax=axs_stiffness[4], damping=damping_ad[20], order=orders[20], label=label)
+        self.k_theta1theta1.plot2(mode=mode, conv=conv, ax=axs_stiffness[5], damping=damping_ad[21], order=orders[21], label=label)
+        self.k_theta1z2.plot2(mode=mode, conv=conv, ax=axs_stiffness[6], damping=damping_ad[22], order=orders[22], label=label)
+        self.k_theta1theta2.plot2(mode=mode, conv=conv, ax=axs_stiffness[7], damping=damping_ad[23], order=orders[23], label=label)
+
+        self.k_z2z1.plot2(mode=mode, conv=conv, ax=axs_stiffness[8], damping=damping_ad[24], order=orders[24], label=label)
+        self.k_z2theta1.plot2(mode=mode, conv=conv, ax=axs_stiffness[9], damping=damping_ad[25], order=orders[25], label=label)
+        self.k_z2z2.plot2(mode=mode, conv=conv, ax=axs_stiffness[10], damping=damping_ad[26], order=orders[26], label=label)
+        self.k_z2theta2.plot2(mode=mode, conv=conv, ax=axs_stiffness[11], damping=damping_ad[27], order=orders[27], label=label)
+
+        self.k_theta2z1.plot2(mode=mode, conv=conv, ax=axs_stiffness[12], damping=damping_ad[28], order=orders[28], label=label)
+        self.k_theta2theta1.plot2(mode=mode, conv=conv, ax=axs_stiffness[13], damping=damping_ad[29], order=orders[29], label=label)
+        self.k_theta2z2.plot2(mode=mode, conv=conv, ax=axs_stiffness[14], damping=damping_ad[30], order=orders[30], label=label)
+        self.k_theta2theta2.plot2(mode=mode, conv=conv, ax=axs_stiffness[15], damping=damping_ad[31], order=orders[31], label=label)
+
+        # Remove x-axis labels on top 12 subplots for cleaner layout
+        for k in range(12):
+            axs_damping[k].set_xlabel("")
+            axs_stiffness[k].set_xlabel("")
+
+        # Resize figures
+        scal = 1.8
+        fig_damping.set_size_inches(20/scal, 15/scal)
+        fig_stiffness.set_size_inches(20/scal, 15/scal)
+
+        # Optimize subplot layout
+        fig_damping.tight_layout()
+        fig_stiffness.tight_layout()
+
+
+def plot_compare(AD_single, AD_1D, AD_2D, AD_3D, AD_4D, AD_5D):
+    """
+    Compares aerodynamic derivative polynomial fits across different gap distances (1D to 5D and single).
+
+    Parameters:
+    -----------
+    AD_single : object
+        Aerodynamic derivative object for the single-section case.
+
+    AD_1D to AD_5D : objects
+        Aerodynamic derivative objects for each gap distance (1D to 5D).
+
+    Returns:
+    --------
+    fig_damping : matplotlib.figure.Figure
+        Figure object containing damping comparison plots.
+
+    fig_stiffness : matplotlib.figure.Figure
+        Figure object containing stiffness comparison plots.
+    """
+
+    # Create figure with 4x4 subplots for damping terms
+    fig_damping = plt.figure()
+    for k in range(16):
+        fig_damping.add_subplot(4, 4, k + 1)
+
+    # Create figure with 4x4 subplots for stiffness terms
+    fig_stiffness = plt.figure()
+    for k in range(16):
+        fig_stiffness.add_subplot(4, 4, k + 1)
+
+    # Plot polynomial fits for each model (1D to 5D and single) into the same axes for comparison
+    AD_1D.plot_to_compare(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='1D')
+    AD_2D.plot_to_compare(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='2D')
+    AD_3D.plot_to_compare(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='3D')
+    AD_4D.plot_to_compare(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='4D')
+    AD_5D.plot_to_compare(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='5D')
+    AD_single.plot_to_compare(fig_damping=fig_damping, fig_stiffness=fig_stiffness)
+
+    # Extract legend handles and labels from the first subplot in the damping figure
+    handles, labels = fig_damping.axes[0].get_legend_handles_labels()
+
+    # Remove individual legends from each subplot to avoid clutter
+    for ax in fig_damping.get_axes():
+        ax.legend().remove()
+    for ax in fig_stiffness.get_axes():
+        ax.legend().remove()
+
+    # Add a single shared legend above each figure
+    fig_damping.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, 1.05),
+                       ncol=6, frameon=False)
+    fig_stiffness.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, 1.05),
+                         ncol=6, frameon=False)
+
+    # Adjust layout to leave space for the shared legend
+    fig_damping.tight_layout(rect=[0, 0, 1, 0.97])
+    fig_stiffness.tight_layout(rect=[0, 0, 1, 0.97])
+
+    # Display the plots
+    plt.show()
+
+    return fig_damping, fig_stiffness
+
+
+        
