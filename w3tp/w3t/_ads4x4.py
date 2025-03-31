@@ -832,7 +832,7 @@ class AerodynamicDerivatives4x4:
 
         ad_matrix, vreds = self.ad_matrix_jagged()  # jagged arrays (lists of np.ndarray)
 
-        poly_coeff = []                     # list to store polynomial coefficients for each component
+        poly_coeff = np.zeros((32, np.max(orders) + 1))                     # list to store polynomial coefficients for each component
         v_range = np.zeros((32, 2))         # Initialize velocity range array
 
         for k in range(32):
@@ -844,8 +844,7 @@ class AerodynamicDerivatives4x4:
             v_range[k, 1] = np.max(v_k)
 
             # Fit polynomial of specified order to current component
-            coeff = np.polyfit(v_k, ad_k, orders[k])
-            poly_coeff.append(coeff)
+            poly_coeff[k, :] = np.polyfit(v_k, ad_k, orders[k])
 
         return poly_coeff, v_range
 
