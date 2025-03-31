@@ -508,7 +508,7 @@ class StaticCoeff:
             ax.legend()
             ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
-        elif mode == "decks": #upwind and downwind deck + total sum
+        elif mode == "decks": #upwind and downwind deck
             cd_upwind_mean = np.array([
                 np.nanmean(self.drag_coeff[:,0][alpha == val]) + np.nanmean(self.drag_coeff[:,1][alpha == val])
                 for val in unique_alphas
@@ -524,6 +524,7 @@ class StaticCoeff:
             ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
             ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            return cd_upwind_mean, cd_downwind_mean, unique_alphas
 
         elif mode == "total": #only total sum
             cd_total_mean = np.array([np.nanmean(np.sum(self.drag_coeff,axis=1)[alpha == val]) for val in unique_alphas])
@@ -547,6 +548,7 @@ class StaticCoeff:
             ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
             ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            return cd_single_mean, unique_alphas
 
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -608,6 +610,7 @@ class StaticCoeff:
             ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
             ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            return cl_upwind_mean, cl_downwind_mean, unique_alphas
         
         elif mode == "total":
             cl_total_mean = np.array([np.nanmean(np.sum(self.lift_coeff,axis=1)[alpha == val]) for val in unique_alphas])
@@ -629,6 +632,7 @@ class StaticCoeff:
             ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
             ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            return cl_single_mean, unique_alphas
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -687,6 +691,7 @@ class StaticCoeff:
             ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
             ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            return cm_upwind_mean, cm_downwind_mean, unique_alphas
         
         elif mode == "total":
             cm_total_mean = np.array([np.nanmean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
@@ -710,7 +715,7 @@ class StaticCoeff:
             ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
             ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
-        
+            return cm_single_mean, unique_alphas
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -1572,15 +1577,15 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
 
 
  
-    alpha_1, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
+    alpha, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
     #ettersom alpha er rundet opp til 1 desimal, er alle alphaer til hver tidsserie like, og man trenger egt ikke skille mellom alphaene i forsøket. Men koden blir litt mer robust.
-    alpha_2, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
+    _, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
  
     drag_1_filt, lift_1_filt, pitch_1_filt = drag_1.copy(), lift_1.copy(), pitch_1.copy()
     drag_2_filt, lift_2_filt, pitch_2_filt = drag_2.copy(), lift_2.copy(), pitch_2.copy()
  
     if not single:
-        alpha_3, drag_3, lift_3, pitch_3 = get_coeffs(static_coeff_3)
+        _, drag_3, lift_3, pitch_3 = get_coeffs(static_coeff_3)
         drag_3_filt, lift_3_filt, pitch_3_filt = drag_3.copy(), lift_3.copy(), pitch_3.copy()
  
     coeff_names = ["drag", "lift", "pitch"]
@@ -1593,11 +1598,11 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
         coeffs_3 = [drag_3, lift_3, pitch_3]
         coeffs_3_filt = [drag_3_filt, lift_3_filt, pitch_3_filt]
  
-    unique_alpha = np.unique(alpha_1)
+    unique_alpha = np.unique(alpha)
  
     for val in unique_alpha:
-        idx1 = np.where(alpha_1 == val)[0]
-        idx2 = np.where(alpha_2 == val)[0]
+        idx1 = np.where(alpha == val)[0]
+        idx2 = np.where(alpha == val)[0]
  
         if single:
             if not (len(idx1) and len(idx2)):
@@ -1657,7 +1662,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                     coeff_array[idx[mask], 1] = np.nan
  
         else:
-            idx3 = np.where(alpha_3 == val)[0]
+            idx3 = np.where(alpha == val)[0]
             if not (len(idx1) and len(idx2) and len(idx3)):
                 continue
  
@@ -1689,7 +1694,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
  
                 nan_flags_up = []
 
-                for check_array, idx_array, alpha_array in zip(coeff_up_checks, [idx1, idx2, idx3], [alpha_1, alpha_2, alpha_3]):
+                for check_array, idx_array, alpha_array in zip(coeff_up_checks, [idx1, idx2, idx3], [alpha, alpha, alpha]):
                     has_nan_now = np.any(np.isnan(check_array[idx_array]))  #Sjekker om det er for stor spredning i en av de tre forsøkene. Hvis spredningen er for stor er det et dårlig signal med denne vinkelen.
 
                     if has_nan_now:
@@ -1757,7 +1762,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
  
                 nan_flags_down = []
 
-                for check_array, idx_array, alpha_array in zip(coeff_down_checks, [idx1, idx2, idx3], [alpha_1, alpha_2, alpha_3]):
+                for check_array, idx_array, alpha_array in zip(coeff_down_checks, [idx1, idx2, idx3], [alpha, alpha, alpha]):
                     has_nan_now = np.any(np.isnan(check_array[idx_array]))  #Sjekker om det er for stor spredning i en av de tre forsøkene. Hvis spredningen er for stor er det et dårlig signal med denne vinkelen.
 
                     if has_nan_now:
@@ -1804,7 +1809,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
                         coeff_array[idx[mask], 2] = np.nan
                         coeff_array[idx[mask], 3] = np.nan
 
-    for i, alpha in enumerate([alpha_1, alpha_2] if single else [alpha_1, alpha_2, alpha_3]):
+    for i, alpha in enumerate([alpha, alpha] if single else [alpha, alpha, alpha]):
         target_arrays = [coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i], coeffs_3_filt[i]]
         for coeff_array in target_arrays:
             remove_after_jump(alpha, coeff_array, threshold_jump=1.2, cols=(0, 1))
