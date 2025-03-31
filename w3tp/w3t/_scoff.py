@@ -488,7 +488,8 @@ class StaticCoeff:
         if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
         alpha = np.round(self.pitch_motion*360/2/np.pi,1)
-        unique_alphas = np.unique(alpha)      
+        unique_alphas = np.sort(np.unique(alpha)) 
+
 
         if mode == "all": #individual load cells + total sum
 
@@ -574,7 +575,7 @@ class StaticCoeff:
         if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6)) 
         alpha = np.round(self.pitch_motion*360/2/np.pi,1)
-        unique_alphas = np.unique(alpha)   
+        unique_alphas = np.sort(np.unique(alpha))
 
         if mode == "all":
             print("Lift coeff shape:", self.lift_coeff.shape)
@@ -658,7 +659,8 @@ class StaticCoeff:
         if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
         alpha = np.round(self.pitch_motion*360/2/np.pi,1)
-        unique_alphas = np.unique(alpha)  
+
+        unique_alphas = np.sort(np.unique(alpha))
                 
         if mode == "all":
             cm_total_mean = np.array([np.nanmean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
@@ -1484,12 +1486,15 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         Filtered downwind coefficients with NaNs replacing outliers.
     """
     if scoff == "drag":
+        print("Filtering drag coefficients")
         coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
         coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
     elif scoff == "lift":
+        print("Filtering lift coefficients")
         coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
         coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
     elif scoff == "pitch":
+        print("Filtering pitch coefficients")
         coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
         coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
     else:
@@ -1517,6 +1522,9 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         idx = np.where(alpha == val)[0]
         spread_up = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
         spread_down = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
+        print(f"Alpha = {val}, Spread = {spread_up:.3f}")
+        print(f"Alpha = {val}, Spread = {spread_down:.3f}")
+
 
         if spread_up > threshold:
             coeff_up_plot[idx] = np.nan
