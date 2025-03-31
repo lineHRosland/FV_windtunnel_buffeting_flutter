@@ -1506,7 +1506,8 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
     alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
 
     coeff_up_plot = coeff_up.copy()
-    coeff_down_plot = coeff_down.copy()
+    if not single:
+        coeff_down_plot = coeff_down.copy()
     unique_alphas = np.unique(alpha)
 
     if single:
