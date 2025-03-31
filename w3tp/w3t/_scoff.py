@@ -1279,7 +1279,7 @@ def plot_compare_wind_speeds(static_coeff_single_low,
 
     """
     if ax is None:
-            fig, ax = plt.subplots(figsize=(8, 6))
+            fig, ax = plt.subplots(figsize=(8/2.6, 6/2.6))
     color1HWS = "#B22222"
     color2HWS= "#F15854"
     color3HWS="#FCA5A5"
@@ -1333,6 +1333,8 @@ def plot_compare_wind_speeds(static_coeff_single_low,
     ax.grid(True)
     ax.legend()
     ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+
     ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
 
  
@@ -1377,7 +1379,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low,
     color2LWS ="#60BD68"
     color3LWS="#238B45"
     if ax is None:
-            fig, ax = plt.subplots(figsize=(8, 6))
+            fig, ax = plt.subplots(figsize=(8/2.6, 6/2.6))
     if scoff == "drag":
         axis = r"$C_D(\alpha)$"
         coeff = "drag_coeff"
@@ -1436,6 +1438,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low,
     ax.set_ylabel(axis)
     ax.grid(True)
     ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
     ax.legend()
     ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
 
