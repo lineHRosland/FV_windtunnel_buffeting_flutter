@@ -1252,9 +1252,9 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Wind speeds
-def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
+def plot_compare_wind_speeds(static_coeff_single_low,
                                    static_coeff_single_high, static_coeff_low,
-                                   static_coeff_med, static_coeff_high,
+                                   static_coeff_high,
                                    scoff = "", ax=None):
     """
     Plots  coefficients for low and high wind speeds in same figure for each deck setup.
@@ -1318,11 +1318,6 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     ax.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_low, coeff)[:,2] + getattr(static_coeff_low, coeff)[:,3],
              label=f"LWS - Downstream deck", color = color3LWS)
 
-    # Plot med wind speed
-    #plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,0] + getattr(static_coeff_med, coeff)[:,1],
-    #         label=f"MWS - Upstream deck", color = color2MWS)
-    #plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,2] + getattr(static_coeff_med, coeff)[:,3],
-    #         label=f"MWS - Downstream deck", color = color3MWS)
 
     # Plot high wind speed
     
@@ -1343,9 +1338,9 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
  
 
 #%% Wind speeds
-def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_med,
+def plot_compare_wind_speeds_mean(static_coeff_single_low, 
                                    static_coeff_single_high, static_coeff_low,
-                                   static_coeff_med, static_coeff_high,
+                                    static_coeff_high,
                                     scoff = "", ax=None):
     """
     Plots  coefficients for low and high wind speeds in same figure for each deck setup.
@@ -1402,15 +1397,11 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single_low = np.round(static_coeff_single_low.pitch_motion*360/2/np.pi,1)
     unique_alphas_single_low = np.unique(alpha_single_low)
-    alpha_single_med = np.round(static_coeff_single_med.pitch_motion*360/2/np.pi,1)
-    unique_alphas_single_med = np.unique(alpha_single_med)
     alpha_single_high = np.round(static_coeff_single_high.pitch_motion*360/2/np.pi,1)
     unique_alphas_single_high = np.unique(alpha_single_high)
 
     alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
     unique_alphas_low = np.unique(alpha_low)
-    alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
-    unique_alphas_med = np.unique(alpha_med)
     alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
     unique_alphas_high = np.unique(alpha_high)
 
@@ -1418,10 +1409,6 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
     downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
     
-    single_mean_med = np.array([np.nanmean(getattr(static_coeff_single_med, coeff)[:,0][alpha_single_med == val]) + np.nanmean(getattr(static_coeff_single_med, coeff)[:,1][alpha_single_med == val]) for val in unique_alphas_single_med])
-    upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
-    downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
-
     single_mean_high = np.array([np.nanmean(getattr(static_coeff_single_high, coeff)[:,0][alpha_single_high == val]) + np.nanmean(getattr(static_coeff_single_high, coeff)[:,1][alpha_single_high == val]) for val in unique_alphas_single_high])
     upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
     downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
@@ -1437,13 +1424,6 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
              label=f"LWS - Downstream deck", color = color2LWS, linestyle='-')
 
 
-    # Plot med wind speed
-  
-    #plt.plot(unique_alphas_med, upwind_mean_med,
-    #            label=f"MWS - Upstream deck", color = color2MWS, linestyle='--')
-    #plt.plot(unique_alphas_med, downwind_mean_med,
-    #            label=f"MWS - Downstream deck", color = color2MWS, linestyle='-')
-    
     # Plot high wind speed
     ax.plot(unique_alphas_single_high, single_mean_high,
              label=f"HWS - Single deck", color = color2HWS,linestyle=':')
