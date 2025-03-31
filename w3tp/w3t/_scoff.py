@@ -1486,17 +1486,17 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         Filtered downwind coefficients with NaNs replacing outliers.
     """
     if scoff == "drag":
-        print("Filtering drag coefficients")
+        #print("Filtering drag coefficients")
         coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
         if not single:
             coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
     elif scoff == "lift":
-        print("Filtering lift coefficients")
+        #print("Filtering lift coefficients")
         coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
         if not single:
             coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
     elif scoff == "pitch":
-        print("Filtering pitch coefficients")
+        #print("Filtering pitch coefficients")
         coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
         if not single:
             coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
@@ -1515,7 +1515,7 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         for val in unique_alphas:
             idx = np.where(alpha == val)[0]
             spread = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
-            print(f"Alpha = {val}, Spread = {spread:.3f}")
+            #print(f"Alpha = {val}, Spread = {spread:.3f}")
 
             if spread > threshold:
                 coeff_up_plot[idx] = np.nan
@@ -1526,8 +1526,8 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         idx = np.where(alpha == val)[0]
         spread_up = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
         spread_down = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
-        print(f"Alpha = {val}, Spread = {spread_up:.3f}")
-        print(f"Alpha = {val}, Spread = {spread_down:.3f}")
+        #print(f"Alpha = {val}, Spread = {spread_up:.3f}")
+        #print(f"Alpha = {val}, Spread = {spread_down:.3f}")
 
 
         if spread_up > threshold:
@@ -1660,18 +1660,25 @@ def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold
                 elif has_nan_2 and not has_nan_1:
                     ref_mean = np.mean(vals_1)
                 else:
-                    ref_mean = np.mean(vals_1) if spread_1 <= spread_2 else np.mean(vals_2)
- 
-                for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
-                    summed = coeff_array[idx, 0] + coeff_array[idx, 1] #når singel, kun ett enkelt brudekke (val_1 og val_2)
-                    mask = np.abs(summed - ref_mean) > threshold #markerer verdier som er for langt unna referansen
-                    coeff_array[idx[mask], 0] = np.nan # setter verdien til nan dersom mask er true
-                    coeff_array[idx[mask], 1] = np.nan
-            
-                if name == "drag":
-                    for coeff_array in [coeff_1_f, coeff_2_f] if single else [coeff_1_f, coeff_2_f]:
-                        remove_after_jump(alpha, coeff_array, threshold_jump=0.08, cols=(0, 1))
-                        
+                    if spread_1 <= 0.05 and spread_2 <= 0.05:
+                        ref_mean = np.mean(vals_1) if spread_1 <= spread_2 else np.mean(vals_2)
+                    else:
+                        ref_mean = None
+                     
+                        for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
+                            coeff_array[idx, 0] = np.nan
+                            coeff_array[idx, 1] = np.nan
+                if ref_mean != None:
+                    for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
+                        summed = coeff_array[idx, 0] + coeff_array[idx, 1] #når singel, kun ett enkelt brudekke (val_1 og val_2)
+                        mask = np.abs(summed - ref_mean) > threshold #markerer verdier som er for langt unna referansen
+                        coeff_array[idx[mask], 0] = np.nan # setter verdien til nan dersom mask er true
+                        coeff_array[idx[mask], 1] = np.nan
+                
+                    if name == "drag":
+                        for coeff_array in [coeff_1_f, coeff_2_f] if single else [coeff_1_f, coeff_2_f]:
+                            remove_after_jump(alpha, coeff_array, threshold_jump=0.08, cols=(0, 1))
+                            
         else:
             idx3 = np.where(alpha == val)[0]
             if not (len(idx1) and len(idx2) and len(idx3)):
