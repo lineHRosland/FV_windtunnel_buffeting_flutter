@@ -791,7 +791,7 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down, a
     ax.legend()
     ax.set_title("Comparison of drag coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
-
+    ax.set_xlim(-4,4)
 
 def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
@@ -828,7 +828,7 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, a
     ax.legend()
     ax.set_title("Comparison of lift coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
-
+    ax.set_xlim(-4,4)
 def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots pitch coefficient from multiple StaticCoeff objects in the same figure.
@@ -865,7 +865,7 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, 
     ax.legend()
     ax.set_title("Comparison of pitch coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
-
+    ax.set_xlim(-4,4)
 def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -917,7 +917,7 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     ax.legend()
     ax.set_title("Comparison of mean drag coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
-
+    ax.set_xlim(-4,4)
 def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -967,7 +967,7 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
     ax.legend()
     ax.set_title("Comparison of mean lift coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
-
+    ax.set_xlim(-4,4)
 def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -1017,7 +1017,7 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
     ax.legend()
     ax.set_title("Comparison of mean pitch coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
-
+    ax.set_xlim(-4,4)
 #%% Compare with single deck
 def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
@@ -1055,7 +1055,7 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of drag coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
-
+    ax.set_xlim(-4,4)
 
 def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
@@ -1089,7 +1089,7 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of lift coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
-
+    ax.set_xlim(-4,4)
 def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots pitch coefficient from multiple StaticCoeff objects in the same figure.
@@ -1123,7 +1123,7 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of pitch coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
-
+    ax.set_xlim(-4,4)
 def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -1168,7 +1168,7 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of mean drag coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
-
+    ax.set_xlim(-4,4)
 def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -1209,7 +1209,7 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of mean lift coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
-
+    ax.set_xlim(-4,4)
 def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -1250,6 +1250,8 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of mean pitch coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    ax.set_xlim(-4,4)
+
 
 #%% Wind speeds
 def plot_compare_wind_speeds(static_coeff_single_low,
