@@ -1506,6 +1506,8 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         for val in unique_alphas:
             idx = np.where(alpha == val)[0]
             spread = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
+            print(f"Alpha = {val}, Spread = {spread:.3f}")
+
             if spread > threshold:
                 coeff_up_plot[idx] = np.nan
         return alpha, coeff_up_plot
