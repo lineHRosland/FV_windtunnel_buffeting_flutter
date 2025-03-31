@@ -98,7 +98,93 @@ array_names = [
     "cm_2D_mds_high_downwind_deck", "cm_alpha_2D_mds_high",
     "cm_3D_mds_high_downwind_deck", "cm_alpha_3D_mds_high",
     "cm_4D_mds_high_downwind_deck", "cm_alpha_4D_mds_high",
-    "cm_5D_mds_high_downwind_deck", "cm_alpha_5D_mds_high",]
+    "cm_5D_mds_high_downwind_deck", "cm_alpha_5D_mds_high",
+    
+    
+    "cd_single_high_filtered", "cd_alpha_single_high_filtered",
+    "cd_1D_mus_high_upwind_deck_filtered", "cd_alpha_1D_mus_high_filtered",
+    "cd_2D_mus_high_upwind_deck_filtered","cd_alpha_2D_mus_high_filtered",
+    "cd_3D_mus_high_upwind_deck_filtered", "cd_alpha_3D_mus_high_filtered",
+    "cd_4D_mus_high_upwind_deck_filtered", "cd_alpha_4D_mus_high_filtered",
+    "cd_5D_mus_high_upwind_deck_filtered", "cd_alpha_5D_mus_high_filtered",
+
+    "cd_1D_mds_high_upwind_deck_filtered", "cd_alpha_1D_mds_high_filtered",
+    "cd_2D_mds_high_upwind_deck_filtered", "cd_alpha_2D_mds_high_filtered",
+    "cd_3D_mds_high_upwind_deck_filtered", "cd_alpha_3D_mds_high_filtered",
+    "cd_4D_mds_high_upwind_deck_filtered", "cd_alpha_4D_mds_high_filtered",
+    "cd_5D_mds_high_upwind_deck_filtered", "cd_alpha_5D_mds_high_filtered",
+
+    "cd_1D_mus_high_downwind_deck_filtered", "cd_alpha_1D_mus_high_filtered",
+    "cd_2D_mus_high_downwind_deck_filtered", "cd_alpha_2D_mus_high_filtered",
+    "cd_3D_mus_high_downwind_deck_filtered", "cd_alpha_3D_mus_high_filtered",
+    "cd_4D_mus_high_downwind_deck_filtered", "cd_alpha_4D_mus_high_filtered",
+    "cd_5D_mus_high_downwind_deck_filtered", "cd_alpha_5D_mus_high_filtered",
+
+    "cd_1D_mds_high_downwind_deck_filtered", "cd_alpha_1D_mds_high_filtered",
+    "cd_2D_mds_high_downwind_deck_filtered", "cd_alpha_2D_mds_high_filtered",
+    "cd_3D_mds_high_downwind_deck_filtered", "cd_alpha_3D_mds_high_filtered",
+    "cd_4D_mds_high_downwind_deck_filtered", "cd_alpha_4D_mds_high_filtered",
+    "cd_5D_mds_high_downwind_deck_filtered", "cd_alpha_5D_mds_high_filtered",
+
+
+
+    "cl_single_high_filtered", "cl_alpha_single_high_filtered",
+    "cl_1D_mus_high_upwind_deck_filtered", "cl_alpha_1D_mus_high_filtered",
+    "cl_2D_mus_high_upwind_deck_filtered", "cl_alpha_2D_mus_high_filtered",
+    "cl_3D_mus_high_upwind_deck_filtered", "cl_alpha_3D_mus_high_filtered",
+    "cl_4D_mus_high_upwind_deck_filtered", "cl_alpha_4D_mus_high_filtered",
+    "cl_5D_mus_high_upwind_deck_filtered", "cl_alpha_5D_mus_high_filtered",
+
+    "cl_1D_mds_high_upwind_deck_filtered", "cl_alpha_1D_mds_high_filtered",
+    "cl_2D_mds_high_upwind_deck_filtered", "cl_alpha_2D_mds_high_filtered",
+    "cl_3D_mds_high_upwind_deck_filtered", "cl_alpha_3D_mds_high_filtered",
+    "cl_4D_mds_high_upwind_deck_filtered", "cl_alpha_4D_mds_high_filtered",
+    "cl_5D_mds_high_upwind_deck_filtered", "cl_alpha_5D_mds_high_filtered",
+
+    "cl_1D_mus_high_downwind_deck_filtered", "cl_alpha_1D_mus_high_filtered",
+    "cl_2D_mus_high_downwind_deck_filtered", "cl_alpha_2D_mus_high_filtered",
+    "cl_3D_mus_high_downwind_deck_filtered", "cl_alpha_3D_mus_high_filtered",
+    "cl_4D_mus_high_downwind_deck_filtered", "cl_alpha_4D_mus_high_filtered",
+    "cl_5D_mus_high_downwind_deck_filtered", "cl_alpha_5D_mus_high_filtered",
+
+    "cl_1D_mds_high_downwind_deck_filtered", "cl_alpha_1D_mds_high_filtered",
+    "cl_2D_mds_high_downwind_deck_filtered", "cl_alpha_2D_mds_high_filtered",
+    "cl_3D_mds_high_downwind_deck_filtered", "cl_alpha_3D_mds_high_filtered",
+    "cl_4D_mds_high_downwind_deck_filtered", "cl_alpha_4D_mds_high_filtered",
+    "cl_5D_mds_high_downwind_deck_filtered", "cl_alpha_5D_mds_high_filtered",
+
+    "cl_1D_mus_high_downwind_deck_filtered", "cl_alpha_1D_mus_high_filtered",
+    "cl_2D_mus_high_downwind_deck_filtered", "cl_alpha_2D_mus_high_filtered",
+    "cl_3D_mus_high_downwind_deck_filtered", "cl_alpha_3D_mus_high_filtered",
+    "cl_4D_mus_high_downwind_deck_filtered", "cl_alpha_4D_mus_high_filtered",
+    "cl_5D_mus_high_downwind_deck_filtered", "cl_alpha_5D_mus_high_filtered",
+    
+
+
+    "cm_single_high_filtered", "cm_alpha_single_high_filtered",
+    "cm_1D_mus_high_upwind_deck_filtered", "cm_alpha_1D_mus_high_filtered",
+    "cm_2D_mus_high_upwind_deck_filtered", "cm_alpha_2D_mus_high_filtered",
+    "cm_3D_mus_high_upwind_deck_filtered", "cm_alpha_3D_mus_high_filtered",
+    "cm_4D_mus_high_upwind_deck_filtered", "cm_alpha_4D_mus_high_filtered",
+    "cm_5D_mus_high_upwind_deck_filtered", "cm_alpha_5D_mus_high_filtered",
+
+    "cm_1D_mds_high_upwind_deck_filtered", "cm_alpha_1D_mds_high_filtered",
+    "cm_2D_mds_high_upwind_deck_filtered", "cm_alpha_2D_mds_high_filtered",
+    "cm_3D_mds_high_upwind_deck_filtered", "cm_alpha_3D_mds_high_filtered",
+    "cm_4D_mds_high_upwind_deck_filtered", "cm_alpha_4D_mds_high_filtered",
+    "cm_5D_mds_high_upwind_deck_filtered", "cm_alpha_5D_mds_high_filtered",
+
+    "cm_1D_mus_high_downwind_deck_filtered", "cm_alpha_1D_mus_high_filtered",
+    "cm_2D_mus_high_downwind_deck_filtered", "cm_alpha_2D_mus_high_filtered",
+    "cm_3D_mus_high_downwind_deck_filtered", "cm_alpha_3D_mus_high_filtered",
+    "cm_4D_mus_high_downwind_deck_filtered", "cm_alpha_4D_mus_high_filtered",
+    "cm_5D_mus_high_downwind_deck_filtered", "cm_alpha_5D_mus_high_filtered",
+
+    "cm_1D_mds_high_downwind_deck_filtered", "cm_alpha_1D_mds_high_filtered",
+    "cm_2D_mds_high_downwind_deck_filtered", "cm_alpha_2D_mds_high_filtered",
+    "cm_3D_mds_high_downwind_deck_filtered", "cm_alpha_3D_mds_high_filtered",
+    "cm_4D_mds_high_downwind_deck_filtered", "cm_alpha_4D_mds_high_filtered",
+    "cm_5D_mds_high_downwind_deck_filtered", "cm_alpha_5D_mds_high_filtered"]
 #High wind velocity chosen for the static coefficient.
 
 # Load each .npy file
@@ -301,3 +387,6 @@ cm_alpha_4D_mds_high = arrays_loaded["cm_alpha_4D_mds_high"]
 cm_5D_mds_high_downwind_deck = arrays_loaded["cm_5D_mds_high_downwind_deck"]
 cm_alpha_5D_mds_high = arrays_loaded["cm_alpha_5D_mds_high"]
 
+
+
+#Har ikke lagt til linjer for filtrert versjon her...

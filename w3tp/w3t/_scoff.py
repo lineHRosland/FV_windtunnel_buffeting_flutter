@@ -1488,15 +1488,18 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
     if scoff == "drag":
         print("Filtering drag coefficients")
         coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
-        coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
+        if not single:
+            coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
     elif scoff == "lift":
         print("Filtering lift coefficients")
         coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
-        coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
+        if not single:
+            coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
     elif scoff == "pitch":
         print("Filtering pitch coefficients")
         coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
-        coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
+        if not single:
+            coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
     else:
         raise ValueError("Invalid 'scoff' argument. Must be 'drag', 'lift', or 'pitch'.")
 
