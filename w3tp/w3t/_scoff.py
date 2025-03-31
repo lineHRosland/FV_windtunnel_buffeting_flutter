@@ -1581,7 +1581,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold
  
     alpha, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
     #ettersom alpha er rundet opp til 1 desimal, er alle alphaer til hver tidsserie like, og man trenger egt ikke skille mellom alphaene i forsøket. Men koden blir litt mer robust.
-    _, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_1)
+    _, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
  
     drag_1_filt, lift_1_filt, pitch_1_filt = drag_1.copy(), lift_1.copy(), pitch_1.copy()
     drag_2_filt, lift_2_filt, pitch_2_filt = drag_2.copy(), lift_2.copy(), pitch_2.copy()
