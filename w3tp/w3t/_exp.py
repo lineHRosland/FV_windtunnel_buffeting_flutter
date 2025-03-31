@@ -85,6 +85,7 @@ class Experiment:
           forces transformed to the center of the pitching motion
          motion : the motion applied in the wind tunnel experiment
         """
+
         self.time = time
         self.name = name
         self.temperature = temperature
@@ -93,6 +94,47 @@ class Experiment:
         self.forces_global = forces_global
         self.forces_global_center = forces_global_center
         self.motion = motion
+
+        if self.motion_type() == 2 and np.max(np.abs(self.motion[:,2])) > 0.1: #0.01 radians = 5.7 degrees
+            # 1. Finn første indeks med faktisk bevegelse
+            motion_threshold = 0.01  # 0.01 radianer = 0.57 deg, juster etter behov
+            motion_abs = np.abs(self.motion[:, 2])
+            start_candidates = np.where(motion_abs > motion_threshold)[0]
+
+            if len(start_candidates) > 0:
+                approx_start_idx = start_candidates[0]
+                
+                # 2. Gå bakover og finn siste nullpunkt FØR dette
+                zero_candidates = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
+                earlier_zeros = zero_candidates[zero_candidates < approx_start_idx]
+                
+                if len(earlier_zeros) > 0:
+                    start_idx = earlier_zeros[-1]  # siste null før bevegelse
+                else:
+                    start_idx = approx_start_idx  # fallback
+            else:
+                start_idx = 0  # fallback hvis aldri over terskel
+            
+            #  Find all indices where u_theta is (approximately) zero
+            zero_indices = np.where(np.isclose(self.motion[:, 2], 0, atol=1e-6))[0]
+
+            # Find stop_idx as the 4th zero **after** start_idx
+            zero_after_start = zero_indices[zero_indices > approx_start_idx]
+            if len(zero_after_start) >= 4:
+                stop_idx = zero_after_start[3]
+            else:
+                stop_idx = len(self.motion)  # fallback to end if not enough zero crossings
+
+            # Apply slicing
+            self.forces_global_center = self.forces_global_center[start_idx:stop_idx, :]
+            self.forces_global = self.forces_global[start_idx:stop_idx, :]
+            self.time = self.time[start_idx:stop_idx]
+            self.wind_speed = self.wind_speed[start_idx:stop_idx]
+            self.motion = self.motion[start_idx:stop_idx, :]
+
+
+
+      
     
        
        
@@ -322,21 +364,22 @@ class Experiment:
         
         axs[0].plot(self.time,self.motion[:,0])
         axs[0].set_title("Horizontal motion")
-        axs[0].set_ylabel(r"$u_x$")
+        axs[0].set_ylabel(r"$u_x $ [mm]")
         axs[0].grid(True)
         
         axs[1].plot(self.time,self.motion[:,1])
         axs[1].set_title("Vertical motion")
-        axs[1].set_ylabel(r"$u_z$")
+        axs[1].set_ylabel(r"$u_z $ [mm]")
         axs[1].grid(True)
         
         axs[2].plot(self.time,self.motion[:,2])
         axs[2].set_title("Pitching motion")
         axs[2].set_ylabel(r"$u_\theta$")
-        axs[2].set_xlabel(r"$t$")
+        axs[2].set_xlabel(r"$Time$ [s]")
         axs[2].grid(True)
         
-        fig.tight_layout()
+        fig.tight_layout(rect=[0, 0, 1, 0.85])
+
         
         fig.show()
         
@@ -398,10 +441,11 @@ class Experiment:
         axs[2].set_title("Pitching moment")
         axs[2].grid(True)
         axs[2].set_ylabel(r"$F_\theta$")
-        axs[2].set_xlabel(r"$t$")
+        axs[2].set_xlabel(r"$Time$ [s]")
         axs[2].legend()
         
-        fig.tight_layout()
+        fig.tight_layout(rect=[0, 0, 1, 0.85])
+
     
     def plot_wind_velocity(self,fig=[]):
         """ plot the measured wind velocity
@@ -419,8 +463,8 @@ class Experiment:
         fig.set_size_inches(20/2.54,5/2.54)
         
         axs[0].plot(self.time,self.wind_speed)
-        axs[0].set_ylabel(r"$U(t)$")
-        axs[0].set_xlabel(r"$t$")
+        axs[0].set_ylabel(r"$U(t)$ [m/s]")
+        axs[0].set_xlabel(r"$Time$ [s]")
         axs[0].set_title("Wind speed")
         axs[0].grid(True)
         
@@ -434,151 +478,169 @@ class Experiment:
 
         if bool(fig) == False:
             fig = plt.figure()
-            ax = fig.add_subplot(4,2,1)
-            for k in [2,3,4,5,6,7,8]:
-                fig.add_subplot(4,2,k, sharex=ax)
-                
-        axs = fig.get_axes()
+            gs = fig.add_gridspec(4, 2)
+            axs = []
+            axs.append(fig.add_subplot(gs[0, :]))   # wind speed over both columns
+            axs.append(fig.add_subplot(gs[1, 0]))   # u_x
+            axs.append(fig.add_subplot(gs[2, 0]))   # u_z
+            axs.append(fig.add_subplot(gs[3, 0]))   # u_theta
+            axs.append(fig.add_subplot(gs[1, 1]))   # F_x
+            axs.append(fig.add_subplot(gs[2, 1]))   # F_z
+            axs.append(fig.add_subplot(gs[3, 1]))   # F_theta
+            
                         
         fig.set_size_inches(20/2.54,15/2.54)
-        
-        
-        if mode == "all":
+        fig.tight_layout(rect=[0, 0, 1, 0.85])
 
-            axs[0].plot(self.time,self.wind_speed)
+        fig.align_ylabels()
+
+        
+        
+       
+        
+        if mode == "all": #hver enkelt lastcelle plottes separat
+
+            axs[0].plot( self.time,self.wind_speed)
+            axs[0].set_title("Average wind speed")
+            axs[0].set_ylabel(r"$U(t)$ [m/s]")
+            axs[0].grid(True)
              
-            axs[2].plot(self.time,self.motion[:,0])
-            #axs[2].set_title("Horizontal motion")
-            axs[2].set_ylabel(r"$u_x$")
+            axs[1].plot( self.time,self.motion[:,0])
+            axs[1].set_title("Horisontal motion")
+            axs[1].set_ylabel(r"$u_x $ [mm]")
+            axs[1].grid(True)
+            
+            axs[2].plot( self.time,self.motion[:,1])
+            axs[2].set_title("Vertical motion")
+            axs[2].set_ylabel(r"$u_z $ [mm]")
             axs[2].grid(True)
             
-            axs[4].plot(self.time,self.motion[:,1])
-            #axs[4].set_title("Vertical motion")
-            axs[4].set_ylabel(r"$u_z$")
-            axs[4].grid(True)
-            
-            axs[6].plot(self.time,self.motion[:,2])
-            #axs[6].set_title("Pitching motion")
-            axs[6].set_ylabel(r"$u_\theta$")
-            axs[6].set_xlabel(r"$t$")
-            axs[6].grid(True)
-            
-            axs[3].plot(self.time,self.forces_global_center[:,0:24:6])
-            #axs[3].set_title("Horizontal force")
+            axs[3].plot( self.time,self.motion[:,2])
+            axs[3].set_title("Pitching motion")
+            axs[3].set_ylabel(r"$u_\theta$  [radianer]")
+            axs[3].set_xlabel(r"$Time$ [s]")
             axs[3].grid(True)
-            axs[3].set_ylabel(r"$F_x$")
-            axs[3].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
+            
+            axs[4].plot( self.time,self.forces_global_center[:,0:24:6])
+            axs[4].set_title("Horizontal force")
+            axs[4].grid(True)
+            axs[4].set_ylabel(r"$F_x$ [N]")
+            axs[4].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
-            axs[5].plot(self.time,self.forces_global_center[:,2:24:6])
-            #axs[5].set_title("Vertical force")
+            axs[5].plot( self.time,self.forces_global_center[:,2:24:6])
+            axs[5].set_title("Vertical force")
             axs[5].grid(True)
-            axs[5].set_ylabel(r"$F_z$")
+            axs[5].set_ylabel(r"$F_z [N]$")
             axs[5].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
-            axs[7].plot(self.time,self.forces_global_center[:,4:24:6])
-            #axs[7].set_title("Pitching moment")
-            axs[7].grid(True)
-            axs[7].set_ylabel(r"$F_\theta$")
-            axs[7].set_xlabel(r"$t$")
-            axs[7].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
+            axs[6].plot( self.time,self.forces_global_center[:,4:24:6])
+            axs[6].set_title("Pitching moment")
+            axs[6].grid(True)
+            axs[6].set_ylabel(r"$F_\theta [Nm]$")
+            axs[6].set_xlabel(r"$Time$ [s]")
+            axs[6].legend(["Load cell 1","Load cell 2", "Load cell 3", "Load cell 4" ])
            
             
-            fig.tight_layout()
+            fig.tight_layout(rect=[0, 0, 1, 0.85])
+
         
-        elif mode == "decks":
+        elif mode == "decks": # krefter og momenter summeres per brodekke
             
-            axs[0].plot(self.time,self.wind_speed)
-            #axs[0].set_title("Wind speed")
-            axs[0].set_ylabel(r"$U(t)$")
+            axs[0].plot( self.time,self.wind_speed)
+            axs[0].set_title("Wind speed")
+            axs[0].set_ylabel(r"$U(t)$ [m/s]")
             axs[0].grid(True)
             
-            axs[2].plot(self.time,self.motion[:,0])
-            #axs[2].set_title("Horizontal motion")
-            axs[2].set_ylabel(r"$u_x$")
+            axs[1].plot( self.time,self.motion[:,0])
+            axs[1].set_title("Horizontal motion")
+            axs[1].set_ylabel(r"$u_x $ [mm]")
+            axs[1].grid(True)
+            
+            axs[2].plot( self.time,self.motion[:,1])
+            axs[2].set_title("Vertical motion")
+            axs[2].set_ylabel(r"$u_z $ [mm]")
             axs[2].grid(True)
             
-            axs[4].plot(self.time,self.motion[:,1])
-            #axs[4].set_title("Vertical motion")
-            axs[4].set_ylabel(r"$u_z$")
-            axs[4].grid(True)
-            
-            axs[6].plot(self.time,self.motion[:,2])
-            #axs[6].set_title("Pitching motion")
-            axs[6].set_ylabel(r"$u_\theta$")
-            axs[6].set_xlabel(r"$t$")
-            axs[6].grid(True)
-            
-            axs[3].plot(self.time,np.sum(self.forces_global_center[:,0:12:6],axis=1),label = "Upwind deck")
-            axs[3].plot(self.time,np.sum(self.forces_global_center[:,12:24:6],axis=1),label = "Downwind deck")
-            #axs[3].set_title("Horizontal force")
+            axs[3].plot( self.time,self.motion[:,2])
+            axs[3].set_title("Pitching motion")
+            axs[3].set_ylabel(r"$u_\theta [radianer]$")
+            axs[3].set_xlabel(r"$Time$ [s]")
             axs[3].grid(True)
-            axs[3].set_ylabel(r"$F_x$")
-            axs[3].legend()
+            
+            axs[4].plot( self.time,np.sum(self.forces_global_center[:,0:12:6],axis=1),label = "Upwind deck") # lastcelle 1 og 2 f.eks
+            axs[4].plot( self.time,np.sum(self.forces_global_center[:,12:24:6],axis=1),label = "Downwind deck") # lastcelle 3 og 4 f.eks
+            axs[4].set_title("Horizontal force")
+            axs[4].grid(True)
+            axs[4].set_ylabel(r"$F_x [N]$")
+            axs[4].legend()
            
             
-            #axs[2,1].plot(self.time,self.forces_global_center[:,2:24:6])
-            axs[5].plot(self.time,np.sum(self.forces_global_center[:,2:12:6],axis=1),label = "Upwind deck")
-            axs[5].plot(self.time,np.sum(self.forces_global_center[:,14:24:6],axis=1),label = "Downwind deck")
-            #axs[5].set_title("Vertical force")
+            #axs[2,1].plot( self.time,self.forces_global_center[:,2:24:6])
+            axs[5].plot( self.time,np.sum(self.forces_global_center[:,2:12:6],axis=1),label = "Upwind deck")
+            axs[5].plot( self.time,np.sum(self.forces_global_center[:,14:24:6],axis=1),label = "Downwind deck")
+            axs[5].set_title("Vertical force")
             axs[5].grid(True)
-            axs[5].set_ylabel(r"$F_z$")
+            axs[5].set_ylabel(r"$F_z [N]$")
             axs[5].legend()
            
             
-            #axs[3,1].plot(self.time,self.forces_global_center[:,4:24:6])
-            axs[7].plot(self.time,np.sum(self.forces_global_center[:,4:12:6],axis=1),label = "Upwind deck")
-            axs[7].plot(self.time,np.sum(self.forces_global_center[:,16:24:6],axis=1),label = "Downwind deck")
-            #axs[7].set_title("Pitching moment")
-            axs[7].grid(True)
-            axs[7].set_ylabel(r"$F_\theta$")
-            axs[7].set_xlabel(r"$t$")
-            axs[7].legend()
+            #axs[3,1].plot( self.time,self.forces_global_center[:,4:24:6])
+            axs[6].plot( self.time,np.sum(self.forces_global_center[:,4:12:6],axis=1),label = "Upwind deck")
+            axs[6].plot( self.time,np.sum(self.forces_global_center[:,16:24:6],axis=1),label = "Downwind deck")
+            axs[6].set_title("Pitching moment")
+            axs[6].grid(True)
+            axs[6].set_ylabel(r"$F_\theta$ [Nm]")
+            axs[6].set_xlabel(r"$Time$ [s]")
+            axs[6].legend()
             
         elif mode == "total":
             
-            axs[0].plot(self.time,self.wind_speed)
-            #axs[0].set_title("Wind speed")
-            axs[0].set_ylabel(r"$U(t)$")
+            axs[0].plot( self.time,self.wind_speed)
+            axs[0].set_title("Wind speed")            
+            axs[0].set_ylabel(r"$U(t)$ [m/s]")
             axs[0].grid(True)
             
-            axs[2].plot(self.time,self.motion[:,0])
-            #axs[2].set_title("Horizontal motion")
-            axs[2].set_ylabel(r"$u_x$")
+            axs[1].plot( self.time,self.motion[:,0])
+            axs[1].set_title("Horizontal motion")
+            axs[1].set_ylabel(r"$u_x $ [mm]")
+            axs[1].grid(True)
+            
+            axs[2].plot( self.time,self.motion[:,1])
+            axs[2].set_title("Vertical motion")
+            axs[2].set_ylabel(r"$u_z $ [mm]")
             axs[2].grid(True)
             
-            axs[4].plot(self.time,self.motion[:,1])
-            #axs[4].set_title("Vertical motion")
-            axs[4].set_ylabel(r"$u_z$")
-            axs[4].grid(True)
-            
-            axs[6].plot(self.time,self.motion[:,2])
-            #axs[6].set_title("Pitching motion")
-            axs[6].set_ylabel(r"$u_\theta$")
-            axs[6].set_xlabel(r"$t$")
-            axs[6].grid(True)
-            
-            axs[3].plot(self.time,np.sum(self.forces_global_center[:,0:24:6],axis=1),label = "Total")
-            #axs[3].set_title("Horizontal force")
+            axs[3].plot( self.time,self.motion[:,2])
+            axs[3].set_title("Pitching motion")
+            axs[3].set_ylabel(r"$u_\theta$ [radianer]")
+            axs[3].set_xlabel(r"$Time$ [s]")
             axs[3].grid(True)
-            axs[3].set_ylabel(r"$F_x$")
-            axs[3].legend()
+            
+            axs[4].plot( self.time,np.sum(self.forces_global_center[:,0:24:6], axis=1),label = "Total")
+            axs[4].set_title("Horizontal force")
+            axs[4].grid(True)
+            axs[4].set_ylabel(r"$F_x$ [N]")
+            #axs[4].legend()
            
             
-            axs[5].plot(self.time,np.sum(self.forces_global_center[:,2:24:6],axis=1),label = "Total")
-            #axs[5].set_title("Vertical force")
+            axs[5].plot( self.time,np.sum(self.forces_global_center[:,2:24:6], axis=1),label = "Total")
+            axs[5].set_title("Vertical force")
             axs[5].grid(True)
-            axs[5].set_ylabel(r"$F_z$")
-            axs[5].legend()
+            axs[5].set_ylabel(r"$F_z$ [N]")
+            #axs[5].legend()
            
             
-            axs[7].plot(self.time,np.sum(self.forces_global_center[:,4:24:6],axis=1),label = "Total")
-            #axs[7].set_title("Pitching moment")
-            axs[7].grid(True)
-            axs[7].set_ylabel(r"$F_\theta$")
-            axs[7].set_xlabel(r"$t$")
-            axs[7].legend()
+            axs[6].plot( self.time,np.sum(self.forces_global_center[:,4:24:6], axis=1),label = "Total")
+            axs[6].set_title("Pitching moment")
+            axs[6].grid(True)
+            axs[6].set_ylabel(r"$F_\theta$ [Nm]")
+            axs[6].set_xlabel(r"$Time$ [s]")
+            #axs[6].legend()
             
-            fig.tight_layout()
+            fig.tight_layout(rect=[0, 0, 1, 0.90])
+
+        
+
         

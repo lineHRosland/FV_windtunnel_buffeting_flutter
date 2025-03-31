@@ -19,7 +19,6 @@ import pandas as pd
 import os
 import copy  
 
-
 __all__ = ["StaticCoeff",]
   
             
@@ -286,7 +285,7 @@ class StaticCoeff:
                 setUp.to_excel(writer, sheet_name)
                 static_coeff.to_excel(writer, sheet_name=sheet_name)             
             
-    def plot_drag(self,mode="decks", upwind_in_rig=True):
+    def plot_drag(self,mode="decks", upwind_in_rig=True, ax=None):
         """ plots the drag coefficient
         
         parameters:
@@ -302,54 +301,51 @@ class StaticCoeff:
         else: 
             color1 = "#006400"
             color2 ="#60BD68"
-        
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
         
         if mode == "all": #individual load cells + total sum
-            plt.figure(figsize=(8,6))
-            plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1),label = "Total")
+            ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1),label = "Total")
                 # Sum all load cells for each time step            
             for k in range(self.drag_coeff.shape[1]):
-                plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,k],label=("Load cell " + str(k+1)),alpha =0.5)
+                ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,k],label=("Load cell " + str(k+1)),alpha =0.5)
                 # each load cell plottet separately
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_D(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "decks": #upwind and downwind deck + total sum
-            plt.figure(figsize=(8,6))
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"), color=color1)
-            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"), color=color2)
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_D(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"), color=color1)
+            ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"), color=color2)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "total": #only total sum
-            plt.figure(figsize=(8,6))
-            plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1))
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_D(\alpha)$")
-            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1))
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "single": #single deck
 
-            plt.figure(figsize=(8,6))
-            plt.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Single deck"))
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_D(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Single deck"))
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
                  
-    def plot_lift(self,mode="decks", upwind_in_rig=True):
+    def plot_lift(self,mode="decks", upwind_in_rig=True, ax=None):
         """ plots the lift coefficient
         
         parameters:
@@ -366,55 +362,52 @@ class StaticCoeff:
             color1 = "#006400"
             color2 ="#60BD68"
     
-                
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))        
         if mode == "all":
             print("Lift coeff shape:", self.lift_coeff.shape)
 
-            plt.figure(figsize=(8,6))
-            plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1),label = "Total")
+            ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1),label = "Total")
                             
             for k in range(self.lift_coeff.shape[1]):
-                plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,k],label=("Load cell " + str(k+1)),alpha=0.5)
+                ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,k],label=("Load cell " + str(k+1)),alpha=0.5)
             
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_L(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "decks":
-            plt.figure(figsize=(8,6))
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Upwind deck"), color=color1)
-            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,2]+self.lift_coeff[:,3],label=("Downwind deck"), color=color2)
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_L(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Upwind deck"), color=color1)
+            ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,2]+self.lift_coeff[:,3],label=("Downwind deck"), color=color2)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "total":
-            plt.figure(figsize=(8,6))
-            plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1))
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_L(\alpha)$")
-            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1))
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
 
         elif mode == "single": #single deck
 
-            plt.figure(figsize=(8,6))
-            plt.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Single deck"))
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_L(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Single deck"))
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
         
-    def plot_pitch(self,mode="decks", upwind_in_rig=True):
+    def plot_pitch(self,mode="decks", upwind_in_rig=True, ax=None):
         """ plots the pitch coefficient
         
         parameters:
@@ -430,53 +423,50 @@ class StaticCoeff:
         else: 
             color1 = "#006400"
             color2 ="#60BD68"
-                
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))        
         if mode == "all":
-            plt.figure(figsize=(8,6))
-            plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1),label = "Total")
+            ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1),label = "Total")
                             
             for k in range(self.drag_coeff.shape[1]):
-                plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,k],label=("Load cell " + str(k+1)),alpha=0.5)
+                ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,k],label=("Load cell " + str(k+1)),alpha=0.5)
             
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_M(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "decks":
-            plt.figure(figsize=(8,6))
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1),label = "Total")
-            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Upwind deck"), color=color1)
-            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,2]+self.pitch_coeff[:,3],label=("Downwind deck"), color=color2)
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_M(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Upwind deck"), color=color1)
+            ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,2]+self.pitch_coeff[:,3],label=("Downwind deck"), color=color2)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "total":
-            plt.figure(figsize=(8,6))
-            plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1))
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_M(\alpha)$")
-            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.plot(self.pitch_motion*360/2/np.pi,np.sum(self.pitch_coeff,axis=1))
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "single": #single deck
 
-            plt.figure(figsize=(8,6))
-            plt.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Single deck"))
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_M(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Single deck"))
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
     
-    def plot_drag_mean(self,mode="total", upwind_in_rig=True):
+    def plot_drag_mean(self,mode="total", upwind_in_rig=True, ax=None):
         """ plots the drag coefficient mean
         
         parameters:
@@ -495,31 +485,31 @@ class StaticCoeff:
             color ="#60BD68"
             linestyle1 = "--"
             linestyle2 = "-"
-
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
         alpha = np.round(self.pitch_motion*360/2/np.pi,1)
-        unique_alphas = np.unique(alpha)      
+        unique_alphas = np.sort(np.unique(alpha)) 
+
 
         if mode == "all": #individual load cells + total sum
-            plt.figure(figsize=(8,6))
 
             cd_total = np.sum(self.drag_coeff,axis=1)
             cd_total_mean = np.array([np.nanmean(cd_total[alpha == val]) for val in unique_alphas])
             
-            plt.plot(unique_alphas,cd_total_mean,label = "Total")
+            ax.plot(unique_alphas,cd_total_mean,label = "Total")
                       
             for k in range(self.drag_coeff.shape[1]):
                 cd_k = self.drag_coeff[:,k]
                 cd_k_mean = np.array([np.nanmean(cd_k[alpha == val]) for val in unique_alphas])
-                plt.plot(unique_alphas,cd_k_mean,label=("Load cell " + str(k+1)),alpha =0.5)
+                ax.plot(unique_alphas,cd_k_mean,label=("Load cell " + str(k+1)),alpha =0.5)
             
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_D(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
-        elif mode == "decks": #upwind and downwind deck + total sum
-            plt.figure(figsize=(8,6))
+        elif mode == "decks": #upwind and downwind deck
             cd_upwind_mean = np.array([
                 np.nanmean(self.drag_coeff[:,0][alpha == val]) + np.nanmean(self.drag_coeff[:,1][alpha == val])
                 for val in unique_alphas
@@ -528,22 +518,22 @@ class StaticCoeff:
                 np.nanmean(self.drag_coeff[:,2][alpha == val]) + np.nanmean(self.drag_coeff[:,3][alpha == val])
                 for val in unique_alphas
             ])
-            plt.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1) # Switch upwind and downwind deck. For Downstream files the load cells are switched.
-            plt.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_D(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.plot(unique_alphas,cd_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1, drawstyle='default') # Switch upwind and downwind deck. For Downstream files the load cells are switched.
+            ax.plot(unique_alphas,cd_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2, drawstyle='default')
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            return cd_upwind_mean, cd_downwind_mean, unique_alphas
 
         elif mode == "total": #only total sum
-            plt.figure(figsize=(8,6))
             cd_total_mean = np.array([np.nanmean(np.sum(self.drag_coeff,axis=1)[alpha == val]) for val in unique_alphas])
-            plt.plot(unique_alphas,cd_total_mean,label = "Total")    
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_D(\alpha)$")
-            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.plot(unique_alphas,cd_total_mean,label = "Total")    
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "single": #single deck
 
@@ -553,18 +543,18 @@ class StaticCoeff:
             ])
 
             
-            plt.figure(figsize=(8,6))
-            plt.plot(unique_alphas,cd_single_mean,label=("Single deck"))
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_D(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            ax.plot(unique_alphas,cd_single_mean,label=("Single deck"))
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_D(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            return cd_single_mean, unique_alphas
 
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
                  
-    def plot_lift_mean(self,mode="total",upwind_in_rig=True):
+    def plot_lift_mean(self,mode="total",upwind_in_rig=True, ax=None):
         """ plots the lift coefficient mean
         
         parameters:
@@ -582,30 +572,29 @@ class StaticCoeff:
             color ="#60BD68"
             linestyle1 = "--"
             linestyle2 = "-" 
-         
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6)) 
         alpha = np.round(self.pitch_motion*360/2/np.pi,1)
-        unique_alphas = np.unique(alpha)   
+        unique_alphas = np.sort(np.unique(alpha))
 
         if mode == "all":
             print("Lift coeff shape:", self.lift_coeff.shape)
 
-            plt.figure(figsize=(8,6))
             cl_total_mean = np.array([np.nanmean(np.sum(self.lift_coeff,axis=1)[alpha == val]) for val in unique_alphas])
-            plt.plot(unique_alphas,cl_total_mean,label = "Total")
+            ax.plot(unique_alphas,cl_total_mean,label = "Total")
                             
             for k in range(self.lift_coeff.shape[1]):
                 cl_k = self.lift_coeff[:,k]
                 cl_k_mean = np.array([np.nanmean(cl_k[alpha == val]) for val in unique_alphas])
-                plt.plot(unique_alphas,cl_k_mean,label=("Load cell " + str(k+1)),alpha=0.5)
+                ax.plot(unique_alphas,cl_k_mean,label=("Load cell " + str(k+1)),alpha=0.5)
             
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_L(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "decks":
-            plt.figure(figsize=(8,6))
             cl_upwind_mean = np.array([
                 np.nanmean(self.lift_coeff[:,0][alpha == val]) + np.nanmean(self.lift_coeff[:,1][alpha == val])
                 for val in unique_alphas
@@ -614,23 +603,23 @@ class StaticCoeff:
                 np.nanmean(self.lift_coeff[:,2][alpha == val]) + np.nanmean(self.lift_coeff[:,3][alpha == val])
                 for val in unique_alphas
             ])
-            plt.plot(unique_alphas,cl_upwind_mean,label=("Upwind deck"), color = color, linestyle = linestyle1)
-            plt.plot(unique_alphas,cl_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
+            ax.plot(unique_alphas,cl_upwind_mean,label=("Upwind deck"), color = color, linestyle = linestyle1)
+            ax.plot(unique_alphas,cl_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
             
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_L(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            return cl_upwind_mean, cl_downwind_mean, unique_alphas
         
         elif mode == "total":
-            plt.figure(figsize=(8,6))
             cl_total_mean = np.array([np.nanmean(np.sum(self.lift_coeff,axis=1)[alpha == val]) for val in unique_alphas])
-            plt.plot(unique_alphas,cl_total_mean)
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_L(\alpha)$")
-            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.plot(unique_alphas,cl_total_mean)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
         
         elif mode == "single": #single deck
             cl_single_mean = np.array([
@@ -638,18 +627,18 @@ class StaticCoeff:
                 for val in unique_alphas
             ])
             
-            plt.figure(figsize=(8,6))
-            plt.plot(unique_alphas,cl_single_mean,label=("Single deck"))
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_L(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.plot(unique_alphas,cl_single_mean,label=("Single deck"))
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_L(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            return cl_single_mean, unique_alphas
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
         
-    def plot_pitch_mean(self,mode="total", upwind_in_rig=True):
+    def plot_pitch_mean(self,mode="total", upwind_in_rig=True, ax=None):
         """ plots the pitch coefficient mean 
         
         parameters:
@@ -667,28 +656,28 @@ class StaticCoeff:
             color ="#60BD68"
             linestyle1 = "--"
             linestyle2 = "-" 
-
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
         alpha = np.round(self.pitch_motion*360/2/np.pi,1)
-        unique_alphas = np.unique(alpha)  
+
+        unique_alphas = np.sort(np.unique(alpha))
                 
         if mode == "all":
-            plt.figure(figsize=(8,6))
             cm_total_mean = np.array([np.nanmean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
-            plt.plot(unique_alphas,cm_total_mean,label = "Total")
+            ax.plot(unique_alphas,cm_total_mean,label = "Total")
                             
             for k in range(self.lift_coeff.shape[1]):
                 cm_k = self.pitch_coeff[:,k]
                 cm_k_mean = np.array([np.nanmean(cm_k[alpha == val]) for val in unique_alphas])
-                plt.plot(unique_alphas,cm_k_mean,label=("Load cell " + str(k+1)),alpha=0.5)
+                ax.plot(unique_alphas,cm_k_mean,label=("Load cell " + str(k+1)),alpha=0.5)
             
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_M(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
         
         elif mode == "decks":
-            plt.figure(figsize=(8,6))
             cm_upwind_mean = np.array([
                 np.nanmean(self.pitch_coeff[:,0][alpha == val]) + np.nanmean(self.pitch_coeff[:,1][alpha == val])
                 for val in unique_alphas
@@ -697,22 +686,22 @@ class StaticCoeff:
                 np.nanmean(self.pitch_coeff[:,2][alpha == val]) + np.nanmean(self.pitch_coeff[:,3][alpha == val])
                 for val in unique_alphas
             ])
-            plt.plot(unique_alphas,cm_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1)
-            plt.plot(unique_alphas,cm_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_M(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.plot(unique_alphas,cm_upwind_mean,label=("Upwind deck"), color=color, linestyle = linestyle1)
+            ax.plot(unique_alphas,cm_downwind_mean,label=("Downwind deck"), color=color, linestyle = linestyle2)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            return cm_upwind_mean, cm_downwind_mean, unique_alphas
         
         elif mode == "total":
-            plt.figure(figsize=(8,6))
             cm_total_mean = np.array([np.nanmean(np.sum(self.pitch_coeff,axis=1)[alpha == val]) for val in unique_alphas])
-            plt.plot(unique_alphas,cm_total_mean)
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_M(\alpha)$")
-            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            ax.plot(unique_alphas,cm_total_mean)
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
 
         elif mode == "single": #single deck
 
@@ -722,14 +711,13 @@ class StaticCoeff:
                         ])
 
             
-            plt.figure(figsize=(8,6))
-            plt.plot(unique_alphas,cm_single_mean,label=("Single deck"))
-            plt.grid()
-            plt.xlabel(r"$\alpha$")
-            plt.ylabel(r"$C_M(\alpha)$")
-            plt.legend()
-            plt.ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
-        
+            ax.plot(unique_alphas,cm_single_mean,label=("Single deck"))
+            ax.grid()
+            ax.set_xlabel(r"$\alpha$")
+            ax.set_ylabel(r"$C_M(\alpha)$")
+            ax.legend()
+            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            return cm_single_mean, unique_alphas
         
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -768,7 +756,7 @@ class StaticCoeff:
             np.savez_compressed(filepath, alpha=unique_alphas, cd_in_rig=cd_upwind_mean, cl_in_rig=cl_upwind_mean, cm_in_rig=cm_upwind_mean)
     
     
-def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
+def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots drag coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -785,26 +773,27 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down):
         "single": "#5DA5DA",
         "mus": "#F15854",
         "mds": "#60BD68"
+
     }
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,0] + static_coeff_up.drag_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2) #MUS er her riktig, altså motsatt av i excel arket.
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,2] + static_coeff_up.drag_coeff[:,3], label=("MUS: Downstream deck"), color = colors["mus"],  alpha = 0.5, linewidth = 1.5)  
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,2] + static_coeff_down.drag_coeff[:,3], label=("MDS: Downstream deck"), color = colors["mds"], linewidth = 2)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,0] + static_coeff_down.drag_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"],alpha = 0.5, linewidth = 1.5)  
+    ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
+    ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,0] + static_coeff_up.drag_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2) #MUS er her riktig, altså motsatt av i excel arket.
+    ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.drag_coeff[:,2] + static_coeff_up.drag_coeff[:,3], label=("MUS: Downstream deck"), color = colors["mus"],  alpha = 0.5, linewidth = 1.5)  
+    ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,2] + static_coeff_down.drag_coeff[:,3], label=("MDS: Downstream deck"), color = colors["mds"], linewidth = 2)
+    ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.drag_coeff[:,0] + static_coeff_down.drag_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"],alpha = 0.5, linewidth = 1.5)  
     
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_D(\alpha)$")
-    plt.grid(True)
-    plt.legend(loc="best", frameon=True)
-    plt.legend()
-    plt.title("Comparison of drag coefficients")
-    plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_D(\alpha)$")
+    ax.grid(True)
+    ax.legend(loc="best", frameon=True)
+    ax.legend()
+    ax.set_title("Comparison of drag coefficients")
+    ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
 
-def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down):
+def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots lift coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -818,29 +807,29 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down):
         The StaticCoeff object for downwind deck.
     
     """
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
     colors = {
         "single": "#5DA5DA",
         "mus": "#F15854",
         "mds": "#60BD68"
     }
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,0] + static_coeff_up.lift_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2)
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,2] + static_coeff_up.lift_coeff[:,3], label=("MUS: Dowstream deck"), color = colors["mus"], alpha = 0.5, linewidth = 1.5)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,2] + static_coeff_down.lift_coeff[:,3], label=("MDS: Dowstream deck"), color = colors["mds"], linewidth = 2)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,0] + static_coeff_down.lift_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"], alpha = 0.5, linewidth = 1.5)
+    ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
+    ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,0] + static_coeff_up.lift_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2)
+    ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.lift_coeff[:,2] + static_coeff_up.lift_coeff[:,3], label=("MUS: Dowstream deck"), color = colors["mus"], alpha = 0.5, linewidth = 1.5)
+    ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,2] + static_coeff_down.lift_coeff[:,3], label=("MDS: Dowstream deck"), color = colors["mds"], linewidth = 2)
+    ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.lift_coeff[:,0] + static_coeff_down.lift_coeff[:,1], label=("MDS: Upstream deck"), color = colors["mds"], alpha = 0.5, linewidth = 1.5)
 
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_L(\alpha)$")
-    plt.grid(True)
-    plt.legend(loc="best", frameon=True)
-    plt.legend()
-    plt.title("Comparison of lift coefficients")
-    plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_L(\alpha)$")
+    ax.grid(True)
+    ax.legend(loc="best", frameon=True)
+    ax.legend()
+    ax.set_title("Comparison of lift coefficients")
+    ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
-def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
+def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots pitch coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -853,31 +842,31 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down):
     static_coeff_down : StaticCoeff object
         The StaticCoeff object for downwind deck.
     """
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
     colors = {
         "single": "#5DA5DA",
         "mus": "#F15854",
         "mds": "#60BD68"
     }
-    plt.figure(figsize=(8,6))
 
-    plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,0] + static_coeff_up.pitch_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,0] + static_coeff_down.pitch_coeff[:,1], label=("MUS: Downstream deck"), color = colors["mus"],  alpha = 0.5, linewidth = 1.5)
-    plt.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,2] + static_coeff_down.pitch_coeff[:,3], label=("MDS: Downstream deck"), color = colors["mds"], linewidth = 2)
-    plt.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,2] + static_coeff_up.pitch_coeff[:,3], label=("MDS: Upstream deck"), color = colors["mds"],  alpha = 0.5, linewidth = 1.5)
+    ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
+    ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,0] + static_coeff_up.pitch_coeff[:,1], label=("MUS: Upstream deck"), color = colors["mus"], linewidth = 2)
+    ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,0] + static_coeff_down.pitch_coeff[:,1], label=("MUS: Downstream deck"), color = colors["mus"],  alpha = 0.5, linewidth = 1.5)
+    ax.plot(static_coeff_down.pitch_motion*360/2/np.pi, static_coeff_down.pitch_coeff[:,2] + static_coeff_down.pitch_coeff[:,3], label=("MDS: Downstream deck"), color = colors["mds"], linewidth = 2)
+    ax.plot(static_coeff_up.pitch_motion*360/2/np.pi, static_coeff_up.pitch_coeff[:,2] + static_coeff_up.pitch_coeff[:,3], label=("MDS: Upstream deck"), color = colors["mds"],  alpha = 0.5, linewidth = 1.5)
   
     
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_M(\alpha)$")
-    plt.grid(True)
-    plt.legend(loc="best", frameon=True)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_M(\alpha)$")
+    ax.grid(True)
+    ax.legend(loc="best", frameon=True)
 
-    plt.legend()
-    plt.title("Comparison of pitch coefficients")
-    plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    ax.legend()
+    ax.set_title("Comparison of pitch coefficients")
+    ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
-def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_down):
+def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -890,6 +879,8 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     static_coeff_down : StaticCoeff object
         The StaticCoeff object for downwind deck.
     """
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
     colors = {
         "single": "#5DA5DA",
         "mus": "#F15854",
@@ -909,27 +900,25 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     cd_upDown_mean = np.array([np.nanmean(static_coeff_up.drag_coeff[:,2][alpha_up == val]) + np.nanmean(static_coeff_up.drag_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
     cd_downUp_mean = np.array([np.nanmean(static_coeff_down.drag_coeff[:,0][alpha_down == val]) + np.nanmean(static_coeff_down.drag_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
    
-    plt.figure(figsize=(8,6))
 
-    plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
 
-    plt.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = colors["single"])
-    plt.plot(unique_alphas_up, cd_upwind_mean, label="MUS: Upstream deck ", color = colors["mus"])
-    plt.plot(unique_alphas_up, cd_upDown_mean, label="MUS: Downstream deck", color = colors["mus"], linestyle = "--")
-    plt.plot(unique_alphas_down, cd_downwind_mean, label="MDS: Downstream deck", color = colors["mds"])
-    plt.plot(unique_alphas_down, cd_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
+    ax.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = colors["single"])
+    ax.plot(unique_alphas_up, cd_upwind_mean, label="MUS: Upstream deck ", color = colors["mus"])
+    ax.plot(unique_alphas_up, cd_upDown_mean, label="MUS: Downstream deck", color = colors["mus"], linestyle = "--")
+    ax.plot(unique_alphas_down, cd_downwind_mean, label="MDS: Downstream deck", color = colors["mds"])
+    ax.plot(unique_alphas_down, cd_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
 
 
    
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_D(\alpha)$")
-    plt.grid(True)
-    plt.legend(loc="best", frameon=True)
-    plt.legend()
-    plt.title("Comparison of mean drag coefficients")
-    plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_D(\alpha)$")
+    ax.grid(True)
+    ax.legend(loc="best", frameon=True)
+    ax.legend()
+    ax.set_title("Comparison of mean drag coefficients")
+    ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
-def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_down):
+def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -943,6 +932,8 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
         The StaticCoeff object for downwind deck.
     
     """
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
     colors = {
         "single": "#5DA5DA",
         "mus": "#F15854",
@@ -961,25 +952,23 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
     cl_downwind_mean = np.array([np.nanmean(static_coeff_down.lift_coeff[:,2][alpha_down == val]) + np.nanmean(static_coeff_down.lift_coeff[:,3][alpha_down == val]) for val in unique_alphas_down])
     cl_upDown_mean = np.array([np.nanmean(static_coeff_up.lift_coeff[:,2][alpha_up == val]) + np.nanmean(static_coeff_up.lift_coeff[:,3][alpha_up == val]) for val in unique_alphas_up])
     cl_downUp_mean = np.array([np.nanmean(static_coeff_down.lift_coeff[:,0][alpha_down == val]) + np.nanmean(static_coeff_down.lift_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
-    plt.figure(figsize=(8,6))
 
-    plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
 
-    plt.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = colors["single"])
-    plt.plot(unique_alphas_up, cl_upwind_mean, label="MUS: Upstream deck", color = colors["mus"])
-    plt.plot(unique_alphas_up, cl_upDown_mean, label="MUS: Downstream deck", color = colors["mus"], linestyle = "--")
-    plt.plot(unique_alphas_down, cl_downwind_mean, label="MDS: Downstream deck", color = colors["mds"])
-    plt.plot(unique_alphas_down, cl_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
+    ax.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = colors["single"])
+    ax.plot(unique_alphas_up, cl_upwind_mean, label="MUS: Upstream deck", color = colors["mus"])
+    ax.plot(unique_alphas_up, cl_upDown_mean, label="MUS: Downstream deck", color = colors["mus"], linestyle = "--")
+    ax.plot(unique_alphas_down, cl_downwind_mean, label="MDS: Downstream deck", color = colors["mds"])
+    ax.plot(unique_alphas_down, cl_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
 
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_L(\alpha)$")
-    plt.grid(True)
-    plt.legend(loc="best", frameon=True)
-    plt.legend()
-    plt.title("Comparison of mean lift coefficients")
-    plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_L(\alpha)$")
+    ax.grid(True)
+    ax.legend(loc="best", frameon=True)
+    ax.legend()
+    ax.set_title("Comparison of mean lift coefficients")
+    ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
-def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_down):
+def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -993,6 +982,8 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
         The StaticCoeff object for downwind deck.
     """
     # Calculate unique alpha values (pitch motion in degrees)
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
     unique_alphas_single = np.unique(alpha_single)
     alpha_up = np.round(static_coeff_up.pitch_motion*360/2/np.pi,1)
@@ -1011,26 +1002,24 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
         "mus": "#F15854",
         "mds": "#60BD68"
     }
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14})  # Generelt større og mer lesbar tekst
 
-    plt.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = colors["single"])
-    plt.plot(unique_alphas_up, cm_upwind_mean, label="MUS: Upstream deck", color =colors["mus"])
-    plt.plot(unique_alphas_up, cm_upDown_mean, label="MUS: Downstream deck", color = colors["mus"], linestyle = "--")
+    ax.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = colors["single"])
+    ax.plot(unique_alphas_up, cm_upwind_mean, label="MUS: Upstream deck", color =colors["mus"])
+    ax.plot(unique_alphas_up, cm_upDown_mean, label="MUS: Downstream deck", color = colors["mus"], linestyle = "--")
 
-    plt.plot(unique_alphas_down, cm_downwind_mean, label="MDS: Downstream deck", color =colors["mds"])
-    plt.plot(unique_alphas_down, cm_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
+    ax.plot(unique_alphas_down, cm_downwind_mean, label="MDS: Downstream deck", color =colors["mds"])
+    ax.plot(unique_alphas_down, cm_downUp_mean, label="MDS: Upstream deck", color = colors["mds"], linestyle = "--")
 
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_M(\alpha)$")
-    plt.grid(True)
-    plt.legend(loc="best", frameon=True)
-    plt.legend()
-    plt.title("Comparison of mean pitch coefficients")
-    plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_M(\alpha)$")
+    ax.grid(True)
+    ax.legend(loc="best", frameon=True)
+    ax.legend()
+    ax.set_title("Comparison of mean pitch coefficients")
+    ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Compare with single deck
-def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_rig=True):
+def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots drag coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1052,24 +1041,23 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_r
         color2 ="#60BD68"
        
    
-        
-
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14}) 
-
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1], label=("Upstream deck"), color = color1)
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,2] + static_coeff.drag_coeff[:,3], label=("Downstream deck"), color = color2)
-
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_D(\alpha)$")
-    plt.grid()
-    plt.legend()
-    plt.title(f"{setUp_type}: Comparison of drag coefficients")
-    plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))   
 
 
-def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_rig=True):
+    ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.drag_coeff[:,0] + static_coeff_single.drag_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
+    ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,0] + static_coeff.drag_coeff[:,1], label=("Upstream deck"), color = color1)
+    ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.drag_coeff[:,2] + static_coeff.drag_coeff[:,3], label=("Downstream deck"), color = color2)
+
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_D(\alpha)$")
+    ax.grid()
+    ax.legend()
+    ax.set_title(f"{setUp_type}: Comparison of drag coefficients")
+    ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+
+
+def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots lift coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1088,22 +1076,21 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_r
         setUp_type = "MDS"
         color1 = "#006400"
         color2 ="#60BD68"
-       
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14}) 
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1], label=("Upwind deck"), color = color1)
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,2] + static_coeff.lift_coeff[:,3], label=("Downwind deck"), color = color2)
+    ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
+    ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,0] + static_coeff.lift_coeff[:,1], label=("Upwind deck"), color = color1)
+    ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.lift_coeff[:,2] + static_coeff.lift_coeff[:,3], label=("Downwind deck"), color = color2)
 
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_L(\alpha)$")
-    plt.grid()
-    plt.legend()
-    plt.title(f"{setUp_type}: Comparison of lift coefficients ")
-    plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_L(\alpha)$")
+    ax.grid()
+    ax.legend()
+    ax.set_title(f"{setUp_type}: Comparison of lift coefficients ")
+    ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
-def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_rig=True):
+def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots pitch coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1122,23 +1109,22 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_
         setUp_type = "MDS"
         color1 = "#006400"
         color2 ="#60BD68"
-       
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14}) 
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))   
 
-    plt.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,0] + static_coeff.pitch_coeff[:,1], label=("Upwind deck"), color = color1)
-    plt.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,2] + static_coeff.pitch_coeff[:,3], label=("Downwind deck"), color = color2)
+    ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = "#5DA5DA")
+    ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,0] + static_coeff.pitch_coeff[:,1], label=("Upwind deck"), color = color1)
+    ax.plot(static_coeff.pitch_motion*360/2/np.pi, static_coeff.pitch_coeff[:,2] + static_coeff.pitch_coeff[:,3], label=("Downwind deck"), color = color2)
 
     
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_M(\alpha)$")
-    plt.grid()
-    plt.legend()
-    plt.title(f"{setUp_type}: Comparison of pitch coefficients ")
-    plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_M(\alpha)$")
+    ax.grid()
+    ax.legend()
+    ax.set_title(f"{setUp_type}: Comparison of pitch coefficients ")
+    ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
-def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True):
+def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1156,7 +1142,8 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind
         setUp_type = "MDS"
         color ="#60BD68"
    
-    
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
     unique_alphas_single = np.unique(alpha_single)
@@ -1168,23 +1155,21 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind
     cd_downwind_mean = np.array([np.nanmean(static_coeff.drag_coeff[:,2][alpha == val]) + np.nanmean(static_coeff.drag_coeff[:,3][alpha== val]) for val in unique_alphas])
 
 
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14}) 
     
-    plt.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = "#5DA5DA")
-    plt.plot(unique_alphas, cd_upwind_mean, label="Upwind deck", color = color)
-    plt.plot(unique_alphas, cd_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
+    ax.plot(unique_alphas_single, cd_single_mean, label="Single deck", color = "#5DA5DA")
+    ax.plot(unique_alphas, cd_upwind_mean, label="Upwind deck", color = color)
+    ax.plot(unique_alphas, cd_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
 
 
    
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_D(\alpha)$")
-    plt.grid()
-    plt.legend()
-    plt.title(f"{setUp_type}: Comparison of mean drag coefficients ")
-    plt.ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_D(\alpha)$")
+    ax.grid()
+    ax.legend()
+    ax.set_title(f"{setUp_type}: Comparison of mean drag coefficients ")
+    ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
 
-def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True):
+def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1201,6 +1186,8 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind
     else: 
         setUp_type = "MDS"
         color ="#60BD68"
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
     unique_alphas_single = np.unique(alpha_single)
@@ -1211,21 +1198,19 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind
     cl_upwind_mean = np.array([np.nanmean(static_coeff.lift_coeff[:,0][alpha == val]) + np.nanmean(static_coeff.lift_coeff[:,1][alpha == val]) for val in unique_alphas])
     cl_downwind_mean = np.array([np.nanmean(static_coeff.lift_coeff[:,2][alpha == val]) + np.nanmean(static_coeff.lift_coeff[:,3][alpha == val]) for val in unique_alphas])
    
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14}) 
 
-    plt.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = "#5DA5DA")
-    plt.plot(unique_alphas, cl_upwind_mean, label="Upwind deck", color = color)
-    plt.plot(unique_alphas, cl_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
+    ax.plot(unique_alphas_single, cl_single_mean, label="Single deck", color = "#5DA5DA")
+    ax.plot(unique_alphas, cl_upwind_mean, label="Upwind deck", color = color)
+    ax.plot(unique_alphas, cl_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
 
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_L(\alpha)$")
-    plt.grid()
-    plt.legend()
-    plt.title(f"{setUp_type}: Comparison of mean lift coefficients ")
-    plt.ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_L(\alpha)$")
+    ax.grid()
+    ax.legend()
+    ax.set_title(f"{setUp_type}: Comparison of mean lift coefficients ")
+    ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
 
-def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True):
+def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
     
@@ -1242,6 +1227,8 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     else: 
         setUp_type = "MDS"
         color ="#60BD68"
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
     unique_alphas_single = np.unique(alpha_single)
@@ -1252,25 +1239,23 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     cm_upwind_mean = np.array([np.nanmean(static_coeff.pitch_coeff[:,0][alpha == val]) + np.nanmean(static_coeff.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
     cm_downwind_mean = np.array([np.nanmean(static_coeff.pitch_coeff[:,2][alpha == val]) + np.nanmean(static_coeff.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
     
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14}) 
 
-    plt.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = "#5DA5DA")
-    plt.plot(unique_alphas, cm_upwind_mean, label="Upwind deck", color = color)
-    plt.plot(unique_alphas, cm_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
+    ax.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = "#5DA5DA")
+    ax.plot(unique_alphas, cm_upwind_mean, label="Upwind deck", color = color)
+    ax.plot(unique_alphas, cm_downwind_mean, label="Downwind deck", color = color, linestyle = "--")
 
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(r"$C_M(\alpha)$")
-    plt.grid()
-    plt.legend()
-    plt.title(f"{setUp_type}: Comparison of mean pitch coefficients ")
-    plt.ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$C_M(\alpha)$")
+    ax.grid()
+    ax.legend()
+    ax.set_title(f"{setUp_type}: Comparison of mean pitch coefficients ")
+    ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
 
 #%% Wind speeds
 def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
                                    static_coeff_single_high, static_coeff_low,
                                    static_coeff_med, static_coeff_high,
-                                   scoff = ""):
+                                   scoff = "", ax=None):
     """
     Plots  coefficients for low and high wind speeds in same figure for each deck setup.
 
@@ -1293,7 +1278,8 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
         "drag" or "ift" or "pitch"
 
     """
-    
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
     color1HWS = "#B22222"
     color2HWS= "#F15854"
     color3HWS="#FCA5A5"
@@ -1322,16 +1308,14 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
         min = -0.175
         max = 0.2
 
-    plt.figure(figsize=(8,12))
-    plt.rcParams.update({'font.size': 14}) 
 
     # Plot low wind speed
    
-    plt.plot(static_coeff_single_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_single_low, coeff)[:,0] + getattr(static_coeff_single_low, coeff)[:,1],
+    ax.plot(static_coeff_single_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_single_low, coeff)[:,0] + getattr(static_coeff_single_low, coeff)[:,1],
              label=f"LWS - Single deck", color = color1LWS)
-    plt.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_low, coeff)[:,0] + getattr(static_coeff_low, coeff)[:,1],
+    ax.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_low, coeff)[:,0] + getattr(static_coeff_low, coeff)[:,1],
              label=f"LWS -  Upstream deck", color = color2LWS)
-    plt.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_low, coeff)[:,2] + getattr(static_coeff_low, coeff)[:,3],
+    ax.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_low, coeff)[:,2] + getattr(static_coeff_low, coeff)[:,3],
              label=f"LWS - Downstream deck", color = color3LWS)
 
     # Plot med wind speed
@@ -1342,19 +1326,19 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
 
     # Plot high wind speed
     
-    plt.plot(static_coeff_single_high.pitch_motion * 360 / (2 * np.pi),getattr(static_coeff_single_high, coeff)[:,0] + getattr(static_coeff_single_high, coeff)[:,1],
+    ax.plot(static_coeff_single_high.pitch_motion * 360 / (2 * np.pi),getattr(static_coeff_single_high, coeff)[:,0] + getattr(static_coeff_single_high, coeff)[:,1],
              label=f"HWS - Single deck", color = color1HWS)
-    plt.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_high, coeff)[:,0] + getattr(static_coeff_high, coeff)[:,1],
+    ax.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_high, coeff)[:,0] + getattr(static_coeff_high, coeff)[:,1],
              label=f"HWS - Upstream deck", color = color2HWS)
-    plt.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_high, coeff)[:,2] + getattr(static_coeff_high, coeff)[:,3],
+    ax.plot(static_coeff_high.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_high, coeff)[:,2] + getattr(static_coeff_high, coeff)[:,3],
              label=f"HWS - Downstream deck", color = color3HWS)
 
-    plt.xlabel(r"$\alpha$ [deg]")
-    plt.ylabel(axis)
-    plt.grid(True)
-    plt.legend()
-    plt.ylim(min,max)
-    plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
+    ax.set_xlabel(r"$\alpha$ [deg]")
+    ax.set_ylabel(axis)
+    ax.grid(True)
+    ax.legend()
+    ax.set_ylim(min,max)
+    ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
 
  
 
@@ -1362,7 +1346,7 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
 def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_med,
                                    static_coeff_single_high, static_coeff_low,
                                    static_coeff_med, static_coeff_high,
-                                    scoff = ""):
+                                    scoff = "", ax=None):
     """
     Plots  coefficients for low and high wind speeds in same figure for each deck setup.
 
@@ -1397,7 +1381,8 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     color1LWS = "#A1D99B"
     color2LWS ="#60BD68"
     color3LWS="#238B45"
-    
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
     if scoff == "drag":
         axis = r"$C_D(\alpha)$"
         coeff = "drag_coeff"
@@ -1442,15 +1427,13 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
 
 
-    plt.figure(figsize=(8,12))
-    plt.rcParams.update({'font.size': 14}) 
 
     # Plot low wind speed
-    plt.plot(unique_alphas_single_low, single_mean_low,
+    ax.plot(unique_alphas_single_low, single_mean_low,
              label=f"LWS - Single deck", color = color2LWS,linestyle=':')
-    plt.plot(unique_alphas_low, upwind_mean_low,
+    ax.plot(unique_alphas_low, upwind_mean_low,
              label=f"LWS -  Upstream deck", color = color2LWS, linestyle='--')
-    plt.plot(unique_alphas_low, downwind_mean_low,
+    ax.plot(unique_alphas_low, downwind_mean_low,
              label=f"LWS - Downstream deck", color = color2LWS, linestyle='-')
 
 
@@ -1462,19 +1445,19 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     #            label=f"MWS - Downstream deck", color = color2MWS, linestyle='-')
     
     # Plot high wind speed
-    plt.plot(unique_alphas_single_high, single_mean_high,
+    ax.plot(unique_alphas_single_high, single_mean_high,
              label=f"HWS - Single deck", color = color2HWS,linestyle=':')
-    plt.plot(unique_alphas_high, upwind_mean_high,
+    ax.plot(unique_alphas_high, upwind_mean_high,
                 label=f"HWS - Upstream deck", color = color2HWS, linestyle='--')
-    plt.plot(unique_alphas_high, downwind_mean_high,
+    ax.plot(unique_alphas_high, downwind_mean_high,
                 label=f"HWS - Downstream deck", color = color2HWS, linestyle='-')
     
-    plt.xlabel(r"$\alpha$ [deg]")
-    plt.ylabel(axis)
-    plt.grid(True)
-    plt.ylim(min,max)
-    plt.legend()
-    plt.title(f"Comparison of {scoff} coefficients at different wind speeds")
+    ax.set_xlabel(r"$\alpha$ [deg]")
+    ax.set_ylabel(axis)
+    ax.grid(True)
+    ax.set_ylim(min,max)
+    ax.legend()
+    ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
 
  
 def filter(static_coeff, threshold=0.3, scoff="", single=True):
@@ -1503,12 +1486,15 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         Filtered downwind coefficients with NaNs replacing outliers.
     """
     if scoff == "drag":
+        print("Filtering drag coefficients")
         coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
         coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
     elif scoff == "lift":
+        print("Filtering lift coefficients")
         coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
         coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
     elif scoff == "pitch":
+        print("Filtering pitch coefficients")
         coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
         coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
     else:
@@ -1525,6 +1511,8 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         for val in unique_alphas:
             idx = np.where(alpha == val)[0]
             spread = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
+            print(f"Alpha = {val}, Spread = {spread:.3f}")
+
             if spread > threshold:
                 coeff_up_plot[idx] = np.nan
         return alpha, coeff_up_plot
@@ -1534,6 +1522,9 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         idx = np.where(alpha == val)[0]
         spread_up = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
         spread_down = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
+        print(f"Alpha = {val}, Spread = {spread_up:.3f}")
+        print(f"Alpha = {val}, Spread = {spread_down:.3f}")
+
 
         if spread_up > threshold:
             coeff_up_plot[idx] = np.nan
@@ -1543,193 +1534,301 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
     return alpha, coeff_up_plot, coeff_down_plot
 
 
+def get_coeffs(static_coeff):
+    alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
+    return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
+     
+def remove_after_jump(alpha_vals, coeff_array, threshold_jump=0.2, cols=(0, 1)):
+    alpha_vals_rounded = np.round(alpha_vals, 1)
+    unique_alpha = np.sort(np.unique(alpha_vals_rounded)) # Lager en sortert liste av unike α-verdier (avrundet til én desimal).
 
+    for i, alpha in enumerate(unique_alpha): # fra lav til høy alpha
+        idx = np.where(alpha_vals_rounded == alpha)[0]
+        if len(idx) == 0:
+            continue
 
+        current_vals = coeff_array[idx, cols[0]] + coeff_array[idx, cols[1]] #upwind or downwind
+        current_mean = np.nanmean(current_vals) #Tar mean i tilfelle ikke begge cellene har verdier for akkurat denne alpha verdien
+        if np.isnan(current_mean):
+            continue
 
+        p = 1
+        while i - p >= 0: #Går bakover i α-verdiene til den finner siste gyldige (ikke-NaN) datapunkt.
+            prev_idx = np.where(alpha_vals_rounded == unique_alpha[i - p])[0]
+            if len(prev_idx) == 0:
+                p += 1
+                continue
+            prev_vals = coeff_array[prev_idx, cols[0]] + coeff_array[prev_idx, cols[1]]
+            prev_mean = np.nanmean(prev_vals)
+            if not np.isnan(prev_mean):
+                break
+            p += 1
+        else:
+            continue
 
-def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, threshold=0.1, threshold_low=[0.05, 0.05, 0.05], threshold_med=[None, None, None], threshold_high=[0.05, 0.05, 0.05], single=False):
+        if np.abs(current_mean - prev_mean) > threshold_jump: #et hopp er oppdaget
+            mask = alpha_vals_rounded > alpha # Fjerner alle verdier med høyere α enn der hoppet oppstod
+            coeff_array[mask, cols[0]] = np.nan
+            coeff_array[mask, cols[1]] = np.nan
+            break # tar kun første hopp (dette er greit etter å ha studert datasettenes oppførsel)
+    return coeff_array
+
+def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold_low=[0.05, 0.05, 0.05], threshold_high=[0.05, 0.05, 0.05], single=False):
     """
     Filters drag, lift, and pitch coefficients in each dataset where values deviate too much from reference at a given alpha.
     Reference is chosen based on dataset with lowest spread per alpha.
     If single=True, filters only static_coeff_1 and static_coeff_2.
     Returns filtered StaticCoeff objects.
     """
+    # Antall trinn bakover du vil sjekke (i grader)
+    alpha_lookback_range = 2  # f.eks. 5 trinn på 0.1
+    alpha_step = 0.1
+    alpha_tolerance = 1e-6  # for å unngå float-problemer
 
-    def get_coeffs(static_coeff):
-        alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
-        return alpha, static_coeff.drag_coeff.copy(), static_coeff.lift_coeff.copy(), static_coeff.pitch_coeff.copy()
 
-    alpha_1, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
-    alpha_2, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
-
+ 
+    alpha, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
+    #ettersom alpha er rundet opp til 1 desimal, er alle alphaer til hver tidsserie like, og man trenger egt ikke skille mellom alphaene i forsøket. Men koden blir litt mer robust.
+    _, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
+ 
     drag_1_filt, lift_1_filt, pitch_1_filt = drag_1.copy(), lift_1.copy(), pitch_1.copy()
     drag_2_filt, lift_2_filt, pitch_2_filt = drag_2.copy(), lift_2.copy(), pitch_2.copy()
-
-    if not single:
-        alpha_3, drag_3, lift_3, pitch_3 = get_coeffs(static_coeff_3)
-        drag_3_filt, lift_3_filt, pitch_3_filt = drag_3.copy(), lift_3.copy(), pitch_3.copy()
-
+ 
+  
     coeff_names = ["drag", "lift", "pitch"]
     coeffs_1 = [drag_1, lift_1, pitch_1]
     coeffs_2 = [drag_2, lift_2, pitch_2]
-    coeffs_1_filt = [drag_1_filt, lift_1_filt, pitch_1_filt]
+    coeffs_1_filt = [drag_1_filt, lift_1_filt, pitch_1_filt] # I første omgang kun en kopi
     coeffs_2_filt = [drag_2_filt, lift_2_filt, pitch_2_filt]
-
-    if not single:
-        coeffs_3 = [drag_3, lift_3, pitch_3]
-        coeffs_3_filt = [drag_3_filt, lift_3_filt, pitch_3_filt]
-
-    unique_alpha = np.unique(alpha_1)
-
+ 
+    unique_alpha = np.unique(alpha)
+ 
     for val in unique_alpha:
-        idx1 = np.where(alpha_1 == val)[0]
-        idx2 = np.where(alpha_2 == val)[0]
-
+        idx1 = np.where(alpha == val)[0]
+        idx2 = np.where(alpha == val)[0]
+ 
         if single:
             if not (len(idx1) and len(idx2)):
                 continue
-
+ 
             for i, name in enumerate(coeff_names):
                 this_threshold_low  = threshold_low[i] if threshold_low[i] is not None else threshold
                 this_threshold_high = threshold_high[i] if threshold_high[i] is not None else threshold
-                
+ 
                 coeff_1 = coeffs_1[i]
                 coeff_2 = coeffs_2[i]
                 coeff_1_f = coeffs_1_filt[i]
                 coeff_2_f = coeffs_2_filt[i]
-
-                vals_1 = coeff_1[idx1, 0] + coeff_1[idx1, 1]
-                vals_2 = coeff_2[idx2, 0] + coeff_2[idx2, 1]
+ 
+                vals_1 = coeff_1[idx1, 0] + coeff_1[idx1, 1] #drag eller lift eller pitch totalen for ett helt brudekke
+                vals_2 = coeff_2[idx2, 0] + coeff_2[idx2, 1] #samme for et annet forsøk
                 spread_1 = np.max(vals_1) - np.min(vals_1)
                 spread_2 = np.max(vals_2) - np.min(vals_2)
-
+ 
                 coeff_check1 = filter(static_coeff_1, this_threshold_low, scoff=name, single=True)[1]
                 coeff_check2 = filter(static_coeff_2, this_threshold_high, scoff=name, single=True)[1]
-                
+ 
+                nan_flags = []
 
+                for check_array, idx_array, alpha_array in zip([coeff_check1, coeff_check2], [idx1, idx2], [alpha, alpha]):
+                    has_nan_now = np.any(np.isnan(check_array[idx_array]))
 
-                has_nan_1 = np.any(np.isnan(coeff_check1[idx1]))
-                has_nan_2 = np.any(np.isnan(coeff_check2[idx2]))
+                    if has_nan_now:
+                        nan_flags.append(True)
+                        continue
 
+                    has_nan_back = False
+                    current_alpha = np.round(val, 1)
+
+                    for delta in np.arange(alpha_step, alpha_lookback_range + alpha_step, alpha_step):
+                        prev_alpha = np.round(current_alpha - delta, 1)
+                        idx_prev = np.where(np.abs(np.round(alpha_array, 1) - prev_alpha) < alpha_tolerance)[0]
+                        if len(idx_prev) > 0 and np.any(np.isnan(check_array[idx_prev])):
+                            has_nan_back = True
+                            break
+
+                    nan_flags.append(has_nan_back)
+
+                has_nan_1, has_nan_2 = nan_flags
+ 
                 if has_nan_1 and not has_nan_2:
                     ref_mean = np.mean(vals_2)
                 elif has_nan_2 and not has_nan_1:
                     ref_mean = np.mean(vals_1)
                 else:
                     ref_mean = np.mean(vals_1) if spread_1 <= spread_2 else np.mean(vals_2)
-
+ 
                 for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
-                    summed = coeff_array[idx, 0] + coeff_array[idx, 1]
-                    mask = np.abs(summed - ref_mean) > threshold
-                    coeff_array[idx[mask], 0] = np.nan
+                    summed = coeff_array[idx, 0] + coeff_array[idx, 1] #når singel, kun ett enkelt brudekke (val_1 og val_2)
+                    mask = np.abs(summed - ref_mean) > threshold #markerer verdier som er for langt unna referansen
+                    coeff_array[idx[mask], 0] = np.nan # setter verdien til nan dersom mask er true
                     coeff_array[idx[mask], 1] = np.nan
-
+ 
         else:
-            idx3 = np.where(alpha_3 == val)[0]
+            idx3 = np.where(alpha == val)[0]
             if not (len(idx1) and len(idx2) and len(idx3)):
                 continue
-
+ 
             for i, name in enumerate(coeff_names):
                 this_threshold_low  = threshold_low[i] if threshold_low[i] is not None else threshold
-                this_threshold_med  = threshold_med[i] if threshold_med[i] is not None else threshold
                 this_threshold_high = threshold_high[i] if threshold_high[i] is not None else threshold
-
+ 
                 coeff_1 = coeffs_1[i]
                 coeff_2 = coeffs_2[i]
-                coeff_3 = coeffs_3[i]
                 coeff_1_f = coeffs_1_filt[i]
                 coeff_2_f = coeffs_2_filt[i]
-                coeff_3_f = coeffs_3_filt[i]
-
+ 
                 #UP
                 vals_up = [coeff_1[idx1, 0] + coeff_1[idx1, 1],
-                           coeff_2[idx2, 0] + coeff_2[idx2, 1],
-                           coeff_3[idx3, 0] + coeff_3[idx3, 1]]
+                           coeff_2[idx2, 0] + coeff_2[idx2, 1]]
+                #print(f"Upwind vals: {[np.mean(v) for v in vals_up]}")
                 spreads_up = [np.max(v) - np.min(v) for v in vals_up]
-
-                
+ 
+ 
                 coeff_up_checks = [
                     filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[1],
-                    filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[1],
-                    filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[1],
+                    filter(static_coeff_2, this_threshold_high, scoff=name, single=False)[1],
                 ]
-              
-                nan_flags_up = [np.any(np.isnan(check[idx])) for check, idx in zip(coeff_up_checks, [idx1, idx2, idx3])]
-                clean_idxs_up = [i for i, nan in enumerate(nan_flags_up) if not nan]
+ 
+                nan_flags_up = []
 
-                if len(clean_idxs_up) == 1:
-                    ref_idx_up = clean_idxs_up[0]
-                elif len(clean_idxs_up) == 2:
+                for check_array, idx_array, alpha_array in zip(coeff_up_checks, [idx1, idx2, idx3], [alpha, alpha, alpha]):
+                    has_nan_now = np.any(np.isnan(check_array[idx_array]))  #Sjekker om det er for stor spredning i en av de tre forsøkene. Hvis spredningen er for stor er det et dårlig signal med denne vinkelen.
+
+                    if has_nan_now:
+                        nan_flags_up.append(True)
+                        continue  # trenger ikke sjekke historikken hvis det allerede er dårlig nå
+
+                    # --- Sjekk bakover i alpha ---
+                    has_nan_back = False
+                    current_alpha = np.round(val, 1)  # val = current alpha value in loop
+
+                    for delta in np.arange(alpha_step, alpha_lookback_range + alpha_step, alpha_step):
+                        prev_alpha = np.round(current_alpha - delta, 1)
+                        idx_prev = np.where(np.abs(np.round(alpha_array, 1) - prev_alpha) < alpha_tolerance)[0]
+                        if len(idx_prev) > 0:
+                            if np.any(np.isnan(check_array[idx_prev])):
+                                has_nan_back = True
+                                break  # vi trenger bare én dårlig α bakover
+
+                    nan_flags_up.append(has_nan_now or has_nan_back)
+
+                # Liste med de datasett som er “clean” nå og tidligere
+                clean_idxs_up = [i for i, nan in enumerate(nan_flags_up) if not nan]  #liste med index til de som ikke har nan (ok spredning i data), nå og litt tidligere
+
+               
+ 
+                if len(clean_idxs_up) == 1: #velger datasettet med minst spredning eller ingen nan
+                    ref_idx_up = clean_idxs_up[0] #eneste signal uten for mye spredning 
+                elif len(clean_idxs_up) == 2: # to signaler uten for mye spredning, lavest spredning best
                     ref_idx_up = clean_idxs_up[0] if spreads_up[clean_idxs_up[0]] < spreads_up[clean_idxs_up[1]] else clean_idxs_up[1]
-                else:
-                    ref_idx_up = np.argmin(spreads_up)
+                elif len(clean_idxs_up) == 3: # alle signaler ok
+                   ref_idx_up = np.argmin(spreads_up) 
+                else: #Alle datasett er for dårlig
+                    ref_idx_up = None
+                    #print("alle datasett er for dårlig")
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f]):
+                        coeff_array[idx, 0] = np.nan
+                        coeff_array[idx, 1] = np.nan
+                
 
-                ref_mean_up = np.mean(vals_up[ref_idx_up])
+                if ref_idx_up is not None:
+                    ref_mean_up = np.mean(vals_up[ref_idx_up])
+    
+                    #print(f"Ref mean up = {ref_mean_up:.3f}")
 
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f]):
+                        summed = coeff_array[idx, 0] + coeff_array[idx, 1]
+                        mask = np.abs(summed - ref_mean_up) > threshold
+                        #print(f"Deck {i+1} — alpha = {val:.1f} — Removed {np.sum(mask)} points due to threshold filtering.")
 
-                for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
-                    summed = coeff_array[idx, 0] + coeff_array[idx, 1]
-                    mask = np.abs(summed - ref_mean_up) > threshold
-                    coeff_array[idx[mask], 0] = np.nan
-                    coeff_array[idx[mask], 1] = np.nan
-
-                filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[1]
-                filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[1]
-                filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[1]
-
+                        coeff_array[idx[mask], 0] = np.nan
+                        coeff_array[idx[mask], 1] = np.nan
+    
+                    
                 # Same logic for downwind
                 vals_down = [coeff_1[idx1, 2] + coeff_1[idx1, 3],
-                             coeff_2[idx2, 2] + coeff_2[idx2, 3],
-                             coeff_3[idx3, 2] + coeff_3[idx3, 3]]
+                             coeff_2[idx2, 2] + coeff_2[idx2, 3]]
                 spreads_down = [np.max(v) - np.min(v) for v in vals_down]
-
+ 
                 coeff_down_checks = [
                     filter(static_coeff_1, this_threshold_low, scoff=name, single=False)[2],
-                    filter(static_coeff_2, this_threshold_med, scoff=name, single=False)[2],
-                    filter(static_coeff_3, this_threshold_high, scoff=name, single=False)[2],
+                    filter(static_coeff_2, this_threshold_high, scoff=name, single=False)[2],
                 ]
+ 
+                nan_flags_down = []
 
-                nan_flags_down = [np.any(np.isnan(check[idx])) for check, idx in zip(coeff_down_checks, [idx1, idx2, idx3])]
+                for check_array, idx_array, alpha_array in zip(coeff_down_checks, [idx1, idx2, idx3], [alpha, alpha, alpha]):
+                    has_nan_now = np.any(np.isnan(check_array[idx_array]))  #Sjekker om det er for stor spredning i en av de tre forsøkene. Hvis spredningen er for stor er det et dårlig signal med denne vinkelen.
 
-                clean_idxs_down = [i for i, nan in enumerate(nan_flags_down) if not nan]
+                    if has_nan_now:
+                        nan_flags_down.append(True)
+                        continue  # trenger ikke sjekke historikken hvis det allerede er dårlig nå
 
+                    # --- Sjekk bakover i alpha ---
+                    has_nan_back = False
+                    current_alpha = np.round(val, 1)  # val = current alpha value in loop
+
+                    for delta in np.arange(alpha_step, alpha_lookback_range + alpha_step, alpha_step):
+                        prev_alpha = np.round(current_alpha - delta, 1)
+                        idx_prev = np.where(np.abs(np.round(alpha_array, 1) - prev_alpha) < alpha_tolerance)[0]
+                        if len(idx_prev) > 0:
+                            if np.any(np.isnan(check_array[idx_prev])):
+                                has_nan_back = True
+                                break  # vi trenger bare én dårlig α bakover
+
+                    nan_flags_down.append(has_nan_now or has_nan_back)
+
+                # Liste med de datasett som er “clean” nå og tidligere
+                clean_idxs_down = [i for i, nan in enumerate(nan_flags_down) if not nan]  #liste med index til de som ikke har nan (ok spredning i data), nå og litt tidligere
+
+ 
                 if len(clean_idxs_down) == 1:
                     ref_idx_down = clean_idxs_down[0]
                 elif len(clean_idxs_down) == 2:
                     ref_idx_down = clean_idxs_down[0] if spreads_down[clean_idxs_down[0]] < spreads_down[clean_idxs_down[1]] else clean_idxs_down[1]
+                elif len(clean_idxs_down) == 3: # alle signaler ok
+                   ref_idx_down = np.argmin(spreads_down)
                 else:
-                    ref_idx_down = np.argmin(spreads_down)
+                    ref_idx_down = None
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f]):
+                       coeff_array[idx, 2] = np.nan
+                       coeff_array[idx, 3] = np.nan
+                 
+                if ref_idx_down is not None:
+ 
+                    ref_mean_down = np.mean(vals_down[ref_idx_down])
+    
+                    for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f]):
+                        summed = coeff_array[idx, 2] + coeff_array[idx, 3]
+                        mask = np.abs(summed - ref_mean_down) > threshold
+                        coeff_array[idx[mask], 2] = np.nan
+                        coeff_array[idx[mask], 3] = np.nan
 
-                ref_mean_down = np.mean(vals_down[ref_idx_down])
+    for i, alpha in enumerate([alpha, alpha] if single else [alpha, alpha, alpha]):
+        target_arrays = [coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i]]
+        for coeff_array in target_arrays:
+            remove_after_jump(alpha, coeff_array, threshold_jump=1.2, cols=(0, 1))
+            if not single:
+                remove_after_jump(alpha, coeff_array, threshold_jump=1.2, cols=(2, 3))
 
-                for idx, coeff_array in zip([idx1, idx2, idx3], [coeff_1_f, coeff_2_f, coeff_3_f]):
-                    summed = coeff_array[idx, 2] + coeff_array[idx, 3]
-                    mask = np.abs(summed - ref_mean_down) > threshold
-                    coeff_array[idx[mask], 2] = np.nan
-                    coeff_array[idx[mask], 3] = np.nan
-
+    #samler sammen alt etter filtreringer
     static_coeff_1_f = copy.deepcopy(static_coeff_1)
     static_coeff_2_f = copy.deepcopy(static_coeff_2)
-    for name, data in zip(coeff_names, [drag_1_filt, lift_1_filt, pitch_1_filt]):
+    for name, data in zip(coeff_names, [drag_1_filt, lift_1_filt, pitch_1_filt]): #legger til nan verdier
         setattr(static_coeff_1_f, f"{name}_coeff", data)
     for name, data in zip(coeff_names, [drag_2_filt, lift_2_filt, pitch_2_filt]):
         setattr(static_coeff_2_f, f"{name}_coeff", data)
-
-    if single:
-        return static_coeff_1_f, static_coeff_2_f
-
-    static_coeff_3_f = copy.deepcopy(static_coeff_3)
-    for name, data in zip(coeff_names, [drag_3_filt, lift_3_filt, pitch_3_filt]):
-        setattr(static_coeff_3_f, f"{name}_coeff", data)
-
-    return static_coeff_1_f, static_coeff_2_f, static_coeff_3_f
+ 
+    return static_coeff_1_f, static_coeff_2_f
+ 
 
 
 
 #####################################################################33
 
 
-def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.3, scoff=""):
+def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.3, scoff="", ax=None):
 
     if upwind_in_rig:
         color1 = "#F15854"
@@ -1750,30 +1849,31 @@ def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_dow
         ylabel = r"$C_M(\alpha)$"
         min = -0.175
         max = 0.2
+    if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
+            fig.tight_layout(rect=[0, 0, 1, 0.85])
 
     # Plot
-    plt.figure(figsize=(8,6))
-    plt.rcParams.update({'font.size': 14}) 
 
     if coeff_down_plot is None:
-        plt.plot(alpha, coeff_up_plot, label="Single deck")  # alpha is unchanged, but coeff has NaNs
-        plt.xlabel(r"$\alpha$")
-        plt.ylabel(ylabel)
-        plt.grid()
-        plt.legend()
-        plt.ylim(min,max)
-        plt.title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
-        plt.tight_layout()
+        ax.plot(alpha, coeff_up_plot, label="Single deck")  # alpha is unchanged, but coeff has NaNs
+        ax.set_xlabel(r"$\alpha$")
+        ax.set_ylabel(ylabel)
+        ax.grid()
+        ax.legend()
+        ax.set_ylim(min,max)
+        ax.set_title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
+        ax.get_tightbbox
+
         return 
 
 
     # Plot both decks
-    plt.plot(alpha, coeff_up_plot, color = color1,label="Upwind deck")
-    plt.plot(alpha, coeff_down_plot, color = color2,label="Downwind deck")
-    plt.xlabel(r"$\alpha$")
-    plt.ylabel(ylabel)
-    plt.grid()
-    plt.ylim(min, max)
-    plt.legend()
-    plt.tight_layout()
-    plt.title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
+    ax.plot(alpha, coeff_up_plot, color = color1,label="Upwind deck")
+    ax.plot(alpha, coeff_down_plot, color = color2,label="Downwind deck")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(ylabel)
+    ax.grid()
+    ax.set_ylim(min, max)
+    ax.legend()
+    ax.set_title(f"Filtered {scoff} coefficients (threshold={threshold}) - Step 1")
