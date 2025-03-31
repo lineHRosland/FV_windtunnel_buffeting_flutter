@@ -664,10 +664,7 @@ plt.show()
 # %% Compare all experiments (Wind speed)
 #drag
 # MUS
-w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6,
-                               static_coeff_single_9_filtered, static_coeff_MUS_1D_5_filtered,
-                               static_coeff_MUS_1D_10_filtered,
-                             scoff = "drag")                        
+w3t._scoff.plot_compare_wind_speeds(static_coeff_single_6,static_coeff_single_9_filtered, static_coeff_MUS_1D_5_filtered,static_coeff_MUS_1D_10_filtered, scoff = "drag")                        
 plt.gcf().suptitle(f"1D: MUS ",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\windspeed", "Single_MUS_1D_drag.png"))
 
