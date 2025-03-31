@@ -409,43 +409,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 
-#numpy array
-file_path = ".\\Arrays_Static_coeff\\"
 
-#Dictionary of arrays to save
-arrays_to_save={
-    "cd_single_high": static_coeff_single_9_filtered.plot_drag_mean( mode="single", upwind_in_rig=True)[0],
-    "cd_alpha_single_high": static_coeff_single_9_filtered.plot_drag_mean( mode="single", upwind_in_rig=True)[1],
-    "cl_single_high": static_coeff_single_9.plot_lift_mean( mode="single", upwind_in_rig=True)[0],
-    "cl_alpha_single_high": static_coeff_single_9.plot_lift_mean( mode="single", upwind_in_rig=True)[1],
-    "cm_single_high": static_coeff_single_9.plot_pitch_mean( mode="single", upwind_in_rig=True)[0],
-    "cm_alpha_single_high": static_coeff_single_9.plot_pitch_mean( mode="single", upwind_in_rig=True)[1],
-
-    "cd_1D_mds_high_upwind_deck": static_coeff_MDS_1D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[0],
-    "cd_1D_mds_high_downwind_deck": static_coeff_MDS_1D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[1],
-    "cd_alpha_1D_mds_high": static_coeff_MDS_1D_10.plot_drag_mean( mode="decks", upwind_in_rig=False)[2],
-    "cl_1D_mds_high_upwind_deck": static_coeff_MDS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[0],
-    "cl_1D_mds_high_downwind_deck": static_coeff_MDS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[1],
-    "cl_alpha_1D_mds_high": static_coeff_MDS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=False)[2],
-    "cm_1D_mds_high_upwind_deck": static_coeff_MDS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[0],
-    "cm_1D_mds_high_downwind_deck": static_coeff_MDS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[1],
-    "cm_alpha_1D_mds_high": static_coeff_MDS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=False)[2],
-
-    "cd_1D_mus_high_upwind_deck": static_coeff_MUS_1D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[0],
-    "cd_1D_mus_high_downwind_deck": static_coeff_MUS_1D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[1],
-    "cd_alpha_1D_mus_high": static_coeff_MUS_1D_10_filtered.plot_drag_mean( mode="decks", upwind_in_rig=True)[2],
-    "cl_1D_mus_high_upwind_deck": static_coeff_MUS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[0],
-    "cl_1D_mus_high_downwind_deck": static_coeff_MUS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[1],
-    "cl_alpha_1D_mus_high": static_coeff_MUS_1D_10.plot_lift_mean( mode="decks", upwind_in_rig=True)[2],
-    "cm_1D_mus_high_upwind_deck": static_coeff_MUS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[0],
-    "cm_1D_mus_high_downwind_deck": static_coeff_MUS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[1],
-    "cm_alpha_1D_mus_high": static_coeff_MUS_1D_10.plot_pitch_mean( mode="decks", upwind_in_rig=True)[2],
-
-
-
-
-
-}
 
 
 #%%  Filter and plot ALT 2
@@ -469,9 +433,9 @@ static_coeff_MUS_1D_5.to_excel(section_name, sheet_name='MUS - 5 m/s' ,section_w
 static_coeff_single_6.to_excel(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-#static_coeff_MDS_1D_8.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MDS_1D_8.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
 #static_coeff_MUS_1D_8.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-#static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
 static_coeff_MDS_1D_10.to_excel(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
@@ -486,9 +450,9 @@ static_coeff_MUS_1D_5.to_excel_mean(section_name, sheet_name='MUS - 5 m/s' ,sect
 static_coeff_single_6.to_excel_mean(section_name, sheet_name='Single - 6 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # Medium wind speed
-#static_coeff_MDS_1D_8.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
+static_coeff_MDS_1D_8.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
 #static_coeff_MUS_1D_8.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
-#static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
 static_coeff_MDS_1D_10.to_excel_mean(section_name, sheet_name="MDS - 10 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
@@ -507,7 +471,7 @@ static_coeff_single_6_filtered.to_excel(section_name, sheet_name='Single - 6 m/s
 
 # Medium wind speed
 static_coeff_MDS_1D_8_filtered.to_excel(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_8_filtered.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+#static_coeff_MUS_1D_8_filtered.to_excel(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9_filtered.to_excel(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed
@@ -524,7 +488,7 @@ static_coeff_single_6_filtered.to_excel_mean(section_name, sheet_name='Single - 
 
 # Medium wind speed
 static_coeff_MDS_1D_8_filtered.to_excel_mean(section_name, sheet_name="MDS - 8 m/s" ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=False)
-static_coeff_MUS_1D_8_filtered.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
+#static_coeff_MUS_1D_8_filtered.to_excel_mean(section_name, sheet_name='MUS - 8 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9 m/s' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 # High wind speed

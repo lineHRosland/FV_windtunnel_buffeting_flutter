@@ -1579,13 +1579,13 @@ def filter_by_reference(static_coeff_1, static_coeff_2, static_coeff_3=None, thr
  
     alpha, drag_1, lift_1, pitch_1 = get_coeffs(static_coeff_1)
     #ettersom alpha er rundet opp til 1 desimal, er alle alphaer til hver tidsserie like, og man trenger egt ikke skille mellom alphaene i forsøket. Men koden blir litt mer robust.
-    _, drag_2, lift_2, pitch_2 = get_coeffs(static_coeff_2)
+    drag_2, lift_2, pitch_2 = static_coeff_2.drag_coeff.copy(), static_coeff_2.lift_coeff.copy(), static_coeff_2.pitch_coeff.copy()
  
     drag_1_filt, lift_1_filt, pitch_1_filt = drag_1.copy(), lift_1.copy(), pitch_1.copy()
     drag_2_filt, lift_2_filt, pitch_2_filt = drag_2.copy(), lift_2.copy(), pitch_2.copy()
  
     if not single:
-        _, drag_3, lift_3, pitch_3 = get_coeffs(static_coeff_3)
+        drag_3, lift_3, pitch_3=static_coeff_3.drag_coeff.copy(), static_coeff_3.lift_coeff.copy(), static_coeff_3.pitch_coeff.copy()
         drag_3_filt, lift_3_filt, pitch_3_filt = drag_3.copy(), lift_3.copy(), pitch_3.copy()
  
     coeff_names = ["drag", "lift", "pitch"]
