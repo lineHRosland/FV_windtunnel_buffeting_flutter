@@ -791,7 +791,7 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down, a
     ax.legend()
     ax.set_title("Comparison of drag coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
-
+    ax.set_xlim(-4,4)
 
 def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
@@ -828,7 +828,7 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, a
     ax.legend()
     ax.set_title("Comparison of lift coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
-
+    ax.set_xlim(-4,4)
 def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots pitch coefficient from multiple StaticCoeff objects in the same figure.
@@ -865,7 +865,7 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, 
     ax.legend()
     ax.set_title("Comparison of pitch coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
-
+    ax.set_xlim(-4,4)
 def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -917,7 +917,7 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     ax.legend()
     ax.set_title("Comparison of mean drag coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
-
+    ax.set_xlim(-4,4)
 def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -967,7 +967,7 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
     ax.legend()
     ax.set_title("Comparison of mean lift coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
-
+    ax.set_xlim(-4,4)
 def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_down, ax=None):
     """
     Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -1017,7 +1017,7 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
     ax.legend()
     ax.set_title("Comparison of mean pitch coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
-
+    ax.set_xlim(-4,4)
 #%% Compare with single deck
 def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
@@ -1055,7 +1055,7 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of drag coefficients")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
-
+    ax.set_xlim(-4,4)
 
 def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
@@ -1089,7 +1089,7 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of lift coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
-
+    ax.set_xlim(-4,4)
 def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots pitch coefficient from multiple StaticCoeff objects in the same figure.
@@ -1123,7 +1123,7 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of pitch coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
-
+    ax.set_xlim(-4,4)
 def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots drag mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -1168,7 +1168,7 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of mean drag coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
-
+    ax.set_xlim(-4,4)
 def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots lift mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -1209,7 +1209,7 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of mean lift coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_lift,ymax=static_coeff_single.ymax_lift)
-
+    ax.set_xlim(-4,4)
 def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
     Plots pitch mean coefficient from multiple StaticCoeff objects in the same figure.
@@ -1250,11 +1250,13 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     ax.legend()
     ax.set_title(f"{setUp_type}: Comparison of mean pitch coefficients ")
     ax.set_ylim(ymin=static_coeff_single.ymin_pitch,ymax=static_coeff_single.ymax_pitch)
+    ax.set_xlim(-4,4)
+
 
 #%% Wind speeds
-def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
+def plot_compare_wind_speeds(static_coeff_single_low,
                                    static_coeff_single_high, static_coeff_low,
-                                   static_coeff_med, static_coeff_high,
+                                   static_coeff_high,
                                    scoff = "", ax=None):
     """
     Plots  coefficients for low and high wind speeds in same figure for each deck setup.
@@ -1318,11 +1320,6 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     ax.plot(static_coeff_low.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_low, coeff)[:,2] + getattr(static_coeff_low, coeff)[:,3],
              label=f"LWS - Downstream deck", color = color3LWS)
 
-    # Plot med wind speed
-    #plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,0] + getattr(static_coeff_med, coeff)[:,1],
-    #         label=f"MWS - Upstream deck", color = color2MWS)
-    #plt.plot(static_coeff_med.pitch_motion * 360 / (2 * np.pi), getattr(static_coeff_med, coeff)[:,2] + getattr(static_coeff_med, coeff)[:,3],
-    #         label=f"MWS - Downstream deck", color = color3MWS)
 
     # Plot high wind speed
     
@@ -1338,14 +1335,16 @@ def plot_compare_wind_speeds(static_coeff_single_low, static_coeff_single_med,
     ax.grid(True)
     ax.legend()
     ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+
     ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
 
  
 
 #%% Wind speeds
-def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_med,
+def plot_compare_wind_speeds_mean(static_coeff_single_low, 
                                    static_coeff_single_high, static_coeff_low,
-                                   static_coeff_med, static_coeff_high,
+                                    static_coeff_high,
                                     scoff = "", ax=None):
     """
     Plots  coefficients for low and high wind speeds in same figure for each deck setup.
@@ -1402,15 +1401,11 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single_low = np.round(static_coeff_single_low.pitch_motion*360/2/np.pi,1)
     unique_alphas_single_low = np.unique(alpha_single_low)
-    alpha_single_med = np.round(static_coeff_single_med.pitch_motion*360/2/np.pi,1)
-    unique_alphas_single_med = np.unique(alpha_single_med)
     alpha_single_high = np.round(static_coeff_single_high.pitch_motion*360/2/np.pi,1)
     unique_alphas_single_high = np.unique(alpha_single_high)
 
     alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
     unique_alphas_low = np.unique(alpha_low)
-    alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
-    unique_alphas_med = np.unique(alpha_med)
     alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
     unique_alphas_high = np.unique(alpha_high)
 
@@ -1418,10 +1413,6 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
     downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
     
-    single_mean_med = np.array([np.nanmean(getattr(static_coeff_single_med, coeff)[:,0][alpha_single_med == val]) + np.nanmean(getattr(static_coeff_single_med, coeff)[:,1][alpha_single_med == val]) for val in unique_alphas_single_med])
-    upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
-    downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
-
     single_mean_high = np.array([np.nanmean(getattr(static_coeff_single_high, coeff)[:,0][alpha_single_high == val]) + np.nanmean(getattr(static_coeff_single_high, coeff)[:,1][alpha_single_high == val]) for val in unique_alphas_single_high])
     upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
     downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
@@ -1437,13 +1428,6 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
              label=f"LWS - Downstream deck", color = color2LWS, linestyle='-')
 
 
-    # Plot med wind speed
-  
-    #plt.plot(unique_alphas_med, upwind_mean_med,
-    #            label=f"MWS - Upstream deck", color = color2MWS, linestyle='--')
-    #plt.plot(unique_alphas_med, downwind_mean_med,
-    #            label=f"MWS - Downstream deck", color = color2MWS, linestyle='-')
-    
     # Plot high wind speed
     ax.plot(unique_alphas_single_high, single_mean_high,
              label=f"HWS - Single deck", color = color2HWS,linestyle=':')
@@ -1456,6 +1440,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low, static_coeff_single_m
     ax.set_ylabel(axis)
     ax.grid(True)
     ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
     ax.legend()
     ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
 
@@ -1486,24 +1471,28 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         Filtered downwind coefficients with NaNs replacing outliers.
     """
     if scoff == "drag":
-        print("Filtering drag coefficients")
+        #print("Filtering drag coefficients")
         coeff_up = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
-        coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
+        if not single:
+            coeff_down = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
     elif scoff == "lift":
-        print("Filtering lift coefficients")
+        #print("Filtering lift coefficients")
         coeff_up = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
-        coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
+        if not single:
+            coeff_down = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
     elif scoff == "pitch":
-        print("Filtering pitch coefficients")
+        #print("Filtering pitch coefficients")
         coeff_up = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
-        coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
+        if not single:
+            coeff_down = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
     else:
         raise ValueError("Invalid 'scoff' argument. Must be 'drag', 'lift', or 'pitch'.")
 
     alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)
 
     coeff_up_plot = coeff_up.copy()
-    coeff_down_plot = coeff_down.copy()
+    if not single:
+        coeff_down_plot = coeff_down.copy()
     unique_alphas = np.unique(alpha)
 
     if single:
@@ -1511,7 +1500,7 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         for val in unique_alphas:
             idx = np.where(alpha == val)[0]
             spread = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
-            print(f"Alpha = {val}, Spread = {spread:.3f}")
+            #print(f"Alpha = {val}, Spread = {spread:.3f}")
 
             if spread > threshold:
                 coeff_up_plot[idx] = np.nan
@@ -1522,8 +1511,8 @@ def filter(static_coeff, threshold=0.3, scoff="", single=True):
         idx = np.where(alpha == val)[0]
         spread_up = np.max(coeff_up[idx]) - np.min(coeff_up[idx])
         spread_down = np.max(coeff_down[idx]) - np.min(coeff_down[idx])
-        print(f"Alpha = {val}, Spread = {spread_up:.3f}")
-        print(f"Alpha = {val}, Spread = {spread_down:.3f}")
+        #print(f"Alpha = {val}, Spread = {spread_up:.3f}")
+        #print(f"Alpha = {val}, Spread = {spread_down:.3f}")
 
 
         if spread_up > threshold:
@@ -1656,14 +1645,25 @@ def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold
                 elif has_nan_2 and not has_nan_1:
                     ref_mean = np.mean(vals_1)
                 else:
-                    ref_mean = np.mean(vals_1) if spread_1 <= spread_2 else np.mean(vals_2)
- 
-                for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
-                    summed = coeff_array[idx, 0] + coeff_array[idx, 1] #når singel, kun ett enkelt brudekke (val_1 og val_2)
-                    mask = np.abs(summed - ref_mean) > threshold #markerer verdier som er for langt unna referansen
-                    coeff_array[idx[mask], 0] = np.nan # setter verdien til nan dersom mask er true
-                    coeff_array[idx[mask], 1] = np.nan
- 
+                    if spread_1 <= 0.05 and spread_2 <= 0.05:
+                        ref_mean = np.mean(vals_1) if spread_1 <= spread_2 else np.mean(vals_2)
+                    else:
+                        ref_mean = None
+                     
+                        for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
+                            coeff_array[idx, 0] = np.nan
+                            coeff_array[idx, 1] = np.nan
+                if ref_mean != None:
+                    for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
+                        summed = coeff_array[idx, 0] + coeff_array[idx, 1] #når singel, kun ett enkelt brudekke (val_1 og val_2)
+                        mask = np.abs(summed - ref_mean) > threshold #markerer verdier som er for langt unna referansen
+                        coeff_array[idx[mask], 0] = np.nan # setter verdien til nan dersom mask er true
+                        coeff_array[idx[mask], 1] = np.nan
+                
+                    if name == "drag":
+                        for coeff_array in [coeff_1_f, coeff_2_f] if single else [coeff_1_f, coeff_2_f]:
+                            remove_after_jump(alpha, coeff_array, threshold_jump=0.08, cols=(0, 1))
+                            
         else:
             idx3 = np.where(alpha == val)[0]
             if not (len(idx1) and len(idx2) and len(idx3)):
@@ -1804,13 +1804,10 @@ def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold
                         mask = np.abs(summed - ref_mean_down) > threshold
                         coeff_array[idx[mask], 2] = np.nan
                         coeff_array[idx[mask], 3] = np.nan
-
-    for i, alpha in enumerate([alpha, alpha] if single else [alpha, alpha, alpha]):
-        target_arrays = [coeffs_1_filt[i], coeffs_2_filt[i]] if single else [coeffs_1_filt[i], coeffs_2_filt[i]]
-        for coeff_array in target_arrays:
-            remove_after_jump(alpha, coeff_array, threshold_jump=1.2, cols=(0, 1))
-            if not single:
-                remove_after_jump(alpha, coeff_array, threshold_jump=1.2, cols=(2, 3))
+                if name == "drag":
+                    for coeff_array in [coeff_1_f, coeff_2_f] if single else [coeff_1_f, coeff_2_f]:
+                        remove_after_jump(alpha, coeff_array, threshold_jump=0.08, cols=(0, 1))
+                        remove_after_jump(alpha, coeff_array, threshold_jump=0.08, cols=(2, 3))
 
     #samler sammen alt etter filtreringer
     static_coeff_1_f = copy.deepcopy(static_coeff_1)
