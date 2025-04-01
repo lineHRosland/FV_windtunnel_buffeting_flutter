@@ -3,6 +3,7 @@ import numpy as np
 import os
 
 file_path = "./Arrays_AD"
+print("Gjeldende arbeidsmappe:", os.getcwd())
 
 
 # Values from FEM-model
