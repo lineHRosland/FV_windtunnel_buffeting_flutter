@@ -79,7 +79,7 @@ def plot_static_coeff_summary(static_coeff, section_name, wind_speed, mode="deck
     plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\pitch", section_name + f"_{wind_speed}_mean" + ".png"))
 
     plt.tight_layout()
-    #plt.show()
+    plt.show()
 
 
 
@@ -129,7 +129,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_single_9.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9_filter" + ".png"))
-#plt.show()
+plt.show()
 plt.close()
 
 static_coeff_single_6 =w3t.StaticCoeff.fromWTT(exp0_single, exp1_single_6, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
@@ -232,7 +232,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MDS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 1D - Wind speed:) 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_10_filter" + ".png"))
-#plt.show()
+plt.show()
 plt.close()
 
 
@@ -345,7 +345,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MUS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_10_filter" + ".png"))
-#plt.show()
+plt.show()
 plt.close()
 
 
@@ -550,7 +550,7 @@ w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9, static_coeff_MUS_1D_10
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_high_pitch_mean" + ".png"))
 
-#plt.show()
+plt.show()
 
 plt.close()
 
@@ -679,7 +679,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_1D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_pitch_mean.png"))
-#plt.show()
+plt.show()
 
 plt.close()
 
@@ -826,7 +826,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MDS_2D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 2D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_10_filter.png"))
-#plt.show()
+plt.show()
 plt.close()
 
 
@@ -934,7 +934,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MUS_2D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 2D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_10_filter.png"))
-#plt.show()
+plt.show()
 
 plt.close()
 
@@ -1145,7 +1145,7 @@ w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9, static_coeff_MUS_2D_10
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "2D_high_pitch_mean" + ".png"))
 
-#plt.show()
+plt.show()
 plt.close()
 
 #%% 
@@ -1262,7 +1262,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_2D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_2D_high_pitch_mean.png"))
-#plt.show()
+plt.show()
 plt.close()
 
 # %% Compare all experiments (Wind speed)
@@ -1415,7 +1415,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MDS_3D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 3D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_10_filter.png"))
-#plt.show()
+plt.show()
 plt.close()
 
 
@@ -1522,7 +1522,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MUS_3D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 3D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_10_filter.png"))
-#plt.show()
+plt.show()
 
 plt.close()
 
@@ -1731,7 +1731,7 @@ w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9, static_coeff_MUS_3D_10
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "3D_high_pitch_mean" + ".png"))
 
-#plt.show()
+plt.show()
 plt.close()
 
 #%% 
@@ -1852,7 +1852,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_3D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_pitch_mean.png"))
-#plt.show()
+plt.show()
 plt.close()
 
 # %% Compare all experiments (Wind speed)
@@ -1986,7 +1986,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MDS_4D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 10 m/s ",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_10.png"))
-#plt.show()
+plt.show()
 plt.close()
 
 exp0_MDS_4D.filt_forces(6, 2)
@@ -2006,7 +2006,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MDS_4D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_10_filter.png"))
-#plt.show()
+plt.show()
 plt.close()
 
 
@@ -2095,7 +2095,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MUS_4D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 10 m/s ",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_10.png"))
-#plt.show()
+plt.show()
 plt.close()
 
 exp0_MUS_4D.filt_forces(6, 2)
@@ -2115,7 +2115,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MUS_4D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_10_filter.png"))
-#plt.show()
+plt.show()
 
 plt.close()
 
@@ -2326,7 +2326,7 @@ w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9, static_coeff_MUS_4D_10
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "4D_high_pitch_mean" + ".png"))
 
-#plt.show()
+plt.show()
 plt.close()
 
 #%%
@@ -2448,7 +2448,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_4D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_pitch_mean.png"))
-#plt.show()
+plt.show()
 plt.close()
 
 
@@ -2586,7 +2586,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MDS_5D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 10 m/s ",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_10.png"))
-#plt.show()
+plt.show()
 plt.close()
 
 exp0_MDS_5D.filt_forces(6, 2)
@@ -2606,7 +2606,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MDS_5D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_10_filter.png"))
-#plt.show()
+plt.show()
 
 plt.close()
 
@@ -2713,7 +2713,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 exp1_MUS_5D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 5D - Wind speed:) 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_10_filter.png"))
-#plt.show()
+plt.show()
 
 plt.close()
 
@@ -2920,7 +2920,7 @@ w3t._scoff.plot_compare_pitch_mean(static_coeff_single_9, static_coeff_MUS_5D_10
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "5D_high_pitch_mean" + ".png"))
 
-#plt.show()
+plt.show()
 plt.close()
 
 #%% 
@@ -3037,7 +3037,7 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coeff_MDS_5D_10,upwind_in_rig=False)
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_pitch_mean.png"))
-#plt.show()
+plt.show()
 plt.close()
 
 # %% Compare all experiments (Wind speed)
