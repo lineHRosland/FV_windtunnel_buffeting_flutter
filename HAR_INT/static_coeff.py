@@ -95,7 +95,8 @@ section_length_on_wall = 2.66
 
 h5_input_path = r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Python\Ole_sin_kode\HAR_INT\H5F\\"
 
-#%% Load single deck
+#%% 
+# Load single deck
 section_name = "Single_Static"
 file_names_6 = ["HAR_INT_SINGLE_02_00_003","HAR_INT_SINGLE_02_00_005"] # 6 m/s
 file_names_9 = ["HAR_INT_SINGLE_02_00_003","HAR_INT_SINGLE_02_00_004"] # 9 m/s, Vibrations
@@ -129,7 +130,7 @@ exp1_single_9.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9_filter" + ".png"))
 #plt.show()
-
+plt.close()
 
 static_coeff_single_6 =w3t.StaticCoeff.fromWTT(exp0_single, exp1_single_6, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
@@ -140,7 +141,8 @@ plot_static_coeff_summary(static_coeff_single_9, section_name, 9, mode="single",
 
 
 
-#%% Filter and plot ALT 1
+#%%
+#  Filter and plot ALT 1
 #drag
 alpha_single, coeff_single_plot=w3t._scoff.filter(static_coeff_single_6, threshold=0.05, scoff="drag", single = True)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_single_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.05, scoff="drag")
@@ -171,7 +173,8 @@ w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_sin
 plt.suptitle(f"Single deck - Wind speed: 9 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\pitch", "Single_9_pitch_clean.png"))
 
-#%%  Filter and plot ALT 2
+#%%  
+# Filter and plot ALT 2
 section_name = "Single_Static_filtered"
 
 static_coeff_single_6_filtered, static_coeff_single_9_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_single_6,static_coeff_2=static_coeff_single_9,threshold=0.02,  threshold_low=[0.05, 0.02,0.004], threshold_high=[0.04,0.03,0.005],single=True)
@@ -185,7 +188,8 @@ plot_static_coeff_summary(static_coeff_single_9_filtered, section_name, 9, mode=
 #print("1D")
 
 
-#%% Load all downwind experiments (downwind in rig)
+#%% 
+# Load all downwind experiments (downwind in rig)
 section_name = "MUS_1D_Static"
 file_names_MDS_1D_6 = ["HAR_INT_MUS_GAP_213D_02_02_000","HAR_INT_MUS_GAP_213D_02_02_001"] #6 m/s, vibrations (Ser OK ut)
 file_names_MDS_1D_8 = ["HAR_INT_MUS_GAP_213D_02_02_000","HAR_INT_MUS_GAP_213D_02_02_002"] # 8 m/s, vibrations
@@ -229,6 +233,7 @@ exp1_MDS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 1D - Wind speed:) 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_10_filter" + ".png"))
 #plt.show()
+plt.close()
 
 
 static_coeff_MDS_1D_6 =w3t.StaticCoeff.fromWTT(exp0_MDS_1D, exp1_MDS_1D_6, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
@@ -245,7 +250,8 @@ plot_static_coeff_summary(static_coeff_MDS_1D_10, section_name, 10, mode="decks"
 
 
 
-#%% Filter and plot ALT 1
+#%%
+#  Filter and plot ALT 1
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_1D_6, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
@@ -292,7 +298,8 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 
-#%%  Filter and plot ALT 2
+#%%  
+# Filter and plot ALT 2
 section_name = "MUS_1D_Static_filtered" 
 
 static_coeff_MDS_1D_6_filtered, static_coeff_MDS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MDS_1D_6, static_coeff_2=static_coeff_MDS_1D_10, threshold=0.1, threshold_low=[0.03,0.03,0.005],threshold_high=[0.03,0.03,0.005],single=False)
@@ -303,7 +310,8 @@ plot_static_coeff_summary(static_coeff_MDS_1D_10_filtered, section_name, 10, mod
 
 
 
-#%% Load all upwind experiments (upwind in rig)
+#%% 
+# Load all upwind experiments (upwind in rig)
 
 section_name = "MDS_1D_Static"
 file_names_MUS_1D_5 = ["HAR_INT_MDS_GAP_213D_02_01_000","HAR_INT_MDS_GAP_213D_02_01_001"] # 5 m/s
@@ -338,6 +346,8 @@ exp1_MUS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_10_filter" + ".png"))
 #plt.show()
+plt.close()
+
 
 
 static_coeff_MUS_1D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_1D, exp1_MUS_1D_5, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
@@ -349,7 +359,8 @@ plot_static_coeff_summary(static_coeff_MUS_1D_10, section_name, 10, mode="decks"
 
 
 
-#%% Filter and plot ALT 
+#%%
+#  Filter and plot ALT 
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_1D_5, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="drag")
@@ -385,7 +396,8 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 
-#%%  Filter and plot ALT 2
+#%% 
+#  Filter and plot ALT 2
 section_name = "MDS_1D_Static_filtered"
 
 static_coeff_MUS_1D_5_filtered, static_coeff_MUS_1D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_1D_5, static_coeff_2=static_coeff_MUS_1D_10, threshold=0.05, threshold_low=[0.08,0.02,0.005],threshold_high=[0.08,0.02,0.005],single=False)
@@ -397,7 +409,8 @@ plot_static_coeff_summary(static_coeff_MUS_1D_10_filtered, section_name, 10, mod
 
 
 
-#%% Save all experiments to excel
+#%%
+#  Save all experiments to excel
 section_name = "1D"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
@@ -432,7 +445,8 @@ static_coeff_MUS_1D_10.to_excel_mean(section_name, sheet_name='MUS - 10' ,sectio
 static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
-#%% Save all experiments to excel filtered
+#%% 
+# Save all experiments to excel filtered
 section_name = "1D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
@@ -464,7 +478,8 @@ static_coeff_MDS_1D_10_filtered.to_excel_mean(section_name, sheet_name="MDS - 10
 static_coeff_MUS_1D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
-#%% Compare all experiments (MUS vs MDS vs Single)
+#%% 
+# Compare all experiments (MUS vs MDS vs Single)
 section_name = "1D"
 
 #Low wind speed
@@ -537,8 +552,10 @@ plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT
 
 #plt.show()
 
+plt.close()
 
-#%% Compare all experiments - only with single deck
+#%% 
+# Compare all experiments - only with single deck
 section_name = "1D"
 
 #Low wind speed
@@ -664,6 +681,7 @@ plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_1D_high_pitch_mean.png"))
 #plt.show()
 
+plt.close()
 
 
 # %% 
@@ -764,7 +782,8 @@ plt.savefig(    os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR
 #print("2D")
 
 
-#%% Load all downwind experiments (downwind in rig)
+#%% 
+# Load all downwind experiments (downwind in rig)
 section_name = "MUS_2D_Static"
 file_names_MDS_2D_6 = ["HAR_INT_MUS_GAP_213D_02_00_001","HAR_INT_MUS_GAP_213D_02_00_002"] #6 m/s
 #file_names_MDS_2D_8 = ["HAR_INT_MUS_GAP_213D_02_00_001","HAR_INT_MUS_GAP_213D_02_00_003"] # 8 m/s, vibrations
@@ -808,6 +827,7 @@ exp1_MDS_2D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 2D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_10_filter.png"))
 #plt.show()
+plt.close()
 
 
 static_coeff_MDS_2D_6 =w3t.StaticCoeff.fromWTT(exp0_MDS_2D, exp1_MDS_2D_6, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
@@ -821,7 +841,8 @@ plot_static_coeff_summary(static_coeff_MDS_2D_6, section_name, 6, mode="decks", 
 plot_static_coeff_summary(static_coeff_MDS_2D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
 
-#%% Filter and plot ALT 1
+#%%
+#  Filter and plot ALT 1
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_2D_6, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
@@ -866,7 +887,8 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 
-#%% Load all upwind experiments (upwind in rig)
+#%% 
+# Load all upwind experiments (upwind in rig)
 
 section_name = "MDS_2D_Static"
 file_names_MUS_2D_5 = ["HAR_INT_MDS_GAP_213D_02_00_000","HAR_INT_MDS_GAP_213D_02_00_001"] # 5 m/s, vibrations
@@ -914,6 +936,7 @@ plt.gcf().suptitle(f"MUS 2D - Wind speed: 10 m/s - With Butterworth low-pass fil
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_10_filter.png"))
 #plt.show()
 
+plt.close()
 
 static_coeff_MUS_2D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_2D, exp1_MUS_2D_5, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
@@ -928,7 +951,8 @@ plot_static_coeff_summary(static_coeff_MUS_2D_10, section_name, 10, mode="decks"
 
 
 
-#%% Filter and plot ALT 1
+#%% 
+# Filter and plot ALT 1
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_2D_5, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="drag")
@@ -972,7 +996,8 @@ plt.suptitle(f"MUS_2D_Static, 10 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\pitch", "MUS_2D_10_pitch_clean.png"))
 
 
-#%%  Filter and plot ALT 2
+#%%  
+# Filter and plot ALT 2
 section_name = "MDS_2D_Static_filtered"
 
 static_coeff_MUS_2D_5_filtered, static_coeff_MUS_2D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_2D_5, static_coeff_2=static_coeff_MUS_2D_10, threshold=0.05, threshold_low=[0.05,0.025,0.005],threshold_high=[0.05,0.025,0.005],single=False)
@@ -982,7 +1007,8 @@ plot_static_coeff_summary(static_coeff_MUS_2D_5_filtered, section_name, 5, mode=
 plot_static_coeff_summary(static_coeff_MUS_2D_10_filtered, section_name, 10, mode="decks", upwind_in_rig=True)
 
 
-#%% Save all experiments to excel
+#%% 
+# Save all experiments to excel
 section_name = "2D"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
@@ -1019,7 +1045,8 @@ static_coeff_MUS_2D_10.to_excel_mean(section_name, sheet_name='MUS - 10' ,sectio
 static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
-#%% Save all experiments to excel filtered
+#%% 
+# Save all experiments to excel filtered
 section_name = "2D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
@@ -1047,7 +1074,8 @@ static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 
 static_coeff_MUS_2D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
-#%% Compare all experiments (MUS vs MDS vs Single)
+#%% 
+# Compare all experiments (MUS vs MDS vs Single)
 section_name = "2D"
 
 
@@ -1118,7 +1146,10 @@ plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", f
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "2D_high_pitch_mean" + ".png"))
 
 #plt.show()
-#%% Compare all experiments - only with single deck
+plt.close()
+
+#%% 
+# Compare all experiments - only with single deck
 
 #Low wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_2D_5_filtered, upwind_in_rig=True)
@@ -1232,6 +1263,8 @@ w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coe
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_2D_high_pitch_mean.png"))
 #plt.show()
+plt.close()
+
 # %% Compare all experiments (Wind speed)
 
 
@@ -1335,11 +1368,11 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 ############################################################################################################
-#%%
 #print("3D")
 
 
-#%% Load all downwind experiments (downwind in rig)
+#%% 
+# Load all downwind experiments (downwind in rig)
 section_name = "MUS_3D_Static"
 file_names_MDS_3D_6 = ["HAR_INT_MUS_GAP_213D_02_01_000","HAR_INT_MUS_GAP_213D_02_01_001"] #6 m/s
 #file_names_MDS_3D_8 = ["HAR_INT_MUS_GAP_213D_02_01_000","HAR_INT_MUS_GAP_213D_02_01_002"] # 8 m/s, vibrations
@@ -1383,6 +1416,7 @@ exp1_MDS_3D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 3D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_10_filter.png"))
 #plt.show()
+plt.close()
 
 
 static_coeff_MDS_3D_6 =w3t.StaticCoeff.fromWTT(exp0_MDS_3D, exp1_MDS_3D_6, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
@@ -1397,7 +1431,8 @@ plot_static_coeff_summary(static_coeff_MDS_3D_6, section_name, 6, mode="decks", 
 plot_static_coeff_summary(static_coeff_MDS_3D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
 
-#%% Filter and plot ALT 1
+#%%
+#  Filter and plot ALT 1
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_3D_6, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
@@ -1442,7 +1477,8 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 
-#%% Load all upwind experiments (upwind in rig)
+#%% 
+# Load all upwind experiments (upwind in rig)
 
 section_name = "MDS_3D_Static"
 file_names_MUS_3D_5 = ["HAR_INT_MDS_GAP_213D_02_02_000","HAR_INT_MDS_GAP_213D_02_02_004"] # 5 m/s, vibrations (Finnes en fil for 6 også)
@@ -1488,6 +1524,7 @@ plt.gcf().suptitle(f"MUS 3D - Wind speed: 10 m/s - With Butterworth low-pass fil
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_10_filter.png"))
 #plt.show()
 
+plt.close()
 
 static_coeff_MUS_3D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_3D, exp1_MUS_3D_5, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
@@ -1502,7 +1539,8 @@ plot_static_coeff_summary(static_coeff_MUS_3D_10, section_name, 10, mode="decks"
 
 
 
-#%% Filter and plot ALT 1
+#%% 
+# Filter and plot ALT 1
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_3D_5, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="drag")
@@ -1547,7 +1585,8 @@ plt.suptitle(f"MUS_3D_Static, 10 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\pitch", "MUS_3D_10_pitch_clean.png"))
 
 
-#%%  Filter and plot ALT 2
+#%%
+#   Filter and plot ALT 2
 section_name = "MDS_3D_Static_filtered"
 
 static_coeff_MUS_3D_5_filtered, static_coeff_MUS_3D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_3D_5, static_coeff_2=static_coeff_MUS_3D_10, threshold=0.05, threshold_low=[0.05,0.03,0.005],threshold_high=[0.04,0.03,0.005],single=False)
@@ -1559,7 +1598,8 @@ plot_static_coeff_summary(static_coeff_MUS_3D_10_filtered, section_name, 10, mod
 
 
 
-#%% Save all experiments to excel
+#%%
+#  Save all experiments to excel
 section_name = "3D"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
@@ -1596,7 +1636,8 @@ static_coeff_MUS_3D_10.to_excel_mean(section_name, sheet_name='MUS - 10' ,sectio
 static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
-#%% Save all experiments to excel filtered
+#%%
+#  Save all experiments to excel filtered
 section_name = "3D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
@@ -1624,7 +1665,8 @@ static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 
 static_coeff_MUS_3D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
-#%% Compare all experiments (MUS vs MDS vs Single)
+#%% 
+# Compare all experiments (MUS vs MDS vs Single)
 section_name = "3D"
 
 #Low wind speed
@@ -1690,7 +1732,10 @@ plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", f
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "3D_high_pitch_mean" + ".png"))
 
 #plt.show()
-#%% Compare all experiments - only with single deck
+plt.close()
+
+#%% 
+# Compare all experiments - only with single deck
 
 #Low wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_3D_5_filtered, upwind_in_rig=True)
@@ -1808,6 +1853,8 @@ w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coe
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMUS", "Single_MDS_3D_high_pitch_mean.png"))
 #plt.show()
+plt.close()
+
 # %% Compare all experiments (Wind speed)
 #drag
 
@@ -1912,10 +1959,10 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 ############################################################################################################
-#%%
 #print("4D")
 
-#%% Load all downwind experiments (downwind in rig)
+#%% 
+# Load all downwind experiments (downwind in rig)
 section_name = "MUS_4D_Static"
 file_names_MDS_4D_55 = ["HAR_INT_MUS_GAP_45D_02_00_000","HAR_INT_MUS_GAP_45D_02_00_002"] #5.5 m/s
 #file_names_MDS_4D_85 = ["HAR_INT_MUS_GAP_45D_02_00_000","HAR_INT_MUS_GAP_45D_02_00_003"] # 8.5 m/s, vibrations
@@ -1940,6 +1987,7 @@ exp1_MDS_4D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 10 m/s ",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_10.png"))
 #plt.show()
+plt.close()
 
 exp0_MDS_4D.filt_forces(6, 2)
 exp1_MDS_4D_55.filt_forces(6, 2)
@@ -1959,6 +2007,7 @@ exp1_MDS_4D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
 plt.gcf().suptitle(f"MDS 4D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_10_filter.png"))
 #plt.show()
+plt.close()
 
 
 static_coeff_MDS_4D_55 =w3t.StaticCoeff.fromWTT(exp0_MDS_4D, exp1_MDS_4D_55, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
@@ -1972,7 +2021,8 @@ plot_static_coeff_summary(static_coeff_MDS_4D_55, section_name, 5.5, mode="decks
 #plot_static_coeff_summary(static_coeff_MDS_4D_85, section_name, 8.5, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_4D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
-#%% Filter and plot ALT 1
+#%% 
+# Filter and plot ALT 1
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_4D_55, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
@@ -2019,7 +2069,8 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 
-#%% Load all upwind experiments (upwind in rig)
+#%% 
+# Load all upwind experiments (upwind in rig)
 
 section_name = "MDS_4D_Static"
 file_names_MUS_4D_5 = ["HAR_INT_MDS_GAP_45D_02_00_001","HAR_INT_MDS_GAP_45D_02_00_003"] # 5 m/s, vibrations 
@@ -2045,6 +2096,7 @@ exp1_MUS_4D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MUS 4D - Wind speed: 10 m/s ",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_10.png"))
 #plt.show()
+plt.close()
 
 exp0_MUS_4D.filt_forces(6, 2)
 exp1_MUS_4D_5.filt_forces(6, 2)
@@ -2065,6 +2117,7 @@ plt.gcf().suptitle(f"MUS 4D - Wind speed: 10 m/s - With Butterworth low-pass fil
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_10_filter.png"))
 #plt.show()
 
+plt.close()
 
 static_coeff_MUS_4D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_4D, exp1_MUS_4D_5, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
@@ -2078,7 +2131,8 @@ plot_static_coeff_summary(static_coeff_MUS_4D_10, section_name, 10, mode="decks"
 
 
 
-#%% Filter and plot ALT 1
+#%%
+#  Filter and plot ALT 1
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_4D_5, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="drag")
@@ -2124,7 +2178,8 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 
-#%%  Filter and plot ALT 2
+#%% 
+#  Filter and plot ALT 2
 section_name = "MDS_4D_Static_filtered"
 
 static_coeff_MUS_4D_5_filtered, static_coeff_MUS_4D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_4D_5, static_coeff_2=static_coeff_MUS_4D_10, threshold=0.2, threshold_low=[0.04,0.025,0.005],threshold_high=[0.04,0.025,0.005],single=False)
@@ -2137,7 +2192,8 @@ plot_static_coeff_summary(static_coeff_MUS_4D_10_filtered, section_name, 10, mod
 
 
 
-#%% Save all experiments to excel
+#%%
+#  Save all experiments to excel
 section_name = "4D"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
@@ -2174,7 +2230,8 @@ static_coeff_MUS_4D_10.to_excel_mean(section_name, sheet_name='MUS - 10' ,sectio
 static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
-#%% Save all experiments to excel filtered
+#%% 
+# Save all experiments to excel filtered
 section_name = "4D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
@@ -2202,7 +2259,8 @@ static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 
 static_coeff_MUS_4D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
-#%% Compare all experiments (MUS vs MDS vs Single)
+#%% 
+# Compare all experiments (MUS vs MDS vs Single)
 section_name = "4D"
 
 
@@ -2269,7 +2327,10 @@ plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", f
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "4D_high_pitch_mean" + ".png"))
 
 #plt.show()
-#%% Compare all experiments - only with single deck
+plt.close()
+
+#%%
+#  Compare all experiments - only with single deck
 
 #Low wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_4D_5_filtered, upwind_in_rig=True)
@@ -2388,8 +2449,11 @@ w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coe
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_4D_high_pitch_mean.png"))
 #plt.show()
+plt.close()
 
-# %% Compare all experiments (Wind speed)
+
+# %% 
+# Compare all experiments (Wind speed)
 #drag
 # MUS
 
@@ -2492,11 +2556,11 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 ############################################################################################################
-#%%
 #print("5D")
 
 
-#%% Load all downwind experiments (downwind in rig)
+#%% 
+# Load all downwind experiments (downwind in rig)
 section_name = "MUS_5D_Static"
 file_names_MDS_5D_55 = ["HAR_INT_MUS_GAP_45D_02_01_000","HAR_INT_MUS_GAP_45D_02_01_001"] # 5.5 m/s
 #file_names_MDS_5D_85 = ["HAR_INT_MUS_GAP_45D_02_01_000","HAR_INT_MUS_GAP_45D_02_01_002"] # 8.5 m/s, vibrations
@@ -2523,6 +2587,7 @@ exp1_MDS_5D_10.plot_experiment(mode="total") #
 plt.gcf().suptitle(f"MDS 5D - Wind speed: 10 m/s ",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_10.png"))
 #plt.show()
+plt.close()
 
 exp0_MDS_5D.filt_forces(6, 2)
 exp1_MDS_5D_55.filt_forces(6, 2)
@@ -2543,6 +2608,7 @@ plt.gcf().suptitle(f"MDS 5D - Wind speed: 10 m/s - With Butterworth low-pass fil
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_10_filter.png"))
 #plt.show()
 
+plt.close()
 
 static_coeff_MDS_5D_55 =w3t.StaticCoeff.fromWTT(exp0_MDS_5D, exp1_MDS_5D_55, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
 
@@ -2555,7 +2621,8 @@ plot_static_coeff_summary(static_coeff_MDS_5D_55, section_name, 5.5, mode="decks
 plot_static_coeff_summary(static_coeff_MDS_5D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
 
-#%% Filter and plot ALT 1
+#%% 
+# Filter and plot ALT 1
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MDS_5D_55, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=False, threshold=0.05, scoff="drag")
@@ -2601,7 +2668,8 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 
-#%% Load all upwind experiments (upwind in rig)
+#%% 
+# Load all upwind experiments (upwind in rig)
 
 section_name = "MDS_5D_Static"
 file_names_MUS_5D_45 = ["HAR_INT_MDS_GAP_45D_02_01_000","HAR_INT_MDS_GAP_45D_02_01_002"] # 4.5 m/s, vibrations 
@@ -2647,6 +2715,7 @@ plt.gcf().suptitle(f"MUS 5D - Wind speed:) 10 m/s - With Butterworth low-pass fi
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_10_filter.png"))
 #plt.show()
 
+plt.close()
 
 static_coeff_MUS_5D_45 =w3t.StaticCoeff.fromWTT(exp0_MUS_5D, exp1_MUS_5D_45, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
@@ -2660,7 +2729,8 @@ plot_static_coeff_summary(static_coeff_MUS_5D_10, section_name, 10, mode="decks"
 
 
 
-#%% Filter and plot ALT 1
+#%% 
+# Filter and plot ALT 1
 #drag
 alpha_low, coeff_plot_up_low, coeff_plot_down_low=w3t._scoff.filter(static_coeff_MUS_5D_45, threshold=0.05, scoff="drag", single = False)
 w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_low,coeff_plot_up_low,coeff_plot_down_low, upwind_in_rig=True, threshold=0.05, scoff="drag")
@@ -2705,7 +2775,8 @@ plt.suptitle(f"MUS_5D_Static, 10 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\pitch", "MUS_5D_10_pitch_clean.png"))
 
 
-#%%  Filter and plot ALT 2
+#%%  
+# Filter and plot ALT 2
 section_name = "MDS_5D_Static_filtered"
 
 static_coeff_MUS_5D_45_filtered, static_coeff_MUS_5D_10_filtered = w3t._scoff.filter_by_reference(static_coeff_1=static_coeff_MUS_5D_45, static_coeff_2=static_coeff_MUS_5D_10, threshold=0.05, threshold_low=[0.1,0.03,0.008],threshold_high=[0.1,0.03,0.008],single=False)
@@ -2715,7 +2786,8 @@ plot_static_coeff_summary(static_coeff_MUS_5D_45_filtered, section_name, 4.5, mo
 plot_static_coeff_summary(static_coeff_MUS_5D_10_filtered, section_name, 10, mode="decks", upwind_in_rig=True)
 
 
-#%% Save all experiments to excel
+#%% 
+# Save all experiments to excel
 section_name = "5D"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
@@ -2752,7 +2824,8 @@ static_coeff_MUS_5D_10.to_excel_mean(section_name, sheet_name='MUS - 10' ,sectio
 static_coeff_single_9.to_excel_mean(section_name, sheet_name='Single - 9' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
 
-#%% Save all experiments to excel filtered
+#%%
+#  Save all experiments to excel filtered
 section_name = "5D_filtered"
 #Her er MDS og MUS riktig, så motsatt av våre eksperimenter i excel arket
 
@@ -2780,7 +2853,8 @@ static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 
 static_coeff_MUS_5D_10_filtered.to_excel_mean(section_name, sheet_name='MUS - 10' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 static_coeff_single_9_filtered.to_excel_mean(section_name, sheet_name='Single - 9' ,section_width =  section_width,section_height=section_height,section_length_in_rig=2.68, section_length_on_wall=2.66, upwind_in_rig=True)
 
-#%% Compare all experiments (MUS vs MDS vs Single)
+#%%
+#  Compare all experiments (MUS vs MDS vs Single)
 section_name = "5D"
 
 
@@ -2847,7 +2921,10 @@ plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 10 m/s, MDS: 10 m/s", f
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "5D_high_pitch_mean" + ".png"))
 
 #plt.show()
-#%% Compare all experiments - only with single deck
+plt.close()
+
+#%% 
+# Compare all experiments - only with single deck
 
 #Low wind speed
 w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True)
@@ -2961,6 +3038,7 @@ w3t._scoff.plot_compare_pitch_mean_only_single(static_coeff_single_9, static_coe
 plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MDS: 10 m/s", fontsize=16)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\SingleMDS", "Single_MDS_5D_high_pitch_mean.png"))
 #plt.show()
+plt.close()
 
 # %% Compare all experiments (Wind speed)
 #drag
@@ -3063,7 +3141,8 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 ##########################################################################333
-#%% Save arrays to .npy files
+#%% 
+# Save arrays to .npy files
 #numpy array
 file_path = ".\\Arrays_Static_coeff\\"
 
