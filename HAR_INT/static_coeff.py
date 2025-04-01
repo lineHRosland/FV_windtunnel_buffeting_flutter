@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Nov 17 11:47:47 2022
-
-@author: oiseth
+Edited 2025
+@author: oiseth, linehro
 """
 #%%
 import numpy as np

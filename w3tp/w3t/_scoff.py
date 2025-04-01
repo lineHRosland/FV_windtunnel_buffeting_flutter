@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Jan 24 22:18:50 2022
-
-@author: oiseth
+Edited 2025
+@author: oiseth, linehro, alicjaas
 """
 
 # -*- coding: utf-8 -*-
