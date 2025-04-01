@@ -1282,13 +1282,12 @@ def plot_compare_wind_speeds(static_coeff_single_low,
     """
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
-    color1HWS = "#B22222"
+    
+    color3HWS = "#B22222"
     color2HWS= "#F15854"
-    color3HWS="#FCA5A5"
+    color1HWS="#FCA5A5"
 
-    color1MWS = "#A6CEE3"
-    color2MWS= "#5DA5DA"
-    color3MWS="#1F4E79"     
+         
 
     color1LWS = "#A1D99B"
     color2LWS ="#60BD68"
