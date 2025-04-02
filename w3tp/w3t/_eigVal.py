@@ -6,7 +6,8 @@ Created in April 2025
 """
 
 import numpy as np
-
+import scipy.linalg as la
+import matplotlib.pyplot as plt
 
 def structural_matrices(m1, m2, f1, f2, zeta):
     """
@@ -49,7 +50,7 @@ def structural_matrices(m1, m2, f1, f2, zeta):
 
     return Ms, Cs, Ks
 
-def cae_kae_twin(poly_coeff, v_range, B, f, N=100):
+def cae_kae_twin(poly_coeff, v_range, B, f, rho, N=100):
     """
     Evaluates all 32 aerodynamic derivatives individually across their own reduced velocity range.
 
@@ -63,6 +64,10 @@ def cae_kae_twin(poly_coeff, v_range, B, f, N=100):
         Section width (m)
     f : float
         Frequency (Hz)
+        Gathered from FEM-model
+    rho : float
+        Air density (kg/m^3)
+    
     N : int
         Number of points per AD
     Returns:
@@ -79,7 +84,7 @@ def cae_kae_twin(poly_coeff, v_range, B, f, N=100):
 
     vmin_global = np.min(v_range[:, 0])
     vmax_global = np.max(v_range[:, 1])
-    V_common = np.linspace(f * B / vmax_global, f * B / vmin_global, N)
+    V_common = np.linspace(vmax_global, vmin_global, N)
 
     AD_interp = []
     AD_global = np.zeros((32, N))
@@ -87,7 +92,7 @@ def cae_kae_twin(poly_coeff, v_range, B, f, N=100):
 
     for i in range(32):
         v_min_red, v_max_red = v_range[i]
-        V_local = np.linspace(f*B/v_min_red ,f*B/ v_max_red, N)
+        V_local = np.linspace(v_min_red ,v_max_red, N)
         AD_local = np.polyval(poly_coeff[i], V_local)
 
         interp = np.interp(V_common, V_local, AD_local, left=np.nan, right=np.nan)
@@ -98,10 +103,10 @@ def cae_kae_twin(poly_coeff, v_range, B, f, N=100):
 
     
     #Damping and stiffness matrices
-    C_ae_local = np.zeros((N, 4, 4))
-    K_ae_local = np.zeros((N, 4, 4))
-    C_ae_global = np.zeros((N, 4, 4))
-    K_ae_global = np.zeros((N, 4, 4))
+    C_ae_local_star = np.zeros((N, 4, 4))
+    K_ae_local_star = np.zeros((N, 4, 4))
+    C_ae_global_star = np.zeros((N, 4, 4))
+    K_ae_global_star = np.zeros((N, 4, 4))
 
 
     for i in range(N):
@@ -125,36 +130,43 @@ def cae_kae_twin(poly_coeff, v_range, B, f, N=100):
         k_z2z1_glob, k_z2θ1_glob, k_z2z2_glob, k_z2θ2_glob = AD_global[24, i], AD_global[25, i], AD_global[26, i], AD_global[27, i]
         k_θ2z1_glob, k_θ2θ1_glob, k_θ2z2_glob, k_θ2θ2_glob = AD_global[28, i], AD_global[29, i], AD_global[30, i], AD_global[31, i]
 
-        C_ae_global[i] = np.array([
+        C_ae_global_star[i] = np.array([
             [c_z1z1_glob,       B * c_z1θ1_glob,       c_z1z2_glob,       B * c_z1θ2_glob],
             [B * c_θ1z1_glob,   B**2 * c_θ1θ1_glob,   B * c_θ1z2_glob,   B**2 * c_θ1θ2_glob],
             [c_z2z1_glob,       B * c_z2θ1_glob,       c_z2z2_glob,       B * c_z2θ2_glob],
             [B * c_θ2z1_glob,   B**2 * c_θ2θ1_glob,   B * c_θ2z2_glob,   B**2 * c_θ2θ2_glob]
         ])
-        K_ae_global[i] = np.array([
+        K_ae_global_star[i] = np.array([
             [k_z1z1_glob,       B * k_z1θ1_glob,       k_z1z2_glob,       B * k_z1θ2_glob],
             [B * k_θ1z1_glob,   B**2 * k_θ1θ1_glob,   B * k_θ1z2_glob,   B**2 * k_θ1θ2_glob],
             [k_z2z1_glob,       B * k_z2θ1_glob,       k_z2z2_glob,       B * k_z2θ2_glob],
             [B * k_θ2z1_glob,   B**2 * k_θ2θ1_glob,   B * k_θ2z2_glob,   B**2 * k_θ2θ2_glob]
         ])
 
-        C_ae_local[i] = np.array([
+        C_ae_local_star[i] = np.array([
             [c_z1z1,       B * c_z1θ1,       c_z1z2,       B * c_z1θ2],
             [B * c_θ1z1,   B**2 * c_θ1θ1,   B * c_θ1z2,   B**2 * c_θ1θ2],
             [c_z2z1,       B * c_z2θ1,       c_z2z2,       B * c_z2θ2],
             [B * c_θ2z1,   B**2 * c_θ2θ1,   B * c_θ2z2,   B**2 * c_θ2θ2]
         ])
 
-        K_ae_local[i] = np.array([
+        K_ae_local_star[i] = np.array([
             [k_z1z1,       B * k_z1θ1,       k_z1z2,       B * k_z1θ2],
             [B * k_θ1z1,   B**2 * k_θ1θ1,   B * k_θ1z2,   B**2 * k_θ1θ2],
             [k_z2z1,       B * k_z2θ1,       k_z2z2,       B * k_z2θ2],
             [B * k_θ2z1,   B**2 * k_θ2θ1,   B * k_θ2z2,   B**2 * k_θ2θ2]
         ])
 
+    omega = 2* np.pi * f #Angular frequency (rad/s)
+
+    C_ae_local = 0.5* rho * B**2*omega*C_ae_local_star
+    C_ae_global = 0.5 * rho * B**2*omega*C_ae_global_star
+    K_ae_local = 0.5 * rho * B**2*omega**2*K_ae_local_star
+    K_ae_global = 0.5 * rho * B**2*omega**2*K_ae_global_star
+
     return C_ae_local, K_ae_local, C_ae_global, K_ae_global, V_common
 
-def cae_kae_single(poly_coeff, v_range, B, f, N=100):
+def cae_kae_single(poly_coeff, v_range, B, f, rho, N=100):
     """
     Evaluates all 8 aerodynamic derivatives individually across their own reduced velocity range.
 
@@ -168,6 +180,9 @@ def cae_kae_single(poly_coeff, v_range, B, f, N=100):
         Section width (m)
     f : float
         Frequency (Hz)
+        Gathered from FEM-model
+    rho : float
+        Air density (kg/m^3)
     N : int
         Number of points per AD
     Returns:
@@ -182,35 +197,137 @@ def cae_kae_single(poly_coeff, v_range, B, f, N=100):
         raise ValueError("OBS: AD-ene har forskjellige reduced velocity-intervaller!"
                          "Denne funksjonen forutsetter at alle bruker samme v_range.")
     
-    AD_N = np.zeros((8, N))
+    AD_N = np.zeros((8, N)) #Function of Vred
     V_N = np.zeros((8, N))
 
     for i in range(8):
         v_min_red, v_max_red = v_range[i]
-        V_i = np.linspace(f*B/v_min_red ,f*B/ v_max_red, N)
+        V_i = np.linspace(v_min_red ,v_max_red, N)
         AD_i = np.polyval(poly_coeff[i], V_i)
         V_N[i] = V_i
         AD_N[i] = AD_i
     
     #Damping and stiffness matrices
-    C_aeN = np.zeros((N, 2, 2))
-    K_aeN = np.zeros((N, 2, 2))
+    C_aeN_star = np.zeros((N, 2, 2)) #Dimensionless
+    K_aeN_star = np.zeros((N, 2, 2)) #Dimensionless
 
     for i in range(N):
         # AD
         H1, H2, H3, H4 = AD_N[0, i], AD_N[1, i], AD_N[2, i], AD_N[3, i]
         A1, A2, A3, A4 = AD_N[4, i], AD_N[5, i], AD_N[6, i], AD_N[7, i]
 
-        C_aeN[i] = np.array([
+        C_aeN_star[i] = np.array([
             [H1,       B * H2],
             [B * A1,   B**2 * A2]
         ])
-        K_aeN[i] = np.array([
+        K_aeN_star[i] = np.array([
             [H4,       B * H3],
             [B * A4,   B**2 * A3]
         ])
+    
+    omega = 2* np.pi * f #Angular frequency (rad/s)
 
+    
+    C_aeN = 0.5 * rho * B**2*omega*C_aeN_star # Not dimensionless
+    K_aeN = 0.5 * rho * B**2*omega**2*K_aeN_star # Not dimensionless
     return C_aeN, K_aeN, V_N
 
 
-#TOD0: Ad plotting functions for Cae and Kae
+
+def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
+    """
+    Løser generalisert eigenverdiproblem for gitt system.
+    
+    [ -λ² M + λ(C + Cae) + (K + Kae) ] φ = 0
+
+    Parameters:
+    -----------
+    M : ndarray
+        Mass matrix
+    C_struc : ndarray
+        Structural damping matrix
+    K_struc : ndarray
+        Structural stiffness matrix
+    C_aero : ndarray
+        Aerodynamic damping matrix (dimensional)
+    K_aero : ndarray
+        Aerodynamic stiffness matrix (dimensional)
+
+    Returns:
+    --------
+    eigvals : ndarray
+        Eigenvalues λ (complex), shape (n_dof*2,)
+    """
+    n = M_struc.shape[0] # n = 2: single deck, n = 4: twin deck
+    A = -la.block_diag(M_struc, np.eye(n))
+    B = np.block([
+        [C_struc + C_aero, K_struc + K_aero],
+        [-np.eye(n), np.zeros((n, n))]
+    ])
+
+    eigvals, eigvec = la.eig(B, A)
+    return eigvals, eigvec
+
+
+def solve_flutter(M_struc, C_struc, K_struc, C_aero, K_aero, V_all):
+    """
+    Parameters:
+    -----------
+    M_struc : ndarray
+        Structural mass matrix
+    C_struc : ndarray
+        Structural damping matrix
+    K_struc : ndarray
+        Structural stiffness matrix
+    C_aero : ndarray of shape (N, n, n)
+        Aerodynamic damping matrices (per wind speed)
+    K_aero : ndarray of shape (N, n, n)
+        Aerodynamic stiffness matrices (per wind speed)
+    V_all : ndarray of shape (1, N) or (N,)
+        Wind speeds corresponding to C_aero/K_aero
+    """
+    eigvals_all = []
+    eigvecs_all = []
+    damping_ratios = []
+    flutter_speed = None
+
+
+    for i, V in enumerate(V_all[0]):  # Bruk f.eks. vertikalmodus sin V-liste
+        Cae = C_aero[i]
+        Kae = K_aero[i]
+
+        eigvals, eigvec = solve_eigvalprob(M_struc, C_struc, K_struc, Cae, Kae)
+        eigvals_all.append(eigvals)
+        eigvecs_all.append(eigvec)
+
+        damping = -np.real(eigvals) / np.abs(eigvals)
+        min_damping = np.min(damping)  # Mest ustabile mode
+
+        damping_ratios.append(min_damping)
+
+        if min_damping < 0 and flutter_speed is None:
+            flutter_speed = V  # Første gang vi får negativ demping
+        
+    if flutter_speed is None:
+        print("Ingen flutter observert i gitt vindhastighetsintervall!")
+
+
+    return flutter_speed, damping_ratios, eigvals_all, eigvecs_all
+
+
+def plot_flutter(flutter_speed, V_all, damping_ratios):
+    
+    print(f"Estimert flutterhastighet: {flutter_speed:.2f} m/s")
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(V_all[0], damping_ratios)
+    plt.axhline(0, linestyle="--", color="gray")
+    plt.xlabel("Vindhastighet V [m/s]")
+    plt.ylabel("Minste relativ demping")
+    plt.title("Flutteranalyse (uten iterasjon)")
+    plt.grid(True)
+    plt.show()
+    
+
+
+

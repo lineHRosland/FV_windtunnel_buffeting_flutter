@@ -91,3 +91,22 @@ C_aero2, K_aero2, V_all2 = _eigVal.cae_kae_twin(poly_coeff_single, v_range_singl
 
 #print("\nAerodynamic Stiffness Matrices (K_aero):")
 #print(K_aero1)
+
+# ALTERNATIVE 1: WITHOUT ITERATION
+
+
+# V = 0, wi(V=0) egenfrekvens i still air
+# Det betyr at den egenfrekvensen 𝜔  du bruker, egentlig bør avhenge av vindhastigheten V.
+
+#1. 
+    # Bruk FEM-verdier for 𝜔1, w2. 
+    # Evaluer matrisene 𝑀,𝐶+𝐶𝑎𝑒,𝐾+𝐾𝑎𝑒  for mange ulike vindhastigheter V. 
+    # Løs generalisert egenverdiproblem. Sjekk hvor dempingen blir null → det er flutterhastigheten. 
+    # Plot Demping 𝜁 eller Re(𝜆) som funksjon av V
+#2. Med iterasjon (for nøyaktig fluttergrense)
+    # Når du har funnet omtrentlig flutterhastighet, kan du i ettertid lage et lite iterativt skript for mer nøyaktig justering i akkurat det området.
+    # Start med w0.
+    # Finn Cae, Kae med w0
+    # Løs egenverdiproblemet, finn ny w, w1
+    # Sjekk om w1 er lik w0. 
+    # Repeter til w1 er lik w0 med ønsket nøyaktighet.
