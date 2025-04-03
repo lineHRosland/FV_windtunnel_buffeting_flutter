@@ -43,10 +43,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
     n = M_struc.shape[0] # n = 2: single deck, n = 4: twin deck
 
-    print("Ms", M_struc)
-    print("Cs", C_struc)
-    print("Ks", K_struc)
-
+    
     print
     A = -la.block_diag(M_struc, np.eye(n))
     B = np.block([
@@ -190,7 +187,7 @@ def solve_flutter_single(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_it
             C_aero_single_iter = 0.5 * rho * B**2*omega_old*C_aero_single_star
             K_aero_single_iter = 0.5 * rho * B**2*omega_old**2*K_aero_single_star
 
-            eigvals, eigvec = solve_eigvalprob(Ms[i], Cs[i], Ks[i], C_aero_single_iter[i], K_aero_single_iter[i])
+            eigvals, eigvec = solve_eigvalprob(Ms, Cs, Ks, C_aero_single_iter, K_aero_single_iter)
             eigvals_all.append(eigvals)
             eigvecs_all.append(eigvec)
 
