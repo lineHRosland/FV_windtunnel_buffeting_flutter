@@ -252,31 +252,36 @@ def plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios):
 
 def plot_eigenvalues_over_v(Vred_list, eigvals_all):
     """
-    Plott egenverdier (reelle og imaginære deler) i funksjon av vindhastighet.
-    
-    Parameters:
-    ----------
-    Vred_list : ndarray
-        Liste over vindhastigheter (reduced velocities).
-    eigvals_all : list
-        Liste med alle egenverdier for hver hastighet (output fra solve_eigvalprob).
-    """
-    plt.figure(figsize=(10, 6))
-    
-    # Ekstraher reelle og imaginære deler av egenverdiene
-    real_parts = [np.real(eigvals) for eigvals in eigvals_all]
-    imag_parts = [np.imag(eigvals) for eigvals in eigvals_all]
+    Plot real and imaginary parts of eigenvalues as function of reduced wind speed.
 
-    # Plot reelle og imaginære deler
-    plt.plot(Vred_list, real_parts, label="Reelle deler", color='b')
-    plt.plot(Vred_list, imag_parts, label="Imaginære deler", color='r', linestyle='--')
-    
-    plt.xlabel("Vindhastighet [m/s]")
-    plt.ylabel("Egenverdi (Reell og Imaginær del)")
+    Parameters:
+    -----------
+    Vred_list : ndarray of shape (N,)
+        Reduced wind speeds
+    eigvals_all : list of ndarray, each (n_modes,)
+        Eigenvalues for each wind speed
+    """
+    eigvals_all = np.array(eigvals_all)  # Shape (N, n_modes)
+    n_modes = eigvals_all.shape[1]
+
+    plt.figure(figsize=(12, 6))
+
+    for mode in range(n_modes):
+        real_part = np.real(eigvals_all[:, mode])
+        imag_part = np.imag(eigvals_all[:, mode])
+        
+        plt.plot(Vred_list, real_part, label=f"Re(λ) Mode {mode+1}", linestyle="-")
+        plt.plot(Vred_list, imag_part, label=f"Im(λ) Mode {mode+1}", linestyle="--")
+
+    plt.xlabel("Reduced wind speed $U/fB$")
+    plt.ylabel("Egenverdi (reell og imaginær del)")
     plt.title("Egenverdier i funksjon av vindhastighet")
-    plt.legend()
+    plt.axhline(0, color="gray", linestyle=":")
     plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
     plt.show()
+
 
 
 def plot_flutter_results(Vred_list, eigvals_all):
