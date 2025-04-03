@@ -177,7 +177,7 @@ def solve_flutter_single(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_it
     flutter_speed = None
 
     for i, V in enumerate(Vred_list):
-        # V = Vred_list[i]  
+        print("V", Vred_list[i] ) 
 
         omega_old = 2* np.pi * f1 #Angular frequency (rad/s) ??f1
 
@@ -235,9 +235,14 @@ def plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios):
         Liste over dempingsforhold for hver vindhastighet.
     """
     plt.figure(figsize=(10, 6))
+
+    if flutter_speed is not None:
+        plt.scatter(flutter_speed, 0, color='r', label=f"Flutter Speed: {flutter_speed:.2f} m/s")
+    else:
+        print("Ingen flutterhastighet funnet - sjekker kun plottet uten markør.")
+
     plt.plot(Vred_list, damping_ratios, label="Damping Ratio", color='b')
     plt.axhline(0, linestyle="--", color="gray", label="Critical Damping Line")
-    plt.scatter(flutter_speed, 0, color='r', label=f"Flutter Speed: {flutter_speed:.2f} m/s")
     plt.xlabel("Vindhastighet [m/s]")
     plt.ylabel("Dempingforhold")
     plt.title("Flutteranalyse: Dempingforhold i funksjon av vindhastighet")
