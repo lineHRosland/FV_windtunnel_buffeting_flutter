@@ -42,6 +42,12 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
         Eigenvalues λ (complex), shape (n_dof*2,)
     """
     n = M_struc.shape[0] # n = 2: single deck, n = 4: twin deck
+    
+    print("Ms", M_struc)
+    print("Cs", C_struc)
+    print("Ks", K_struc)
+
+    print
     A = -la.block_diag(M_struc, np.eye(n))
     B = np.block([
         [C_struc + C_aero, K_struc + K_aero],
@@ -504,48 +510,3 @@ def solve_flutter_twin(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_iter
 
 
     return flutter_speed, damping_ratios, eigvals_all, eigvecs_all
-
-###############################
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-
-def uncoupled_freq_damping(w_s, H4_star, A3_star, mu):
-    """
-    Beregn uncoupled (modifiserte) frekvenser og demping for vertikal og torsjon
-    """
-    w_bar_1 = w_s[0] * np.sqrt(1 - (mu * H4_star)**2)
-    w_bar_2 = w_s[1] * np.sqrt(1 - (mu * A3_star)**2)
-
-    return w_bar_1, w_bar_2
-
-def uncoupled_damping(xi_s, w_s, w_bar, H1_star, A2_star, mu):
-    """
-    Beregn modifisert demping (ξ̄) for uncoupled modes
-    """
-    xi_bar_1 = xi_s[0] * (w_s[0] / w_bar[0]) - 0.5 * mu * (H1_star / w_bar[0])
-    xi_bar_2 = xi_s[1] * (w_s[1] / w_bar[1]) - 0.5 * mu * (A2_star / w_bar[1])
-    return xi_bar_1, xi_bar_2
-
-# Eksempelverdier (kan erstattes med reelle)
-w_s = [10, 20]         # struktur-frekvenser (Hz)
-xi_s = [0.005, 0.005]  # struktur-demping
-mu = 0.03              # masseparameter
-H4_star = 0.1
-A3_star = 0.1
-H1_star = 0.2
-A2_star = 0.15
-
-# Steg 1: uncoupled frekvens og damping
-w_bar_1, w_bar_2 = uncoupled_freq_damping(w_s, H4_star, A3_star, mu)
-xi_bar_1, xi_bar_2 = uncoupled_damping(xi_s, w_s, (w_bar_1, w_bar_2), H1_star, A2_star, mu)
-
-results = {
-    "Uncoupled modifisert frekvens ω̄1": w_bar_1,
-    "Uncoupled modifisert frekvens ω̄2": w_bar_2,
-    "Uncoupled demping ξ̄1": xi_bar_1,
-    "Uncoupled demping ξ̄2": xi_bar_2
-}
-
-import ace_tools as tools; tools.display_dataframe_to_user(name="Uncoupled Flutter Resultater", dataframe=pd.DataFrame([results]))
-

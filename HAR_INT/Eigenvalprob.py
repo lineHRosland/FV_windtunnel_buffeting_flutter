@@ -4,7 +4,7 @@ Created in April 2025
 
 @author: linehro
 """
-
+#%%
 import numpy as np
 import sys
 import os
@@ -52,7 +52,7 @@ else:
 #print(poly_coeff_single.shape)  # Skal være (8, 3)
 #print(v_range_single)           # Skal være (8,2)
 
-flutter_speed, damping_ratios, min_damping_ratios, eigvals_all, eigvecs_all, Vred_list=_eigVal.solve_flutter_single(poly_coeff_single, v_range_single, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N)
+flutter_speed, damping_ratios, min_damping_ratios, eigvals_all, eigvecs_all, Vred_list=_eigVal.solve_flutter_single(poly_coeff_single, v_range_single, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N)
 
 _eigVal.plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios)
 
@@ -141,3 +141,49 @@ C_aero2, K_aero2, V_all2 = _eigVal.cae_kae_twin(poly_coeff_single, v_range_singl
 
 # # Isolated modes
 # w1_bar = ws1*np.sqrt(1-mikro(w/ws1)**2*H4) 
+
+
+###############################
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+def uncoupled_freq_damping(w_s, H4_star, A3_star, mu):
+    """
+    Beregn uncoupled (modifiserte) frekvenser og demping for vertikal og torsjon
+    """
+    w_bar_1 = w_s[0] * np.sqrt(1 - (mu * H4_star)**2)
+    w_bar_2 = w_s[1] * np.sqrt(1 - (mu * A3_star)**2)
+
+    return w_bar_1, w_bar_2
+
+def uncoupled_damping(xi_s, w_s, w_bar, H1_star, A2_star, mu):
+    """
+    Beregn modifisert demping (ξ̄) for uncoupled modes
+    """
+    xi_bar_1 = xi_s[0] * (w_s[0] / w_bar[0]) - 0.5 * mu * (H1_star / w_bar[0])
+    xi_bar_2 = xi_s[1] * (w_s[1] / w_bar[1]) - 0.5 * mu * (A2_star / w_bar[1])
+    return xi_bar_1, xi_bar_2
+
+# Eksempelverdier (kan erstattes med reelle)
+w_s = [10, 20]         # struktur-frekvenser (Hz)
+xi_s = [0.005, 0.005]  # struktur-demping
+mu = 0.03              # masseparameter
+H4_star = 0.1
+A3_star = 0.1
+H1_star = 0.2
+A2_star = 0.15
+
+# Steg 1: uncoupled frekvens og damping
+w_bar_1, w_bar_2 = uncoupled_freq_damping(w_s, H4_star, A3_star, mu)
+xi_bar_1, xi_bar_2 = uncoupled_damping(xi_s, w_s, (w_bar_1, w_bar_2), H1_star, A2_star, mu)
+
+results = {
+    "Uncoupled modifisert frekvens ω̄1": w_bar_1,
+    "Uncoupled modifisert frekvens ω̄2": w_bar_2,
+    "Uncoupled demping ξ̄1": xi_bar_1,
+    "Uncoupled demping ξ̄2": xi_bar_2
+}
+
+import ace_tools as tools; tools.display_dataframe_to_user(name="Uncoupled Flutter Resultater", dataframe=pd.DataFrame([results]))
+
