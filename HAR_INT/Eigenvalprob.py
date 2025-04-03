@@ -18,30 +18,46 @@ file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Arrays_AD"
 B = 0.365 # m, section width
 
 # Values from FEM-model
-m1 = 1000 #kg, vertical
-m2 = 2000 #kg, torsion
-f1 = 10 #Hz, vertical
-f2 = 20 #Hz, torsion
+ms1 = 1000 #kg, vertical
+ms2 = 2000 #kg, torsion
+fs1 = 10 #Hz, vertical
+fs2 = 20 #Hz, torsion
 
+ws1 = 2*np.pi*fs1 # rad/s, vertical FØRSTE ITERASJON
+ws2 = 2*np.pi*fs2 # rad/s, torsion FØRSTE ITERASJON
 
 zeta = 0.005 # 0.5 %, critical damping
+rho = 1.225 # kg/m^3, air density
 
 
+scale = 1/50
+
+N = 100 # Number of steps in V_list
+
+#%%
+#ITERATIVE BIMODAL EIGENVALUE APPROACH
+eps = 1e-3  # Konvergensterskel
+max_iter = 10  # Maksimalt antall iterasjoner
+#%%
+#Single deck
 if os.path.exists(os.path.join(file_path, "poly_coeff_single.npy")):
     poly_coeff_single = np.load(os.path.join(file_path, "poly_coeff_single.npy"))
 else:
     raise FileNotFoundError(f"The file 'poly_coeff_single.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
-
 if os.path.exists(os.path.join(file_path, "v_range_single.npy")):
     v_range_single = np.load(os.path.join(file_path, "v_range_single.npy"))
 else:
     raise FileNotFoundError(f"The file 'v_range_single.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
 #print(poly_coeff_single.shape)  # Skal være (8, 3)
-#print(v_range_single)           # Skal være f.eks. [min, max]
+#print(v_range_single)           # Skal være (8,2)
+
+flutter_speed, damping_ratios, min_damping_ratios, eigvals_all, eigvecs_all, Vred_list=_eigVal.solve_flutter_single(poly_coeff_single, v_range_single, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N)
+
+_eigVal.plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios)
 
 
-
+#%%
 
 if os.path.exists(os.path.join(file_path, "poly_coeff_3D.npy")):
     poly_coeff_3D = np.load(os.path.join(file_path, "poly_coeff_3D.npy"))
@@ -56,14 +72,7 @@ else:
 #print(poly_coeff_3D.shape)  # Skal være (32, 3)
 #print(v_range_3D)           # Skal være f.eks. [min, max]
 
-# Call the function to evaluate aerodynamic matrices
-#vertical
-C_aero1_single, K_aero1_single, V_all1_single = _eigVal.cae_kae_single(poly_coeff_single, v_range_single, B, f1, 100)
-#torsion
-C_aero2_single, K_aero2_single, V_all2_single = _eigVal.cae_kae_single(poly_coeff_single, v_range_single, B, f2, 100)
 
-# Call the function to compute structural matrices
-Ms, Cs, Ks = _eigVal.structural_matrices(m1, m2, f1, f2, zeta)
 
 # Print the results
 print("Mass Matrix (M):")
@@ -95,6 +104,10 @@ C_aero2, K_aero2, V_all2 = _eigVal.cae_kae_twin(poly_coeff_single, v_range_singl
 # ALTERNATIVE 1: WITHOUT ITERATION
 
 
+
+
+# ALTERNATIVE 2: WITH ITERATION
+
 # V = 0, wi(V=0) egenfrekvens i still air
 # Det betyr at den egenfrekvensen 𝜔  du bruker, egentlig bør avhenge av vindhastigheten V.
 
@@ -110,3 +123,21 @@ C_aero2, K_aero2, V_all2 = _eigVal.cae_kae_twin(poly_coeff_single, v_range_singl
     # Løs egenverdiproblemet, finn ny w, w1
     # Sjekk om w1 er lik w0. 
     # Repeter til w1 er lik w0 med ønsket nøyaktighet.
+
+
+
+# finn w iterativt, deretter finn demping for ulike vindhastigheter
+# Du løser egenverdiproblemet for hver V, og sjekker dempingen. Egenverdiproblemet gir egenverdier og egenvektorer.
+#     Egenverdiene er komplekse og trengs for å regne ut dempingen.
+#     Egenvektorene er komplekse og gir fase informasjon. Dette er viktig å kommentere.
+# Man får en frekvens per løsningn av egenverdiprob for en gitt vindhastighet.
+    
+# #CLOSED FORM
+# # Constants
+# I = #FEM
+# mikro = rho * (B/2)**2/I
+# nu = rho * (B/2)**4/I
+# D = G_h1alpha2/np.sqrt(G_h1h1*G_alpha2alpha2) #G: mode shapes
+
+# # Isolated modes
+# w1_bar = ws1*np.sqrt(1-mikro(w/ws1)**2*H4) 
