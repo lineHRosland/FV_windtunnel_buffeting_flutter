@@ -277,7 +277,117 @@ def plot_eigenvalues_over_v(Vred_list, eigvals_all):
     plt.legend()
     plt.grid(True)
     plt.show()
-    
+
+
+def plot_flutter_results(Vred_list, eigvals_all):
+    """
+    Plotter frekvens og demping for hver mode over vindhastighet.
+
+    Parameters:
+    -----------
+    Vred_list : array
+        Liste over reduserte vindhastigheter.
+    eigvals_all : array
+        Array av egenverdier med shape (N, n_modes).
+    """
+
+    frequencies = np.imag(eigvals_all) / (2 * np.pi)
+    dampings = -np.real(eigvals_all) / np.abs(eigvals_all)
+    n_modes = eigvals_all.shape[1]
+
+    fig, axs = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+
+    # Frekvenser
+    for i in range(n_modes):
+        axs[0].plot(Vred_list, frequencies[:, i], label=f"$\lambda_{i+1}$")
+    axs[0].set_ylabel("f [Hz]")
+    axs[0].set_title("Frekvens for hver mode")
+    axs[0].legend()
+    axs[0].grid()
+
+    # Demping
+    for i in range(n_modes):
+        axs[1].plot(Vred_list, dampings[:, i], label=f"$\lambda_{i+1}$")
+    axs[1].axhline(0, linestyle="--", color="gray")
+    axs[1].set_ylabel(r"$\zeta$ [-]")
+    axs[1].set_xlabel("Redusert vindhastighet $U^*$")
+    axs[1].set_title("Demping for hver mode")
+    axs[1].legend()
+    axs[1].grid()
+
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_flutter_modes(U_list, eigvals_all, split_modes=True, labels=None):
+    """
+    Plot frequencies and damping ratios for all eigenvalues over wind speeds.
+    Optionally split into vertical/torsional or symmetric/antisymmetric groups.
+
+    Parameters:
+    -----------
+    U_list : ndarray
+        Wind speeds used in the flutter analysis, shape (N,)
+    eigvals_all : list of ndarray
+        List of eigenvalues from solve_flutter_single (length N, each of shape (2*n,))
+    split_modes : bool
+        Whether to split plots into vertical/torsional (even/odd indices)
+    labels : list of str
+        Optional labels for each mode (e.g., ['λ₁', 'λ₂', ...])
+    """
+    eigvals_all = np.array(eigvals_all)  # shape (N, 2n)
+    N, n_modes = eigvals_all.shape
+
+    freqs = np.imag(eigvals_all) / (2 * np.pi)  # Hz
+    damping = -np.real(eigvals_all) / np.abs(eigvals_all)
+
+    # Auto-generate labels if none given
+    if labels is None:
+        labels = [f"$\\lambda_{i+1}$" for i in range(n_modes)]
+
+    fig, axs = plt.subplots(2, 2 if split_modes else 1, figsize=(14, 8), sharex=True)
+
+    if split_modes:
+        axs = axs.flatten()
+        mode_groups = {
+            "Symmetric instability": range(0, n_modes, 2),
+            "Anti-symmetric instability": range(1, n_modes, 2)
+        }
+
+        for idx, (title, mode_idx) in enumerate(mode_groups.items()):
+            # Frequency
+            for i in mode_idx:
+                axs[idx].plot(U_list, freqs[:, i], label=labels[i])
+            axs[idx].set_title(title)
+            axs[idx].set_ylabel("f [Hz]")
+            axs[idx].grid(True)
+            axs[idx].legend()
+
+            # Damping
+            for i in mode_idx:
+                axs[idx+2].plot(U_list, damping[:, i], label=labels[i])
+            axs[idx+2].set_ylabel(r"$\zeta$ [-]")
+            axs[idx+2].set_xlabel("U [m/s]")
+            axs[idx+2].grid(True)
+            axs[idx+2].legend()
+
+    else:
+        # All in one plot (no split)
+        axs = axs if isinstance(axs, np.ndarray) else [axs]
+        axs = np.array(axs)
+        for i in range(n_modes):
+            axs[0].plot(U_list, freqs[:, i], label=labels[i])
+            axs[1].plot(U_list, damping[:, i], label=labels[i])
+        axs[0].set_ylabel("f [Hz]")
+        axs[1].set_ylabel(r"$\zeta$ [-]")
+        axs[1].set_xlabel("U [m/s]")
+        axs[0].grid(True)
+        axs[1].grid(True)
+        axs[0].legend()
+        axs[1].legend()
+
+    plt.tight_layout()
+    return fig
 
 def structural_matrices_twin(m1, m2, f1, f2, zeta):
     """
@@ -334,7 +444,7 @@ def structural_matrices_twin(m1, m2, f1, f2, zeta):
     
     return Ms, Cs, Ks
 
-def cae_kae_twin(poly_coeff, V_loc, V_glob, B):
+def cae_kae_twin(poly_coeff, V, B):
     """
     Evaluates all 32 aerodynamic derivatives individually across their own reduced velocity range.
 
@@ -362,61 +472,33 @@ def cae_kae_twin(poly_coeff, V_loc, V_glob, B):
         Aerodynamic stiffness matrices
     """
     
-    
-    #Damping and stiffness matrices
-    C_ae_local_star = np.zeros((4, 4))
-    K_ae_local_star = np.zeros((4, 4))
-    C_ae_global_star = np.zeros((4, 4))
-    K_ae_global_star = np.zeros((4, 4))
+
 
     # AD
-    c_z1z1, c_z1θ1, c_z1z2, c_z1θ2 = np.polyval(poly_coeff[0],V_loc), np.polyval(poly_coeff[1],V_loc), np.polyval(poly_coeff[2],V_loc), np.polyval(poly_coeff[3],V_loc)
-    c_θ1z1, c_θ1θ1, c_θ1z2, c_θ1θ2 = np.polyval(poly_coeff[4],V_loc), np.polyval(poly_coeff[5],V_loc), np.polyval(poly_coeff[6],V_loc), np.polyval(poly_coeff[7],V_loc)
-    c_z2z1, c_z2θ1, c_z2z2, c_z2θ2 = np.polyval(poly_coeff[8],V_loc), np.polyval(poly_coeff[9],V_loc), np.polyval(poly_coeff[10],V_loc), np.polyval(poly_coeff[11],V_loc)
-    c_θ2z1, c_θ2θ1, c_θ2z2, c_θ2θ2 = np.polyval(poly_coeff[12],V_loc), np.polyval(poly_coeff[13],V_loc), np.polyval(poly_coeff[14],V_loc), np.polyval(poly_coeff[15],V_loc)
-    k_z1z1, k_z1θ1, k_z1z2, k_z1θ2 = np.polyval(poly_coeff[16],V_loc), np.polyval(poly_coeff[17],V_loc), np.polyval(poly_coeff[18],V_loc), np.polyval(poly_coeff[19],V_loc)
-    k_θ1z1, k_θ1θ1, k_θ1z2, k_θ1θ2 = np.polyval(poly_coeff[20],V_loc), np.polyval(poly_coeff[21],V_loc), np.polyval(poly_coeff[22],V_loc), np.polyval(poly_coeff[23],V_loc)
-    k_z2z1, k_z2θ1, k_z2z2, k_z2θ2 = np.polyval(poly_coeff[24],V_loc), np.polyval(poly_coeff[25],V_loc), np.polyval(poly_coeff[26],V_loc), np.polyval(poly_coeff[27],V_loc)
-    k_θ2z1, k_θ2θ1, k_θ2z2, k_θ2θ2 = np.polyval(poly_coeff[28],V_loc), np.polyval(poly_coeff[29],V_loc), np.polyval(poly_coeff[30],V_loc), np.polyval(poly_coeff[31],V_loc)
+    c_z1z1, c_z1θ1, c_z1z2, c_z1θ2 = np.polyval(poly_coeff[0],V[0]), np.polyval(poly_coeff[1],V[1]), np.polyval(poly_coeff[2],V[2]), np.polyval(poly_coeff[3],V[3])
+    c_θ1z1, c_θ1θ1, c_θ1z2, c_θ1θ2 = np.polyval(poly_coeff[4],V[4]), np.polyval(poly_coeff[5],V[5]), np.polyval(poly_coeff[6],V[6]), np.polyval(poly_coeff[7],V[7])
+    c_z2z1, c_z2θ1, c_z2z2, c_z2θ2 = np.polyval(poly_coeff[8],V[8]), np.polyval(poly_coeff[9],V[9]), np.polyval(poly_coeff[10],V[10]), np.polyval(poly_coeff[11],V[11])
+    c_θ2z1, c_θ2θ1, c_θ2z2, c_θ2θ2 = np.polyval(poly_coeff[12],V[12]), np.polyval(poly_coeff[13],V[13]), np.polyval(poly_coeff[14],V[14]), np.polyval(poly_coeff[15],V[15])
+    k_z1z1, k_z1θ1, k_z1z2, k_z1θ2 = np.polyval(poly_coeff[16],V[16]), np.polyval(poly_coeff[17],V[17]), np.polyval(poly_coeff[18],V[18]), np.polyval(poly_coeff[19],V[19])
+    k_θ1z1, k_θ1θ1, k_θ1z2, k_θ1θ2 = np.polyval(poly_coeff[20],V[20]), np.polyval(poly_coeff[21],V[21]), np.polyval(poly_coeff[22],V[22]), np.polyval(poly_coeff[23],V[23])
+    k_z2z1, k_z2θ1, k_z2z2, k_z2θ2 = np.polyval(poly_coeff[24],V[24]), np.polyval(poly_coeff[25],V[25]), np.polyval(poly_coeff[26],V[26]), np.polyval(poly_coeff[27],V[27])
+    k_θ2z1, k_θ2θ1, k_θ2z2, k_θ2θ2 = np.polyval(poly_coeff[28],V[28]), np.polyval(poly_coeff[29],V[29]), np.polyval(poly_coeff[30],V[30]), np.polyval(poly_coeff[31],V[31])
 
-    # AD_global
-    c_z1z1_glob, c_z1θ1_glob, c_z1z2_glob, c_z1θ2_glob = np.polyval(poly_coeff[0],V_glob), np.polyval(poly_coeff[1],V_glob), np.polyval(poly_coeff[2],V_glob), np.polyval(poly_coeff[3],V_glob)
-    c_θ1z1_glob, c_θ1θ1_glob, c_θ1z2_glob, c_θ1θ2_glob = np.polyval(poly_coeff[4],V_glob), np.polyval(poly_coeff[5],V_glob), np.polyval(poly_coeff[6],V_glob), np.polyval(poly_coeff[7],V_glob)
-    c_z2z1_glob, c_z2θ1_glob, c_z2z2_glob, c_z2θ2_glob = np.polyval(poly_coeff[8],V_glob), np.polyval(poly_coeff[9],V_glob), np.polyval(poly_coeff[10],V_glob), np.polyval(poly_coeff[11],V_glob)
-    c_θ2z1_glob, c_θ2θ1_glob, c_θ2z2_glob, c_θ2θ2_glob = np.polyval(poly_coeff[12],V_glob), np.polyval(poly_coeff[13],V_glob), np.polyval(poly_coeff[14],V_glob), np.polyval(poly_coeff[15],V_glob)
-    k_z1z1_glob, k_z1θ1_glob, k_z1z2_glob, k_z1θ2_glob = np.polyval(poly_coeff[16],V_glob), np.polyval(poly_coeff[17],V_glob), np.polyval(poly_coeff[18],V_glob), np.polyval(poly_coeff[19],V_glob)
-    k_θ1z1_glob, k_θ1θ1_glob, k_θ1z2_glob, k_θ1θ2_glob = np.polyval(poly_coeff[20],V_glob), np.polyval(poly_coeff[21],V_glob), np.polyval(poly_coeff[22],V_glob), np.polyval(poly_coeff[23],V_glob)
-    k_z2z1_glob, k_z2θ1_glob, k_z2z2_glob, k_z2θ2_glob = np.polyval(poly_coeff[24],V_glob), np.polyval(poly_coeff[25],V_glob), np.polyval(poly_coeff[26],V_glob), np.polyval(poly_coeff[27],V_glob)
-    k_θ2z1_glob, k_θ2θ1_glob, k_θ2z2_glob, k_θ2θ2_glob = np.polyval(poly_coeff[28],V_glob), np.polyval(poly_coeff[29],V_glob), np.polyval(poly_coeff[30],V_glob), np.polyval(poly_coeff[31],V_glob)
-
-    C_ae_global_star = np.array([
-        [c_z1z1_glob,       B * c_z1θ1_glob,       c_z1z2_glob,       B * c_z1θ2_glob],
-        [B * c_θ1z1_glob,   B**2 * c_θ1θ1_glob,   B * c_θ1z2_glob,   B**2 * c_θ1θ2_glob],
-        [c_z2z1_glob,       B * c_z2θ1_glob,       c_z2z2_glob,       B * c_z2θ2_glob],
-        [B * c_θ2z1_glob,   B**2 * c_θ2θ1_glob,   B * c_θ2z2_glob,   B**2 * c_θ2θ2_glob]
-    ])
-    K_ae_global_star = np.array([
-        [k_z1z1_glob,       B * k_z1θ1_glob,       k_z1z2_glob,       B * k_z1θ2_glob],
-        [B * k_θ1z1_glob,   B**2 * k_θ1θ1_glob,   B * k_θ1z2_glob,   B**2 * k_θ1θ2_glob],
-        [k_z2z1_glob,       B * k_z2θ1_glob,       k_z2z2_glob,       B * k_z2θ2_glob],
-        [B * k_θ2z1_glob,   B**2 * k_θ2θ1_glob,   B * k_θ2z2_glob,   B**2 * k_θ2θ2_glob]
-    ])
-
-    C_ae_local_star = np.array([
+    C_ae_star = np.array([
         [c_z1z1,       B * c_z1θ1,       c_z1z2,       B * c_z1θ2],
         [B * c_θ1z1,   B**2 * c_θ1θ1,   B * c_θ1z2,   B**2 * c_θ1θ2],
         [c_z2z1,       B * c_z2θ1,       c_z2z2,       B * c_z2θ2],
         [B * c_θ2z1,   B**2 * c_θ2θ1,   B * c_θ2z2,   B**2 * c_θ2θ2]
     ])
 
-    K_ae_local_star = np.array([
+    K_ae_star = np.array([
         [k_z1z1,       B * k_z1θ1,       k_z1z2,       B * k_z1θ2],
         [B * k_θ1z1,   B**2 * k_θ1θ1,   B * k_θ1z2,   B**2 * k_θ1θ2],
         [k_z2z1,       B * k_z2θ1,       k_z2z2,       B * k_z2θ2],
         [B * k_θ2z1,   B**2 * k_θ2θ1,   B * k_θ2z2,   B**2 * k_θ2θ2]
     ])
 
-    return C_ae_local_star, K_ae_local_star, C_ae_global_star, K_ae_global_star
+    return C_ae_star, K_ae_star
 
 def solve_flutter_twin(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100):
     """
@@ -439,76 +521,112 @@ def solve_flutter_twin(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_iter
 
     # Sjekk at alle AD-er har samme hastighetsintervall
     if not np.allclose(v_all, v_all[0], atol=1e-8):
-        print("OBS: AD-ene har forskjellige reduced velocity-intervaller! Cae_global differs from Cae_local and Kae_global differs from Kae_local.")
-    
+        print("OBS: AD-ene har forskjellige reduced velocity-intervaller! ")
+        print("Global differs local, where local is the shortest interval")
+       
 
-    vmin_global = np.min(v_range[:, 0])
-    vmax_global = np.max(v_range[:, 1])
+    vmin_global = np.min(v_all[:, 0])
+    vmax_global = np.max(v_all[:, 1])
     V_common = np.linspace(vmax_global, vmin_global, N)
-
-    AD_interp = []
-    AD_global = np.zeros((32, N))
-
-
+    V_local = np.zeros((32, N))
+    V_global = np.zeros((32, N))
     for i in range(32):
-        v_min_red, v_max_red = v_range[i]
-        V_local = np.linspace(v_min_red ,v_max_red, N)
-        AD_local = np.polyval(poly_coeff[i], V_local)
-
-        interp = np.interp(V_common, V_local, AD_local, left=np.nan, right=np.nan)
-        AD_interp.append(interp)
-        # Could extend this to include an other option than setting NaN for out of bounds values
-        
-        AD_global[i] = np.polyval(poly_coeff[i], V_common)
+        v_min_red, v_max_red = v_all[i]
+        V_local[i] = np.linspace(v_min_red ,v_max_red, N)
+        V_global[i] = V_common
 
     
-    eigvals_all = []
-    eigvecs_all = []
-    min_damping_ratios = []
-    damping_ratios = []
-    flutter_speed = None
+    eigvals_all_local = []
+    eigvecs_all_local = []
+    damping_ratios_local = []
+    flutter_speed_local = None
 
-    for i, V in enumerate(Vred_list):
-        # V = Vred_list[i]  
+    eigvals_all_global = []
+    eigvecs_all_global = []
+    damping_ratios_global = []
+    flutter_speed_global = None
 
-        omega_old = 2* np.pi * f1 #Angular frequency (rad/s) ??f1
+    #Global
+    for i, V in enumerate(V_local):
+
+        omega_old_local = 2* np.pi * f1 #Angular frequency (rad/s) ??f1
 
         for _ in range(max_iter):
             #Beregn nye Cae og Kae for denne omega
-            C_aero_single_star, K_aero_single_star  = cae_kae_single(poly_coeff, V, B)
-            C_aero_single_iter = 0.5 * rho * B**2*omega_old*C_aero_single_star
-            K_aero_single_iter = 0.5 * rho * B**2*omega_old**2*K_aero_single_star
+            C_aero_twin_star_local, K_aero_twin_star_local  = cae_kae_twin(poly_coeff, V, B)
+            C_aero_twin__local = 0.5 * rho * B**2*omega_old_local*C_aero_twin_star_local
+            K_aero_twin_local = 0.5 * rho * B**2*omega_old_local**2*K_aero_twin_star_local
 
-            eigvals, eigvec = solve_eigvalprob(Ms[i], Cs[i], Ks[i], C_aero_single_iter[i], K_aero_single_iter[i])
-            eigvals_all.append(eigvals)
-            eigvecs_all.append(eigvec)
+            eigvals_local, eigvec_local = solve_eigvalprob(Ms, Cs, Ks, C_aero_twin__local, K_aero_twin_local)
+            eigvals_all_local.append(eigvals_local)
+            eigvecs_all_local.append(eigvec_local)
 
 
             # Finn ny omega fra kritisk mode (minste demping)
-            damping = -np.real(eigvals) / np.abs(eigvals)
-            idx = np.argmin(damping)
-            omega_new = np.abs(np.imag(eigvals[idx]))
+            damping_local = -np.real(eigvals_local) / np.abs(eigvals_local)
+            idx_local = np.argmin(damping_local)
+            omega_new_local = np.abs(np.imag(eigvals_local[idx_local]))
 
 
             # Brudd dersom konvergert
-            if np.abs(omega_new - omega_old) < eps:
-                min_damping = np.min(damping) # Mest utstabile mode
+            if np.abs(omega_new_local - omega_old_local) < eps:
+                min_damping_local = np.min(damping_local)
                 break
-            else: omega_old = omega_new
+            else: omega_old_local = omega_new_local
 
-        damping_ratios.append(damping)
-        min_damping_ratios.append(min_damping)   
+        damping_ratios_local.append(damping_local)
 
-        if min_damping < 0 and flutter_speed is None:
-            flutter_speed = V  # Første gang vi får negativ demping
+        if min_damping_local < 0 and flutter_speed_local is None:
+            flutter_speed_local = V  # Første gang vi får negativ demping
 
-        print("eigvals", eigvals)
-        print("eigvec", eigvec)        
-        print("damping", damping)
-        print("min_damping", min_damping)
+        print("eigvals_local", eigvals_local)
+        print("eigvec_local", eigvec_local)        
+        print("damping_local", damping_local)
+        print("min_damping_local", min_damping_local)
+    
+    for i, V in enumerate(V_global):
 
-    if flutter_speed is None:
+        omega_old_global = 2* np.pi * f1
+
+        for _ in range(max_iter):
+            #Beregn nye Cae og Kae for denne omega
+            C_aero_twin_star_global, K_aero_twin_star_global  = cae_kae_twin(poly_coeff, V, B)
+            C_aero_twin__global = 0.5 * rho * B**2*omega_old_global*C_aero_twin_star_global
+            K_aero_twin_global = 0.5 * rho * B**2*omega_old_global**2*K_aero_twin_star_global
+
+            eigvals_global, eigvec_global = solve_eigvalprob(Ms, Cs, Ks, C_aero_twin__global, K_aero_twin_global)
+            eigvals_all_global.append(eigvals_global)
+            eigvecs_all_global.append(eigvec_global)
+
+
+            # Finn ny omega fra kritisk mode (minste demping)
+            damping_global = -np.real(eigvals_global) / np.abs(eigvals_global)
+            idx_global = np.argmin(damping_global)
+            omega_new_global = np.abs(np.imag(eigvals_global[idx_global]))
+
+
+            # Brudd dersom konvergert
+            if np.abs(omega_new_global - omega_old_global) < eps:
+                min_damping_global = np.min(damping_global)
+                break
+            else: omega_old_global = omega_new_global
+        
+        damping_ratios_global.append(damping_global)
+
+        if min_damping_global < 0 and flutter_speed_global is None:
+            flutter_speed_global = V
+        
+        print("eigvals_global", eigvals_global)
+        print("eigvec_global", eigvec_global)
+        print("damping_global", damping_global)
+        print("min_damping_global", min_damping_global)
+
+
+    if flutter_speed_local is None:
+        print("Ingen flutter observert i gitt vindhastighetsintervall!")
+    
+    if flutter_speed_global is None:
         print("Ingen flutter observert i gitt vindhastighetsintervall!")
 
 
-    return flutter_speed, damping_ratios, eigvals_all, eigvecs_all
+    return flutter_speed_local, damping_ratios_local, eigvals_all_local, eigvecs_all_local, V_local, flutter_speed_global, damping_ratios_global, eigvals_all_global, eigvecs_all_global, V_global

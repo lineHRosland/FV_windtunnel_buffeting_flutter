@@ -56,10 +56,14 @@ else:
 flutter_speed, damping_ratios, min_damping_ratios, eigvals_all, eigvecs_all, Vred_list=_eigVal.solve_flutter_single(poly_coeff_single, v_range_single, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N)
 
 _eigVal.plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios)
+_eigVal.plot_eigenvalues_over_v(Vred_list, eigvals_all)
 
+_eigVal.plot_flutter_results(Vred_list, eigvals_all)
+
+_eigVal.plot_flutter_modes(Vred_list, eigvals_all, split_modes=True, labels=None)
 
 #%%
-
+#Double deck 3D
 if os.path.exists(os.path.join(file_path, "poly_coeff_3D.npy")):
     poly_coeff_3D = np.load(os.path.join(file_path, "poly_coeff_3D.npy"))
 else:
@@ -73,35 +77,10 @@ else:
 #print(poly_coeff_3D.shape)  # Skal være (32, 3)
 #print(v_range_3D)           # Skal være f.eks. [min, max]
 
+flutter_speed_local, damping_ratios_local, eigvals_all_local, eigvecs_all_local, V_local, flutter_speed_global, damping_ratios_global, eigvals_all_global, eigvecs_all_global, V_global= _eigVal.solve_flutter_single(poly_coeff_3D, v_range_3D, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N)
 
 
-# Print the results
-print("Mass Matrix (M):")
-print(Ms)
-
-print("\nStructural Damping Matrix (C_struc):")
-print(Cs)
-
-print("\nStructural Stiffness Matrix (K_struc):")
-print(Ks)
-
-# Call the function to evaluate aerodynamic matrices
-#vertical
-C_aero1, K_aero1, V_all1 = _eigVal.cae_kae_twin(poly_coeff_single, v_range_single, B, f1, 100)
-#torsion
-C_aero2, K_aero2, V_all2 = _eigVal.cae_kae_twin(poly_coeff_single, v_range_single, B, f2, 100)
-
-
-# Print the aerodynamic damping and stiffness matrices
-#print("Aerodynamic Damping Matrices (C_aero):")
-#print(C_aero1[0])
-
-#print("Aerodynamic Damping Matrices (C_aero):")
-#print(C_aero2[0])
-
-#print("\nAerodynamic Stiffness Matrices (K_aero):")
-#print(K_aero1)
-
+#%%
 # ALTERNATIVE 1: WITHOUT ITERATION
 
 
