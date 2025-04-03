@@ -38,6 +38,7 @@ N = 100 # Number of steps in V_list
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
 eps = 1e-3  # Konvergensterskel
 max_iter = 10  # Maksimalt antall iterasjoner
+
 #%%
 #Single deck
 if os.path.exists(os.path.join(file_path, "poly_coeff_single.npy")):
@@ -187,3 +188,5 @@ results = {
 
 import ace_tools as tools; tools.display_dataframe_to_user(name="Uncoupled Flutter Resultater", dataframe=pd.DataFrame([results]))
 
+
+# %%

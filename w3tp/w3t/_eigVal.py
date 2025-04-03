@@ -42,7 +42,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
         Eigenvalues λ (complex), shape (n_dof*2,)
     """
     n = M_struc.shape[0] # n = 2: single deck, n = 4: twin deck
-    
+
     print("Ms", M_struc)
     print("Cs", C_struc)
     print("Ks", K_struc)
@@ -92,9 +92,9 @@ def structural_matrices_single(m1, m2, f1, f2, zeta):
     c2 = 2 * zeta * m2 * np.sqrt(k2 * m2)  # (Torsion)
 
     # Structural matrices, diagonal matrices in modal coordinates
-    Ms = np.diag([m1, m2])  # Mass matrix
-    Cs = np.diag([c1, c2])  # Damping matrix
-    Ks = np.diag([k1, k2])  # Stiffness matrix
+    Ms = np.array([[m1,0],[0,m2]])  # Mass matrix
+    Cs = np.array([[c1,0],[0,c2]])  # Damping matrix
+    Ks = np.array([[k1,0],[0,k2]])  # Stiffness matrix
 
 
     return Ms, Cs, Ks
