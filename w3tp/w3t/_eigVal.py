@@ -177,8 +177,6 @@ def solve_flutter_single(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_it
     flutter_speed = None
 
     for i, V in enumerate(Vred_list):
-        print("V", Vred_list[i] ) 
-
         omega_old = 2* np.pi * f1 #Angular frequency (rad/s) ??f1
 
         for _ in range(max_iter):
@@ -210,10 +208,10 @@ def solve_flutter_single(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_it
         if min_damping < 0 and flutter_speed is None:
             flutter_speed = V  # Første gang vi får negativ demping
 
-        print("eigvals shape", eigvals)
-        print("eigvec shape", eigvec)        
-        print("damping shape", damping)
-        print("min_damping shape", min_damping)
+    print("eigvals shape", eigvals_all.shape)
+    print("eigvec shape", eigvecs_all.shape)        
+    print("damping shape", damping_ratios.shape)
+    print("omega shape", omega.shape)
 
     if flutter_speed is None:
         print("Ingen flutter observert i gitt vindhastighetsintervall!")
@@ -238,13 +236,11 @@ def plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios, 
 
     if flutter_speed is not None:
         plt.scatter(flutter_speed, 0, color='r', label=f"Flutter Speed: {flutter_speed*omega*B:.2f} m/s")
-    else:
-        print("Ingen flutterhastighet funnet - sjekker kun plottet uten markør.")
-
-    plt.plot(Vred_list*omega*B, damping_ratios[0], label="Damping Ratio 1", color='blue')
-    plt.plot(Vred_list*omega*B, damping_ratios[1], label="Damping Ratio 2", color='red')
-    plt.plot(Vred_list*omega*B, damping_ratios[2], label="Damping Ratio 3", color='yellow')
-    plt.plot(Vred_list*omega*B, damping_ratios[3], label="Damping Ratio 4", color='green')
+    
+    plt.plot(Vred_list*omega*B, damping_ratios[:,0], label="Damping Ratio 1", color='blue')
+    plt.plot(Vred_list*omega*B, damping_ratios[:,1], label="Damping Ratio 2", color='red')
+    plt.plot(Vred_list*omega*B, damping_ratios[:,2], label="Damping Ratio 3", color='yellow')
+    plt.plot(Vred_list*omega*B, damping_ratios[:,3], label="Damping Ratio 4", color='green')
 
     plt.axhline(0, linestyle="--", color="gray", label="Critical Damping Line")
     plt.xlabel("Vindhastighet [m/s]")
@@ -254,41 +250,11 @@ def plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios, 
     plt.grid(True)
     plt.show()
 
-def plot_eigenvalues_over_v(Vred_list, eigvals_all):
-    """
-    Plot real and imaginary parts of eigenvalues as function of reduced wind speed.
-
-    Parameters:
-    -----------
-    Vred_list : ndarray of shape (N,)
-        Reduced wind speeds
-    eigvals_all : list of ndarray, each (n_modes,)
-        Eigenvalues for each wind speed
-    """
-    eigvals_all = np.array(eigvals_all)  # Shape (N, n_modes)
-    n_modes = eigvals_all.shape[1]
-
-    plt.figure(figsize=(12, 6))
-
-    for mode in range(n_modes):
-        real_part = np.real(eigvals_all[:, mode])
-        imag_part = np.imag(eigvals_all[:, mode])
-        
-        plt.plot(Vred_list, real_part, label=f"Re(λ) Mode {mode+1}", linestyle="-")
-        plt.plot(Vred_list, imag_part, label=f"Im(λ) Mode {mode+1}", linestyle="--")
-
-    plt.xlabel("Reduced wind speed $U/fB$")
-    plt.ylabel("Egenverdi (reell og imaginær del)")
-    plt.title("Egenverdier i funksjon av vindhastighet")
-    plt.axhline(0, color="gray", linestyle=":")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
 
 
 
-def plot_flutter_results(Vred_list, eigvals_all):
+
+def plot_frequency_vs_wind_speed_singles(Vred_list, omega, B):
     """
     Plotter frekvens og demping for hver mode over vindhastighet.
 
@@ -300,33 +266,21 @@ def plot_flutter_results(Vred_list, eigvals_all):
         Array av egenverdier med shape (N, n_modes).
     """
 
-    frequencies = np.imag(eigvals_all) / (2 * np.pi)
-    dampings = -np.real(eigvals_all) / np.abs(eigvals_all)
-    n_modes = eigvals_all.shape[1]
+    frequencies = omega/(np.pi*2)  # Frekvens i Hz
+  
+    plt.figure(figsize=(10, 6))
 
-    fig, axs = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
 
-    # Frekvenser
-    for i in range(n_modes):
-        axs[0].plot(Vred_list, frequencies[:, i], label=f"$\lambda_{i+1}$")
-    axs[0].set_ylabel("f [Hz]")
-    axs[0].set_title("Frekvens for hver mode")
-    axs[0].legend()
-    axs[0].grid()
+    plt.plot(Vred_list*omega*B, frequencies[:,0], label="Freq 1", color='blue')
+    plt.plot(Vred_list*omega*B, frequencies[:, 1], label="Freq 2", color='red')
+    plt.plot(Vred_list*omega*B, frequencies[:, 2], label="Freq 3", color='yellow')
+    plt.plot(Vred_list*omega*B, frequencies[:, 3], label="Freq 4", color='green')
 
-    # Demping
-    for i in range(n_modes):
-        axs[1].plot(Vred_list, dampings[:, i], label=f"$\lambda_{i+1}$")
-    axs[1].axhline(0, linestyle="--", color="gray")
-    axs[1].set_ylabel(r"$\zeta$ [-]")
-    axs[1].set_xlabel("Redusert vindhastighet $U^*$")
-    axs[1].set_title("Demping for hver mode")
-    axs[1].legend()
-    axs[1].grid()
-
-    plt.tight_layout()
+    plt.xlabel("Vindhastighet [m/s]")
+    plt.ylabel("Frequency [Hz]")
+    plt.legend()
+    plt.grid(True)
     plt.show()
-
 
 def structural_matrices_twin(m1, m2, f1, f2, zeta):
     """

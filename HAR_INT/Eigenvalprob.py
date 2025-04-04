@@ -57,11 +57,7 @@ flutter_speed, damping_ratios, omega, eigvals_all, eigvecs_all, Vred_list =_eigV
 
 _eigVal.plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios, omega, B)
 
-#_eigVal.plot_eigenvalues_over_v(Vred_list, eigvals_all)
-
-_eigVal.plot_flutter_results(Vred_list, eigvals_all)
-
-_eigVal.plot_flutter_modes(Vred_list, eigvals_all, split_modes=True, labels=None)
+_eigVal.plot_frequency_vs_wind_speed_singles(Vred_list, omega, B)
 
 #%%
 #Double deck 3D
