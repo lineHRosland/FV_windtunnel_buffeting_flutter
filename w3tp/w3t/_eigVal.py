@@ -210,10 +210,10 @@ def solve_flutter_single(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_it
         if min_damping < 0 and flutter_speed is None:
             flutter_speed = V  # Første gang vi får negativ demping
 
-        print("eigvals", eigvals)
-        print("eigvec", eigvec)        
-        print("damping", damping)
-        print("min_damping", min_damping)
+        print("eigvals shape", eigvals)
+        print("eigvec shape", eigvec)        
+        print("damping shape", damping)
+        print("min_damping shape", min_damping)
 
     if flutter_speed is None:
         print("Ingen flutter observert i gitt vindhastighetsintervall!")
