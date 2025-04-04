@@ -37,7 +37,7 @@ N = 100 # Number of steps in V_list
 #%%
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
 eps = 1e-3  # Konvergensterskel
-max_iter = 10  # Maksimalt antall iterasjoner
+max_iter = 100  # Maksimalt antall iterasjoner
 
 #%%
 #Single deck
@@ -53,10 +53,11 @@ else:
 #print(poly_coeff_single.shape)  # Skal være (8, 3)
 #print(v_range_single)           # Skal være (8,2)
 
-flutter_speed, damping_ratios, min_damping_ratios, eigvals_all, eigvecs_all, Vred_list=_eigVal.solve_flutter_single(poly_coeff_single, v_range_single, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N)
+flutter_speed, damping_ratios, omega, eigvals_all, eigvecs_all, Vred_list, omega =_eigVal.solve_flutter_single(poly_coeff_single, v_range_single, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N)
 
-_eigVal.plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios)
-_eigVal.plot_eigenvalues_over_v(Vred_list, eigvals_all)
+_eigVal.plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios, omega, B)
+
+#_eigVal.plot_eigenvalues_over_v(Vred_list, eigvals_all)
 
 _eigVal.plot_flutter_results(Vred_list, eigvals_all)
 
