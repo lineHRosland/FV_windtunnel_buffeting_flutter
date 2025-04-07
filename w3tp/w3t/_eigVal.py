@@ -178,7 +178,7 @@ def solve_flutter_single(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_it
     
     for i, V in enumerate(Vred_list):
         converged_flags = [False] * 2  # én per mode
-        omega_old = [2*np.pi*f1, 2*np.pi*f2]
+        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
         omega_ref = np.mean(omega_old[~np.array(converged_flags)])
 
         for _ in range(max_iter):
