@@ -50,7 +50,7 @@ if os.path.exists(os.path.join(file_path, "v_range_single.npy")):
 else:
     raise FileNotFoundError(f"The file 'v_range_single.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-#print(poly_coeff_single.shape)  # Skal være (8, 3)
+#print(poly_coeff_single.shape)  # Skal være (8, 3) (8 AD)
 #print(v_range_single)           # Skal være (8,2)
 
 flutter_speed, damping_ratios, omega, eigvals_all, eigvecs_all, Vred_list =_eigVal.solve_flutter_single(poly_coeff_single, v_range_single, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N)
@@ -71,7 +71,7 @@ if os.path.exists(os.path.join(file_path, "v_range_3D.npy")):
 else:
     raise FileNotFoundError(f"The file 'v_range_3D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-#print(poly_coeff_3D.shape)  # Skal være (32, 3)
+#print(poly_coeff_3D.shape)  # Skal være (32, 3) (32 AD)
 #print(v_range_3D)           # Skal være f.eks. [min, max]
 
 flutter_speed_local, damping_ratios_local, eigvals_all_local, eigvecs_all_local, V_local, flutter_speed_global, damping_ratios_global, eigvals_all_global, eigvecs_all_global, V_global= _eigVal.solve_flutter_single(poly_coeff_3D, v_range_3D, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N)

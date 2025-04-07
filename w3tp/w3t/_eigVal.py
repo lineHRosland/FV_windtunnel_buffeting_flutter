@@ -257,7 +257,7 @@ def cae_kae_twin(poly_coeff, V, B):
     return C_ae_star, K_ae_star
 
 
-def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100, single = True):
+def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100, single = True):
     """
     Parameters:
     -----------
@@ -282,6 +282,10 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100
         Ms, Cs, Ks = structural_matrices_twin(m1, m2, f1, f2, zeta)
         n_modes = 4 # 4 modes for twin deck
 
+        eigvals_all_local = [[] for _ in range(n_modes)]
+        eigvecs_all_local = [[] for _ in range(n_modes)]
+        damping_ratios_local = [[] for _ in range(n_modes)]
+        omega_all_local = [[] for _ in range(n_modes)]
 
     eigvals_all = [[] for _ in range(n_modes)]
     eigvecs_all = [[] for _ in range(n_modes)]
@@ -291,7 +295,6 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100
 
     V_list = np.linspace(0, 80, N) #m/s
 
-    
     for i, V in enumerate(V_list):
         omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
         damping_old = [zeta, zeta]
@@ -299,7 +302,8 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100
 
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
 
-            Vred_global = V/(omega_old[j]*B)  # reduced velocity for global
+            Vred_global = [V/(omega_old[j]*B)] * 32  # reduced velocity for global
+                # Formatet på Vred_global må matche Vred_local
 
             for _ in range(max_iter):
                 print("omega_ref", omega_old[j])
@@ -359,11 +363,71 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100
                     omega_old[j] = omega_new
                     damping_old = damping_new
                     eigvec_old[j] = φj
+    if not single:
+        Vred= np.linspace(np.max(v_all[:, 0]), np.min(v_all[:, 1]), N) #m/s reduce
+
+        for i, V in enumerate(Vred): 
+            omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
+            damping_old = [zeta, zeta]
+            eigvec_old = [None] * n_modes
+
+            for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
+                V_red_local = [V]* 32
+                for _ in range(max_iter):
+                    print("omega_ref", omega_old[j])
+                        
+                    #Beregn nye Cae og Kae for denne omega[i]
+                    if single:
+                        C_star, K_star = cae_kae_single(poly_coeff, V_red_local, B)
+                    else:
+                        C_star, K_star = cae_kae_twin(poly_coeff, V_red_local, B)
+
+                    C_aero_single_iter = 0.5 * rho * B**2 * omega_old[j] * C_star
+                    K_aero_single_iter = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
+                    
+                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero_single_iter, K_aero_single_iter)
+                   
+                    # Behold kun én av hvert konjugatpar
+                    eigvals_pos = eigvals[np.imag(eigvals) > 0]
+                    eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  # hver kolonne er en φ
+
+                    # Beregn damping og omega for alle positive eigvals
+                    omega_pos = np.imag(eigvals_pos)
+                    damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
+
+                    # Finn λ for denne spesifikke moden j ??
+                    # Beregn projeksjon:
+                    similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
+                    idx1 = np.argmax(similarities)
+                    # Beregn score med w og damping for alle modene
+                    score = np.abs(omega_pos - omega_old[j]) + 5 * np.abs(damping_pos - damping_old[j])
+                    idx2 = np.argmin(score)
+
+                    print("idx1", idx1)
+                    print("idx2", idx2)
+
+                    λj = eigvals_pos[idx1]
+                    φj = eigvecs_pos[:, idx1]
+
+                    omega_new = np.imag(λj)
+                    damping_new = -np.real(λj) / np.abs(λj)
+                    
+                    # Sjekk konvergens for mode
+                    if np.abs(omega_new - omega_old[j]) < eps:
+                        omega_all_local[j].append(omega_new)              # lagre alle modenes omega
+                        damping_ratios_local[j].append(damping_new)       # lagre alle modenes damping
+                        eigvals_all_local[j].append(λj)                   # lagre alle modenes egenverdier
+                        eigvecs_all_local[j].append(φj)                   # lagre alle modenes egenvektorer
+                        break
+                    else: # Oppdater dersom w ikke har konvergert
+                        omega_old[j] = omega_new
+                        damping_old = damping_new
+                        eigvec_old[j] = φj    
+
+    return damping_ratios, omega_all, eigvals_all, eigvecs_all, V_list, damping_ratios_local, omega_all_local, eigvals_all_local, eigvecs_all_local, V_red_local
 
 
-    return damping_ratios, omega_all, eigvals_all, eigvecs_all, V_list
-
-def solve_flutter_speed_twin(damping_ratios, N = 100, single = True):
+def solve_flutter_speed( damping_ratios, N = 100, single = True):
 
     if single:
         n_modes = 2
@@ -386,7 +450,7 @@ def solve_flutter_speed_twin(damping_ratios, N = 100, single = True):
      
 
      
-def plot_damping_vs_wind_speed_single(V_defined, V_list, damping_ratios, omega_all, B, single = True):
+def plot_damping_vs_wind_speed_single( V_list, Vred_defined, damping_ratios, damping_ratios_local, omega_all, omega_all_local, B, N = 100, single = True):
     """
     Plot damping ratios as a function of wind speed, and mark regions where ADs are defined.
 
@@ -405,27 +469,45 @@ def plot_damping_vs_wind_speed_single(V_defined, V_list, damping_ratios, omega_a
     single : bool
         Whether plotting is for single-deck (2 modes) or twin-deck (4 modes).
     """
+    omega = np.array(omega_all).T           # shape (N, 2/4)
+    damping_ratios = np.array(damping_ratios).T  # shape (N, 2/4)
 
-    min = V_defined[0][0]
-    max = V_defined[0][1]
 
-    Vred_global_1 = V_list/(omega_all[:,0]*B)  # reduced velocity for global
-    Vred_global_2 = V_list/(omega_all[:,1]*B)  # reduced velocity for global
+    colors = ['blue', 'red', 'green', 'orange']
+    labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
-    if not single:
-        Vred_global_3 = V_list/(omega_all[:,2]*B)
-        Vred_global_4 = V_list/(omega_all[:,3]*B)
+    if single:
+        n_modes = 2 
+        V_min = Vred_defined[0][0]
+        V_max = Vred_defined[0][1]
+    else:
+        n_modes = 4
+        omega_local = np.array(omega_all_local).T           # shape (N, 4)
+        damping_ratios_local = np.array(damping_ratios_local).T  # shape (N, 4)
+
+        Vred_local = np.zeros((32, N))
+        for i, V in enumerate(Vred_defined):
+            Vred_local[i] = np.linspace(Vred_defined[i][0], Vred_defined[i][1], N) #m/s reduced
+
 
     plt.figure(figsize=(10, 6))
 
-    omega = np.array(omega_all).T           # shape (N, 2)
-    omega_1 = omega[:,0]
-    omega_2 = omega[:,1]
-    if not single:
-        omega_3 = omega[:,2]
-        omega_4 = omega[:,3]
+    for j in range(n_modes):
+        V_glob = V_list /(omega_all[:,j] * B)
 
-    damping_ratios = np.array(damping_ratios).T  # shape (N, 2)
+        # Finn indeksene der V_glob er innenfor AD-definert område
+        inside_idx = np.where((V_glob >= V_min) & (V_glob <= V_max))[0]
+        outside_idx = np.where((V_glob < V_min) | (V_glob > V_max))[0]
+
+        # Plot gyldig område som heltrukket
+        if inside_idx.size > 0:
+            plt.plot(V_effective[inside_idx], damping_ratios[j][inside_idx],
+                     color=colors[j], label=labels[j], linewidth=2)
+
+        # Plot ugyldig område som stipla
+        if outside_idx.size > 0:
+            plt.plot(V_effective[outside_idx], damping_ratios[j][outside_idx],
+                     color=colors[j], linestyle='--', linewidth=1)
 
 
     if global ikke begynner før min og ikke slutter etter max:
