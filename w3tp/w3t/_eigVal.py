@@ -144,161 +144,6 @@ def cae_kae_single(poly_coeff, V, B):
         
     return C_aeN_star, K_aeN_star
 
-def solve_flutter_single(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100):
-    """
-    Parameters:
-    -----------
-    M_struc : ndarray
-        Structural mass matrix
-    C_struc : ndarray
-        Structural damping matrix
-    K_struc : ndarray
-        Structural stiffness matrix
-    C_aero : ndarray of shape (N, n, n)
-        Aerodynamic damping matrices (per wind speed)
-    K_aero : ndarray of shape (N, n, n)
-        Aerodynamic stiffness matrices (per wind speed)
-    V_all : ndarray of shape (1, N) or (N,)
-        Wind speeds corresponding to C_aero/K_aero
-    """
-    Ms, Cs, Ks = structural_matrices_single(m1, m2, f1, f2, zeta)
-
-    # Sjekk at alle AD-er har samme hastighetsintervall
-    if not np.allclose(v_all, v_all[0], atol=1e-8):
-        raise ValueError("OBS: AD-ene har forskjellige reduced velocity-intervaller!"
-                         "Denne funksjonen forutsetter at alle bruker samme v_range.")
-           
-    Vred_list = np.linspace(v_all[0][0] ,v_all[0][1], N)
-    
-    eigvals_all = []
-    eigvecs_all = []
-    damping_ratios = []
-    omega_all = []
-    flutter_speed_modes = [None] * 2  # én per mode
-    
-    for i, V in enumerate(Vred_list):
-        converged_flags = [False] * 2  # én per mode
-        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
-        omega_ref = np.mean(omega_old[~np.array(converged_flags)])
-
-        for _ in range(max_iter):
-            print("omega_ref", omega_ref)
-                    
-            C_aero_single_iter = np.zeros_like(Ms)
-            K_aero_single_iter = np.zeros_like(Ms)
-
-            #Beregn nye Cae og Kae for denne omega[i]
-            C_star, K_star = cae_kae_single(poly_coeff, V, B)
-            C_aero_single_iter = 0.5 * rho * B**2 * omega_ref * C_star
-            K_aero_single_iter = 0.5 * rho * B**2 * omega_ref**2 * K_star
-            
-            eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero_single_iter, K_aero_single_iter)
-            # Komplekse konjugate egenverdier er to sider av samme svingende bevegelse.
-            # De beskriver samme mode, bare i motfase – og inneholder nøyaktig samme fysiske informasjon.
-            
-            print("eigvals", eigvals)
-            
-            # Behold kun én av hvert konjugatpar:
-            positive_idx = np.where(np.imag(eigvals) > 0)[0]
-            eigvals = eigvals[positive_idx]
-            eigvecs = eigvecs[:, positive_idx]
-            # Hver kolonne er en egenvektor (tilhørende én egenverdi)
-            # Hver rad er en komponent i en vektor (eks. DOF1, DOF2, …)
-
-            omega_new = np.imag(eigvals)
-            damping = -np.real(eigvals) / np.abs(eigvals)
-            
-            # Sjekk konvergens for alle modene
-            for j in range(2): # 2 modes give 4 eigenvals dua to complex conjugate pairs
-                if not converged_flags[j]:
-                    if np.abs(omega_new[j] - omega_ref) < eps:
-                        converged_flags[j] = True
-                        if damping[j] < 0 and flutter_speed_modes[j] is None:
-                            flutter_speed_modes[j] = V
-                else: # Oppdater kun de som ikke er konvergert
-                    omega_old[j] = omega_new[j]
-
-            # Hvis alle er konvergert: break
-            if np.all(converged_flags):
-                print(f"Konvergert for vindhastighet {V:.2f} m/s reduced.")
-                omega_all.append(omega_new)          # lagre alle modenes omega
-                damping_ratios.append(damping)       # lagre alle modenes damping
-                eigvals_all.append(eigvals)          # lagre alle modenes egenverdier
-                eigvecs_all.append(eigvecs)          # lagre alle modenes egenvektorer
-                break  # avbryt iterasjon for denne V
-            else:
-                omega_ref = np.mean(omega_old[~np.array(converged_flags)])  # oppdater omega_ref for neste iterasjon med modene som ikke er konvergert
-        
-        if all (con is False for con in converged_flags):
-            print(f"Ikke konvergert for vindhastighet {V:.2f} m/s reduced.")
-
-    if all(fs is None for fs in flutter_speed_modes):
-        print(f"Ingen flutter observert i gitt vindhastighetsintervall for noen moder!")
-
-    return flutter_speed_modes, damping_ratios, omega_all, eigvals_all, eigvecs_all, Vred_list
-
-def plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios, omega, B):
-    """
-    Plott dempingforhold som funksjon av vindhastighet, og marker flutterhastigheten.
-    
-    Parameters:
-    ----------
-    flutter_speed : float
-        Flutterhastighet (kritisk vindhastighet).
-    Vred_list : ndarray
-        Liste over vindhastigheter (reduced velocities).
-    damping_ratios : list
-        Liste over dempingsforhold for hver vindhastighet.
-    """
-    plt.figure(figsize=(10, 6))
-
-    if flutter_speed is not None:
-        plt.scatter(flutter_speed, 0, color='r', label=f"Flutter Speed: {flutter_speed*omega*B:.2f} m/s")
-    
-    plt.plot(Vred_list*omega*B, damping_ratios[:,0], label="Damping Ratio 1", color='blue')
-    plt.plot(Vred_list*omega*B, damping_ratios[:,1], label="Damping Ratio 2", color='red')
-    plt.plot(Vred_list*omega*B, damping_ratios[:,2], label="Damping Ratio 3", color='yellow')
-    plt.plot(Vred_list*omega*B, damping_ratios[:,3], label="Damping Ratio 4", color='green')
-
-    plt.axhline(0, linestyle="--", color="gray", label="Critical Damping Line")
-    plt.xlabel("Vindhastighet [m/s]")
-    plt.ylabel("Dempingforhold")
-    plt.title("Flutteranalyse: Dempingforhold i funksjon av vindhastighet")
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-
-
-
-
-
-def plot_frequency_vs_wind_speed_singles(Vred_list, omega, B):
-    """
-    Plotter frekvens og demping for hver mode over vindhastighet.
-
-    Parameters:
-    -----------
-    Vred_list : array
-        Liste over reduserte vindhastigheter.
-    eigvals_all : array
-        Array av egenverdier med shape (N, n_modes).
-    """
-
-    frequencies = omega/(np.pi*2)  # Frekvens i Hz
-  
-    plt.figure(figsize=(10, 6))
-
-
-    plt.plot(Vred_list*omega*B, frequencies[:,0], label="Freq 1", color='blue')
-    plt.plot(Vred_list*omega*B, frequencies[:, 1], label="Freq 2", color='red')
-    plt.plot(Vred_list*omega*B, frequencies[:, 2], label="Freq 3", color='yellow')
-    plt.plot(Vred_list*omega*B, frequencies[:, 3], label="Freq 4", color='green')
-
-    plt.xlabel("Vindhastighet [m/s]")
-    plt.ylabel("Frequency [Hz]")
-    plt.legend()
-    plt.grid(True)
-    plt.show()
 
 def structural_matrices_twin(m1, m2, f1, f2, zeta):
     """
@@ -411,7 +256,8 @@ def cae_kae_twin(poly_coeff, V, B):
 
     return C_ae_star, K_ae_star
 
-def solve_flutter_twin(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100):
+
+def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100, single = True):
     """
     Parameters:
     -----------
@@ -428,116 +274,302 @@ def solve_flutter_twin(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_iter
     V_all : ndarray of shape (1, N) or (N,)
         Wind speeds corresponding to C_aero/K_aero
     """
-    Ms, Cs, Ks = structural_matrices_twin(m1, m2, f1, f2, zeta)
 
-    # Sjekk at alle AD-er har samme hastighetsintervall
-    if not np.allclose(v_all, v_all[0], atol=1e-8):
-        print("OBS: AD-ene har forskjellige reduced velocity-intervaller! ")
-        print("Global differs local, where local is the shortest interval")
-       
+    if single:
+        Ms, Cs, Ks = structural_matrices_single(m1, m2, f1, f2, zeta)
+        n_modes = 2 # 2 modes for single deck
+    else:
+        Ms, Cs, Ks = structural_matrices_twin(m1, m2, f1, f2, zeta)
+        n_modes = 4 # 4 modes for twin deck
 
-    vmin_global = np.min(v_all[:, 0])
-    vmax_global = np.max(v_all[:, 1])
-    V_common = np.linspace(vmax_global, vmin_global, N)
-    V_local = np.zeros((32, N))
-    V_global = np.zeros((32, N))
-    for i in range(32):
-        v_min_red, v_max_red = v_all[i]
-        V_local[i] = np.linspace(v_min_red ,v_max_red, N)
-        V_global[i] = V_common
+
+    eigvals_all = [[] for _ in range(n_modes)]
+    eigvecs_all = [[] for _ in range(n_modes)]
+    damping_ratios = [[] for _ in range(n_modes)]
+    omega_all = [[] for _ in range(n_modes)]
+
+
+    V_list = np.linspace(0, 80, N) #m/s
 
     
-    eigvals_all_local = []
-    eigvecs_all_local = []
-    damping_ratios_local = []
-    flutter_speed_local = None
+    for i, V in enumerate(V_list):
+        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
+        damping_old = [zeta, zeta]
+        eigvec_old = [None] * n_modes
 
-    eigvals_all_global = []
-    eigvecs_all_global = []
-    damping_ratios_global = []
-    flutter_speed_global = None
+        for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
 
-    #Global
-    for i, V in enumerate(V_local):
+            Vred_global = V/(omega_old[j]*B)  # reduced velocity for global
 
-        omega_old_local = 2* np.pi * f1 #Angular frequency (rad/s) ??f1
+            for _ in range(max_iter):
+                print("omega_ref", omega_old[j])
+                    
+                #Beregn nye Cae og Kae for denne omega[i]
+                if single:
+                    C_star, K_star = cae_kae_single(poly_coeff, Vred_global, B)
+                else:
+                    C_star, K_star = cae_kae_twin(poly_coeff, Vred_global, B)
 
-        for _ in range(max_iter):
-            #Beregn nye Cae og Kae for denne omega
-            C_aero_twin_star_local, K_aero_twin_star_local  = cae_kae_twin(poly_coeff, V, B)
-            C_aero_twin__local = 0.5 * rho * B**2*omega_old_local*C_aero_twin_star_local
-            K_aero_twin_local = 0.5 * rho * B**2*omega_old_local**2*K_aero_twin_star_local
+                C_aero_single_iter = 0.5 * rho * B**2 * omega_old[j] * C_star
+                K_aero_single_iter = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
+                
+                eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero_single_iter, K_aero_single_iter)
+                # Komplekse konjugate egenverdier er to sider av samme svingende bevegelse.
+                # De beskriver samme mode, bare i motfase – og inneholder nøyaktig samme fysiske informasjon
+                
+                print("eigvals", eigvals)
 
-            eigvals_local, eigvec_local = solve_eigvalprob(Ms, Cs, Ks, C_aero_twin__local, K_aero_twin_local)
-            eigvals_all_local.append(eigvals_local)
-            eigvecs_all_local.append(eigvec_local)
+                if np.all(np.imag(eigvals) == 0):
+                    print("OBS: Ingen komplekse egenverdier - systemet oscillerer ikke!")
+
+                
+                # Behold kun én av hvert konjugatpar
+                eigvals_pos = eigvals[np.imag(eigvals) > 0]
+                eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  # hver kolonne er en φ
+
+                # Beregn damping og omega for alle positive eigvals
+                omega_pos = np.imag(eigvals_pos)
+                damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
+
+                # Finn λ for denne spesifikke moden j ??
+                # Beregn projeksjon:
+                similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
+                idx1 = np.argmax(similarities)
+                # Beregn score med w og damping for alle modene
+                score = np.abs(omega_pos - omega_old[j]) + 5 * np.abs(damping_pos - damping_old[j])
+                idx2 = np.argmin(score)
+
+                print("idx1", idx1)
+                print("idx2", idx2)
+
+                λj = eigvals_pos[idx1]
+                φj = eigvecs_pos[:, idx1]
+
+                omega_new = np.imag(λj)
+                damping_new = -np.real(λj) / np.abs(λj)
+                
+                # Sjekk konvergens for mode
+                if np.abs(omega_new - omega_old[j]) < eps:
+                    omega_all[j].append(omega_new)              # lagre alle modenes omega
+                    damping_ratios[j].append(damping_new)       # lagre alle modenes damping
+                    eigvals_all[j].append(λj)                   # lagre alle modenes egenverdier
+                    eigvecs_all[j].append(φj)                   # lagre alle modenes egenvektorer
+                    break
+                else: # Oppdater dersom w ikke har konvergert
+                    omega_old[j] = omega_new
+                    damping_old = damping_new
+                    eigvec_old[j] = φj
 
 
-            # Finn ny omega fra kritisk mode (minste demping)
-            damping_local = -np.real(eigvals_local) / np.abs(eigvals_local)
-            idx_local = np.argmin(damping_local)
-            omega_new_local = np.abs(np.imag(eigvals_local[idx_local]))
+    return damping_ratios, omega_all, eigvals_all, eigvecs_all, V_list
 
+def solve_flutter_speed_twin(damping_ratios, N = 100, single = True):
 
-            # Brudd dersom konvergert
-            if np.abs(omega_new_local - omega_old_local) < eps:
-                min_damping_local = np.min(damping_local)
-                break
-            else: omega_old_local = omega_new_local
+    if single:
+        n_modes = 2
+    else:
+        n_modes = 4
 
-        damping_ratios_local.append(damping_local)
+    flutter_speed_modes = [None] * n_modes  # én per mode
+    V_list = np.linspace(0, 80, N) #m/s
+    damping = np.array(damping_ratios).T  # shape (N, 4) eller (N, 2)
 
-        if min_damping_local < 0 and flutter_speed_local is None:
-            flutter_speed_local = V  # Første gang vi får negativ demping
-
-        print("eigvals_local", eigvals_local)
-        print("eigvec_local", eigvec_local)        
-        print("damping_local", damping_local)
-        print("min_damping_local", min_damping_local)
+    for i, V in enumerate(V_list):
+        for j in range(n_modes): #  modes for single deck
+            if damping[i,j] < 0 and flutter_speed_modes[j] is None:
+                flutter_speed_modes[j] = V
     
-    for i, V in enumerate(V_global):
+    if all(fs is None for fs in flutter_speed_modes):
+        return f"Ingen flutter observert for noen moder!"
+    else:
+        return flutter_speed_modes, V_list
+     
 
-        omega_old_global = 2* np.pi * f1
+     
+def plot_damping_vs_wind_speed_single(V_defined, V_list, damping_ratios, omega_all, B, single = True):
+    """
+    Plot damping ratios as a function of wind speed, and mark regions where ADs are defined.
 
-        for _ in range(max_iter):
-            #Beregn nye Cae og Kae for denne omega
-            C_aero_twin_star_global, K_aero_twin_star_global  = cae_kae_twin(poly_coeff, V, B)
-            C_aero_twin__global = 0.5 * rho * B**2*omega_old_global*C_aero_twin_star_global
-            K_aero_twin_global = 0.5 * rho * B**2*omega_old_global**2*K_aero_twin_star_global
+    Parameters:
+    ----------
+    V_defined : list of tuples
+        Each tuple (min, max) defines the valid velocity range for ADs (typically one per mode).
+    V_list : ndarray
+        List of wind speeds [m/s].
+    damping_ratios : list of arrays
+        List of damping ratios for each mode.
+    omega_all : list of arrays
+        List of angular frequencies (rad/s) for each mode.
+    B : float
+        Deck width.
+    single : bool
+        Whether plotting is for single-deck (2 modes) or twin-deck (4 modes).
+    """
 
-            eigvals_global, eigvec_global = solve_eigvalprob(Ms, Cs, Ks, C_aero_twin__global, K_aero_twin_global)
-            eigvals_all_global.append(eigvals_global)
-            eigvecs_all_global.append(eigvec_global)
+    min = V_defined[0][0]
+    max = V_defined[0][1]
+
+    Vred_global_1 = V_list/(omega_all[:,0]*B)  # reduced velocity for global
+    Vred_global_2 = V_list/(omega_all[:,1]*B)  # reduced velocity for global
+
+    if not single:
+        Vred_global_3 = V_list/(omega_all[:,2]*B)
+        Vred_global_4 = V_list/(omega_all[:,3]*B)
+
+    plt.figure(figsize=(10, 6))
+
+    omega = np.array(omega_all).T           # shape (N, 2)
+    omega_1 = omega[:,0]
+    omega_2 = omega[:,1]
+    if not single:
+        omega_3 = omega[:,2]
+        omega_4 = omega[:,3]
+
+    damping_ratios = np.array(damping_ratios).T  # shape (N, 2)
 
 
-            # Finn ny omega fra kritisk mode (minste demping)
-            damping_global = -np.real(eigvals_global) / np.abs(eigvals_global)
-            idx_global = np.argmin(damping_global)
-            omega_new_global = np.abs(np.imag(eigvals_global[idx_global]))
+    if global ikke begynner før min og ikke slutter etter max:
 
+        plt.plot(V_list*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue')
+        plt.plot(V_list*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red')
 
-            # Brudd dersom konvergert
-            if np.abs(omega_new_global - omega_old_global) < eps:
-                min_damping_global = np.min(damping_global)
-                break
-            else: omega_old_global = omega_new_global
-        
-        damping_ratios_global.append(damping_global)
+        if not single:
+            plt.plot(V_list*omega_3*B, damping_ratios[:,0], label="$\lambda_1$", color='blue')
+            plt.plot(V_list*omega_4*B, damping_ratios[:,1], label="$\lambda_2$", color='red')
 
-        if min_damping_global < 0 and flutter_speed_global is None:
-            flutter_speed_global = V
-        
-        print("eigvals_global", eigvals_global)
-        print("eigvec_global", eigvec_global)
-        print("damping_global", damping_global)
-        print("min_damping_global", min_damping_global)
+    elif global starter før min og slutter etter max:
 
-
-    if flutter_speed_local is None:
-        print("Ingen flutter observert i gitt vindhastighetsintervall!")
+        plt.plot(V_list[min index:max index]*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue')
+        plt.plot(V_list[min index:max index]*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red')
+        plt.plot(V_list*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue', linestyle="--")
+        plt.plot(V_list*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red', linestyle="--")
     
-    if flutter_speed_global is None:
-        print("Ingen flutter observert i gitt vindhastighetsintervall!")
+    elif global starter før min og ikke slutter etter max:
+         plt.plot(V_list[min index:]*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue')
+        plt.plot(V_list[min index:]*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red')
+        plt.plot(V_list*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue', linestyle="--")
+        plt.plot(V_list*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red', linestyle="--")
+
+    else:
+        plt.plot(V_list[:max index]*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue')
+        plt.plot(V_list[:max index]*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red')
+        plt.plot(V_list*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue', linestyle="--")
+        plt.plot(V_list*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red', linestyle="--")
 
 
-    return flutter_speed_local, damping_ratios_local, eigvals_all_local, eigvecs_all_local, V_local, flutter_speed_global, damping_ratios_global, eigvals_all_global, eigvecs_all_global, V_global
+    plt.axhline(0, linestyle="--", color="gray", label="Critical Damping Line")
+    plt.xlabel("Vindhastighet  [m/s]")
+    plt.ylabel("Dempingforhold")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+
+
+def plot_frequency_vs_wind_speed_singles(Vred_list, omega_all, B):
+    """
+    Plotter frekvens og demping for hver mode over vindhastighet.
+
+    Parameters:
+    -----------
+    Vred_list : array
+        Liste over reduserte vindhastigheter.
+    eigvals_all : array
+        Array av egenverdier med shape (N, n_modes).
+    """
+
+  
+    plt.figure(figsize=(10, 6))
+
+    omega = np.array(omega_all).T           # shape (N, 2)
+    frequencies = omega/(2*np.pi)  # shape (N, 2)
+
+    omega_1 = omega[:,0]
+    omega_2 = omega[:,1]
+
+    plt.plot(Vred_list*omega_1*B, frequencies[:,0], label="$\lambda_1$", color='blue')
+    plt.plot(Vred_list*omega_2*B, frequencies[:, 1], label="$\lambda_2$", color='red')
+ 
+    plt.xlabel("Vindhastighet  [m/s]")
+    plt.ylabel("Frequency [Hz]")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+def plot_damping_vs_wind_speed_twin(Vred_local, Vred_global, damping_ratios_local, damping_ratios_global, omega_all_local, omega_all_global, B):
+    """
+    Plott dempingforhold som funksjon av vindhastighet, og marker flutterhastigheten.
+    
+    Parameters:
+    ----------
+    flutter_speed : float
+        Flutterhastighet (kritisk vindhastighet).
+    Vred_list : ndarray
+        Liste over vindhastigheter (reduced velocities).
+    damping_ratios : list
+        Liste over dempingsforhold for hver vindhastighet.
+    """
+    plt.figure(figsize=(10, 6))
+
+    omega_local = np.array(omega_all_local).T           # shape (N, 2)
+    damping_ratios_local = np.array(damping_ratios_local).T  # shape (N, 2)
+    omega_1_local = omega_local[:,0]
+    omega_2_local = omega_local[:,1]
+
+    omega_global = np.array(omega_all_global).T           # shape (N, 2)
+    damping_ratios_global = np.array(damping_ratios_global).T  # shape (N, 2)
+    omega_1_global = omega_global[:,0]
+    omega_2_global = omega_global[:,1]
+
+    plt.plot(Vred_local*omega_1_local*B, damping_ratios_local[:,0], label="$\lambda_1$", color='blue')
+    plt.plot(Vred_local*omega_2_local*B, damping_ratios_local[:,1], label="$\lambda_2$", color='red')
+
+    plt.plot(Vred_global*omega_1_global*B, damping_ratios_global[:,0], label="$\lambda_1$", color='blue', linestyle='--')
+    plt.plot(Vred_global*omega_2_global*B, damping_ratios_global[:,1], label="$\lambda_2$", color='red', linestyle='--')  
+
+    plt.axhline(0, linestyle="--", color="gray", label="Critical Damping Line")
+    plt.xlabel("Vindhastighet  [m/s]")
+    plt.ylabel("Dempingforhold")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+
+
+def plot_frequency_vs_wind_speed_twin(Vred_local, Vred_global,omega_all_local, omega_all_global, B):
+    """
+    Plotter frekvens og demping for hver mode over vindhastighet.
+
+    Parameters:
+    -----------
+    Vred_list : array
+        Liste over reduserte vindhastigheter.
+    eigvals_all : array
+        Array av egenverdier med shape (N, n_modes).
+    """
+
+  
+    plt.figure(figsize=(10, 6))
+
+    omega_local = np.array(omega_all_local).T           # shape (N, 2)
+    frequencies_local = omega_local/(2*np.pi)  # shape (N, 2)
+    omega_1_local = omega_local[:,0]
+    omega_2_local = omega_local[:,1]
+
+    omega_global = np.array(omega_all_global).T           # shape (N, 2)
+    frequencies_global = omega_global/(2*np.pi)  # shape (N, 2)
+    omega_1_global = omega_global[:,0]
+    omega_2_global = omega_global[:,1]
+
+    plt.plot(Vred_local*omega_1_local*B, frequencies_local[:,0], label="$\lambda_1$", color='blue')
+    plt.plot(Vred_local*omega_2_local*B, frequencies_local[:, 1], label="$\lambda_2$", color='red')
+
+    plt.plot(Vred_global*omega_1_global*B, frequencies_global[:,0], label="$\lambda_1$", color='blue', linestyle='--')
+    plt.plot(Vred_global*omega_2_global*B, frequencies_global[:, 1], label="$\lambda_2$", color='red', linestyle='--')
+ 
+    plt.xlabel("Vindhastighet  [m/s]")
+    plt.ylabel("Frequency [Hz]")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
