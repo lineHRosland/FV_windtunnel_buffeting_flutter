@@ -173,47 +173,68 @@ def solve_flutter_single(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_it
     eigvals_all = []
     eigvecs_all = []
     damping_ratios = []
-    omega=[]
-    flutter_speed = None
-
+    omega_all = []
+    flutter_speed_modes = [None] * 2  # én per mode
+    
     for i, V in enumerate(Vred_list):
-        omega_old = 2* np.pi * f1 #Angular frequency (rad/s) ??f1
+        converged_flags = [False] * 2  # én per mode
+        omega_old = [2*np.pi*f1, 2*np.pi*f2]
+        omega_ref = np.mean(omega_old[~np.array(converged_flags)])
 
         for _ in range(max_iter):
-            #Beregn nye Cae og Kae for denne omega
-            C_aero_single_star, K_aero_single_star  = cae_kae_single(poly_coeff, V, B)
-            C_aero_single_iter = 0.5 * rho * B**2*omega_old*C_aero_single_star
-            K_aero_single_iter = 0.5 * rho * B**2*omega_old**2*K_aero_single_star
+            print("omega_ref", omega_ref)
+                    
+            C_aero_single_iter = np.zeros_like(Ms)
+            K_aero_single_iter = np.zeros_like(Ms)
 
-            eigvals, eigvec = solve_eigvalprob(Ms, Cs, Ks, C_aero_single_iter, K_aero_single_iter)
-            eigvals_all.append(eigvals)
-            eigvecs_all.append(eigvec)
+            #Beregn nye Cae og Kae for denne omega[i]
+            C_star, K_star = cae_kae_single(poly_coeff, V, B)
+            C_aero_single_iter = 0.5 * rho * B**2 * omega_ref * C_star
+            K_aero_single_iter = 0.5 * rho * B**2 * omega_ref**2 * K_star
+            
+            eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero_single_iter, K_aero_single_iter)
+            # Komplekse konjugate egenverdier er to sider av samme svingende bevegelse.
+            # De beskriver samme mode, bare i motfase – og inneholder nøyaktig samme fysiske informasjon.
+            
+            
+            # Behold kun én av hvert konjugatpar:
+            positive_idx = np.where(np.imag(eigvals) > 0)[0]
+            eigvals = eigvals[positive_idx]
+            eigvecs = eigvecs[:, positive_idx]
+            # Hver kolonne er en egenvektor (tilhørende én egenverdi)
+            # Hver rad er en komponent i en vektor (eks. DOF1, DOF2, …)
 
-
-            # Finn ny omega fra kritisk mode (minste demping)
+            omega_new = np.imag(eigvals)
             damping = -np.real(eigvals) / np.abs(eigvals)
-            idx = np.argmin(damping)
-            omega_new = np.abs(np.imag(eigvals[idx]))
+            
+            # Sjekk konvergens for alle modene
+            for j in range(2): # 2 modes give 4 eigenvals dua to complex conjugate pairs
+                if not converged_flags[j]:
+                    if np.abs(omega_new[j] - omega_ref) < eps:
+                        converged_flags[j] = True
+                        if damping[j] < 0 and flutter_speed_modes[j] is None:
+                            flutter_speed_modes[j] = V
+                else: # Oppdater kun de som ikke er konvergert
+                    omega_old[j] = omega_new[j]
 
+            # Hvis alle er konvergert: break
+            if np.all(converged_flags):
+                print(f"Konvergert for vindhastighet {V:.2f} m/s reduced.")
+                omega_all.append(omega_new)          # lagre alle modenes omega
+                damping_ratios.append(damping)       # lagre alle modenes damping
+                eigvals_all.append(eigvals)          # lagre alle modenes egenverdier
+                eigvecs_all.append(eigvecs)          # lagre alle modenes egenvektorer
+                break  # avbryt iterasjon for denne V
+            else:
+                omega_ref = np.mean(omega_old[~np.array(converged_flags)])  # oppdater omega_ref for neste iterasjon med modene som ikke er konvergert
+        
+        if all (con is False for con in converged_flags):
+            print(f"Ikke konvergert for vindhastighet {V:.2f} m/s reduced.")
 
-            # Brudd dersom konvergert
-            if np.abs(omega_new - omega_old) < eps:
-                min_damping = np.min(damping) # Mest utstabile mode
-                omega.append(omega_new)
-                break
-            else: omega_old = omega_new
+    if all(fs is None for fs in flutter_speed_modes):
+        print(f"Ingen flutter observert i gitt vindhastighetsintervall for noen moder!")
 
-        damping_ratios.append(damping)
-
-        if min_damping < 0 and flutter_speed is None:
-            flutter_speed = V  # Første gang vi får negativ demping
-
-
-    if flutter_speed is None:
-        print("Ingen flutter observert i gitt vindhastighetsintervall!")
-
-
-    return flutter_speed, damping_ratios, omega, eigvals_all, eigvecs_all, Vred_list
+    return flutter_speed_modes, damping_ratios, omega_all, eigvals_all, eigvecs_all, Vred_list
 
 def plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios, omega, B):
     """

@@ -20,8 +20,8 @@ B = 0.365 # m, section width
 # Values from FEM-model
 ms1 = 1000 #kg, vertical
 ms2 = 2000 #kg, torsion
-fs1 = 10 #Hz, vertical
-fs2 = 20 #Hz, torsion
+fs1 = 0.11042 #Hz, vertical MODE 3
+fs2 = 0.0979904 #Hz, torsion
 
 ws1 = 2*np.pi*fs1 # rad/s, vertical FØRSTE ITERASJON
 ws2 = 2*np.pi*fs2 # rad/s, torsion FØRSTE ITERASJON
@@ -37,7 +37,7 @@ N = 100 # Number of steps in V_list
 #%%
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
 eps = 1e-3  # Konvergensterskel
-max_iter = 100  # Maksimalt antall iterasjoner
+max_iter = 1000  # Maksimalt antall iterasjoner
 
 #%%
 #Single deck
@@ -55,9 +55,9 @@ else:
 
 flutter_speed, damping_ratios, omega, eigvals_all, eigvecs_all, Vred_list =_eigVal.solve_flutter_single(poly_coeff_single, v_range_single, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N)
 
-_eigVal.plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios, omega, B)
+#_eigVal.plot_damping_vs_wind_speed_single(flutter_speed, Vred_list, damping_ratios, omega, B)
 
-_eigVal.plot_frequency_vs_wind_speed_singles(Vred_list, omega, B)
+#_eigVal.plot_frequency_vs_wind_speed_singles(Vred_list, omega, B)
 
 #%%
 #Double deck 3D
