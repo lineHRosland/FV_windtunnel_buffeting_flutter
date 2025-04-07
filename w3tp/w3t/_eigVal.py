@@ -196,6 +196,7 @@ def solve_flutter_single(poly_coeff, v_all, m1, m2, f1, f2, B, rho, zeta, max_it
             # Komplekse konjugate egenverdier er to sider av samme svingende bevegelse.
             # De beskriver samme mode, bare i motfase – og inneholder nøyaktig samme fysiske informasjon.
             
+            print("eigvals", eigvals)
             
             # Behold kun én av hvert konjugatpar:
             positive_idx = np.where(np.imag(eigvals) > 0)[0]
