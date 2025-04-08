@@ -98,7 +98,7 @@ def structural_matrices(m1, m2, f1, f2, zeta, single = True):
 
     if not single:
         Ms = np.block([
-        [Ms, np.zeroes((2,2))],
+        [Ms, np.zeros((2,2))],
         [np.zeros((2,2)), Ms]
                   ])
         Cs = np.block([
@@ -272,10 +272,10 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
         damping_old = [zeta, zeta]
         eigvec_old = [None] * n_modes
         print("Vindhastighet iterasjon nr. " + str(i+1) + "som tilsvarer " + str(V) + " m/s")
-
+        print("")
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
             print("Modeiterasjon nr. " + str(j+1))
-
+            print("")
             if single:
                 Vred_global = [V/(omega_old[j]*B)] * 8  # reduced velocity for global
                     # Formatet på Vred_global må matche Vred_local
@@ -284,7 +284,7 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
 
             for k in range(max_iter):
                 print("Iterasjon nr. " + str(k+1) + " for mode " + str(j+1))
-                
+                print("")
                 print("omega_ref", omega_old[j])
                     
                 #Beregn nye Cae og Kae for denne omega[i]
@@ -405,7 +405,6 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
                     print("idx", idx)
                     print("idx2", idx2)
 
-
                 λj = eigvals_pos[idx]
                 φj = eigvecs_pos[:, idx]
 
@@ -516,7 +515,7 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
         plt.plot(Vred_local*omega_local[:,j]*B, damping_ratios_local[:,j], label=labels[j], color=colors[j])
         plt.plot(V_list, damping_ratios[:,j], color=colors[j], linestyle="--")
 
-    plt.axhline(0, linestyle="--", color="gray", linewidth=0.8, label="Kritisk demping")
+    plt.axhline(0, linestyle="--", color="black", linewidth=1.1, label="Kritisk demping")
     plt.xlabel("Vindhastighet [m/s]")
     plt.ylabel("Dempingsforhold")
     plt.title(title)
