@@ -241,9 +241,9 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
     V_list : np.ndarray
         Vindhastighetsliste brukt for global løsning
     damping_ratios_local, omega_all_local, eigvals_all_local, eigvecs_all_local : list
-        Lokale resultater (kun twin-deck)
+        Lokale resultater
     V_red_local : np.ndarray
-        Felles redusert hastighetsintervall for twin-deck (None for single)
+        Felles redusert hastighetsintervall 
     '''
 
     if single:
@@ -253,15 +253,16 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
         Ms, Cs, Ks = structural_matrices(m1, m2, f1, f2, zeta, single = False)
         n_modes = 4 # 4 modes for twin deck
 
-        eigvals_all_local = [[] for _ in range(n_modes)]
-        eigvecs_all_local = [[] for _ in range(n_modes)]
-        damping_ratios_local = [[] for _ in range(n_modes)]
-        omega_all_local = [[] for _ in range(n_modes)]
 
     eigvals_all = [[] for _ in range(n_modes)]
     eigvecs_all = [[] for _ in range(n_modes)]
     damping_ratios = [[] for _ in range(n_modes)]
     omega_all = [[] for _ in range(n_modes)]
+
+    eigvals_all_local = [[] for _ in range(n_modes)]
+    eigvecs_all_local = [[] for _ in range(n_modes)]
+    damping_ratios_local = [[] for _ in range(n_modes)]
+    omega_all_local = [[] for _ in range(n_modes)]
 
 
     V_list = np.linspace(0, 80, N) #m/s
@@ -351,69 +352,69 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
                     omega_old[j] = omega_new
                     damping_old[j] = damping_new
                     eigvec_old[j] = φj
-    if not single:
-        Vred_local= np.linspace(np.max(v_all[:, 0]), np.min(v_all[:, 1]), N) #m/s reduce
+    
+     
+    Vred_local= np.linspace(np.max(v_all[:, 0]), np.min(v_all[:, 1]), N) #m/s reduce
 
-        for i, V in enumerate(Vred_local): 
-            omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
-            damping_old = [zeta, zeta]
-            eigvec_old = [None] * n_modes
+    for i, V in enumerate(Vred_local): 
+        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
+        damping_old = [zeta, zeta]
+        eigvec_old = [None] * n_modes
 
-            for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
-                V_red_local = [V]* 32
-                for _ in range(max_iter):
-                    print("omega_ref", omega_old[j])
+        for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
+            V_red_local = [V]* 32
+            for _ in range(max_iter):
+                print("omega_ref", omega_old[j])
                         
-                    #Beregn nye Cae og Kae for denne omega[i]
-                    if single:
-                        C_star, K_star = cae_kae_single(poly_coeff, V_red_local, B)
-                    else:
-                        C_star, K_star = cae_kae_twin(poly_coeff, V_red_local, B)
+                #Beregn nye Cae og Kae for denne omega[i]
+                if single:
+                    C_star, K_star = cae_kae_single(poly_coeff, V_red_local, B)
+                else:
+                    C_star, K_star = cae_kae_twin(poly_coeff, V_red_local, B)
 
-                    C_aero_single_iter = 0.5 * rho * B**2 * omega_old[j] * C_star
-                    K_aero_single_iter = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
+                C_aero_single_iter = 0.5 * rho * B**2 * omega_old[j] * C_star
+                K_aero_single_iter = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
                     
-                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero_single_iter, K_aero_single_iter)
+                eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero_single_iter, K_aero_single_iter)
                    
-                    # Behold kun én av hvert konjugatpar
-                    eigvals_pos = eigvals[np.imag(eigvals) > 0]
-                    eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  # hver kolonne er en φ
+                # Behold kun én av hvert konjugatpar
+                eigvals_pos = eigvals[np.imag(eigvals) > 0]
+                eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  # hver kolonne er en φ
 
-                    # Beregn damping og omega for alle positive eigvals
-                    omega_pos = np.imag(eigvals_pos)
-                    damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
+                # Beregn damping og omega for alle positive eigvals
+                omega_pos = np.imag(eigvals_pos)
+                damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
 
-                    # Finn λ for denne spesifikke moden j ??
-                    # Beregn projeksjon:
-                    similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
-                    idx1 = np.argmax(similarities)
-                    # Beregn score med w og damping for alle modene
-                    score = np.abs(omega_pos - omega_old[j]) + 5 * np.abs(damping_pos - damping_old[j])
-                    idx2 = np.argmin(score)
+                # Finn λ for denne spesifikke moden j ??
+                # Beregn projeksjon:
+                similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
+                idx1 = np.argmax(similarities)
+                # Beregn score med w og damping for alle modene
+                score = np.abs(omega_pos - omega_old[j]) + 5 * np.abs(damping_pos - damping_old[j])
+                idx2 = np.argmin(score)
 
-                    print("idx1", idx1)
-                    print("idx2", idx2)
+                print("idx1", idx1)
+                print("idx2", idx2)
 
-                    λj = eigvals_pos[idx1]
-                    φj = eigvecs_pos[:, idx1]
+                λj = eigvals_pos[idx1]
+                φj = eigvecs_pos[:, idx1]
 
-                    omega_new = np.imag(λj)
-                    damping_new = -np.real(λj) / np.abs(λj)
+                omega_new = np.imag(λj)
+                damping_new = -np.real(λj) / np.abs(λj)
                     
-                    # Sjekk konvergens for mode
-                    if np.abs(omega_new - omega_old[j]) < eps:
-                        omega_all_local[j].append(omega_new)              # lagre alle modenes omega
-                        damping_ratios_local[j].append(damping_new)       # lagre alle modenes damping
-                        eigvals_all_local[j].append(λj)                   # lagre alle modenes egenverdier
-                        eigvecs_all_local[j].append(φj)                   # lagre alle modenes egenvektorer
-                        break
-                    else: # Oppdater dersom w ikke har konvergert
-                        omega_old[j] = omega_new
-                        damping_old[j] = damping_new
-                        eigvec_old[j] = φj    
+                # Sjekk konvergens for mode
+                if np.abs(omega_new - omega_old[j]) < eps:
+                    omega_all_local[j].append(omega_new)              # lagre alle modenes omega
+                    damping_ratios_local[j].append(damping_new)       # lagre alle modenes damping
+                    eigvals_all_local[j].append(λj)                   # lagre alle modenes egenverdier
+                    eigvecs_all_local[j].append(φj)                   # lagre alle modenes egenvektorer
+                    break
+                else: # Oppdater dersom w ikke har konvergert
+                    omega_old[j] = omega_new
+                    damping_old[j] = damping_new
+                    eigvec_old[j] = φj    
 
-        return damping_ratios, omega_all, eigvals_all, eigvecs_all, damping_ratios_local, omega_all_local, eigvals_all_local, eigvecs_all_local
-    return damping_ratios, omega_all, eigvals_all, eigvecs_all
+    return damping_ratios, omega_all, eigvals_all, eigvecs_all, damping_ratios_local, omega_all_local, eigvals_all_local, eigvecs_all_local
 
 def solve_flutter_speed( damping_ratios, N = 100, single = True):
     """
@@ -453,7 +454,7 @@ def solve_flutter_speed( damping_ratios, N = 100, single = True):
      
 
      
-def plot_damping_vs_wind_speed_single(B,Vred_defined, damping_ratios, omega_all, damping_ratios_local = None,  omega_all_local = None,  N = 100, single = True):
+def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all, damping_ratios_local = None,  omega_all_local = None,  dist="Fill in dist",N = 100, single = True):
     """
     Plot damping ratios as a function of wind speed, and mark AD-validity range.
 
@@ -488,39 +489,27 @@ def plot_damping_vs_wind_speed_single(B,Vred_defined, damping_ratios, omega_all,
 
     if single:
         n_modes = 2 
-        V_min = Vred_defined[0][0]
-        V_max = Vred_defined[0][1]
+        title = f"Demping vs. vindhastighet - {dist}"
 
-        for j in range(n_modes):
-            V_glob = V_list /(omega_all[:,j] * B)
-
-            # Finn indeksene der V_glob er innenfor AD-definert område
-            inside_idx = np.where((V_glob >= V_min) & (V_glob <= V_max))[0]
-            outside_idx = np.where((V_glob < V_min) | (V_glob > V_max))[0]
-
-            # Plot gyldig område som heltrukket
-            if inside_idx.size > 0:
-                plt.plot(V_glob[inside_idx], damping_ratios[inside_idx, j], color=colors[j], label=labels[j])
-
-            # Plot ugyldig område som stipla
-            if outside_idx.size > 0:
-                plt.plot(V_glob[outside_idx], damping_ratios[inside_idx, j], color=colors[j], linestyle='--')
     else:
         n_modes = 4
-        omega_local = np.array(omega_all_local).T           # shape (N, 4)
-        damping_ratios_local = np.array(damping_ratios_local).T  # shape (N, 4)
+        title = f"Demping vs. vindhastighet - {dist}"
+
+
+    omega_local = np.array(omega_all_local).T           # shape (N, 4)
+    damping_ratios_local = np.array(damping_ratios_local).T  # shape (N, 4)
     
-        Vred_defined = np.array(Vred_defined)
-        Vred_local= np.linspace(np.max(Vred_defined[:, 0]), np.min(Vred_defined[:, 1]), N) 
+    Vred_defined = np.array(Vred_defined)
+    Vred_local= np.linspace(np.max(Vred_defined[:, 0]), np.min(Vred_defined[:, 1]), N) 
         
-        for j in range(n_modes):
-            plt.plot(Vred_local*omega_local[:,j]*B, damping_ratios_local[:,j], label=labels[j], color=colors[j])
-            plt.plot(V_list, damping_ratios[:,j], color=colors[j], linestyle="--")
+    for j in range(n_modes):
+        plt.plot(Vred_local*omega_local[:,j]*B, damping_ratios_local[:,j], label=labels[j], color=colors[j])
+        plt.plot(V_list, damping_ratios[:,j], color=colors[j], linestyle="--")
 
     plt.axhline(0, linestyle="--", color="gray", linewidth=0.8, label="Kritisk demping")
     plt.xlabel("Vindhastighet [m/s]")
     plt.ylabel("Dempingsforhold")
-    plt.title("Demping vs. vindhastighet")
+    plt.title(title)
     plt.grid(True, linestyle='--', linewidth=0.5)
     plt.legend()
     plt.tight_layout()
@@ -528,7 +517,7 @@ def plot_damping_vs_wind_speed_single(B,Vred_defined, damping_ratios, omega_all,
 
 
 
-def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, omega_all_local = None, N = 100, single = True):
+def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, omega_all_local = None, dist="Fill in dist",N = 100, single = True):
     """
     Plots natural frequencies as a function of wind speed, marking valid AD regions.
 
@@ -557,38 +546,24 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, omega_all_local = N
 
     if single:
         n_modes = 2 
-        V_min = Vred_defined[0][0]
-        V_max = Vred_defined[0][1]
-
-        for j in range(n_modes):
-            V_glob = V_list /(omega_all[:,j] * B)
-
-            # Finn indeksene der V_glob er innenfor AD-definert område
-            inside_idx = np.where((V_glob >= V_min) & (V_glob <= V_max))[0]
-            outside_idx = np.where((V_glob < V_min) | (V_glob > V_max))[0]
-
-            # Plot gyldig område som heltrukket
-            if inside_idx.size > 0:
-                plt.plot(V_glob[inside_idx], frequencies[inside_idx, j], color=colors[j], label=labels[j])
-
-            # Plot ugyldig område som stipla
-            if outside_idx.size > 0:
-                plt.plot(V_glob[outside_idx], frequencies[inside_idx, j], color=colors[j], linestyle='--')
+        title = f"Egenfrekvenser vs vindhastighet - {dist}"
     else:
         n_modes = 4
-        omega_local = np.array(omega_all_local).T           # shape (N, 4)
-        frequencies_local = omega_local/(2*np.pi)           # shape (N, 4)
+        title = f"Egenfrekvenser vs vindhastighet - {dist}"
+    
+    omega_local = np.array(omega_all_local).T           # shape (N, 4)
+    frequencies_local = omega_local/(2*np.pi)           # shape (N, 4)
 
-        Vred_defined = np.array(Vred_defined)
-        Vred_local= np.linspace(np.max(Vred_defined[:, 0]), np.min(Vred_defined[:, 1]), N) 
+    Vred_defined = np.array(Vred_defined)
+    Vred_local= np.linspace(np.max(Vred_defined[:, 0]), np.min(Vred_defined[:, 1]), N) 
 
-        for j in range(n_modes):
-            plt.plot(Vred_local*omega_local[:,j]*B, frequencies_local[:,j], label=labels[j], color=colors[j])
-            plt.plot(V_list, frequencies[:,j], color=colors[j], linestyle="--")
+    for j in range(n_modes):
+        plt.plot(Vred_local*omega_local[:,j]*B, frequencies_local[:,j], label=labels[j], color=colors[j])
+        plt.plot(V_list, frequencies[:,j], color=colors[j], linestyle="--")
  
     plt.xlabel("Vindhastighet [m/s]")
     plt.ylabel("Egenfrekvens [Hz]")
-    plt.title("Egenfrekvenser som funksjon av vindhastighet")
+    plt.title(title)
     plt.legend()
     plt.grid(True, which='both', linestyle='--', linewidth=0.5)
     plt.tight_layout()

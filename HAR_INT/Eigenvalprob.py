@@ -53,15 +53,15 @@ else:
 #print(poly_coeff_single.shape)  # Skal være (8, 3) (8 AD)
 #print(v_range_single)           # Skal være (8,2)
 
-damping_ratios_single, omega_all_single, eigvals_all_single, eigvecs_all_single= _eigVal.solve_omega(poly_coeff_single,v_range_single, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N = 100, single = True)
+damping_ratios_single, omega_all_single, eigvals_all_single, eigvecs_all_single, damping_ratios_local_single, omega_all_local_single, eigvals_all_local_single, eigvecs_all_local_single= _eigVal.solve_omega(poly_coeff_single,v_range_single, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N = 100, single = True)
 
 flutter_speed_modes_single =_eigVal.solve_flutter_speed( damping_ratios_single, N = 100, single = True)
 
 print("Flutter speed modes: ", flutter_speed_modes_single)
 
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_single, damping_ratios_single, omega_all_single, N = 100, single = True)
+_eigVal.plot_damping_vs_wind_speed_single(B, v_range_single, damping_ratios_single, omega_all_single, damping_ratios_local=damping_ratios_local_single, omega_all_local=omega_all_local_single, dist="Single deck", N = 100, single = True)
 
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_single, omega_all_single, N = 100, single = True)
+_eigVal.plot_frequency_vs_wind_speed(B,  v_range_single, omega_all_single,omega_all_local=omega_all_local_single, dist="Single deck", N = 100, single = True)
 
 #%%
 #Double deck 1D
@@ -82,9 +82,9 @@ flutter_speed_modes_1D=_eigVal.solve_flutter_speed( damping_ratios_1D, N = 100, 
 print("Flutter speed modes 1D: ", flutter_speed_modes_1D)
 
 
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_1D, damping_ratios=damping_ratios_1D, omega_all = omega_all_1D, damping_ratios_local = damping_ratios_local_1D, omega_all_local = omega_all_local_1D, N = 100, single = False)
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_1D, damping_ratios=damping_ratios_1D, omega_all = omega_all_1D, damping_ratios_local = damping_ratios_local_1D, omega_all_local = omega_all_local_1D, dist="1D", N = 100, single = False)
 
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_1D, omega_all=omega_all_1D, omega_all_local = omega_all_local_1D, N = 100, single = False)
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_1D, omega_all=omega_all_1D, omega_all_local = omega_all_local_1D, dist="1D",N = 100, single = False)
 
 #%%
 #Double deck 2D
@@ -106,9 +106,9 @@ flutter_speed_modes_2D=_eigVal.solve_flutter_speed( damping_ratios_2D, N = 100, 
 print("Flutter speed modes 2D: ", flutter_speed_modes_2D)
 
 
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_2D, damping_ratios=damping_ratios_2D, omega_all = omega_all_2D, damping_ratios_local = damping_ratios_local_2D, omega_all_local = omega_all_local_2D, N = 100, single = False)
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_2D, damping_ratios=damping_ratios_2D, omega_all = omega_all_2D, damping_ratios_local = damping_ratios_local_2D, omega_all_local = omega_all_local_2D, dist="2D",N = 100, single = False)
 
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_2D, omega_all=omega_all_2D, omega_all_local = omega_all_local_2D, N = 100, single = False)
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_2D, omega_all=omega_all_2D, omega_all_local = omega_all_local_2D, dist="2D",N = 100, single = False)
 
 
 
@@ -133,8 +133,8 @@ flutter_speed_modes_3D=_eigVal.solve_flutter_speed( damping_ratios_3D, N = 100, 
 
 print("Flutter speed modes 3D: ", flutter_speed_modes_3D)
 
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_3D, damping_ratios=damping_ratios_3D, omega_all = omega_all_3D, damping_ratios_local = damping_ratios_local_3D, omega_all_local = omega_all_local_3D, N = 100, single = False)
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_3D, omega_all=omega_all_3D, omega_all_local = omega_all_local_3D, N = 100, single = False)
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_3D, damping_ratios=damping_ratios_3D, omega_all = omega_all_3D, damping_ratios_local = damping_ratios_local_3D, omega_all_local = omega_all_local_3D, dist="3D",N = 100, single = False)
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_3D, omega_all=omega_all_3D, omega_all_local = omega_all_local_3D,dist="3D",N = 100, single = False)
 
 
 #%%
@@ -155,8 +155,8 @@ flutter_speed_modes_4D=_eigVal.solve_flutter_speed( damping_ratios_4D, N = 100, 
 
 print("Flutter speed modes 4D: ", flutter_speed_modes_4D)
 
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_4D, damping_ratios=damping_ratios_4D, omega_all = omega_all_4D, damping_ratios_local = damping_ratios_local_4D, omega_all_local = omega_all_local_4D, N = 100, single = False)
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_4D, omega_all=omega_all_4D, omega_all_local = omega_all_local_4D, N = 100, single = False)
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_4D, damping_ratios=damping_ratios_4D, omega_all = omega_all_4D, damping_ratios_local = damping_ratios_local_4D, omega_all_local = omega_all_local_4D, dist="4D",N = 100, single = False)
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_4D, omega_all=omega_all_4D, omega_all_local = omega_all_local_4D, dist="4D",N = 100, single = False)
 
 #%%
 #Double deck 5D
@@ -176,5 +176,5 @@ flutter_speed_modes_5D=_eigVal.solve_flutter_speed( damping_ratios_5D, N = 100, 
 
 print("Flutter speed modes 5D: ", flutter_speed_modes_5D)
 
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_5D, damping_ratios=damping_ratios_5D, omega_all = omega_all_5D, damping_ratios_local = damping_ratios_local_5D, omega_all_local = omega_all_local_5D, N = 100, single = False)
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_5D, omega_all=omega_all_5D, omega_all_local = omega_all_local_5D, N = 100, single = False)
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_5D, damping_ratios=damping_ratios_5D, omega_all = omega_all_5D, damping_ratios_local = damping_ratios_local_5D, omega_all_local = omega_all_local_5D, dist="5D",N = 100, single = False)
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_5D, omega_all=omega_all_5D, omega_all_local = omega_all_local_5D,dist="5D", N = 100, single = False)
