@@ -140,8 +140,8 @@ def cae_kae_single(poly_coeff, V, B):
     K_aeN_star = np.zeros((2, 2)) #Dimensionless
 
     # AD
-    H1, H2, H3, H4 = np.polyval(poly_coeff[0], V), np.polyval(poly_coeff[1], V), np.polyval(poly_coeff[2], V), np.polyval(poly_coeff[3], V)
-    A1, A2, A3, A4 = np.polyval(poly_coeff[4], V), np.polyval(poly_coeff[5], V), np.polyval(poly_coeff[6], V), np.polyval(poly_coeff[7], V)
+    H1, H2, H3, H4 = np.polyval(poly_coeff[0], V[0]), np.polyval(poly_coeff[1], V[1]), np.polyval(poly_coeff[2], V[2]), np.polyval(poly_coeff[3], V[3])
+    A1, A2, A3, A4 = np.polyval(poly_coeff[4], V[4]), np.polyval(poly_coeff[5], V[5]), np.polyval(poly_coeff[6], V[6]), np.polyval(poly_coeff[7], V[7])
 
     C_aeN_star = np.array([
         [H1,       B * H2],
