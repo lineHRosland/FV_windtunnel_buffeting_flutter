@@ -276,7 +276,7 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
         damping_old = [zeta]*n_modes
         eigvec_old = [None] * n_modes
 
-        print("Vindhastighet iterasjon nr. " + str(i+1) + "som tilsvarer " + str(V) + " m/s")
+        print("Vindhastighet iterasjon nr. " + str(i+1) + " som tilsvarer " + str(V) + " m/s")
         print("")
 
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
@@ -502,6 +502,9 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios,damping_ra
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
+    
+
+
     plt.figure(figsize=(10, 6))
 
     if single:
@@ -516,10 +519,11 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios,damping_ra
     omega_local = np.array(omega_all_local).T           # shape (N, 4)
     damping_ratios_local = np.array(damping_ratios_local).T  # shape (N, 4)
     
-    Vred_defined = np.array(Vred_defined)
     Vred_local= np.linspace(np.max(Vred_defined[:, 0]), np.min(Vred_defined[:, 1]), N) 
         
     for j in range(n_modes):
+        print("Vdefff", Vred_defined[:, 0]*omega_local[:,j]*B, Vred_defined[:, 1]*omega_local[:,j]*B)
+        print("omega", omega_local[:,j])
         print("Vred_local*omega_local*B:", (Vred_local*omega_local[:,j]*B).shape)
         print("damping_ratios_local:", damping_ratios_local[:,j].shape)
         print("V_local", Vred_local*omega_local[:,j]*B)
