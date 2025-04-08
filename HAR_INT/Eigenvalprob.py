@@ -37,7 +37,6 @@ N = 100 # Number of steps in V_list
 #%%
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
 eps = 20 # Konvergensterskel
-max_iter = 700  # Maksimalt antall iterasjoner
 
 #%%
 #Single deck
