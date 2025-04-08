@@ -309,6 +309,7 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
                 omega_pos = np.imag(eigvals_pos)
                 damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
 
+
                 # Finn λ for denne spesifikke moden j ??
                 if eigvec_old[j] is None:
                     # Første iterasjon – bruk nærmeste i frekvens
@@ -316,8 +317,12 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
                     idx = np.argmin(score)
                 else:
                     # Beregn projeksjon mot forrige egenvektor
-                    similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
-                    idx = np.argmax(similarities)
+                    if eigvecs_pos.shape[1] == 0:
+                        print("Ingen komplekse egenverdier — hopper over denne iterasjonen.")
+                        continue   
+                    else:
+                        similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
+                        idx = np.argmax(similarities)
 
                     score = np.abs(omega_pos - omega_old[j]) + 5 * np.abs(damping_pos - damping_old[j])
                     idx2 = np.argmin(score)
