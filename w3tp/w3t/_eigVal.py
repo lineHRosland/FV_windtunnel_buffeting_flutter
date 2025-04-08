@@ -322,10 +322,10 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
                     score = np.abs(omega_pos - omega_old[j]) + 5 * np.abs(damping_pos - damping_old[j])
                     idx2 = np.argmin(score)
                 
-                print("idx", idx)
-                print("idx2", idx2)
+                    print("idx", idx)
+                    print("idx2", idx2)
 
-                λj = eigvals_pos[id1]
+                λj = eigvals_pos[idx]
                 φj = eigvecs_pos[:, idx]
 
                 omega_new = np.imag(λj)
