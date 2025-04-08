@@ -18,8 +18,8 @@ file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Arrays_AD"
 B = 0.365 # m, section width
 
 # Values from FEM-model
-ms1 = 1000 #kg, vertical
-ms2 = 2000 #kg, torsion
+ms1 = 50 #kg, vertical
+ms2 = 15 #kg, torsion
 fs1 = 0.11042 #Hz, vertical MODE 3
 fs2 = 0.0979904 #Hz, torsion
 

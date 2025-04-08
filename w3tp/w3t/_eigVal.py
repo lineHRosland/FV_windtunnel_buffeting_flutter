@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 
 def Uf(Um, scale):
     """
-    The function takes the model wind speed and the scale factor as inputs 
-    and returns the full scale wind speed.
+    The function takes the model wind speed [m/s] and the scale factor as inputs 
+    and returns the full scale wind speed [m/s].
     """
     return Um * 1/np.sqrt(scale)
 
@@ -21,7 +21,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
     Løser generalisert eigenverdiproblem for gitt system.
     
-    [ -λ² M + λ(C + Cae) + (K + Kae) ] φ = 0
+    [ -λ² M + λ(C - Cae) + (K - Kae) ] φ = 0
 
     Parameters:
     -----------
@@ -47,43 +47,46 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     print
     A = -la.block_diag(M_struc, np.eye(n))
     B = np.block([
-        [C_struc + C_aero, K_struc + K_aero],
+        [C_struc - C_aero, K_struc - K_aero],
         [-np.eye(n), np.zeros((n, n))]
     ])
 
     eigvals, eigvec = la.eig(B, A)
     return eigvals, eigvec
 
-def structural_matrices_single(m1, m2, f1, f2, zeta):
+def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     """
-    Calculate structural matrices for a two-degree-of-freedom system.
+    Construct structural mass, damping, and stiffness matrices for single or twin-deck systems.
 
     Parameters:
     -----------
     m1 : float
-        Mass of the first degree of freedom (kg).
+        Modal mass for vertical motion (kg).
     m2 : float
-        Mass of the second degree of freedom (kg).
+        Modal mass for torsional motion (kg).
     f1 : float
-        Natural frequency of the first degree of freedom (Hz).
+        Natural frequency for vertical mode (Hz).
     f2 : float
-        Natural frequency of the second degree of freedom (Hz).
+        Natural frequency for torsional mode (Hz).
     zeta : float
-        Damping ratio.
+        Damping ratio (assumed equal for both modes).
+    single : bool, optional
+        If True, returns 2x2 matrices (single-deck).
+        If False, returns 4x4 block-diagonal matrices (twin-deck).
 
     Returns:
     --------
-    Ms : ndarray of shape (N, 2, 2)
-        Mass matrix.
-    Ks : ndarray of shape (N, 2, 2)
-        Stiffness matrix.
-    Cs : ndarray of shape (N, 2, 2)
-        Damping matrix.
+    Ms : ndarray
+        Mass matrix (2x2 or 4x4).
+    Cs : ndarray
+        Damping matrix (2x2 or 4x4).
+    Ks : ndarray
+        Stiffness matrix (2x2 or 4x4).
     """
     # Stiffness
     k1 = (2 * np.pi * f1) ** 2 * m1  #  (Vertical)
     k2 = (2 * np.pi * f2) ** 2 * m2  #  (Torsion)
-
+    
     # Damping
     c1 = 2 * zeta * m1 * np.sqrt(k1 * m1)  # (Vertical)
     c2 = 2 * zeta * m2 * np.sqrt(k2 * m2)  # (Torsion)
@@ -93,35 +96,42 @@ def structural_matrices_single(m1, m2, f1, f2, zeta):
     Cs = np.array([[c1,0],[0,c2]])  # Damping matrix
     Ks = np.array([[k1,0],[0,k2]])  # Stiffness matrix
 
+    if not single:
+        Ms = np.block([
+        [Ms, np.zeroes((2,2))],
+        [np.zeros((2,2)), Ms]
+                  ])
+        Cs = np.block([
+            [Cs, np.zeros((2,2))],
+            [np.zeros((2,2)), Cs]
+                    ])
+        Ks = np.block([
+            [Ks, np.zeros((2,2))],
+            [np.zeros((2,2)), Ks]
+                    ])
 
     return Ms, Cs, Ks
 
 
 def cae_kae_single(poly_coeff, V, B):
-    """structural_matrices
-    Evaluates all 8 aerodynamic derivatives individually across their own reduced velocity range.
+    """
+    Evaluates the 8 aerodynamic derivatives for single-deck bridges.
 
     Parameters:
     -----------
-    poly_coeff : ndarray
-        Polynomial coefficients, shape (8, 3)
-    v_all : ndarray
-        Reduced velocity range per AD, shape (8, 2)
+    poly_coeff : ndarray, shape (8, 3)
+        Polynomial coefficients for H1–H4 and A1–A4 (aerodynamic derivatives).
+    V : float
+        Reduced velocity (non-dimensional).
     B : float
-        Section width (m)
-    f : float
-        Frequency (Hz)
-        Gathered from FEM-model
-    rho : float
-        Air density (kg/m^3)
-    N : int
-        Number of points per AD
+        Section width (m).
+
     Returns:
     --------
-    C_all : ndarray of shape (N, 2, 2)
-        Aerodynamic damping matrices
-    K_all : ndarray of shape (N, 2, 2)
-        Aerodynamic stiffness matrices
+    C_ae_star : ndarray, shape (2, 2)
+        Dimensionless aerodynamic damping matrix.
+    K_ae_star : ndarray, shape (2, 2)
+        Dimensionless aerodynamic stiffness matrix.
     """
 
     
@@ -145,89 +155,28 @@ def cae_kae_single(poly_coeff, V, B):
     return C_aeN_star, K_aeN_star
 
 
-def structural_matrices_twin(m1, m2, f1, f2, zeta):
-    """
-    Calculate structural matrices for a two-degree-of-freedom system.
 
-    Parameters:
-    -----------
-    m1 : float
-        Mass of the first degree of freedom (kg).
-    m2 : float
-        Mass of the second degree of freedom (kg).
-    f1 : float
-        Natural frequency of the first degree of freedom (Hz).
-    f2 : float
-        Natural frequency of the second degree of freedom (Hz).
-    zeta : float
-        Damping ratio.
-
-    Returns:
-    --------
-    Ms : ndarray of shape (N, 4, 4)
-        Mass matrix.
-    Ks : ndarray of shape (N, 4, 4)
-        Stiffness matrix.
-    Cs : ndarray of shape (N, 4, 4)
-        Damping matrix.
-    """
-    # Stiffness
-    k1 = (2 * np.pi * f1) ** 2 * m1  #  (Vertical)
-    k2 = (2 * np.pi * f2) ** 2 * m2  #  (Torsion)
-
-    # Damping
-    c1 = 2 * zeta * m1 * np.sqrt(k1 * m1)  # (Vertical)
-    c2 = 2 * zeta * m2 * np.sqrt(k2 * m2)  # (Torsion)
-
-    # One bridge deck, two degrees of freedom
-    Ms_single = np.diag([m1, m2])  # Mass matrix
-    Cs_single = np.diag([c1, c2])  # Damping matrix
-    Ks_single = np.diag([k1, k2])  # Stiffness matrix
-
-
-    Ms = np.block([
-        [Ms_single, np.zeroes((2,2))],
-        [np.zeros((2,2)), Ms_single]
-                  ])
-    Cs = np.block([
-        [Cs_single, np.zeros((2,2))],
-        [np.zeros((2,2)), Cs_single]
-                  ])
-    Ks = np.block([
-        [Ks_single, np.zeros((2,2))],
-        [np.zeros((2,2)), Ks_single]
-                  ])
-    
-    return Ms, Cs, Ks
 
 def cae_kae_twin(poly_coeff, V, B):
     """
-    Evaluates all 32 aerodynamic derivatives individually across their own reduced velocity range.
+    Evaluates all 32 aerodynamic derivatives at given reduced velocities.
 
     Parameters:
     -----------
-    poly_coeff : ndarray
-        Polynomial coefficients, shape (32, 3)
-    v_range : ndarray
-        Reduced velocity range per AD, shape (32, 2)
+    poly_coeff : ndarray, shape (32, 3)
+        Polynomial coefficients for each aerodynamic derivative (2nd order).
+    V : ndarray, shape (32,)
+        Reduced velocity for each derivative.
     B : float
-        Section width (m)
-    f : float
-        Frequency (Hz)
-        Gathered from FEM-model
-    rho : float
-        Air density (kg/m^3)
-    
-    N : int
-        Number of points per AD
+        Section width (m).
+
     Returns:
     --------
-    C_all : ndarray of shape (N, 2, 2)
-        Aerodynamic damping matrices
-    K_all : ndarray of shape (N, 2, 2)
-        Aerodynamic stiffness matrices
+    C_ae_star : ndarray, shape (4, 4)
+        Non-dimensional aerodynamic damping matrix.
+    K_ae_star : ndarray, shape (4, 4)
+        Non-dimensional aerodynamic stiffness matrix.
     """
-    
 
 
     # AD
@@ -258,28 +207,50 @@ def cae_kae_twin(poly_coeff, V, B):
 
 
 def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N = 100, single = True):
-    """
-    Parameters:
-    -----------
-    M_struc : ndarray
-        Structural mass matrix
-    C_struc : ndarray
-        Structural damping matrix
-    K_struc : ndarray
-        Structural stiffness matrix
-    C_aero : ndarray of shape (N, n, n)
-        Aerodynamic damping matrices (per wind speed)
-    K_aero : ndarray of shape (N, n, n)
-        Aerodynamic stiffness matrices (per wind speed)
-    V_all : ndarray of shape (1, N) or (N,)
-        Wind speeds corresponding to C_aero/K_aero
-    """
+    '''
+    Løser flutteranalyse med iterativ metode for enten single-deck (2DOF) eller twin-deck (4DOF).
+    Returnerer både global og lokal løsning (kun twin-deck).
+
+    Parameters
+    ----------
+    poly_coeff : ndarray
+        Aerodynamiske deriverte som polynomkoeffisienter (32, 3)
+    v_all : ndarray
+        Redusert hastighetsintervall for hver AD (32, 2)
+    m1, m2, f1, f2 : float
+        Masse og frekvenser for de to modene
+    B : float
+        Bredde av broseksjon
+    rho : float
+        Lufttetthet
+    zeta : float
+        Strukturell demping
+    max_iter : int
+        Maks antall iterasjoner per mode
+    eps : float
+        Toleranse for konvergens
+    N : int
+        Antall punkter i vindhastighetsintervall
+    single : bool
+        True for single-deck, False for twin-deck
+
+    Returns
+    -------
+    damping_ratios, omega_all, eigvals_all, eigvecs_all : list
+        Globale resultater (alle)
+    V_list : np.ndarray
+        Vindhastighetsliste brukt for global løsning
+    damping_ratios_local, omega_all_local, eigvals_all_local, eigvecs_all_local : list
+        Lokale resultater (kun twin-deck)
+    V_red_local : np.ndarray
+        Felles redusert hastighetsintervall for twin-deck (None for single)
+    '''
 
     if single:
-        Ms, Cs, Ks = structural_matrices_single(m1, m2, f1, f2, zeta)
+        Ms, Cs, Ks = structural_matrices(m1, m2, f1, f2, zeta, single = True)
         n_modes = 2 # 2 modes for single deck
     else:
-        Ms, Cs, Ks = structural_matrices_twin(m1, m2, f1, f2, zeta)
+        Ms, Cs, Ks = structural_matrices(m1, m2, f1, f2, zeta, single = False)
         n_modes = 4 # 4 modes for twin deck
 
         eigvals_all_local = [[] for _ in range(n_modes)]
@@ -361,12 +332,12 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
                     break
                 else: # Oppdater dersom w ikke har konvergert
                     omega_old[j] = omega_new
-                    damping_old = damping_new
+                    damping_old[j] = damping_new
                     eigvec_old[j] = φj
     if not single:
-        Vred= np.linspace(np.max(v_all[:, 0]), np.min(v_all[:, 1]), N) #m/s reduce
+        Vred_local= np.linspace(np.max(v_all[:, 0]), np.min(v_all[:, 1]), N) #m/s reduce
 
-        for i, V in enumerate(Vred): 
+        for i, V in enumerate(Vred_local): 
             omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
             damping_old = [zeta, zeta]
             eigvec_old = [None] * n_modes
@@ -421,237 +392,186 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
                         break
                     else: # Oppdater dersom w ikke har konvergert
                         omega_old[j] = omega_new
-                        damping_old = damping_new
+                        damping_old[j] = damping_new
                         eigvec_old[j] = φj    
 
     return damping_ratios, omega_all, eigvals_all, eigvecs_all, V_list, damping_ratios_local, omega_all_local, eigvals_all_local, eigvecs_all_local, V_red_local
 
 
 def solve_flutter_speed( damping_ratios, N = 100, single = True):
-
-    if single:
-        n_modes = 2
-    else:
-        n_modes = 4
-
-    flutter_speed_modes = [None] * n_modes  # én per mode
-    V_list = np.linspace(0, 80, N) #m/s
-    damping = np.array(damping_ratios).T  # shape (N, 4) eller (N, 2)
-
-    for i, V in enumerate(V_list):
-        for j in range(n_modes): #  modes for single deck
-            if damping[i,j] < 0 and flutter_speed_modes[j] is None:
-                flutter_speed_modes[j] = V
-    
-    if all(fs is None for fs in flutter_speed_modes):
-        return f"Ingen flutter observert for noen moder!"
-    else:
-        return flutter_speed_modes, V_list
-     
-
-     
-def plot_damping_vs_wind_speed_single( V_list, Vred_defined, damping_ratios, damping_ratios_local, omega_all, omega_all_local, B, N = 100, single = True):
     """
-    Plot damping ratios as a function of wind speed, and mark regions where ADs are defined.
+    Finds the flutter speed for each mode where the damping becomes negative.
 
     Parameters:
-    ----------
-    V_defined : list of tuples
-        Each tuple (min, max) defines the valid velocity range for ADs (typically one per mode).
-    V_list : ndarray
-        List of wind speeds [m/s].
+    -----------
     damping_ratios : list of arrays
-        List of damping ratios for each mode.
+        Damping ratios for each mode (shape: list of length n_modes with N elements each).
+    N : int
+        Number of wind speed steps.
+    single : bool
+        True if single-deck (2 modes), False if twin-deck (4 modes).
+
+    Returns:
+    --------
+    flutter_speed_modes : list
+        List of flutter speeds (None if not observed).
+    V_list : ndarray
+        Wind speed vector used in calculation.
+    """
+    n_modes = 2 if single else 4
+    flutter_speed_modes = [None] * n_modes
+    V_list = np.linspace(0, 80, N)
+    damping = np.array(damping_ratios).T  # Shape (N, n_modes)
+
+    for j in range(n_modes):
+        for i, V in enumerate(V_list):
+            if damping[i, j] < 0 and flutter_speed_modes[j] is None:
+                flutter_speed_modes[j] = V
+                break
+
+    if all(fs is None for fs in flutter_speed_modes):
+        print("Ingen flutter observert for noen moder!")
+        return None, V_list
+    return flutter_speed_modes, V_list
+     
+
+     
+def plot_damping_vs_wind_speed_single(Vred_defined, damping_ratios, damping_ratios_local, omega_all, omega_all_local, B, N = 100, single = True):
+    """
+    Plot damping ratios as a function of wind speed, and mark AD-validity range.
+
+    Parameters:
+    -----------
+    Vred_defined : list or array
+        Reduced velocity validity intervals for ADs.
+    damping_ratios : list of arrays
+        Global damping ratios per mode.
+    damping_ratios_local : list of arrays
+        Local damping ratios per mode (only valid inside AD range).
     omega_all : list of arrays
-        List of angular frequencies (rad/s) for each mode.
+        Global angular frequencies per mode.
+    omega_all_local : list of arrays
+        Local angular frequencies per mode (used in AD range).
     B : float
         Deck width.
+    N : int
+        Number of wind speed steps.
     single : bool
-        Whether plotting is for single-deck (2 modes) or twin-deck (4 modes).
+        Whether single-deck (2 modes) or twin-deck (4 modes).
     """
-    omega = np.array(omega_all).T           # shape (N, 2/4)
     damping_ratios = np.array(damping_ratios).T  # shape (N, 2/4)
 
+    V_list = np.linspace(0, 80, N) #m/s
 
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
+
+    plt.figure(figsize=(10, 6))
 
     if single:
         n_modes = 2 
         V_min = Vred_defined[0][0]
         V_max = Vred_defined[0][1]
+
+        for j in range(n_modes):
+            V_glob = V_list /(omega_all[:,j] * B)
+
+            # Finn indeksene der V_glob er innenfor AD-definert område
+            inside_idx = np.where((V_glob >= V_min) & (V_glob <= V_max))[0]
+            outside_idx = np.where((V_glob < V_min) | (V_glob > V_max))[0]
+
+            # Plot gyldig område som heltrukket
+            if inside_idx.size > 0:
+                plt.plot(V_glob[inside_idx], damping_ratios[inside_idx, j], color=colors[j], label=labels[j])
+
+            # Plot ugyldig område som stipla
+            if outside_idx.size > 0:
+                plt.plot(V_glob[outside_idx], damping_ratios[inside_idx, j], color=colors[j], linestyle='--')
     else:
         n_modes = 4
         omega_local = np.array(omega_all_local).T           # shape (N, 4)
         damping_ratios_local = np.array(damping_ratios_local).T  # shape (N, 4)
-
-        Vred_local = np.zeros((32, N))
-        for i, V in enumerate(Vred_defined):
-            Vred_local[i] = np.linspace(Vred_defined[i][0], Vred_defined[i][1], N) #m/s reduced
-
-
-    plt.figure(figsize=(10, 6))
-
-    for j in range(n_modes):
-        V_glob = V_list /(omega_all[:,j] * B)
-
-        # Finn indeksene der V_glob er innenfor AD-definert område
-        inside_idx = np.where((V_glob >= V_min) & (V_glob <= V_max))[0]
-        outside_idx = np.where((V_glob < V_min) | (V_glob > V_max))[0]
-
-        # Plot gyldig område som heltrukket
-        if inside_idx.size > 0:
-            plt.plot(V_effective[inside_idx], damping_ratios[j][inside_idx],
-                     color=colors[j], label=labels[j], linewidth=2)
-
-        # Plot ugyldig område som stipla
-        if outside_idx.size > 0:
-            plt.plot(V_effective[outside_idx], damping_ratios[j][outside_idx],
-                     color=colors[j], linestyle='--', linewidth=1)
-
-
-    if global ikke begynner før min og ikke slutter etter max:
-
-        plt.plot(V_list*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue')
-        plt.plot(V_list*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red')
-
-        if not single:
-            plt.plot(V_list*omega_3*B, damping_ratios[:,0], label="$\lambda_1$", color='blue')
-            plt.plot(V_list*omega_4*B, damping_ratios[:,1], label="$\lambda_2$", color='red')
-
-    elif global starter før min og slutter etter max:
-
-        plt.plot(V_list[min index:max index]*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue')
-        plt.plot(V_list[min index:max index]*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red')
-        plt.plot(V_list*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue', linestyle="--")
-        plt.plot(V_list*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red', linestyle="--")
     
-    elif global starter før min og ikke slutter etter max:
-         plt.plot(V_list[min index:]*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue')
-        plt.plot(V_list[min index:]*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red')
-        plt.plot(V_list*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue', linestyle="--")
-        plt.plot(V_list*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red', linestyle="--")
+        Vred_defined = np.array(Vred_defined)
+        Vred_local= np.linspace(np.max(Vred_defined[:, 0]), np.min(Vred_defined[:, 1]), N) 
+        
+        for j in range(n_modes):
+            plt.plot(Vred_local*omega_local[:,j]*B, damping_ratios_local[:,j], label=labels[j], color=colors[j])
+            plt.plot(V_list, damping_ratios[:,j], color=colors[j], linestyle="--")
 
-    else:
-        plt.plot(V_list[:max index]*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue')
-        plt.plot(V_list[:max index]*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red')
-        plt.plot(V_list*omega_1*B, damping_ratios[:,0], label="$\lambda_1$", color='blue', linestyle="--")
-        plt.plot(V_list*omega_2*B, damping_ratios[:,1], label="$\lambda_2$", color='red', linestyle="--")
-
-
-    plt.axhline(0, linestyle="--", color="gray", label="Critical Damping Line")
-    plt.xlabel("Vindhastighet  [m/s]")
-    plt.ylabel("Dempingforhold")
+    plt.axhline(0, linestyle="--", color="gray", linewidth=0.8, label="Kritisk demping")
+    plt.xlabel("Vindhastighet [m/s]")
+    plt.ylabel("Dempingsforhold")
+    plt.title("Demping vs. vindhastighet")
+    plt.grid(True, linestyle='--', linewidth=0.5)
     plt.legend()
-    plt.grid(True)
+    plt.tight_layout()
     plt.show()
 
 
 
-def plot_frequency_vs_wind_speed_singles(Vred_list, omega_all, B):
+def plot_frequency_vs_wind_speed(Vred_defined, omega_all, omega_all_local, B, N = 100, single = True):
     """
-    Plotter frekvens og demping for hver mode over vindhastighet.
+    Plots natural frequencies as a function of wind speed, marking valid AD regions.
 
     Parameters:
     -----------
-    Vred_list : array
-        Liste over reduserte vindhastigheter.
-    eigvals_all : array
-        Array av egenverdier med shape (N, n_modes).
+    Vred_defined : list or array
+        Reduced velocity validity interval (e.g. from polynomial fit).
+    omega_all : list of arrays
+        Global angular frequencies (from V_list loop).
+    omega_all_local : list of arrays
+        Local angular frequencies (from Vred_local loop).
+    B : float
+        Deck width.
+    N : int
+        Number of points.
+    single : bool
     """
-
-  
-    plt.figure(figsize=(10, 6))
+    colors = ['blue', 'red', 'green', 'orange']
+    labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
     omega = np.array(omega_all).T           # shape (N, 2)
     frequencies = omega/(2*np.pi)  # shape (N, 2)
+    V_list = np.linspace(0, 80, N) #m/s
 
-    omega_1 = omega[:,0]
-    omega_2 = omega[:,1]
-
-    plt.plot(Vred_list*omega_1*B, frequencies[:,0], label="$\lambda_1$", color='blue')
-    plt.plot(Vred_list*omega_2*B, frequencies[:, 1], label="$\lambda_2$", color='red')
- 
-    plt.xlabel("Vindhastighet  [m/s]")
-    plt.ylabel("Frequency [Hz]")
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-
-def plot_damping_vs_wind_speed_twin(Vred_local, Vred_global, damping_ratios_local, damping_ratios_global, omega_all_local, omega_all_global, B):
-    """
-    Plott dempingforhold som funksjon av vindhastighet, og marker flutterhastigheten.
-    
-    Parameters:
-    ----------
-    flutter_speed : float
-        Flutterhastighet (kritisk vindhastighet).
-    Vred_list : ndarray
-        Liste over vindhastigheter (reduced velocities).
-    damping_ratios : list
-        Liste over dempingsforhold for hver vindhastighet.
-    """
     plt.figure(figsize=(10, 6))
 
-    omega_local = np.array(omega_all_local).T           # shape (N, 2)
-    damping_ratios_local = np.array(damping_ratios_local).T  # shape (N, 2)
-    omega_1_local = omega_local[:,0]
-    omega_2_local = omega_local[:,1]
+    if single:
+        n_modes = 2 
+        V_min = Vred_defined[0][0]
+        V_max = Vred_defined[0][1]
 
-    omega_global = np.array(omega_all_global).T           # shape (N, 2)
-    damping_ratios_global = np.array(damping_ratios_global).T  # shape (N, 2)
-    omega_1_global = omega_global[:,0]
-    omega_2_global = omega_global[:,1]
+        for j in range(n_modes):
+            V_glob = V_list /(omega_all[:,j] * B)
 
-    plt.plot(Vred_local*omega_1_local*B, damping_ratios_local[:,0], label="$\lambda_1$", color='blue')
-    plt.plot(Vred_local*omega_2_local*B, damping_ratios_local[:,1], label="$\lambda_2$", color='red')
+            # Finn indeksene der V_glob er innenfor AD-definert område
+            inside_idx = np.where((V_glob >= V_min) & (V_glob <= V_max))[0]
+            outside_idx = np.where((V_glob < V_min) | (V_glob > V_max))[0]
 
-    plt.plot(Vred_global*omega_1_global*B, damping_ratios_global[:,0], label="$\lambda_1$", color='blue', linestyle='--')
-    plt.plot(Vred_global*omega_2_global*B, damping_ratios_global[:,1], label="$\lambda_2$", color='red', linestyle='--')  
+            # Plot gyldig område som heltrukket
+            if inside_idx.size > 0:
+                plt.plot(V_glob[inside_idx], frequencies[inside_idx, j], color=colors[j], label=labels[j])
 
-    plt.axhline(0, linestyle="--", color="gray", label="Critical Damping Line")
-    plt.xlabel("Vindhastighet  [m/s]")
-    plt.ylabel("Dempingforhold")
-    plt.legend()
-    plt.grid(True)
-    plt.show()
+            # Plot ugyldig område som stipla
+            if outside_idx.size > 0:
+                plt.plot(V_glob[outside_idx], frequencies[inside_idx, j], color=colors[j], linestyle='--')
+    else:
+        n_modes = 4
+        omega_local = np.array(omega_all_local).T           # shape (N, 4)
+        frequencies_local = omega_local/(2*np.pi)           # shape (N, 4)
 
+        Vred_defined = np.array(Vred_defined)
+        Vred_local= np.linspace(np.max(Vred_defined[:, 0]), np.min(Vred_defined[:, 1]), N) 
 
-
-def plot_frequency_vs_wind_speed_twin(Vred_local, Vred_global,omega_all_local, omega_all_global, B):
-    """
-    Plotter frekvens og demping for hver mode over vindhastighet.
-
-    Parameters:
-    -----------
-    Vred_list : array
-        Liste over reduserte vindhastigheter.
-    eigvals_all : array
-        Array av egenverdier med shape (N, n_modes).
-    """
-
-  
-    plt.figure(figsize=(10, 6))
-
-    omega_local = np.array(omega_all_local).T           # shape (N, 2)
-    frequencies_local = omega_local/(2*np.pi)  # shape (N, 2)
-    omega_1_local = omega_local[:,0]
-    omega_2_local = omega_local[:,1]
-
-    omega_global = np.array(omega_all_global).T           # shape (N, 2)
-    frequencies_global = omega_global/(2*np.pi)  # shape (N, 2)
-    omega_1_global = omega_global[:,0]
-    omega_2_global = omega_global[:,1]
-
-    plt.plot(Vred_local*omega_1_local*B, frequencies_local[:,0], label="$\lambda_1$", color='blue')
-    plt.plot(Vred_local*omega_2_local*B, frequencies_local[:, 1], label="$\lambda_2$", color='red')
-
-    plt.plot(Vred_global*omega_1_global*B, frequencies_global[:,0], label="$\lambda_1$", color='blue', linestyle='--')
-    plt.plot(Vred_global*omega_2_global*B, frequencies_global[:, 1], label="$\lambda_2$", color='red', linestyle='--')
+        for j in range(n_modes):
+            plt.plot(Vred_local*omega_local[:,j]*B, frequencies_local[:,j], label=labels[j], color=colors[j])
+            plt.plot(V_list, frequencies[:,j], color=colors[j], linestyle="--")
  
-    plt.xlabel("Vindhastighet  [m/s]")
-    plt.ylabel("Frequency [Hz]")
+    plt.xlabel("Vindhastighet [m/s]")
+    plt.ylabel("Egenfrekvens [Hz]")
+    plt.title("Egenfrekvenser som funksjon av vindhastighet")
     plt.legend()
-    plt.grid(True)
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+    plt.tight_layout()
     plt.show()
-
