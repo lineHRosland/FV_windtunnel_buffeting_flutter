@@ -36,8 +36,8 @@ N = 100 # Number of steps in V_list
 
 #%%
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
-eps = 10 # Konvergensterskel
-max_iter = 500  # Maksimalt antall iterasjoner
+eps = 20 # Konvergensterskel
+max_iter = 700  # Maksimalt antall iterasjoner
 
 #%%
 #Single deck
@@ -59,9 +59,9 @@ flutter_speed_modes_single =_eigVal.solve_flutter_speed( damping_ratios_single, 
 
 print("Flutter speed modes: ", flutter_speed_modes_single)
 
-_eigVal.plot_damping_vs_wind_speed_single(B, v_range_single, damping_ratios_single, omega_all_single, damping_ratios_local=damping_ratios_local_single, omega_all_local=omega_all_local_single, dist="Single deck", N = 100, single = True)
+_eigVal.plot_damping_vs_wind_speed_single(B, v_range_single, damping_ratios_single, damping_ratios_local_single,omega_all_single, omega_all_local_single, dist="Single deck", N = 100, single = True)
 
-_eigVal.plot_frequency_vs_wind_speed(B,  v_range_single, omega_all_single,omega_all_local=omega_all_local_single, dist="Single deck", N = 100, single = True)
+_eigVal.plot_frequency_vs_wind_speed(B,  v_range_single, omega_all_single,omega_all_local_single, dist="Single deck", N = 100, single = True)
 
 #%%
 #Double deck 1D

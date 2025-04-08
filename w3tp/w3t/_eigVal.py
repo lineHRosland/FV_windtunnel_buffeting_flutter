@@ -265,7 +265,7 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
     omega_all_local = [[] for _ in range(n_modes)]
 
 
-    V_list = np.linspace(0, 80, N) #m/s
+    V_list = np.linspace(0, 100, N) #m/s
 
     for i, V in enumerate(V_list):
         if single:
@@ -455,7 +455,7 @@ def solve_flutter_speed( damping_ratios, N = 100, single = True):
     """
     n_modes = 2 if single else 4
     flutter_speed_modes = [None] * n_modes
-    V_list = np.linspace(0, 80, N)
+    V_list = np.linspace(0, 100, N)
     damping = np.array(damping_ratios).T  # Shape (N, n_modes)
 
     for j in range(n_modes):
@@ -471,7 +471,7 @@ def solve_flutter_speed( damping_ratios, N = 100, single = True):
      
 
      
-def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all, damping_ratios_local = None,  omega_all_local = None,  dist="Fill in dist",N = 100, single = True):
+def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios,damping_ratios_local, omega_all,  omega_all_local,  dist="Fill in dist",N = 100, single = True):
     """
     Plot damping ratios as a function of wind speed, and mark AD-validity range.
 
@@ -497,7 +497,7 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
     damping_ratios = np.array(damping_ratios).T  # shape (N, 2/4)
     omega_all = np.array(omega_all).T  # shape (N, n_modes)
 
-    V_list = np.linspace(0, 80, N) #m/s
+    V_list = np.linspace(0, 100, N) #m/s
 
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
@@ -520,16 +520,18 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
     Vred_local= np.linspace(np.max(Vred_defined[:, 0]), np.min(Vred_defined[:, 1]), N) 
         
     for j in range(n_modes):
+        print("Vred_local*omega_local*B:", (Vred_local*omega_local[:,j]*B).shape)
+        print("damping_ratios_local:", damping_ratios_local[:,j].shape)
         print("V_local", Vred_local*omega_local[:,j]*B)
         plt.plot(Vred_local*omega_local[:,j]*B, damping_ratios_local[:,j], label=labels[j], color=colors[j])
         plt.plot(V_list, damping_ratios[:,j], color=colors[j], linestyle="--")
 
     plt.axhline(0, linestyle="--", color="black", linewidth=1.1, label="Kritisk demping")
-    plt.xlabel("Vindhastighet [m/s]", fontsize=14)
-    plt.ylabel("Dempingsforhold [-]", fontsize=14)
-    plt.title(title, fontsize=16)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
+    plt.xlabel("Vindhastighet [m/s]", fontsize=16)
+    plt.ylabel("Dempingsforhold [-]", fontsize=16)
+    plt.title(title, fontsize=18)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.legend(fontsize=14)
     plt.grid(True, linestyle='--', linewidth=0.5)
     plt.tight_layout()
@@ -537,7 +539,7 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
 
 
 
-def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, omega_all_local = None, dist="Fill in dist",N = 100, single = True):
+def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, omega_all_local, dist="Fill in dist",N = 100, single = True):
     """
     Plots natural frequencies as a function of wind speed, marking valid AD regions.
 
@@ -560,7 +562,7 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, omega_all_local = N
 
     omega = np.array(omega_all).T           # shape (N, 2)
     frequencies = omega/(2*np.pi)  # shape (N, 2)
-    V_list = np.linspace(0, 80, N) #m/s
+    V_list = np.linspace(0, 100, N) #m/s
 
     plt.figure(figsize=(10, 6))
 
@@ -578,14 +580,15 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, omega_all_local = N
     Vred_local= np.linspace(np.max(Vred_defined[:, 0]), np.min(Vred_defined[:, 1]), N) 
 
     for j in range(n_modes):
+
         plt.plot(Vred_local*omega_local[:,j]*B, frequencies_local[:,j], label=labels[j], color=colors[j])
         plt.plot(V_list, frequencies[:,j], color=colors[j], linestyle="--")
  
-    plt.xlabel("Vindhastighet [m/s]", fontsize=14)
-    plt.ylabel("Egenfrekvens [Hz]", fontsize=14)
-    plt.title(title, fontsize=16)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
+    plt.xlabel("Vindhastighet [m/s]", fontsize=16)
+    plt.ylabel("Egenfrekvens [Hz]", fontsize=16)
+    plt.title(title, fontsize=18)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.legend(fontsize=14)
     plt.grid(True, which='both', linestyle='--', linewidth=0.5)
     plt.tight_layout()
