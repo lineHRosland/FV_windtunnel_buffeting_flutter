@@ -477,6 +477,7 @@ def plot_damping_vs_wind_speed_single(B,Vred_defined, damping_ratios, omega_all,
         Whether single-deck (2 modes) or twin-deck (4 modes).
     """
     damping_ratios = np.array(damping_ratios).T  # shape (N, 2/4)
+    omega_all = np.array(omega_all).T  # shape (N, n_modes)
 
     V_list = np.linspace(0, 80, N) #m/s
 
