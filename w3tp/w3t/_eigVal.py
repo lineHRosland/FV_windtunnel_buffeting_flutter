@@ -395,8 +395,8 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
                         damping_old[j] = damping_new
                         eigvec_old[j] = φj    
 
-    return damping_ratios, omega_all, eigvals_all, eigvecs_all, V_list, damping_ratios_local, omega_all_local, eigvals_all_local, eigvecs_all_local, V_red_local
-
+        return damping_ratios, omega_all, eigvals_all, eigvecs_all, damping_ratios_local, omega_all_local, eigvals_all_local, eigvecs_all_local
+    return damping_ratios, omega_all, eigvals_all, eigvecs_all
 
 def solve_flutter_speed( damping_ratios, N = 100, single = True):
     """
@@ -431,12 +431,12 @@ def solve_flutter_speed( damping_ratios, N = 100, single = True):
 
     if all(fs is None for fs in flutter_speed_modes):
         print("Ingen flutter observert for noen moder!")
-        return None, V_list
-    return flutter_speed_modes, V_list
+        return None
+    return flutter_speed_modes
      
 
      
-def plot_damping_vs_wind_speed_single(Vred_defined, damping_ratios, damping_ratios_local, omega_all, omega_all_local, B, N = 100, single = True):
+def plot_damping_vs_wind_speed_single(B,Vred_defined, damping_ratios, omega_all, damping_ratios_local = None,  omega_all_local = None,  N = 100, single = True):
     """
     Plot damping ratios as a function of wind speed, and mark AD-validity range.
 
@@ -510,7 +510,7 @@ def plot_damping_vs_wind_speed_single(Vred_defined, damping_ratios, damping_rati
 
 
 
-def plot_frequency_vs_wind_speed(Vred_defined, omega_all, omega_all_local, B, N = 100, single = True):
+def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, omega_all_local = None, N = 100, single = True):
     """
     Plots natural frequencies as a function of wind speed, marking valid AD regions.
 

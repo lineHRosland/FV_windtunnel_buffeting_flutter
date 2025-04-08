@@ -53,11 +53,64 @@ else:
 #print(poly_coeff_single.shape)  # Skal være (8, 3) (8 AD)
 #print(v_range_single)           # Skal være (8,2)
 
-flutter_speed, damping_ratios, omega, eigvals_all, eigvecs_all, Vred_list =_eigVal.solve_flutter_single(poly_coeff_single, v_range_single, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N)
+damping_ratios_single, omega_all_single, eigvals_all_single, eigvecs_all_single= _eigVal.solve_omega(poly_coeff_single,v_range_single, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N = 100, single = True)
 
-#_eigVal.plot_damping_vs_wind_speed_single(Vred_list, damping_ratios, omega, B)
+flutter_speed_modes_single =_eigVal.solve_flutter_speed( damping_ratios_single, N = 100, single = True)
 
-#_eigVal.plot_frequency_vs_wind_speed_singles(Vred_list, omega, B)
+print("Flutter speed modes: ", flutter_speed_modes_single)
+
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_single, damping_ratios_single, omega_all_single, N = 100, single = True)
+
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_single, omega_all_single, N = 100, single = True)
+
+#%%
+#Double deck 1D
+if os.path.exists(os.path.join(file_path, "poly_coeff_1D.npy")):
+    poly_coeff_1D = np.load(os.path.join(file_path, "poly_coeff_1D.npy"))
+else:
+    raise FileNotFoundError(f"The file 'poly_coeff_1D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
+
+if os.path.exists(os.path.join(file_path, "v_range_1D.npy")):
+    v_range_1D = np.load(os.path.join(file_path, "v_range_1D.npy"))
+else:
+    raise FileNotFoundError(f"The file 'v_range_1D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
+
+damping_ratios_1D, omega_all_1D, eigvals_all_1D, eigvecs_all_1D, damping_ratios_local_1D, omega_all_local_1D, eigvals_all_local_1D, eigvecs_all_local_1D= _eigVal.solve_omega(poly_coeff_1D,v_range_1D, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N = 100, single = False)
+
+flutter_speed_modes_1D=_eigVal.solve_flutter_speed( damping_ratios_1D, N = 100, single = False)
+
+print("Flutter speed modes 1D: ", flutter_speed_modes_1D)
+
+
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_1D, damping_ratios=damping_ratios_1D, omega_all = omega_all_1D, damping_ratios_local = damping_ratios_local_1D, omega_all_local = omega_all_local_1D, N = 100, single = False)
+
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_1D, omega_all=omega_all_1D, omega_all_local = omega_all_local_1D, N = 100, single = False)
+
+#%%
+#Double deck 2D
+if os.path.exists(os.path.join(file_path, "poly_coeff_2D.npy")):
+    poly_coeff_2D = np.load(os.path.join(file_path, "poly_coeff_2D.npy"))
+else:
+    raise FileNotFoundError(f"The file 'poly_coeff_2D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
+
+if os.path.exists(os.path.join(file_path, "v_range_2D.npy")):
+    v_range_2D = np.load(os.path.join(file_path, "v_range_2D.npy"))
+else:
+    raise FileNotFoundError(f"The file 'v_range_2D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
+
+
+damping_ratios_2D, omega_all_2D, eigvals_all_2D, eigvecs_all_2D, damping_ratios_local_2D, omega_all_local_2D, eigvals_all_local_2D, eigvecs_all_local_2D= _eigVal.solve_omega(poly_coeff_2D,v_range_2D, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N = 100, single = False)
+
+flutter_speed_modes_2D=_eigVal.solve_flutter_speed( damping_ratios_2D, N = 100, single = False)
+
+print("Flutter speed modes 2D: ", flutter_speed_modes_2D)
+
+
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_2D, damping_ratios=damping_ratios_2D, omega_all = omega_all_2D, damping_ratios_local = damping_ratios_local_2D, omega_all_local = omega_all_local_2D, N = 100, single = False)
+
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_2D, omega_all=omega_all_2D, omega_all_local = omega_all_local_2D, N = 100, single = False)
+
+
 
 #%%
 #Double deck 3D
@@ -74,95 +127,54 @@ else:
 #print(poly_coeff_3D.shape)  # Skal være (32, 3) (32 AD)
 #print(v_range_3D)           # Skal være f.eks. [min, max]
 
-flutter_speed_local, damping_ratios_local, eigvals_all_local, eigvecs_all_local, V_local, flutter_speed_global, damping_ratios_global, eigvals_all_global, eigvecs_all_global, V_global= _eigVal.solve_flutter_single(poly_coeff_3D, v_range_3D, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N)
+damping_ratios_3D, omega_all_3D, eigvals_all_3D, eigvecs_all_3D, damping_ratios_local_3D, omega_all_local_3D, eigvals_all_local_3D, eigvecs_all_local_3D= _eigVal.solve_omega(poly_coeff_3D,v_range_3D, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N = 100, single = False)
+
+flutter_speed_modes_3D=_eigVal.solve_flutter_speed( damping_ratios_3D, N = 100, single = False)
+
+print("Flutter speed modes 3D: ", flutter_speed_modes_3D)
+
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_3D, damping_ratios=damping_ratios_3D, omega_all = omega_all_3D, damping_ratios_local = damping_ratios_local_3D, omega_all_local = omega_all_local_3D, N = 100, single = False)
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_3D, omega_all=omega_all_3D, omega_all_local = omega_all_local_3D, N = 100, single = False)
 
 
 #%%
-# ALTERNATIVE 1: WITHOUT ITERATION
+#Double deck 4D
+if os.path.exists(os.path.join(file_path, "poly_coeff_4D.npy")):
+    poly_coeff_4D = np.load(os.path.join(file_path, "poly_coeff_4D.npy"))
+else:
+    raise FileNotFoundError(f"The file 'poly_coeff_4D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
+if os.path.exists(os.path.join(file_path, "v_range_4D.npy")):
+    v_range_4D = np.load(os.path.join(file_path, "v_range_4D.npy"))
+else:
+    raise FileNotFoundError(f"The file 'v_range_4D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
+damping_ratios_4D, omega_all_4D, eigvals_all_4D, eigvecs_all_4D, damping_ratios_local_4D, omega_all_local_4D, eigvals_all_local_4D, eigvecs_all_local_4D= _eigVal.solve_omega(poly_coeff_4D,v_range_4D, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N = 100, single = False)
 
+flutter_speed_modes_4D=_eigVal.solve_flutter_speed( damping_ratios_4D, N = 100, single = False)
 
-# ALTERNATIVE 2: WITH ITERATION
+print("Flutter speed modes 4D: ", flutter_speed_modes_4D)
 
-# V = 0, wi(V=0) egenfrekvens i still air
-# Det betyr at den egenfrekvensen 𝜔  du bruker, egentlig bør avhenge av vindhastigheten V.
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_4D, damping_ratios=damping_ratios_4D, omega_all = omega_all_4D, damping_ratios_local = damping_ratios_local_4D, omega_all_local = omega_all_local_4D, N = 100, single = False)
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_4D, omega_all=omega_all_4D, omega_all_local = omega_all_local_4D, N = 100, single = False)
 
-#1. 
-    # Bruk FEM-verdier for 𝜔1, w2. 
-    # Evaluer matrisene 𝑀,𝐶+𝐶𝑎𝑒,𝐾+𝐾𝑎𝑒  for mange ulike vindhastigheter V. 
-    # Løs generalisert egenverdiproblem. Sjekk hvor dempingen blir null → det er flutterhastigheten. 
-    # Plot Demping 𝜁 eller Re(𝜆) som funksjon av V
-#2. Med iterasjon (for nøyaktig fluttergrense)
-    # Når du har funnet omtrentlig flutterhastighet, kan du i ettertid lage et lite iterativt skript for mer nøyaktig justering i akkurat det området.
-    # Start med w0.
-    # Finn Cae, Kae med w0
-    # Løs egenverdiproblemet, finn ny w, w1
-    # Sjekk om w1 er lik w0. 
-    # Repeter til w1 er lik w0 med ønsket nøyaktighet.
+#%%
+#Double deck 5D
+if os.path.exists(os.path.join(file_path, "poly_coeff_5D.npy")):
+    poly_coeff_5D = np.load(os.path.join(file_path, "poly_coeff_5D.npy"))
+else:
+    raise FileNotFoundError(f"The file 'poly_coeff_5D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
+if os.path.exists(os.path.join(file_path, "v_range_5D.npy")):
+    v_range_5D = np.load(os.path.join(file_path, "v_range_5D.npy"))
+else:
+    raise FileNotFoundError(f"The file 'v_range_5D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
+damping_ratios_5D, omega_all_5D, eigvals_all_5D, eigvecs_all_5D, damping_ratios_local_5D, omega_all_local_5D, eigvals_all_local_5D, eigvecs_all_local_5D= _eigVal.solve_omega(poly_coeff_5D,v_range_5D, ms1, ms2, fs1, fs2, B, rho, zeta, max_iter, eps, N = 100, single = False)
 
-# finn w iterativt, deretter finn demping for ulike vindhastigheter
-# Du løser egenverdiproblemet for hver V, og sjekker dempingen. Egenverdiproblemet gir egenverdier og egenvektorer.
-#     Egenverdiene er komplekse og trengs for å regne ut dempingen.
-#     Egenvektorene er komplekse og gir fase informasjon. Dette er viktig å kommentere.
-# Man får en frekvens per løsningn av egenverdiprob for en gitt vindhastighet.
-    
-# #CLOSED FORM
-# # Constants
-# I = #FEM
-# mikro = rho * (B/2)**2/I
-# nu = rho * (B/2)**4/I
-# D = G_h1alpha2/np.sqrt(G_h1h1*G_alpha2alpha2) #G: mode shapes
+flutter_speed_modes_5D=_eigVal.solve_flutter_speed( damping_ratios_5D, N = 100, single = False)
 
-# # Isolated modes
-# w1_bar = ws1*np.sqrt(1-mikro(w/ws1)**2*H4) 
+print("Flutter speed modes 5D: ", flutter_speed_modes_5D)
 
-
-###############################
-# import numpy as np
-# import matplotlib.pyplot as plt
-# import pandas as pd
-
-# def uncoupled_freq_damping(w_s, H4_star, A3_star, mu):
-#     """
-#     Beregn uncoupled (modifiserte) frekvenser og demping for vertikal og torsjon
-#     """
-#     w_bar_1 = w_s[0] * np.sqrt(1 - (mu * H4_star)**2)
-#     w_bar_2 = w_s[1] * np.sqrt(1 - (mu * A3_star)**2)
-
-#     return w_bar_1, w_bar_2
-
-# def uncoupled_damping(xi_s, w_s, w_bar, H1_star, A2_star, mu):
-#     """
-#     Beregn modifisert demping (ξ̄) for uncoupled modes
-#     """
-#     xi_bar_1 = xi_s[0] * (w_s[0] / w_bar[0]) - 0.5 * mu * (H1_star / w_bar[0])
-#     xi_bar_2 = xi_s[1] * (w_s[1] / w_bar[1]) - 0.5 * mu * (A2_star / w_bar[1])
-#     return xi_bar_1, xi_bar_2
-
-# # Eksempelverdier (kan erstattes med reelle)
-# w_s = [10, 20]         # struktur-frekvenser (Hz)
-# xi_s = [0.005, 0.005]  # struktur-demping
-# mu = 0.03              # masseparameter
-# H4_star = 0.1
-# A3_star = 0.1
-# H1_star = 0.2
-# A2_star = 0.15
-
-# # Steg 1: uncoupled frekvens og damping
-# w_bar_1, w_bar_2 = uncoupled_freq_damping(w_s, H4_star, A3_star, mu)
-# xi_bar_1, xi_bar_2 = uncoupled_damping(xi_s, w_s, (w_bar_1, w_bar_2), H1_star, A2_star, mu)
-
-# results = {
-#     "Uncoupled modifisert frekvens ω̄1": w_bar_1,
-#     "Uncoupled modifisert frekvens ω̄2": w_bar_2,
-#     "Uncoupled demping ξ̄1": xi_bar_1,
-#     "Uncoupled demping ξ̄2": xi_bar_2
-# }
-
-# import ace_tools as tools; tools.display_dataframe_to_user(name="Uncoupled Flutter Resultater", dataframe=pd.DataFrame([results]))
-
-
-# %%
+_eigVal.plot_damping_vs_wind_speed_single(B,v_range_5D, damping_ratios=damping_ratios_5D, omega_all = omega_all_5D, damping_ratios_local = damping_ratios_local_5D, omega_all_local = omega_all_local_5D, N = 100, single = False)
+_eigVal.plot_frequency_vs_wind_speed(B, v_range_5D, omega_all=omega_all_5D, omega_all_local = omega_all_local_5D, N = 100, single = False)
