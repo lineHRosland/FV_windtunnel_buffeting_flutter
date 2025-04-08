@@ -270,8 +270,10 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
         omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
         damping_old = [zeta, zeta]
         eigvec_old = [None] * n_modes
+        print("Vindhastighet iterasjon nr. " + str(i+1) + "som tilsvarer " + str(V) + " m/s")
 
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
+            print("Modeiterasjon nr. " + str(j+1))
 
             if single:
                 Vred_global = [V/(omega_old[j]*B)] * 8  # reduced velocity for global
@@ -279,7 +281,9 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
             else:
                 Vred_global = [V/(omega_old[j]*B)] * 32
 
-            for _ in range(max_iter):
+            for k in range(max_iter):
+                print("Iterasjon nr. " + str(k+1) + " for mode " + str(j+1))
+                
                 print("omega_ref", omega_old[j])
                     
                 #Beregn nye Cae og Kae for denne omega[i]
