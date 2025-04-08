@@ -272,13 +272,17 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
             omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
         else:
             omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) #Først brudekke 1, deretter brudekke 2
-        damping_old = [zeta, zeta]
+        
+        damping_old = [zeta]*n_modes
         eigvec_old = [None] * n_modes
+
         print("Vindhastighet iterasjon nr. " + str(i+1) + "som tilsvarer " + str(V) + " m/s")
         print("")
+
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
             print("Modeiterasjon nr. " + str(j+1))
             print("")
+
             if single:
                 Vred_global = [V/(omega_old[j]*B)] * 8  # reduced velocity for global
                     # Formatet på Vred_global må matche Vred_local
@@ -364,7 +368,8 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
             omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
         else:
             omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2])
-        damping_old = [zeta, zeta]
+        
+        damping_old = [zeta]*n_modes
         eigvec_old = [None] * n_modes
 
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
@@ -515,6 +520,7 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
     Vred_local= np.linspace(np.max(Vred_defined[:, 0]), np.min(Vred_defined[:, 1]), N) 
         
     for j in range(n_modes):
+        print("V_local", Vred_local*omega_local[:,j]*B)
         plt.plot(Vred_local*omega_local[:,j]*B, damping_ratios_local[:,j], label=labels[j], color=colors[j])
         plt.plot(V_list, damping_ratios[:,j], color=colors[j], linestyle="--")
 
