@@ -344,15 +344,20 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                 
                 # Sjekk konvergens for mode
                 if np.abs(omega_new - omega_old[j]) < eps:
-                    omega_all[j].append(omega_new)              # lagre alle modenes omega
-                    damping_ratios[j].append(damping_new)       # lagre alle modenes damping
-                    eigvals_all[j].append(λj)                   # lagre alle modenes egenverdier
-                    eigvecs_all[j].append(φj)                   # lagre alle modenes egenvektorer
                     converge = True
                     # Legg til kryssings-sjekk: Når flutter har oppstått trenger vi ikke øke hastigheten noe ytterligere
                     sign_changes = np.where(np.diff(np.sign(damping_ratios[j])) != 0)[0]
                     if len(sign_changes) >= 2:
+                        omega_all[j].append(np.nan)
+                        damping_ratios[j].append(np.nan)
+                        eigvals_all[j].append(np.nan)
+                        eigvecs_all[j].append(np.nan)
                         skip_mode[j] = True
+                    else:
+                        omega_all[j].append(omega_new)              # lagre alle modenes omega
+                        damping_ratios[j].append(damping_new)       # lagre alle modenes damping
+                        eigvals_all[j].append(λj)                   # lagre alle modenes egenverdier
+                        eigvecs_all[j].append(φj)                   # lagre alle modenes egenvektorer
 
                 else: # Oppdater dersom w ikke har konvergert
                     omega_old[j] = omega_new
@@ -458,7 +463,7 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
     plt.legend(fontsize=14)
     plt.grid(True, linestyle='--', linewidth=0.5)
     plt.tight_layout()
-    plt.ylim(-0.1, 0.3)
+    plt.ylim(-0.2, 0.3)
     plt.show()
 
 
