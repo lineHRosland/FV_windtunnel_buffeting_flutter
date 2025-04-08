@@ -273,8 +273,11 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
 
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
 
-            Vred_global = [V/(omega_old[j]*B)] * 32  # reduced velocity for global
-                # Formatet på Vred_global må matche Vred_local
+            if single:
+                Vred_global = [V/(omega_old[j]*B)] * 8  # reduced velocity for global
+                    # Formatet på Vred_global må matche Vred_local
+            else:
+                Vred_global = [V/(omega_old[j]*B)] * 32
 
             for _ in range(max_iter):
                 print("omega_ref", omega_old[j])
