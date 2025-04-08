@@ -268,7 +268,10 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
     V_list = np.linspace(0, 80, N) #m/s
 
     for i, V in enumerate(V_list):
-        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
+        if single:
+            omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
+        else:
+            omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) #Først brudekke 1, deretter brudekke 2
         damping_old = [zeta, zeta]
         eigvec_old = [None] * n_modes
         print("Vindhastighet iterasjon nr. " + str(i+1) + "som tilsvarer " + str(V) + " m/s")
@@ -357,14 +360,16 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
     Vred_local= np.linspace(np.max(v_all[:, 0]), np.min(v_all[:, 1]), N) #m/s reduce
 
     for i, V in enumerate(Vred_local): 
-        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
+        if single:
+            omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
+        else:
+            omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2])
         damping_old = [zeta, zeta]
         eigvec_old = [None] * n_modes
 
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
             V_red_local = [V]* 32
             for _ in range(max_iter):
-                print("omega_ref", omega_old[j])
                         
                 #Beregn nye Cae og Kae for denne omega[i]
                 if single:
@@ -401,9 +406,7 @@ def solve_omega(poly_coeff,v_all, m1, m2, f1, f2, B, rho, zeta, max_iter, eps, N
 
                     score = np.abs(omega_pos - omega_old[j]) + 5 * np.abs(damping_pos - damping_old[j])
                     idx2 = np.argmin(score)
-                
-                    print("idx", idx)
-                    print("idx2", idx2)
+
 
                 λj = eigvals_pos[idx]
                 φj = eigvecs_pos[:, idx]
@@ -516,11 +519,13 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
         plt.plot(V_list, damping_ratios[:,j], color=colors[j], linestyle="--")
 
     plt.axhline(0, linestyle="--", color="black", linewidth=1.1, label="Kritisk demping")
-    plt.xlabel("Vindhastighet [m/s]")
-    plt.ylabel("Dempingsforhold")
-    plt.title(title)
+    plt.xlabel("Vindhastighet [m/s]", fontsize=14)
+    plt.ylabel("Dempingsforhold [-]", fontsize=14)
+    plt.title(title, fontsize=16)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.legend(fontsize=14)
     plt.grid(True, linestyle='--', linewidth=0.5)
-    plt.legend()
     plt.tight_layout()
     plt.show()
 
@@ -570,10 +575,12 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, omega_all_local = N
         plt.plot(Vred_local*omega_local[:,j]*B, frequencies_local[:,j], label=labels[j], color=colors[j])
         plt.plot(V_list, frequencies[:,j], color=colors[j], linestyle="--")
  
-    plt.xlabel("Vindhastighet [m/s]")
-    plt.ylabel("Egenfrekvens [Hz]")
-    plt.title(title)
-    plt.legend()
+    plt.xlabel("Vindhastighet [m/s]", fontsize=14)
+    plt.ylabel("Egenfrekvens [Hz]", fontsize=14)
+    plt.title(title, fontsize=16)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.legend(fontsize=14)
     plt.grid(True, which='both', linestyle='--', linewidth=0.5)
     plt.tight_layout()
     plt.show()
