@@ -6,7 +6,7 @@ Created in April 2025
 """
 
 import numpy as np
-import scipy.linalg as la
+from scipy import linalg as spla
 import matplotlib.pyplot as plt
 
 
@@ -34,26 +34,23 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     --------
     eigvals : ndarray
         Eigenvalues λ (complex), shape (n_dof*2,)
-    """
-    #State space mer relevant for tidsdomene ??
-
-    
+    """   
     C = C_struc - C_aero
     K = K_struc - K_aero
 
-    n = M_struc.shape[0]
-    I = np.eye(n)
-
-    # P og Q 
-    P = np.block([[C, K],
-                [I, np.zeros((n, n))]])
-
-    Q = np.block([[-M_struc, np.zeros((n, n))],
-                [np.zeros((n, n)), I]])
+    print("C", C)
+    print("K", K)
     
-   
-    eigvals, eigvecs = la.eig(P, Q)
+    # State-space A-matrix
+    A = np.block([
+        [np.zeros_like(M_struc), np.eye(M_struc.shape[0])],
+        [-np.linalg.inv(M_struc) @ K, -np.linalg.inv(M_struc) @ C]
+    ])
 
+    # Solve the eigenvalue problem  
+    eigvals, eigvecs = spla.eig(A)
+
+    print("SE HER", eigvals)
     return eigvals, eigvecs
 
 def structural_matrices(m1, m2, f1, f2, zeta, single = True):
@@ -329,12 +326,8 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                         idx = np.argmin(score)
                     else:
                         # Calculate similarity with previous eigenvector
-                        if eigvecs_pos.shape[1] == 0:
-                            print("Ingen komplekse egenverdier — hopper over denne iterasjonen.")
-                            continue   
-                        else:
-                            similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
-                            idx = np.argmax(similarities)
+                        similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
+                        idx = np.argmax(similarities)
                         # Calculate similarity with previous damping and frequency
                         score = np.abs(omega_pos - omega_old[j]) + np.abs(damping_pos - damping_old[j]) # Kan kanskje vurdere å vekte de ulikt ??
                         idx2 = np.argmin(score)
