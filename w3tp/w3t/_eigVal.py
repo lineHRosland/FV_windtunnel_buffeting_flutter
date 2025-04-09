@@ -15,7 +15,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
     Løser generalisert eigenverdiproblem for gitt system.
     
-    [ -λ² M + λ(C - Cae) + (K - Kae) ] φ = 0
+    [ -λ² M + λ(C + Cae) + (K + Kae) ] φ = 0
 
     Parameters:
     -----------
@@ -37,16 +37,24 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
     n = M_struc.shape[0] # n = 2: single deck, n = 4: twin deck
 
+    C_aero = np.atleast_2d(C_aero)
+    K_aero = np.atleast_2d(K_aero)
     
-    print
     A = -la.block_diag(M_struc, np.eye(n))
     B = np.block([
         [C_struc - C_aero, K_struc - K_aero],
         [-np.eye(n), np.zeros((n, n))]
     ])
 
-    eigvals, eigvec = la.eig(B, A)
-    return eigvals, eigvec
+    # eigvals, eigvecs = la.eig(B, A)
+
+
+    #MIDLERTIDIG LØSNING DEBUGGE
+    A_inv_B = np.linalg.solve(A,B)
+    eigvals, eigvecs = np.linalg.eig(A_inv_B)
+    print("NEW λ = ", eigvals)
+    print("Im parts =", np.imag(eigvals))
+    return eigvals, eigvecs
 
 def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     """
@@ -107,7 +115,7 @@ def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     return Ms, Cs, Ks
 
 
-def cae_kae_single(poly_coeff, V, B):
+def cae_kae_single(poly_coeff, Vred_global, B):
     """
     Evaluates the 8 aerodynamic derivatives for single-deck bridges.
 
@@ -128,14 +136,14 @@ def cae_kae_single(poly_coeff, V, B):
         Dimensionless aerodynamic stiffness matrix.
     """
 
-    
+    Vred_global = float(Vred_global) 
     #Damping and stiffness matrices
     C_aeN_star = np.zeros((2, 2)) #Dimensionless
     K_aeN_star = np.zeros((2, 2)) #Dimensionless
 
     # AD
-    H1, H2, H3, H4 = np.polyval(poly_coeff[0], V[0]), np.polyval(poly_coeff[1], V[1]), np.polyval(poly_coeff[2], V[2]), np.polyval(poly_coeff[3], V[3])
-    A1, A2, A3, A4 = np.polyval(poly_coeff[4], V[4]), np.polyval(poly_coeff[5], V[5]), np.polyval(poly_coeff[6], V[6]), np.polyval(poly_coeff[7], V[7])
+    H1, H2, H3, H4 = np.polyval(poly_coeff[0], Vred_global), np.polyval(poly_coeff[1], Vred_global), np.polyval(poly_coeff[2], Vred_global), np.polyval(poly_coeff[3], Vred_global)
+    A1, A2, A3, A4 = np.polyval(poly_coeff[4], Vred_global), np.polyval(poly_coeff[5], Vred_global), np.polyval(poly_coeff[6], Vred_global), np.polyval(poly_coeff[7], Vred_global)
 
     C_aeN_star = np.array([
         [H1,       B * H2],
@@ -151,7 +159,7 @@ def cae_kae_single(poly_coeff, V, B):
 
 
 
-def cae_kae_twin(poly_coeff, V, B):
+def cae_kae_twin(poly_coeff, Vred_global, B):
     """
     Evaluates all 32 aerodynamic derivatives at given reduced velocities.
 
@@ -172,16 +180,16 @@ def cae_kae_twin(poly_coeff, V, B):
         Non-dimensional aerodynamic stiffness matrix.
     """
 
-
+    Vred_global = float(Vred_global) 
     # AD
-    c_z1z1, c_z1θ1, c_z1z2, c_z1θ2 = np.polyval(poly_coeff[0],V[0]), np.polyval(poly_coeff[1],V[1]), np.polyval(poly_coeff[2],V[2]), np.polyval(poly_coeff[3],V[3])
-    c_θ1z1, c_θ1θ1, c_θ1z2, c_θ1θ2 = np.polyval(poly_coeff[4],V[4]), np.polyval(poly_coeff[5],V[5]), np.polyval(poly_coeff[6],V[6]), np.polyval(poly_coeff[7],V[7])
-    c_z2z1, c_z2θ1, c_z2z2, c_z2θ2 = np.polyval(poly_coeff[8],V[8]), np.polyval(poly_coeff[9],V[9]), np.polyval(poly_coeff[10],V[10]), np.polyval(poly_coeff[11],V[11])
-    c_θ2z1, c_θ2θ1, c_θ2z2, c_θ2θ2 = np.polyval(poly_coeff[12],V[12]), np.polyval(poly_coeff[13],V[13]), np.polyval(poly_coeff[14],V[14]), np.polyval(poly_coeff[15],V[15])
-    k_z1z1, k_z1θ1, k_z1z2, k_z1θ2 = np.polyval(poly_coeff[16],V[16]), np.polyval(poly_coeff[17],V[17]), np.polyval(poly_coeff[18],V[18]), np.polyval(poly_coeff[19],V[19])
-    k_θ1z1, k_θ1θ1, k_θ1z2, k_θ1θ2 = np.polyval(poly_coeff[20],V[20]), np.polyval(poly_coeff[21],V[21]), np.polyval(poly_coeff[22],V[22]), np.polyval(poly_coeff[23],V[23])
-    k_z2z1, k_z2θ1, k_z2z2, k_z2θ2 = np.polyval(poly_coeff[24],V[24]), np.polyval(poly_coeff[25],V[25]), np.polyval(poly_coeff[26],V[26]), np.polyval(poly_coeff[27],V[27])
-    k_θ2z1, k_θ2θ1, k_θ2z2, k_θ2θ2 = np.polyval(poly_coeff[28],V[28]), np.polyval(poly_coeff[29],V[29]), np.polyval(poly_coeff[30],V[30]), np.polyval(poly_coeff[31],V[31])
+    c_z1z1, c_z1θ1, c_z1z2, c_z1θ2 = np.polyval(poly_coeff[0],Vred_global), np.polyval(poly_coeff[1],Vred_global), np.polyval(poly_coeff[2],Vred_global), np.polyval(poly_coeff[3],Vred_global)
+    c_θ1z1, c_θ1θ1, c_θ1z2, c_θ1θ2 = np.polyval(poly_coeff[4],Vred_global), np.polyval(poly_coeff[5],Vred_global), np.polyval(poly_coeff[6],Vred_global), np.polyval(poly_coeff[7],Vred_global)
+    c_z2z1, c_z2θ1, c_z2z2, c_z2θ2 = np.polyval(poly_coeff[8],Vred_global), np.polyval(poly_coeff[9],Vred_global), np.polyval(poly_coeff[10],Vred_global), np.polyval(poly_coeff[11],Vred_global)
+    c_θ2z1, c_θ2θ1, c_θ2z2, c_θ2θ2 = np.polyval(poly_coeff[12],Vred_global), np.polyval(poly_coeff[13],Vred_global), np.polyval(poly_coeff[14],Vred_global), np.polyval(poly_coeff[15],Vred_global)
+    k_z1z1, k_z1θ1, k_z1z2, k_z1θ2 = np.polyval(poly_coeff[16],Vred_global), np.polyval(poly_coeff[17],Vred_global), np.polyval(poly_coeff[18],Vred_global), np.polyval(poly_coeff[19],Vred_global)
+    k_θ1z1, k_θ1θ1, k_θ1z2, k_θ1θ2 = np.polyval(poly_coeff[20],Vred_global), np.polyval(poly_coeff[21],Vred_global), np.polyval(poly_coeff[22],Vred_global), np.polyval(poly_coeff[23],Vred_global)
+    k_z2z1, k_z2θ1, k_z2z2, k_z2θ2 = np.polyval(poly_coeff[24],Vred_global), np.polyval(poly_coeff[25],Vred_global), np.polyval(poly_coeff[26],Vred_global), np.polyval(poly_coeff[27],Vred_global)
+    k_θ2z1, k_θ2θ1, k_θ2z2, k_θ2θ2 = np.polyval(poly_coeff[28],Vred_global), np.polyval(poly_coeff[29],Vred_global), np.polyval(poly_coeff[30],Vred_global), np.polyval(poly_coeff[31],Vred_global)
 
     C_ae_star = np.array([
         [c_z1z1,       B * c_z1θ1,       c_z1z2,       B * c_z1θ2],
@@ -246,7 +254,7 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
     damping_ratios = [[] for _ in range(n_modes)]
     omega_all = [[] for _ in range(n_modes)]
 
-    V_list = np.linspace(0, 100, N) #m/s
+    V_list = np.linspace(0, 300, N) #m/s
 
     skip_mode = [False] * n_modes   # skip mode once flutter is detected
 
@@ -258,54 +266,56 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
         damping_old = [zeta]*n_modes
         eigvec_old = [None] * n_modes
 
-        if V == 0:
-            for j in range(n_modes):
-                    
-                I = np.eye(Ms.shape[0])  # Identity matrix
-                lambda_j = -damping_old[j] * omega_old[j] + 1j * omega_old[j] * np.sqrt(1 - damping_old[j]**2)
-                omega_all[j].append(omega_old[j])
-                damping_ratios[j].append(damping_old[j])
-                eigvals_all[j].append(lambda_j)  # or np.nan
-                eigvecs_all[j].append(I[:, j])
-        else:
-            print(f"Wind speed iteration {i+1}: V = {V} m/s")
+  
+       
+        print(f"Wind speed iteration {i+1}: V = {V} m/s")
 
-            for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
-                print(f"Mode iteration {j+1}")
+        for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
+            print(f"Mode iteration {j+1}")
 
-                if skip_mode[j]:
-                    omega_all[j].append(np.nan)
-                    damping_ratios[j].append(np.nan)
-                    eigvals_all[j].append(np.nan)
-                    eigvecs_all[j].append(np.nan)
-                    continue  # Go to next mode if flutter is detected
+            if skip_mode[j]:
+                omega_all[j].append(np.nan)
+                damping_ratios[j].append(np.nan)
+                eigvals_all[j].append(np.nan)
+                eigvecs_all[j].append(np.nan)
+                continue  # Go to next mode if flutter is detected
+
+            if single:
+                Vred_global = V/(omega_old[j]*B) # reduced velocity for global
+            else:
+                Vred_global = V/(omega_old[j]*B)
+
+            converge = False
+            while converge != True:
+                print("omega_ref", omega_old[j])
 
                 if single:
-                    Vred_global = [V/(omega_old[j]*B)] * 8  # reduced velocity for global
+                    C_star, K_star = cae_kae_single(poly_coeff, Vred_global, B)
                 else:
-                    Vred_global = [V/(omega_old[j]*B)] * 32
+                    C_star, K_star = cae_kae_twin(poly_coeff, Vred_global, B)
 
-                converge = False
-                while converge != True:
-                    print("omega_ref", omega_old[j])
+                C_aero = 0.5 * rho * B**2 * omega_old[j] * C_star
+                K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
 
-                    if single:
-                        C_star, K_star = cae_kae_single(poly_coeff, Vred_global, B)
-                    else:
-                        C_star, K_star = cae_kae_twin(poly_coeff, Vred_global, B)
-
-                    C_aero = 0.5 * rho * B**2 * omega_old[j] * C_star
-                    K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
+                print("C_aero", C_aero)
+                print("K_aero", K_aero)
                 
-                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
+                eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
 
                 
-                    print("eigvals", eigvals)
+                print("eigvals", eigvals)
 
-                    if np.all(np.imag(eigvals) == 0):
-                        print("WARNING: No complex eigenvalues – no oscillations!")
+                if np.all(np.imag(eigvals) == 0):
+                        print(f"At wind speed {V} m/s, no complex eigenvalues found for mode {j+1}.")
+                        converge = True
+                        I = np.eye(Ms.shape[0])  # Identity matrix
+                        lambda_j = -damping_old[j] * omega_old[j] + 1j * omega_old[j] * np.sqrt(1 - damping_old[j]**2)
 
-                    
+                        omega_all[j].append(omega_old[j])
+                        damping_ratios[j].append(damping_old[j])
+                        eigvals_all[j].append(lambda_j)  # or np.nan
+                        eigvecs_all[j].append(I[:, j])
+                else:
                     # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
                     eigvals_pos = eigvals[np.imag(eigvals) > 0]
                     eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  
@@ -393,7 +403,7 @@ def solve_flutter_speed(damping_ratios, N = 100, single = True):
     n_modes = 2 if single else 4
     flutter_speed_modes = [None] * n_modes
     flutter_idx_modes = [None] * n_modes
-    V_list = np.linspace(0, 100, N)
+    V_list = np.linspace(0, 300, N)
 
     for j in range(n_modes):
         for i, V in enumerate(V_list):
@@ -433,7 +443,7 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
         Whether single-deck (2 modes) or twin-deck (4 modes).
     """
 
-    V_list = np.linspace(0, 100, N)  # m/s
+    V_list = np.linspace(0, 300, N)  # m/s
 
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
@@ -487,7 +497,7 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist"
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
     frequencies = omega_all / (2 * np.pi)       # Convert to Hz
-    V_list = np.linspace(0, 100, N)             # Wind speed [m/s]
+    V_list = np.linspace(0, 300, N)             # Wind speed [m/s]
 
     plt.figure(figsize=(10, 6))
 
