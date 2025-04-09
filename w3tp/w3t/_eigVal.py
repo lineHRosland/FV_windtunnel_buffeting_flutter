@@ -330,10 +330,10 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                         similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
                         idx = np.argmax(similarities)
 
-                    score = np.abs(omega_pos - omega_old[j]) + 5 * np.abs(damping_pos - damping_old[j])
+                    score = np.abs(omega_pos - omega_old[j]) + np.abs(damping_pos - damping_old[j]) # Kan kanskje vurdere å vekte de ulikt ??
                     idx2 = np.argmin(score)
                 
-                    print("idx", idx) # Bare for å sjekke om disse sjekkeen valgte ulike idx-er
+                    print("idx", idx) # Bare for å sjekke om disse sjekkene valgte ulike idx-er
                     print("idx2", idx2)
 
                 λj = eigvals_pos[idx]
@@ -345,8 +345,10 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                 # Sjekk konvergens for mode
                 if np.abs(omega_new - omega_old[j]) < eps:
                     converge = True
+                
                     # Legg til kryssings-sjekk: Når flutter har oppstått trenger vi ikke øke hastigheten noe ytterligere
-                    sign_changes = np.where(np.diff(np.sign(damping_ratios[j])) != 0)[0]
+                    tmp_damping = damping_ratios[j] + [damping_new]
+                    sign_changes = np.where(np.diff(np.sign(tmp_damping)) != 0)[0]
                     if len(sign_changes) >= 2:
                         omega_all[j].append(np.nan)
                         damping_ratios[j].append(np.nan)
@@ -405,7 +407,7 @@ def solve_flutter_speed( damping_ratios, N = 100, single = True):
      
 
      
-def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all,  dist="Fill in dist",N = 100, single = True):
+def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all,  dist="Fill in dist", N = 100, single = True):
     """
     Plot damping ratios as a function of wind speed, and mark AD-validity range.
 
@@ -431,32 +433,29 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
     damping_ratios = np.array(damping_ratios).T  # shape (N, 2/4)
     omega_all = np.array(omega_all).T  # shape (N, n_modes)
 
-    V_list = np.linspace(0, 100, N) #m/s
+    V_list = np.linspace(0, 100, N)  # m/s
 
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
-
 
     plt.figure(figsize=(10, 6))
 
     if single:
         n_modes = 2 
-        title = f"Demping vs. vindhastighet - {dist}"
-
+        title = f"Damping vs. wind speed - {dist}"
     else:
         n_modes = 4
-        title = f"Demping vs. vindhastighet - {dist}"
+        title = f"Damping vs. wind speed - {dist}"
 
-        
     for j in range(n_modes):
         target_value = np.min(Vred_defined[:, 1])
-        idx = np.argmax(V_list/(omega_all[:,j]*B) >= target_value)
-        plt.plot(V_list[:idx], damping_ratios[:idx,j], label=labels[j], color=colors[j],alpha=0.5)
-        plt.plot(V_list, damping_ratios[:,j], color=colors[j], linestyle="--",alpha=0.5)
+        idx = np.argmax(V_list / (omega_all[:, j] * B) >= target_value)
+        plt.plot(V_list[:idx], damping_ratios[:idx, j], label=labels[j], color=colors[j], alpha=0.5)
+        plt.plot(V_list, damping_ratios[:, j], color=colors[j], linestyle="--", alpha=0.5)
 
-    plt.axhline(0, linestyle="--", color="black", linewidth=1.1, label="Kritisk demping")
-    plt.xlabel("Vindhastighet [m/s]", fontsize=16)
-    plt.ylabel("Dempingsforhold [-]", fontsize=16)
+    plt.axhline(0, linestyle="--", color="black", linewidth=1.1, label="Critical damping")
+    plt.xlabel("Wind speed [m/s]", fontsize=16)
+    plt.ylabel("Damping ratio [-]", fontsize=16)
     plt.title(title, fontsize=18)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
@@ -466,9 +465,7 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
     plt.ylim(-0.2, 0.3)
     plt.show()
 
-
-
-def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist",N = 100, single = True):
+def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist", N = 100, single = True):
     """
     Plots natural frequencies as a function of wind speed, marking valid AD regions.
 
@@ -489,33 +486,251 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist"
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
-    omega_all = np.array(omega_all).T           # shape (N, 2)
-    frequencies = omega_all/(2*np.pi)  # shape (N, 2)
-    V_list = np.linspace(0, 100, N) #m/s
+    omega_all = np.array(omega_all).T           # shape (N, 2/4)
+    frequencies = omega_all / (2 * np.pi)       # Convert to Hz
+    V_list = np.linspace(0, 100, N)             # Wind speed [m/s]
 
     plt.figure(figsize=(10, 6))
 
     if single:
         n_modes = 2 
-        title = f"Egenfrekvenser vs vindhastighet - {dist}"
+        title = f"Natural frequencies vs wind speed - {dist}"
     else:
         n_modes = 4
-        title = f"Egenfrekvenser vs vindhastighet - {dist}"
+        title = f"Natural frequencies vs wind speed - {dist}"
 
     for j in range(n_modes):
         target_value = np.min(Vred_defined[:, 1])
-        idx = np.argmax(V_list/(omega_all[:,j]*B) >= target_value)
-        plt.plot(V_list[:idx], frequencies[:idx,j], label=labels[j], color=colors[j],alpha=0.5)
-        plt.plot(V_list, frequencies[:,j], color=colors[j], linestyle="--",alpha=0.5)
- 
-    plt.xlabel("Vindhastighet [m/s]", fontsize=16)
-    plt.ylabel("Egenfrekvens [Hz]", fontsize=16)
+        idx = np.argmax(V_list / (omega_all[:, j] * B) >= target_value)
+        plt.plot(V_list[:idx], frequencies[:idx, j], label=labels[j], color=colors[j], alpha=0.5)
+        plt.plot(V_list, frequencies[:, j], color=colors[j], linestyle="--", alpha=0.5)
+
+    plt.xlabel("Wind speed [m/s]", fontsize=16)
+    plt.ylabel("Natural frequency [Hz]", fontsize=16)
     plt.title(title, fontsize=18)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     plt.legend(fontsize=14)
     plt.grid(True, which='both', linestyle='--', linewidth=0.5)
     plt.tight_layout()
-    plt.ylim(0, 0.5)
-
+    plt.ylim(0, 0.25)
     plt.show()
+
+# def plot_flutter_mode_shape(eigvecs_all, damping_ratios, dist="Fill in dist"):
+#     print("eigvec",eigvecs_all)
+#     n_dof = len(eigvecs_all[0])  # Antall DOF (2 for single deck, 4 for twin deck)
+#     # DOF 0 og 1 = vertikal og torsjon for fremste bro
+#     # DOF 2 og 3 = vertikal og torsjon for bakre bro
+
+#     for j in range(n_dof):
+#         damp = np.array(damping_ratios[:,j])
+#         flutter_idx = np.argmax(damp < 0)  # første gang dempingen går under null
+#         flutter_vec = eigvecs_all[flutter_idx,j]
+
+#         plot_flutter_mode_shape(flutter_vec, title=f"Vibrasjonsform ved flutter for mode {j+1}")
+
+#     fig, ax = plt.subplots()
+    
+#     # Plott hver komponent av egenvektoren
+#     dof_labels = [f"DOF {i+1}" for i in range(n_dof)]
+#     magnitudes = np.abs(flutter_vec)  # størrelsen på utslagene
+#     phases = np.angle(flutter_vec)    # faseforskjeller
+
+#     ax.bar(dof_labels, magnitudes, color='skyblue')
+#     ax.set_ylabel("Amplitude [-]")
+#     ax.set_title(f"Vibrasjonsform ved flutter - {dist}", fontsize=16)
+#     ax.grid(True)
+
+#     for i, phase in enumerate(phases):
+#         ax.text(i, magnitudes[i] + 0.01, f"fase={np.round(np.degrees(phase),1)}°", ha='center', fontsize=10)
+
+#     plt.tight_layout()
+#     plt.show()
+
+
+# #def plot_compare_with_single():
+
+# #def plot_compare_with_dist():
+
+# def plot_flutter_mode_shape(phi, labels=['$z$', r'$\theta$'], title='Flutter mode shape'):
+#     """
+#     Plot vertical and torsional components of the flutter mode shape.
+
+#     Parameters
+#     ----------
+#     phi : ndarray of shape (2,)
+#         Eigenvector (real or complex) corresponding to flutter mode.
+#     labels : list of str
+#         Labels for z and θ components.
+#     title : str
+#         Plot title.
+#     """
+#     phi = np.array(phi).flatten()
+
+#     # Normaliser til maks 1
+#     phi_norm = phi / np.max(np.abs(phi))
+
+#     z = phi_norm[0]
+#     theta = phi_norm[1]
+
+#     fig, ax = plt.subplots(figsize=(8,4))
+
+#     # Plott realdel og imaginærdel
+#     ax.bar([0, 1], [np.real(z), np.real(theta)], width=0.3, label='Real part', color='tab:blue', alpha=0.7)
+#     ax.bar([0.4, 1.4], [np.imag(z), np.imag(theta)], width=0.3, label='Imag part', color='tab:orange', alpha=0.7)
+
+#     ax.set_xticks([0.2, 1.2])
+#     ax.set_xticklabels(labels, fontsize=13)
+#     ax.set_ylabel("Amplitude (normalized)", fontsize=13)
+#     ax.set_title(title, fontsize=14)
+#     ax.legend()
+#     ax.grid(True, linestyle='--', alpha=0.5)
+#     plt.tight_layout()
+#     plt.show()
+# def plot_flutter_mode_shape_twin(phi, labels=['$z_1$', r'$\theta_1$', '$z_2$', r'$\theta_2$'], title='Flutter mode shape'):
+#     """
+#     Plot vertical and torsional components of the flutter mode shape for twin-deck.
+
+#     Parameters
+#     ----------
+#     phi : ndarray of shape (4,)
+#         Eigenvector (real or complex) corresponding to flutter mode.
+#     labels : list of str
+#         DOF labels.
+#     title : str
+#         Plot title.
+#     """
+#     phi = np.array(phi).flatten()
+#     phi_norm = phi / np.max(np.abs(phi))
+
+#     fig, ax = plt.subplots(figsize=(10,4))
+
+#     ax.bar(np.arange(4)-0.15, np.real(phi_norm), width=0.3, label='Real part', color='tab:blue', alpha=0.7)
+#     ax.bar(np.arange(4)+0.15, np.imag(phi_norm), width=0.3, label='Imag part', color='tab:orange', alpha=0.7)
+
+#     ax.set_xticks(np.arange(4))
+#     ax.set_xticklabels(labels, fontsize=13)
+#     ax.set_ylabel("Amplitude (normalized)", fontsize=13)
+#     ax.set_title(title, fontsize=14)
+#     ax.legend()
+#     ax.grid(True, linestyle='--', alpha=0.5)
+#     plt.tight_layout()
+#     plt.show()
+
+# # Order DOFs [z1, tetha1, z2, tetha2]
+# # Each eigenvec has 4 components, corresponding to the two modes of the two decks.
+
+# def plot_mode_shape(phi, dist='TBD', title='Flutter mode shape', show_phase=True):
+#     """
+#     Plot vertical and torsional components of a flutter mode shape (eigenvector) for twin-deck bridge.
+
+#     Parameters:
+#     -----------
+#     phi : ndarray
+#         Eigenvector with 4 components [z1, θ1, z2, θ2]
+#     dist : str
+#         Deck separation label (e.g. "1D", "2D")
+#     title : str
+#         Plot title
+#     show_phase : bool
+#         Whether to plot real & imag parts separately (True) or just magnitude (False)
+#     """
+#     assert len(phi) == 4, "Eigenvector must have 4 components for twin-deck [z1, θ1, z2, θ2]"
+
+#     # Normaliser slik at maksverdi = 1 (bruk modulus hvis kompleks)
+#     scale = np.max(np.abs(phi))
+#     phi_norm = phi / scale
+
+#     # Pakk ut
+#     z1, theta1, z2, theta2 = phi_norm
+
+#     fig, axs = plt.subplots(1, 1, figsize=(8, 4))
+#     x = ['z₁', 'θ₁', 'z₂', 'θ₂']
+    
+#     if show_phase:
+#         axs.plot(x, np.real(phi_norm), 'o-', label='Real part')
+#         axs.plot(x, np.imag(phi_norm), 's--', label='Imag part')
+#     else:
+#         axs.bar(x, np.abs(phi_norm), color='gray', label='Magnitude')
+
+#     axs.axhline(0, color='black', linestyle='--', linewidth=0.8)
+#     axs.set_ylabel('Normalized amplitude [-]')
+#     axs.set_title(f"{title} ({dist})")
+#     axs.legend()
+#     axs.grid(True)
+#     plt.tight_layout()
+#     plt.show()
+
+#     # use:
+# phi_flutter = eigvecs_all[j][-1]  # siste lagrede egenvektor for mode j
+# plot_mode_shape(phi_flutter, dist='2D')
+
+
+# def plot_flutter_mode_shape(eigvecs_all, damping_ratios, V_list, mode_labels=["z1", "θ1", "z2", "θ2"]):
+#     """
+#     Plot mode shape (eigenvector components) at flutter onset.
+
+#     Parameters
+#     ----------
+#     eigvecs_all : list of arrays
+#         List with eigenvectors (complex) per mode, length N.
+#     damping_ratios : list of arrays
+#         Corresponding damping values (real), same shape.
+#     V_list : array
+#         Wind speed values corresponding to each result.
+#     mode_labels : list of str
+#         Labels for the degrees of freedom, default: ["z1", "θ1", "z2", "θ2"].
+#     """
+#     import matplotlib.pyplot as plt
+#     import numpy as np
+
+#     n_modes = len(damping_ratios)
+#     for j in range(n_modes):
+#         damping = np.array(damping_ratios[j])
+#         flutter_idx = np.argmax(damping < 0)  # Første gang dempingen går under null
+#         if flutter_idx == 0:
+#             continue  # hopp over hvis den er negativ helt fra start
+
+#         φ_flutter = eigvecs_all[j][flutter_idx]
+#         φ_flutter = φ_flutter / np.max(np.abs(φ_flutter))  # normaliser til maks = 1
+
+#         plt.figure(figsize=(8, 5))
+#         plt.plot(np.real(φ_flutter), 'o-', label='Real part')
+#         plt.plot(np.imag(φ_flutter), 's--', label='Imag part')
+#         plt.xticks(np.arange(len(φ_flutter)), mode_labels)
+#         plt.title(f"Mode shape at flutter (mode {j+1}) – V = {V_list[flutter_idx]:.2f} m/s")
+#         plt.ylabel("Normalized amplitude")
+#         plt.grid(True)
+#         plt.legend()
+#         plt.tight_layout()
+#         plt.show()
+# def plot_mode_shape_bar(phi, mode_labels=["z1", "θ1", "z2", "θ2"], title="Flutter mode shape"):
+#     """
+#     Bar plot for mode shape (real and imaginary parts).
+
+#     Parameters
+#     ----------
+#     phi : array
+#         Complex eigenvector.
+#     mode_labels : list
+#         Labels for each degree of freedom.
+#     """
+#     phi = phi / np.max(np.abs(phi))  # normalize
+#     real = np.real(phi)
+#     imag = np.imag(phi)
+
+#     x = np.arange(len(phi))
+#     width = 0.35
+
+#     fig, ax = plt.subplots(figsize=(8, 5))
+#     ax.bar(x - width/2, real, width, label='Real part', alpha=0.7)
+#     ax.bar(x + width/2, imag, width, label='Imag part', alpha=0.7)
+    
+#     ax.set_xticks(x)
+#     ax.set_xticklabels(mode_labels)
+#     ax.set_ylabel("Normalized amplitude")
+#     ax.set_title(title)
+#     ax.legend()
+#     ax.grid(True, linestyle='--', alpha=0.5)
+#     plt.tight_layout()
+#     plt.show()

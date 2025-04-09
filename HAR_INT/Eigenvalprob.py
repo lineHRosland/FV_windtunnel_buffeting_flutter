@@ -17,17 +17,17 @@ file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Arrays_AD"
 
 B = 0.365 # m, section width !! Denne må endres
 
-# Values from FEM-model
-ms1 = 50 #kg, vertical
-ms2 = 15 #kg, torsion
-fs1 = 0.11042 #Hz, vertical MODE 3
-fs2 = 0.0979904 #Hz, torsion
+# Values from FEM-model (Pure structural modes in still air)
+ms1 = 50 #kg, vertical !! Denne må endres
+ms2 = 15 #kg, torsion !! Denne må endres
+fs1 = 0.11042 #Hz, vertical MODE 3 !! Denne må endres
+fs2 = 0.0979904 #Hz, torsion !! Denne må endres
 
 ws1 = 2*np.pi*fs1 # rad/s, vertical FØRSTE ITERASJON
 ws2 = 2*np.pi*fs2 # rad/s, torsion FØRSTE ITERASJON
 
 zeta = 0.005 # 0.5 %, critical damping
-rho = 1.225 # kg/m^3, air density
+rho = 1.225 # kg/m^3, air density ??
 
 
 scale = 1/50
