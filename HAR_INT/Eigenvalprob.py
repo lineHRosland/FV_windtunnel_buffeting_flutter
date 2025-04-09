@@ -29,7 +29,7 @@ w1V = 2*np.pi*f1V # rad/s, vertical FØRSTE ITERASJON
 w2V = 2*np.pi*f2V # rad/s, vertical FØRSTE ITERASJON
 w1T = 2*np.pi*f1T # rad/s, torsion FØRSTE ITERASJON
 
-zeta = 0.005 # 0.5 %, critical damping
+zeta = 0.003 # 0.5 %, critical damping
 rho = 1.225 # kg/m^3, air density ??
 
 

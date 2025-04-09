@@ -38,9 +38,6 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     C = C_struc - C_aero
     K = K_struc - K_aero
 
-    print("C", C)
-    print("K", K)
-    
     # State-space A-matrix
     A = np.block([
         [np.zeros_like(M_struc), np.eye(M_struc.shape[0])],
@@ -50,7 +47,6 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     # Solve the eigenvalue problem  
     eigvals, eigvecs = spla.eig(A)
 
-    print("SE HER", eigvals)
     return eigvals, eigvecs
 
 def structural_matrices(m1, m2, f1, f2, zeta, single = True):
@@ -87,8 +83,8 @@ def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     k2 = (2 * np.pi * f2) ** 2 * m2  #  (Torsion)
     
     # Damping
-    c1 = 2 * zeta * m1 * np.sqrt(k1 * m1)  # (Vertical)
-    c2 = 2 * zeta * m2 * np.sqrt(k2 * m2)  # (Torsion)
+    c1 = 2 * zeta * m1 * np.sqrt(k1 / m1)  # (Vertical)
+    c2 = 2 * zeta * m2 * np.sqrt(k2 / m2)  # (Torsion)
 
     # Structural matrices, diagonal matrices in modal coordinates
     Ms = np.array([[m1,0],[0,m2]])  # Mass matrix
@@ -119,7 +115,7 @@ def cae_kae_single(poly_coeff, Vred_global, B):
     Parameters:
     -----------
     poly_coeff : ndarray, shape (8, 3)
-        Polynomial coefficients for H1–H4 and A1–A4 (aerodynamic derivatives).
+        Polynomial coefficients for H1-H4 and A1-A4 (aerodynamic derivatives).
     V : float
         Reduced velocity (non-dimensional).
     B : float
@@ -251,7 +247,7 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
     damping_ratios = [[] for _ in range(n_modes)]
     omega_all = [[] for _ in range(n_modes)]
 
-    V_list = np.linspace(0, 300, N) #m/s
+    V_list = np.linspace(0, 160, N) #m/s
 
     skip_mode = [False] * n_modes   # skip mode once flutter is detected
 
@@ -265,10 +261,10 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
 
   
        
-        print(f"Wind speed iteration {i+1}: V = {V} m/s")
+        #print(f"Wind speed iteration {i+1}: V = {V} m/s")
 
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
-            print(f"Mode iteration {j+1}")
+            #print(f"Mode iteration {j+1}")
 
             if skip_mode[j]:
                 omega_all[j].append(np.nan)
@@ -284,7 +280,7 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
 
             converge = False
             while converge != True:
-                print("omega_ref", omega_old[j])
+                #print("omega_ref", omega_old[j])
 
                 if single:
                     C_star, K_star = cae_kae_single(poly_coeff, Vred_global, B)
@@ -294,13 +290,13 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                 C_aero = 0.5 * rho * B**2 * omega_old[j] * C_star
                 K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
 
-                print("C_aero", C_aero)
-                print("K_aero", K_aero)
+                #print("C_aero", C_aero)
+                #print("K_aero", K_aero)
                 
                 eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
 
                 
-                print("eigvals", eigvals)
+                #print("eigvals", eigvals)
 
                 if np.all(np.imag(eigvals) == 0):
                         print(f"At wind speed {V} m/s, no complex eigenvalues found for mode {j+1}.")
@@ -308,8 +304,8 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                         I = np.eye(Ms.shape[0])  # Identity matrix
                         lambda_j = -damping_old[j] * omega_old[j] + 1j * omega_old[j] * np.sqrt(1 - damping_old[j]**2)
 
-                        omega_all[j].append(omega_old[j])
-                        damping_ratios[j].append(damping_old[j])
+                        omega_all[j].append(omega_old[j])  # or np.nan
+                        damping_ratios[j].append(damping_old[j])  # or np.nan
                         eigvals_all[j].append(lambda_j)  # or np.nan
                         eigvecs_all[j].append(I[:, j])
                 else:
@@ -396,7 +392,7 @@ def solve_flutter_speed(damping_ratios, N = 100, single = True):
     n_modes = 2 if single else 4
     flutter_speed_modes = [None] * n_modes
     flutter_idx_modes = [None] * n_modes
-    V_list = np.linspace(0, 300, N)
+    V_list = np.linspace(0, 160, N)
 
     for j in range(n_modes):
         for i, V in enumerate(V_list):
@@ -436,8 +432,8 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
         Whether single-deck (2 modes) or twin-deck (4 modes).
     """
 
-    V_list = np.linspace(0, 300, N)  # m/s
-
+    V_list = np.linspace(0, 160, N)  # m/s
+    linestyles = ['-', '--', ':', '-.']
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
@@ -453,8 +449,8 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
     for j in range(n_modes):
         target_value = np.min(Vred_defined[:, 1])
         idx = np.argmax(V_list / (omega_all[:, j] * B) >= target_value)
-        plt.plot(V_list[:idx], damping_ratios[:idx, j], label=labels[j], color=colors[j], alpha=0.5)
-        plt.plot(V_list, damping_ratios[:, j], color=colors[j], linestyle="--", alpha=0.5)
+        plt.plot(V_list[:idx], damping_ratios[:idx, j], label=labels[j], color=colors[j],  linestyle=linestyles[j], linewidth=1.5)
+        plt.plot(V_list, damping_ratios[:, j], color=colors[j], linestyle=linestyles[j], linewidth=1.5)
 
     plt.axhline(0, linestyle="--", color="black", linewidth=1.1, label="Critical damping")
     plt.xlabel("Wind speed [m/s]", fontsize=16)
@@ -465,7 +461,7 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
     plt.legend(fontsize=14)
     plt.grid(True, linestyle='--', linewidth=0.5)
     plt.tight_layout()
-    plt.ylim(-0.2, 0.3)
+    plt.ylim(-0.1, 0.1)
     plt.show()
 
 def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist", N = 100, single = True):
@@ -486,11 +482,12 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist"
         Number of points.
     single : bool
     """
+    linestyles = ['-', '--', ':', '-.']
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
     frequencies = omega_all / (2 * np.pi)       # Convert to Hz
-    V_list = np.linspace(0, 300, N)             # Wind speed [m/s]
+    V_list = np.linspace(0, 160, N)             # Wind speed [m/s]
 
     plt.figure(figsize=(10, 6))
 
@@ -504,8 +501,8 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist"
     for j in range(n_modes):
         target_value = np.min(Vred_defined[:, 1])
         idx = np.argmax(V_list / (omega_all[:, j] * B) >= target_value)
-        plt.plot(V_list[:idx], frequencies[:idx, j], label=labels[j], color=colors[j], alpha=0.5)
-        plt.plot(V_list, frequencies[:, j], color=colors[j], linestyle="--", alpha=0.5)
+        plt.plot(V_list[:idx], frequencies[:idx, j], label=labels[j], color=colors[j],  linestyle=linestyles[j], linewidth=1.5)
+        plt.plot(V_list, frequencies[:, j], color=colors[j], linestyle=linestyles[j], linewidth=1.5)
 
     plt.xlabel("Wind speed [m/s]", fontsize=16)
     plt.ylabel("Natural frequency [Hz]", fontsize=16)
@@ -515,13 +512,12 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist"
     plt.legend(fontsize=14)
     plt.grid(True, which='both', linestyle='--', linewidth=0.5)
     plt.tight_layout()
-    plt.ylim(0, 0.25)
+    plt.ylim(0.12, 0.16)
     plt.show()
 
     ############################################
 
 def plot_flutter_mode_shape(eigvecs_all, flutter_idx, dist="Fill in dist"):
-    print("eigvec",eigvecs_all)
     n_dof = len(eigvecs_all[0])  # Antall DOF (2 for single deck, 4 for twin deck)
     # DOF 0 og 1 = vertikal og torsjon for fremste bro
     # DOF 2 og 3 = vertikal og torsjon for bakre bro
