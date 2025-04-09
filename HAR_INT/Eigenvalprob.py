@@ -33,7 +33,7 @@ zeta = 0.005 # 0.5 %, critical damping
 rho = 1.225 # kg/m^3, air density ??
 
 
-N = 1000 # Number of steps in V_list
+N = 100 # Number of steps in V_list
 
 #%%
 #ITERATIVE BIMODAL EIGENVALUE APPROACH

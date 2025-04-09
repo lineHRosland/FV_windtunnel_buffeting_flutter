@@ -258,54 +258,53 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
         damping_old = [zeta]*n_modes
         eigvec_old = [None] * n_modes
 
-        if V == 0:
-            for j in range(n_modes):
-                    
-                I = np.eye(Ms.shape[0])  # Identity matrix
-                lambda_j = -damping_old[j] * omega_old[j] + 1j * omega_old[j] * np.sqrt(1 - damping_old[j]**2)
-                omega_all[j].append(omega_old[j])
-                damping_ratios[j].append(damping_old[j])
-                eigvals_all[j].append(lambda_j)  # or np.nan
-                eigvecs_all[j].append(I[:, j])
-        else:
-            print(f"Wind speed iteration {i+1}: V = {V} m/s")
+  
+       
+        print(f"Wind speed iteration {i+1}: V = {V} m/s")
 
-            for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
-                print(f"Mode iteration {j+1}")
+        for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
+            print(f"Mode iteration {j+1}")
 
-                if skip_mode[j]:
-                    omega_all[j].append(np.nan)
-                    damping_ratios[j].append(np.nan)
-                    eigvals_all[j].append(np.nan)
-                    eigvecs_all[j].append(np.nan)
-                    continue  # Go to next mode if flutter is detected
+            if skip_mode[j]:
+                omega_all[j].append(np.nan)
+                damping_ratios[j].append(np.nan)
+                eigvals_all[j].append(np.nan)
+                eigvecs_all[j].append(np.nan)
+                continue  # Go to next mode if flutter is detected
+
+            if single:
+                Vred_global = [V/(omega_old[j]*B)] * 8  # reduced velocity for global
+            else:
+                Vred_global = [V/(omega_old[j]*B)] * 32
+
+            converge = False
+            while converge != True:
+                print("omega_ref", omega_old[j])
 
                 if single:
-                    Vred_global = [V/(omega_old[j]*B)] * 8  # reduced velocity for global
+                    C_star, K_star = cae_kae_single(poly_coeff, Vred_global, B)
                 else:
-                    Vred_global = [V/(omega_old[j]*B)] * 32
+                    C_star, K_star = cae_kae_twin(poly_coeff, Vred_global, B)
 
-                converge = False
-                while converge != True:
-                    print("omega_ref", omega_old[j])
-
-                    if single:
-                        C_star, K_star = cae_kae_single(poly_coeff, Vred_global, B)
-                    else:
-                        C_star, K_star = cae_kae_twin(poly_coeff, Vred_global, B)
-
-                    C_aero = 0.5 * rho * B**2 * omega_old[j] * C_star
-                    K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
+                C_aero = 0.5 * rho * B**2 * omega_old[j] * C_star
+                K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
                 
-                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
+                eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
 
                 
-                    print("eigvals", eigvals)
+                print("eigvals", eigvals)
 
-                    if np.all(np.imag(eigvals) == 0):
-                        print("WARNING: No complex eigenvalues – no oscillations!")
+                if np.all(np.imag(eigvals) == 0):
+                        print(f"At wind speed {V} m/s, no complex eigenvalues found for mode {j+1}.")
+                        converge = False
+                        I = np.eye(Ms.shape[0])  # Identity matrix
+                        lambda_j = -damping_old[j] * omega_old[j] + 1j * omega_old[j] * np.sqrt(1 - damping_old[j]**2)
 
-                    
+                        omega_all[j].append(omega_old[j])
+                        damping_ratios[j].append(damping_old[j])
+                        eigvals_all[j].append(lambda_j)  # or np.nan
+                        eigvecs_all[j].append(I[:, j])
+                else:
                     # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
                     eigvals_pos = eigvals[np.imag(eigvals) > 0]
                     eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  
