@@ -36,7 +36,7 @@ rho = 1.225 # kg/m^3, air density ??
 
 #%%
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
-eps = 20 # Konvergensterskel
+eps = 1e-6 # Konvergensterskel
 
 #%%
 #Single deck

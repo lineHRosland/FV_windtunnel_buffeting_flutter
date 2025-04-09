@@ -15,7 +15,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
     Løser generalisert eigenverdiproblem for gitt system.
     
-    [ -λ² M + λ(C + Cae) + (K + Kae) ] φ = 0
+    [ -λ² M + λ(C - Cae) + (K - Kae) ] φ = 0
 
     Parameters:
     -----------
@@ -35,25 +35,25 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     eigvals : ndarray
         Eigenvalues λ (complex), shape (n_dof*2,)
     """
-    n = M_struc.shape[0] # n = 2: single deck, n = 4: twin deck
+    #State space mer relevant for tidsdomene ??
 
-    C_aero = np.atleast_2d(C_aero)
-    K_aero = np.atleast_2d(K_aero)
     
-    A = -la.block_diag(M_struc, np.eye(n))
-    B = np.block([
-        [C_struc - C_aero, K_struc - K_aero],
-        [-np.eye(n), np.zeros((n, n))]
-    ])
+    C = C_struc - C_aero
+    K = K_struc - K_aero
 
-    # eigvals, eigvecs = la.eig(B, A)
+    n = M_struc.shape[0]
+    I = np.eye(n)
 
+    # P og Q 
+    P = np.block([[C, K],
+                [I, np.zeros((n, n))]])
 
-    #MIDLERTIDIG LØSNING DEBUGGE
-    A_inv_B = np.linalg.solve(A,B)
-    eigvals, eigvecs = np.linalg.eig(A_inv_B)
-    print("NEW λ = ", eigvals)
-    print("Im parts =", np.imag(eigvals))
+    Q = np.block([[-M_struc, np.zeros((n, n))],
+                [np.zeros((n, n)), I]])
+    
+   
+    eigvals, eigvecs = la.eig(P, Q)
+
     return eigvals, eigvecs
 
 def structural_matrices(m1, m2, f1, f2, zeta, single = True):
