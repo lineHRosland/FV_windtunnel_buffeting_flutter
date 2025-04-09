@@ -33,7 +33,6 @@ zeta = 0.005 # 0.5 %, critical damping
 rho = 1.225 # kg/m^3, air density ??
 
 
-N = 100 # Number of steps in V_list
 
 #%%
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
@@ -53,8 +52,8 @@ else:
 #print(poly_coeff_single.shape)  # Skal være (8, 3) (8 AD)
 #print(v_range_single)           # Skal være (8,2)
 
-damping_ratios_single, omega_all_single, eigvals_all_single, eigvecs_all_single= _eigVal.solve_omega(poly_coeff_single, m1V, m1T, f1V, f1T, B, rho, zeta,  eps, N = 1000, single = True)
-flutter_speed_modes_single, flutter_idx_modes_single =_eigVal.solve_flutter_speed( damping_ratios_single, N = 1000, single = True)
+damping_ratios_single, omega_all_single, eigvals_all_single, eigvecs_all_single= _eigVal.solve_omega(poly_coeff_single, m1V, m1T, f1V, f1T, B, rho, zeta,  eps, N=1000, single = True)
+flutter_speed_modes_single, flutter_idx_modes_single =_eigVal.solve_flutter_speed( damping_ratios_single, N=1000, single = True)
 
 print("Flutter speed modes: ", flutter_speed_modes_single[0])
 
