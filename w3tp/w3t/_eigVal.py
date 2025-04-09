@@ -6,7 +6,7 @@ Created in April 2025
 """
 
 import numpy as np
-import scipy.linalg as la
+from scipy import linalg as spla
 import matplotlib.pyplot as plt
 
 
@@ -15,7 +15,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
     Løser generalisert eigenverdiproblem for gitt system.
     
-    [ -λ² M + λ(C + Cae) + (K + Kae) ] φ = 0
+    [ -λ² M + λ(C - Cae) + (K - Kae) ] φ = 0
 
     Parameters:
     -----------
@@ -34,26 +34,23 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     --------
     eigvals : ndarray
         Eigenvalues λ (complex), shape (n_dof*2,)
-    """
-    n = M_struc.shape[0] # n = 2: single deck, n = 4: twin deck
+    """   
+    C = C_struc - C_aero
+    K = K_struc - K_aero
 
-    C_aero = np.atleast_2d(C_aero)
-    K_aero = np.atleast_2d(K_aero)
+    print("C", C)
+    print("K", K)
     
-    A = -la.block_diag(M_struc, np.eye(n))
-    B = np.block([
-        [C_struc - C_aero, K_struc - K_aero],
-        [-np.eye(n), np.zeros((n, n))]
+    # State-space A-matrix
+    A = np.block([
+        [np.zeros_like(M_struc), np.eye(M_struc.shape[0])],
+        [-np.linalg.inv(M_struc) @ K, -np.linalg.inv(M_struc) @ C]
     ])
 
-    # eigvals, eigvecs = la.eig(B, A)
+    # Solve the eigenvalue problem  
+    eigvals, eigvecs = spla.eig(A)
 
-
-    #MIDLERTIDIG LØSNING DEBUGGE
-    A_inv_B = np.linalg.solve(A,B)
-    eigvals, eigvecs = np.linalg.eig(A_inv_B)
-    print("NEW λ = ", eigvals)
-    print("Im parts =", np.imag(eigvals))
+    print("SE HER", eigvals)
     return eigvals, eigvecs
 
 def structural_matrices(m1, m2, f1, f2, zeta, single = True):
@@ -329,12 +326,8 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                         idx = np.argmin(score)
                     else:
                         # Calculate similarity with previous eigenvector
-                        if eigvecs_pos.shape[1] == 0:
-                            print("Ingen komplekse egenverdier — hopper over denne iterasjonen.")
-                            continue   
-                        else:
-                            similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
-                            idx = np.argmax(similarities)
+                        similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
+                        idx = np.argmax(similarities)
                         # Calculate similarity with previous damping and frequency
                         score = np.abs(omega_pos - omega_old[j]) + np.abs(damping_pos - damping_old[j]) # Kan kanskje vurdere å vekte de ulikt ??
                         idx2 = np.argmin(score)

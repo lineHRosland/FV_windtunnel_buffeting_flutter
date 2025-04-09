@@ -20,7 +20,7 @@ B = 18.3 # m, section width
 # Values from FEM-model (Pure structural modes in still air)
 m1V = 4440631.00000000 #kg, vertical !! Denne må endres
 m2V = 6683762.00000000 #kg, vertical !! Denne må endres
-m1T = 5582542.50000000 #kg, torsion !! Denne må endres
+m1T = 5582542.50000000 #kg m^2, torsion !! Denne må endres
 f1V = 0.14066587 #Hz, vertical  !! Denne må endres
 f2V = 0.19722386 #Hz, vertical  !! Denne må endres
 f1T = 0.32923025 #Hz, torsion !! Denne må endres
@@ -36,7 +36,7 @@ rho = 1.225 # kg/m^3, air density ??
 
 #%%
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
-eps = 20 # Konvergensterskel
+eps = 1e-6 # Konvergensterskel
 
 #%%
 #Single deck
