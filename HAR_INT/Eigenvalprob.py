@@ -66,10 +66,8 @@ else:
     print("Flutter speed mode 2 - single deck: Not found")
 
 
-#%%
-# Plotting
 
-_eigVal.plot_damping_vs_wind_speed_single(B, v_range_single, damping_ratios_single,omega_all_single, dist="Single deck", N = 100, single = True)
+_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_single, dist="Single deck", N = 100, single = True)
 
 _eigVal.plot_frequency_vs_wind_speed(B,  v_range_single, omega_all_single, dist="Single deck", N = 100, single = True)
 
@@ -112,9 +110,8 @@ else:
     print("Flutter speed mode 4 - 1D: Not found")
 
 
-#%%
-# Plotting
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_1D, damping_ratios=damping_ratios_1D, omega_all = omega_all_1D, dist="1D", N = 100, single = False)
+
+_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_1D, dist="1D", N = 100, single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(B, v_range_1D, omega_all=omega_all_1D, dist="1D",N = 100, single = False)
 
@@ -158,7 +155,7 @@ else:
     print("Flutter speed mode 4 - 2D: Not found")
 
 
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_2D, damping_ratios=damping_ratios_2D, omega_all = omega_all_2D,   dist="2D",N = 100, single = False)
+_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_2D,   dist="2D",N = 100, single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(B, v_range_2D, omega_all=omega_all_2D, dist="2D",N = 100, single = False)
 
@@ -204,7 +201,7 @@ if flutter_speed_modes_3D[3] is not None:
 else:
     print("Flutter speed mode 4 - 3D: Not found")
 
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_3D, damping_ratios=damping_ratios_3D, omega_all = omega_all_3D,  dist="3D",N = 100, single = False)
+_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_3D, dist="3D",N = 100, single = False)
 _eigVal.plot_frequency_vs_wind_speed(B, v_range_3D, omega_all=omega_all_3D,dist="3D",N = 100, single = False)
 _eigVal.plot_flutter_mode_shape(eigvecs_all_3D,flutter_idx_modes_3D, dist="3D", single = False)
 
@@ -245,7 +242,7 @@ if flutter_speed_modes_4D[3] is not None:
 else:
     print("Flutter speed mode 4 - 4D: Not found")
 
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_4D, damping_ratios=damping_ratios_4D, omega_all = omega_all_4D, dist="4D",N = 100, single = False)
+_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_4D,dist="4D",N = 100, single = False)
 _eigVal.plot_frequency_vs_wind_speed(B, v_range_4D, omega_all=omega_all_4D,   dist="4D",N = 100, single = False)
 _eigVal.plot_flutter_mode_shape(eigvecs_all_4D,flutter_idx_modes_4D, dist="4D", single = False)
 
@@ -285,6 +282,6 @@ if flutter_speed_modes_5D[3] is not None:
 else:
     print("Flutter speed mode 4 - 5D: Not found")
 
-_eigVal.plot_damping_vs_wind_speed_single(B,v_range_5D, damping_ratios=damping_ratios_5D, omega_all = omega_all_5D,  dist="5D",N = 100, single = False)
+_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_5D, dist="5D",N = 100, single = False)
 _eigVal.plot_frequency_vs_wind_speed(B, v_range_5D, omega_all=omega_all_5D, dist="5D", N = 100, single = False)
 _eigVal.plot_flutter_mode_shape(eigvecs_all_5D,flutter_idx_modes_5D, dist="5D", single = False)

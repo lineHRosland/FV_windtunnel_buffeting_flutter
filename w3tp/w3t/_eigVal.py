@@ -431,7 +431,7 @@ def solve_flutter_speed(damping_ratios, N = 100, single = True):
      
 
      
-def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all,  dist="Fill in dist", N = 100, single = True):
+def plot_damping_vs_wind_speed_single(damping_ratios, dist="Fill in dist", N = 100, single = True):
     """
     Plot damping ratios as a function of wind speed, and mark AD-validity range.
 
@@ -441,24 +441,11 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
     damping_ratios : list of arrays
         Global damping ratios per mode.
     omega_all : list of arrays
-        Global angular frequencies per mode.
-
-    Following paramters if you want to illustrate area where AD is defined:
-    Vred_defined : list or array
-        Reduced velocity validity intervals for ADs.
-    B : float
-        Deck width.
-    N : int
-        Number of wind speed steps.
-    single : bool
-        Whether single-deck (2 modes) or twin-deck (4 modes).
-    dist : str
-        Description of the bridge or analysis.
+        Global angular frequencies per mode..
     """
 
     V_list = np.linspace(0, 180, N)  # m/s
-    # linestyles = [(0,(5,10)), '--', ':', (0,(3,5,1,5))]
-    markers = ['D', 's', '.', 'x']
+    markers = ['D', 's', '.', 'X']
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
@@ -472,10 +459,7 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
         title = f"Damping vs. wind speed - {dist}"
 
     for j in range(n_modes):
-        target_value = np.min(Vred_defined[:, 1])
-        idx = np.argmax(V_list / (omega_all[:, j] * B) >= target_value)
-        plt.plot(V_list[:idx], damping_ratios[:idx, j],  color=colors[j], linewidth=2.5) #Dersom man ønsker heltrukker linje for området AD er definert
-        plt.plot(V_list, damping_ratios[:, j], color=colors[j], marker=markers[j],  linestyle='None', label=labels[j], linewidth=2.5)
+        plt.plot(V_list, damping_ratios[:, j], color=colors[j], marker=markers[j],  linestyle='None', label=labels[j])
 
     plt.axhline(0, linestyle="--", color="grey", linewidth=1.1, label="Critical damping")
     plt.xlabel("Wind speed [m/s]", fontsize=16)
