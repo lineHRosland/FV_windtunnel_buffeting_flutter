@@ -15,7 +15,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
     Løser generalisert eigenverdiproblem for gitt system.
     
-    [ -λ² M + λ(C - Cae) + (K - Kae) ] φ = 0
+    [ -λ² M + λ(C + Cae) + (K + Kae) ] φ = 0
 
     Parameters:
     -----------
@@ -35,8 +35,8 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     eigvals : ndarray
         Eigenvalues λ (complex), shape (n_dof*2,)
     """   
-    C = C_struc - C_aero
-    K = K_struc - K_aero
+    C = C_struc + C_aero
+    K = K_struc + K_aero
 
     # State-space A-matrix
     A = np.block([
@@ -284,7 +284,6 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                 K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
 
                
-
                 if np.isclose(V, 0.0): # still air
                     # Egenverdiene og egenvektorene kommer i riktig rekkefølge
                     # Save which DOFs that dominate the mode shape
@@ -293,10 +292,8 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                     else:
                         dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
 
-                    print("C_tot", Cs-C_aero)
-                    print("K_tot", Ks-K_aero)
  
-                    C_aero = np.zeros_like(Ms)  # Set aerodynamic damping to zero
+                    C_aero = np.zeros_like(Ms)  # Set aerodynamic damping to zero ??
                     K_aero = np.zeros_like(Ms)  # Set aerodynamic stiffness to zero
 
                     eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
@@ -309,7 +306,6 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                     damping_ratios[i,j]=damping_old[j]  # or np.nan
                     eigvals_all[i,j]=lambda_j  # or np.nan
                     eigvecs_all[i,j]=eigvecs[:n, j] # or I[:, j]
-
 
                     converge = True
                 else:
@@ -441,26 +437,28 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
 
     Parameters:
     -----------
-    Vred_defined : list or array
-        Reduced velocity validity intervals for ADs.
+    
     damping_ratios : list of arrays
         Global damping ratios per mode.
-    damping_ratios_local : list of arrays
-        Local damping ratios per mode (only valid inside AD range).
     omega_all : list of arrays
         Global angular frequencies per mode.
-    omega_all_local : list of arrays
-        Local angular frequencies per mode (used in AD range).
+
+    Following paramters if you want to illustrate area where AD is defined:
+    Vred_defined : list or array
+        Reduced velocity validity intervals for ADs.
     B : float
         Deck width.
     N : int
         Number of wind speed steps.
     single : bool
         Whether single-deck (2 modes) or twin-deck (4 modes).
+    dist : str
+        Description of the bridge or analysis.
     """
 
     V_list = np.linspace(0, 180, N)  # m/s
-    linestyles = [(0,(5,10)), '--', ':', (0,(3,5,1,5))]
+    # linestyles = [(0,(5,10)), '--', ':', (0,(3,5,1,5))]
+    markers = ['D', 's', '.', 'x']
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
@@ -476,8 +474,8 @@ def plot_damping_vs_wind_speed_single(B, Vred_defined, damping_ratios, omega_all
     for j in range(n_modes):
         target_value = np.min(Vred_defined[:, 1])
         idx = np.argmax(V_list / (omega_all[:, j] * B) >= target_value)
-        plt.plot(V_list[:idx], damping_ratios[:idx, j], label=labels[j], color=colors[j],  linestyle=linestyles[j], linewidth=2.5)
-        plt.plot(V_list, damping_ratios[:, j], color=colors[j], linestyle=linestyles[j], linewidth=2.5)
+        plt.plot(V_list[:idx], damping_ratios[:idx, j],  color=colors[j], linewidth=2.5) #Dersom man ønsker heltrukker linje for området AD er definert
+        plt.plot(V_list, damping_ratios[:, j], color=colors[j], marker=markers[j],  linestyle='None', label=labels[j], linewidth=2.5)
 
     plt.axhline(0, linestyle="--", color="grey", linewidth=1.1, label="Critical damping")
     plt.xlabel("Wind speed [m/s]", fontsize=16)

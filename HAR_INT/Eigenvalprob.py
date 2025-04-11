@@ -36,7 +36,7 @@ rho = 1.225 # kg/m^3, air density ??
 
 #%%
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
-eps = 1e-6 # Konvergensterskel
+eps = 1e-7 # Konvergensterskel
 
 #%%
 #Single deck
@@ -162,6 +162,7 @@ _eigVal.plot_damping_vs_wind_speed_single(B,v_range_2D, damping_ratios=damping_r
 
 _eigVal.plot_frequency_vs_wind_speed(B, v_range_2D, omega_all=omega_all_2D, dist="2D",N = 100, single = False)
 
+_eigVal.plot_flutter_mode_shape(eigvecs_all_2D,flutter_idx_modes_2D, dist="2D", single = False)
 
 
 #%%
@@ -205,6 +206,7 @@ else:
 
 _eigVal.plot_damping_vs_wind_speed_single(B,v_range_3D, damping_ratios=damping_ratios_3D, omega_all = omega_all_3D,  dist="3D",N = 100, single = False)
 _eigVal.plot_frequency_vs_wind_speed(B, v_range_3D, omega_all=omega_all_3D,dist="3D",N = 100, single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_all_3D,flutter_idx_modes_3D, dist="3D", single = False)
 
 
 #%%
@@ -245,6 +247,7 @@ else:
 
 _eigVal.plot_damping_vs_wind_speed_single(B,v_range_4D, damping_ratios=damping_ratios_4D, omega_all = omega_all_4D, dist="4D",N = 100, single = False)
 _eigVal.plot_frequency_vs_wind_speed(B, v_range_4D, omega_all=omega_all_4D,   dist="4D",N = 100, single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_all_4D,flutter_idx_modes_4D, dist="4D", single = False)
 
 #%%
 #Double deck 5D
@@ -284,3 +287,4 @@ else:
 
 _eigVal.plot_damping_vs_wind_speed_single(B,v_range_5D, damping_ratios=damping_ratios_5D, omega_all = omega_all_5D,  dist="5D",N = 100, single = False)
 _eigVal.plot_frequency_vs_wind_speed(B, v_range_5D, omega_all=omega_all_5D, dist="5D", N = 100, single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_all_5D,flutter_idx_modes_5D, dist="5D", single = False)
