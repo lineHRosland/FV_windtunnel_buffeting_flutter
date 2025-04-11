@@ -445,7 +445,8 @@ def plot_damping_vs_wind_speed_single(damping_ratios, dist="Fill in dist", N = 1
     """
 
     V_list = np.linspace(0, 180, N)  # m/s
-    markers = ['0', 's', '^', 'x']
+    markers = ['o', 's', '^', 'x']
+    markersizes = [2.8, 2.5, 3, 3]
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
@@ -459,7 +460,7 @@ def plot_damping_vs_wind_speed_single(damping_ratios, dist="Fill in dist", N = 1
         title = f"Damping vs. wind speed - {dist}"
 
     for j in range(n_modes):
-        plt.plot(V_list, damping_ratios[:, j], color=colors[j], marker=markers[j],  markersize=3,  linestyle='None', label=labels[j])
+        plt.plot(V_list, damping_ratios[:, j], color=colors[j], marker=markers[j],  markersize=markersizes[j],  linestyle='None', label=labels[j])
 
     plt.axhline(0, linestyle="--", color="grey", linewidth=1.1, label="Critical damping")
     plt.xlabel("Wind speed [m/s]", fontsize=16)
@@ -492,8 +493,9 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist"
         Number of points.
     single : bool
     """
-    linestyles = [(0,(5,10)), '--', ':', (0,(3,5,1,5))]
     colors = ['blue', 'red', 'green', 'orange']
+    markers = ['o', 's', '^', 'x']
+    markersizes = [2.8, 2.5, 3, 3]
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
     frequencies = omega_all / (2 * np.pi)       # Convert to Hz
@@ -509,10 +511,7 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist"
         title = f"Natural frequencies vs wind speed - {dist}"
 
     for j in range(n_modes):
-        target_value = np.min(Vred_defined[:, 1])
-        idx = np.argmax(V_list / (omega_all[:, j] * B) >= target_value)
-        plt.plot(V_list[:idx], frequencies[:idx, j], label=labels[j], color=colors[j],  linestyle=linestyles[j], linewidth=2.5)
-        plt.plot(V_list, frequencies[:, j], color=colors[j], linestyle=linestyles[j], linewidth=2.5)
+        plt.plot(V_list, frequencies[:, j], color=colors[j], marker = markers[j], markersize = markersizes[j], label = labels[j], linestyle='None')
 
     plt.xlabel("Wind speed [m/s]", fontsize=16)
     plt.ylabel("Natural frequency [Hz]", fontsize=16)
@@ -535,12 +534,11 @@ def plot_flutter_mode_shape(eigvecs_all, flutter_idx_modes, dist="Fill in dist",
 
     # 2 subplot: én for amplitudene, én for fasevinklene. De deler x-aksen
     fig, ax = plt.subplots(2, 1, figsize=(6, 6), sharex=True)
+    dofs = ["V1", "T1", "V2", "T2"]
 
     if single:
-        dofs = ["V1", "T1"]  # DOF labels for single-deck
         n_modes = 2
     else:
-        dofs = ["V1", "T1", "V2", "T2"]
         n_modes = 4      
 
     abs_vec = np.abs(flutter_vec) # absoluttverdien av alle komponentene i egenvektoren
