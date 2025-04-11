@@ -445,7 +445,7 @@ def plot_damping_vs_wind_speed_single(damping_ratios, dist="Fill in dist", N = 1
     """
 
     V_list = np.linspace(0, 180, N)  # m/s
-    markers = ['D', 's', '.', 'X']
+    markers = ['0', 's', '^', 'x']
     colors = ['blue', 'red', 'green', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
@@ -459,7 +459,7 @@ def plot_damping_vs_wind_speed_single(damping_ratios, dist="Fill in dist", N = 1
         title = f"Damping vs. wind speed - {dist}"
 
     for j in range(n_modes):
-        plt.plot(V_list, damping_ratios[:, j], color=colors[j], marker=markers[j],  linestyle='None', label=labels[j])
+        plt.plot(V_list, damping_ratios[:, j], color=colors[j], marker=markers[j],  markersize=3,  linestyle='None', label=labels[j])
 
     plt.axhline(0, linestyle="--", color="grey", linewidth=1.1, label="Critical damping")
     plt.xlabel("Wind speed [m/s]", fontsize=16)
