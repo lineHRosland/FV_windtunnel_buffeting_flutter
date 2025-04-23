@@ -7,6 +7,7 @@ Created in April 2025
 import numpy as np
 from scipy import linalg as spla
 import matplotlib.pyplot as plt
+import time
 
 
 # x går fra -654 til 654, og mode inneholder verdiene for alle 6 forskyvningskomponenter i alle nodene
@@ -87,6 +88,8 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """   
     C = C_struc - C_aero
     K = K_struc - K_aero
+
+
 
     # State-space A-matrix
     A = np.block([
@@ -318,7 +321,13 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                 Vred_global = V/(omega_old[j]*B)
 
             converge = False
+            iter = 0
+            start_time = time.time()
+            timeout = 10  # sekunder  
             while converge != True:
+    
+                #if V > 62: print(f"  Iteration {iter+1} for mode {j+1}")
+                iter += 1
 
                 if single:
                     Cae_star, Kae_star = cae_kae_single(poly_coeff, Vred_global, B)
@@ -362,13 +371,13 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                     # Find correct mode j ??
                     if eigvec_old[j] is None:
                         score = np.abs(omega_pos - omega_old[j]) #  +np.abs(damping_pos - damping_old[j])
-                        idx2 = np.argmin(score)
+                        idx1 = np.argmin(score)
                     else:
                         # Calculate similarity with previous eigenvector
-                        similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
+                        similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:n_modes, k])) for k in range(eigvecs_pos.shape[1])]
                         idx2 = np.argmax(similarities)
                         # Calculate similarity with previous damping and frequency
-                        score = np.abs(omega_pos - omega_old[j])  # Kan kanskje vurdere å vekte de ulikt ?? + np.abs(damping_pos - damping_old[j])
+                        score =  np.abs(damping_pos - damping_old[j])  # Kan kanskje vurdere å vekte de ulikt ?? + np.abs(damping_pos - damping_old[j])
                         idx1 = np.argmin(score)
                         # Forsøk 3
                         score = (
@@ -388,8 +397,8 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                             max_val = mag
                             best_idx = idx
 
-                    λj = eigvals_pos[idx2]
-                    φj = eigvecs_pos[:n_modes, idx2]
+                    λj = eigvals_pos[idx1]
+                    φj = eigvecs_pos[:n_modes, idx1]
                         # eigvecs_pos[:, j] = 4 komponenter i single-deck → skyldes at du henter hele state-vektoen (inkl. hastighet)
 
 
@@ -417,6 +426,9 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                         #     damping_ratios[j].append(damping_new)      
                         #     eigvals_all[j].append(λj)                   
                         #     eigvecs_all[j].append(φj) 
+                            
+                        print("C: (-)", Cs - C_aero)
+                        print("K: (-)", Ks - K_aero)
 
                         omega_all[i,j]=omega_new    
                         damping_ratios[i,j]=damping_new
@@ -425,6 +437,16 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                         converge = True              
 
                     else: # For the next iteration, use the new values as the old ones
+                        # Timeout check
+                        if time.time() - start_time > timeout:
+                            print(f"WARNING: Convergence timeout at V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
+                            omega_all[i, j] = np.nan
+                            damping_ratios[i, j] = np.nan
+                            eigvals_all[i, j] = np.nan
+                            eigvecs_all[i, j] = None
+                            print("iteration:", iter)
+                            break
+
                         omega_old[j] = omega_new
                         damping_old[j] = damping_new
                         eigvec_old[j] = φj
