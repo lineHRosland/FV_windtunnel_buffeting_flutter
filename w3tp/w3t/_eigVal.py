@@ -10,6 +10,8 @@ from scipy import linalg as spla
 import matplotlib.pyplot as plt
 
 
+# x går fra -654 til 654, og mode inneholder verdiene for alle 6 forskyvningskomponenter i alle nodene
+
 
 def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
