@@ -6,12 +6,59 @@ Created in April 2025
 
 import numpy as np
 from scipy import linalg as spla
-from mode_shapes import mode_shape_twin
-
 import matplotlib.pyplot as plt
 
 
 # x går fra -654 til 654, og mode inneholder verdiene for alle 6 forskyvningskomponenter i alle nodene
+
+def generalize_C_k(C, K, single=True):
+    """
+    Projects the aerodynamic damping (C) and stiffness (K) matrices into generalized modal form
+    using mode shapes and trapezoidal integration.
+
+    Parameters:
+    -----------
+    C : ndarray, shape (2x2 or 4x4)
+        Dimensionless aerodynamic damping matrix.
+    K : ndarray, shape (2x2 or 4x4)
+        Dimensionless aerodynamic stiffness matrix.
+    single : bool, default=True
+        If True, use single-deck mode shapes (2 DOFs).
+        If False, use twin-deck mode shapes (4 DOFs).
+
+    Returns:
+    --------
+    C_gen : ndarray
+        Generalized aerodynamic damping matrix (2x2 or 4x4).
+    K_gen : ndarray
+        Generalized aerodynamic stiffness matrix (2x2 or 4x4).
+    """
+    if single:
+        from mode_shapes import mode_shape_single
+        Phi, N, x = mode_shape_single(full_matrix=True)
+        C_gen = np.zeros((2, 2))
+        K_gen = np.zeros((2, 2))
+    else:
+        from mode_shapes import mode_shape_twin
+        Phi, N, x = mode_shape_twin(full_matrix=True)
+        C_gen = np.zeros((4, 4))
+        K_gen = np.zeros((4, 4))
+
+    # Trapezoidal integration over x
+    for i in range(N - 1):
+        dx = x[i+1] - x[i]
+
+        C_gen += 0.5 * (
+            Phi[i].T @ C @ Phi[i] +
+            Phi[i+1].T @ C @ Phi[i+1]
+        ) * dx
+
+        K_gen += 0.5 * (
+            Phi[i].T @ K @ Phi[i] +
+            Phi[i+1].T @ K @ Phi[i+1]
+        ) * dx
+
+    return C_gen, K_gen
 
 
 def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
@@ -117,10 +164,8 @@ def cae_kae_single(poly_coeff, Vred_global, B):
 
     Returns:
     --------
-    C_ae_star_gen : ndarray, shape (2, 2)
-        Generalized aerodynamic damping matrix (projected via modal integration).
-    K_ae_star_gen : ndarray, shape (2, 2)
-        Generalized aerodynamic stiffness matrix (projected via modal integration).
+    C_ae_star: ndarray, shape (2, 2)
+    K_ae_star: ndarray, shape (2, 2)
     """
 
     Vred_global = float(Vred_global) 
@@ -141,26 +186,8 @@ def cae_kae_single(poly_coeff, Vred_global, B):
         [B * A4,   B**2 * A3]
     ])
 
-    from mode_shapes import mode_shape_single
-    Phi, N, x = mode_shape_single(full_matrix=True)
-
-    C_ae_star_gen = np.zeros((2, 2))
-    K_ae_star_gen = np.zeros((2, 2))
-
-    for i in range(N-1):
-        dx = x[i+1] - x[i] # discretized length
-
-        # Damping
-        C_integrand_left  = Phi[i].T @ C_ae_star @ Phi[i]
-        C_integrand_right = Phi[i+1].T @ C_ae_star @ Phi[i+1]
-        C_ae_star_gen += 0.5 * (C_integrand_left + C_integrand_right) * dx
-
-        # Stiffness
-        K_integrand_left = Phi[i].T @ K_ae_star @ Phi[i]
-        K_integrand_right = Phi[i+1].T @ K_ae_star @ Phi[i+1]
-        K_ae_star_gen += 0.5 * (K_integrand_left + K_integrand_right) * dx
         
-    return C_ae_star_gen, K_ae_star_gen
+    return C_ae_star, K_ae_star
 
 
 
@@ -180,10 +207,8 @@ def cae_kae_twin(poly_coeff, Vred_global, B):
 
     Returns:
     --------
-    C_ae_star_gen : ndarray, shape (4, 4)
-        Generalized aerodynamic damping matrix.
-    K_ae_star_gen : ndarray, shape (4, 4)
-        Generalized aerodynamic stiffness matrix.
+    C_ae_star: ndarray, shape (4, 4)
+    K_ae_star: ndarray, shape (4, 4)
     """
 
     Vred_global = float(Vred_global) 
@@ -211,27 +236,12 @@ def cae_kae_twin(poly_coeff, Vred_global, B):
         [B * k_θ2z1,   B**2 * k_θ2θ1,   B * k_θ2z2,   B**2 * k_θ2θ2]
     ])
 
-    from mode_shapes import mode_shape_twin
-    Phi, N, x = mode_shape_twin(full_matrix=True)
 
-    # Initialize generalized matrices
-    C_ae_star_gen = np.zeros((4, 4))
-    K_ae_star_gen = np.zeros((4, 4))
-
-    for i in range(N-1):
-        dx = x[i+1] - x[i] # discretized length
-        C_integrand_left  = Phi[i].T @ C_ae_star @ Phi[i]
-        C_integrand_right = Phi[i+1].T @ C_ae_star @ Phi[i+1]
-        C_ae_star_gen += 0.5 * (C_integrand_left + C_integrand_right) * dx
-
-        K_integrand_left = Phi[i].T @ K_ae_star @ Phi[i]
-        K_integrand_right = Phi[i+1].T @ K_ae_star @ Phi[i+1]
-        K_ae_star_gen += 0.5 * (K_integrand_left + K_integrand_right) * dx
-
-    return C_ae_star_gen, K_ae_star_gen
+    return C_ae_star, K_ae_star
 
 
-def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single = True):
+
+def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, single = True):
     '''
     Solves flutter analysis using an iterative method for either single-deck (2DOF) or twin-deck (4DOF).
     Returns global results (and optionally local for twin-deck).
@@ -264,11 +274,9 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
     '''
 
     if single:
-        Ms, Cs, Ks = structural_matrices(m1, m2, f1, f2, zeta, single = True)
         n_modes = 2 # 2 modes for single deck
         n = 2
     else:
-        Ms, Cs, Ks = structural_matrices(m1, m2, f1, f2, zeta, single = False)
         n_modes = 4 # 4 modes for twin deck
         n = 4
 
@@ -278,7 +286,7 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
     damping_ratios  = np.empty((N, n_modes))
     omega_all = np.empty((N, n_modes))
 
-    V_list = np.linspace(0, 300, N) #m/s
+    V_list = np.linspace(0, 100, N) #m/s
 
     #skip_mode = [False] * n_modes   # skip mode once flutter is detected
 
@@ -293,10 +301,9 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
 
         
        
-        #print(f"Wind speed iteration {i+1}: V = {V} m/s")
+        print(f"Wind speed iteration {i+1}: V = {V} m/s")
 
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
-            #print(f"Mode iteration {j+1}")
 
             # if skip_mode[j]:
             #     omega_all[j].append(np.nan)
@@ -312,15 +319,18 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
 
             converge = False
             while converge != True:
-                #print("omega_ref", omega_old[j])
 
                 if single:
-                    C_star, K_star = cae_kae_single(poly_coeff, Vred_global, B)
-                else:
-                    C_star, K_star = cae_kae_twin(poly_coeff, Vred_global, B)
+                    Cae_star, Kae_star = cae_kae_single(poly_coeff, Vred_global, B)
+                    Cae_star_gen, Kae_star_gen =generalize_C_k(Cae_star, Kae_star, single=True)
 
-                C_aero = 0.5 * rho * B**2 * omega_old[j] * C_star
-                K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * K_star
+                else:
+                    Cae_star, Kae_star = cae_kae_twin(poly_coeff, Vred_global, B)
+                    Cae_star_gen, Kae_star_gen =generalize_C_k(Cae_star, Kae_star, single=False)
+
+                C_aero = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen
+                K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen
+
 
                
                 if np.isclose(V, 0.0): # still air
@@ -331,13 +341,13 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                     else:
                         dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
 
-                    # ?? dette kan man vurdere å fjerne
-                    C_aero = np.zeros_like(Ms)  # Set aerodynamic damping to zero ??
-                    K_aero = np.zeros_like(Ms)  # Set aerodynamic stiffness to zero
+                    # # ?? dette kan man vurdere å fjerne
+                    # C_aero = np.zeros_like(Ms)  # Set aerodynamic damping to zero 
+                    # K_aero = np.zeros_like(Ms)  # Set aerodynamic stiffness to zero
 
-                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
-                    eigvals_pos = eigvals[np.imag(eigvals) > 0]
-                    eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]
+                    # eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
+                    # eigvals_pos = eigvals[np.imag(eigvals) > 0]
+                    # eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]
 
                     # ?? dette kan endres
                     I = np.eye(Ms.shape[0])  # Identity matrix
@@ -345,7 +355,9 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                     omega_all[i,j]=omega_old[j]  # or np.nan
                     damping_ratios[i,j]=damping_old[j]  # or np.nan
                     eigvals_all[i,j]=lambda_j  # or np.nan
-                    eigvecs_all[i,j]=eigvecs[:n, j] # or I[:, j]
+                    eigvecs_all[i,j]= I[:, j] # eigvecs[:n, j]
+
+                    print("Initial damping:", damping_ratios[0, :])
 
                     converge = True
                 else:
@@ -356,20 +368,20 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                     eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  
 
 
-                    omega_pos = np.imag(eigvals_pos)
-                    damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
+                    # omega_pos = np.imag(eigvals_pos)
+                    # damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
 
-                    # # Find correct mode j ??
-                    if eigvec_old[j] is None:
-                        score = np.abs(omega_pos - omega_old[j]) +5 *np.abs(damping_pos - damping_old[j])
-                        idx2 = np.argmin(score)
-                    else:
-                        # Calculate similarity with previous eigenvector
-                        # similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
-                        # idx2 = np.argmax(similarities)
-                        # Calculate similarity with previous damping and frequency
-                        score = np.abs(omega_pos - omega_old[j]) + 5*np.abs(damping_pos - damping_old[j]) # Kan kanskje vurdere å vekte de ulikt ??
-                        idx2 = np.argmin(score)
+                    # # # Find correct mode j ??
+                    # if eigvec_old[j] is None:
+                    #     score = np.abs(omega_pos - omega_old[j]) +5 *np.abs(damping_pos - damping_old[j])
+                    #     idx2 = np.argmin(score)
+                    # else:
+                    #     # Calculate similarity with previous eigenvector
+                    #     # similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
+                    #     # idx2 = np.argmax(similarities)
+                    #     # Calculate similarity with previous damping and frequency
+                    #     score = np.abs(omega_pos - omega_old[j]) + 5*np.abs(damping_pos - damping_old[j]) # Kan kanskje vurdere å vekte de ulikt ??
+                    #     idx2 = np.argmin(score)
                     
                     # score = (
                     #     np.abs(omega_pos - omega_old[j]) +
@@ -378,18 +390,18 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                     # )
                     # idx = np.argmin(score)
 
-                    # best_idx = None
-                    # max_val = -np.inf
+                    best_idx = None
+                    max_val = -np.inf
 
-                    # # For mode j, finn den vektoren som ligner mest på tidligere dominant frihetsgrad
-                    # for idx in range(eigvecs_pos.shape[1]): 
-                    #     mag = np.abs(eigvecs_pos[dominant_dofs[j], idx])
-                    #     if mag > max_val:
-                    #         max_val = mag
-                    #         best_idx = idx
+                    # For mode j, finn den vektoren som ligner mest på tidligere dominant frihetsgrad
+                    for idx in range(eigvecs_pos.shape[1]): 
+                        mag = np.abs(eigvecs_pos[dominant_dofs[j], idx])
+                        if mag > max_val:
+                            max_val = mag
+                            best_idx = idx
 
-                    λj = eigvals_pos[idx2]
-                    φj = eigvecs_pos[:n, idx2]
+                    λj = eigvals_pos[best_idx]
+                    φj = eigvecs_pos[:n, best_idx]
                         # eigvecs_pos[:, j] = 4 komponenter i single-deck → skyldes at du henter hele state-vektoen (inkl. hastighet)
 
 
@@ -455,7 +467,7 @@ def solve_flutter_speed(damping_ratios, N = 100, single = True):
     n_modes = 2 if single else 4
     flutter_speed_modes = np.full(n_modes, np.nan)
     flutter_idx_modes = np.full(n_modes, np.nan)
-    V_list = np.linspace(0, 300, N)
+    V_list = np.linspace(0, 100, N)
 
     for j in range(n_modes):
         for i, V in enumerate(V_list):
@@ -484,7 +496,7 @@ def plot_damping_vs_wind_speed_single(damping_ratios, dist="Fill in dist", N = 1
         Global angular frequencies per mode..
     """
 
-    V_list = np.linspace(0, 300, N)  # m/s
+    V_list = np.linspace(0, 100, N)  # m/s
     markers = ['o', 's', '^', 'x']
     markersizes = [2.6, 2.4, 3, 3]
     colors = ['blue', 'green', 'red', 'orange']

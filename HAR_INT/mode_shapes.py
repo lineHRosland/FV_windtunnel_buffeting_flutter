@@ -44,7 +44,7 @@ def mode_shape_single(full_matrix=True):
 
     """
     data4 = np.load('mode4_data.npz')
-    data15 = np.load('mode_15_data.npz')
+    data15 = np.load('mode15_data.npz')
     mode_4 = data4['mode']
     mode_15 = data15['mode']
     x = data4['x']
@@ -97,7 +97,7 @@ def mode_shape_twin(full_matrix=True):
 
     """
     data4 = np.load('mode4_data.npz')
-    data15 = np.load('mode_15_data.npz')
+    data15 = np.load('mode15_data.npz')
     mode_4 = data4['mode']
     mode_15 = data15['mode']
     x = data4['x']
