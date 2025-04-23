@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created in April 2025
 
@@ -7,6 +6,9 @@ Created in April 2025
 
 import numpy as np
 from scipy import linalg as spla
+from mode_shapes import mode_shape_single
+from mode_shapes import mode_shape_twin
+
 import matplotlib.pyplot as plt
 
 
@@ -139,8 +141,13 @@ def cae_kae_single(poly_coeff, Vred_global, B):
         [H4,       B * H3],
         [B * A4,   B**2 * A3]
     ])
+
+    Phi_single, N = mode_shape_single(full_matrix=True)
+    for i in range(N):
+        C_aeN_star_gen = Phi_single[i].T @ C_aeN_star @ Phi_single[i]
+        K_aeN_star_gen = Phi_single[i].T @ K_aeN_star @ Phi_single[i]
         
-    return C_aeN_star, K_aeN_star
+    return C_aeN_star_gen, K_aeN_star_gen
 
 
 
