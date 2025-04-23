@@ -280,22 +280,24 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
         n_modes = 4 # 4 modes for twin deck
         n = 4
 
-
+    # empty() creates an array of the given shape and type, EVERY ELEMENT MUST BE INITIALIZED LATER
     eigvals_all = np.empty((N, n_modes), dtype=complex)
     eigvecs_all = np.empty((N, n_modes), dtype=object) 
     damping_ratios  = np.empty((N, n_modes))
     omega_all = np.empty((N, n_modes))
 
-    V_list = np.linspace(0, 100, N) #m/s
+    V_list = np.linspace(0, 100, N) # m/s
 
     #skip_mode = [False] * n_modes   # skip mode once flutter is detected
+
+   
 
     for i, V in enumerate(V_list):
         if single:
             omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
         else:
             omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) #Først brudekke 1, deretter brudekke 2
-        
+            
         damping_old = [zeta]*n_modes
         eigvec_old = [None] * n_modes
 
@@ -323,7 +325,6 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                 if single:
                     Cae_star, Kae_star = cae_kae_single(poly_coeff, Vred_global, B)
                     Cae_star_gen, Kae_star_gen =generalize_C_k(Cae_star, Kae_star, single=True)
-
                 else:
                     Cae_star, Kae_star = cae_kae_twin(poly_coeff, Vred_global, B)
                     Cae_star_gen, Kae_star_gen =generalize_C_k(Cae_star, Kae_star, single=False)
@@ -341,21 +342,12 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                     else:
                         dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
 
-                    # # ?? dette kan man vurdere å fjerne
-                    # C_aero = np.zeros_like(Ms)  # Set aerodynamic damping to zero 
-                    # K_aero = np.zeros_like(Ms)  # Set aerodynamic stiffness to zero
-
-                    # eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
-                    # eigvals_pos = eigvals[np.imag(eigvals) > 0]
-                    # eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]
-
-                    # ?? dette kan endres
                     I = np.eye(Ms.shape[0])  # Identity matrix
                     lambda_j = -damping_old[j] * omega_old[j] + 1j * omega_old[j] * np.sqrt(1 - damping_old[j]**2)
-                    omega_all[i,j]=omega_old[j]  # or np.nan
-                    damping_ratios[i,j]=damping_old[j]  # or np.nan
-                    eigvals_all[i,j]=lambda_j  # or np.nan
-                    eigvecs_all[i,j]= I[:, j] # eigvecs[:n, j]
+                    omega_all[i,j]= omega_old[j] # or np.nan 
+                    damping_ratios[i,j]= damping_old[j]   # or np.nan
+                    eigvals_all[i,j]= lambda_j   # or np.nan
+                    eigvecs_all[i,j]=  I[:, j] 
 
                     print("Initial damping:", damping_ratios[0, :])
 
@@ -368,19 +360,19 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                     eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  
 
 
-                    # omega_pos = np.imag(eigvals_pos)
-                    # damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
+                    omega_pos = np.imag(eigvals_pos)
+                    damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
 
-                    # # # Find correct mode j ??
+                    # # Find correct mode j ??
                     # if eigvec_old[j] is None:
-                    #     score = np.abs(omega_pos - omega_old[j]) +5 *np.abs(damping_pos - damping_old[j])
+                    #     score = np.abs(omega_pos - omega_old[j]) #  +np.abs(damping_pos - damping_old[j])
                     #     idx2 = np.argmin(score)
                     # else:
                     #     # Calculate similarity with previous eigenvector
                     #     # similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
                     #     # idx2 = np.argmax(similarities)
                     #     # Calculate similarity with previous damping and frequency
-                    #     score = np.abs(omega_pos - omega_old[j]) + 5*np.abs(damping_pos - damping_old[j]) # Kan kanskje vurdere å vekte de ulikt ??
+                    #     score = np.abs(omega_pos - omega_old[j])  # Kan kanskje vurdere å vekte de ulikt ?? + np.abs(damping_pos - damping_old[j])
                     #     idx2 = np.argmin(score)
                     
                     # score = (
