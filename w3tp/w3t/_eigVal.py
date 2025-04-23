@@ -15,7 +15,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
     Løser generalisert eigenverdiproblem for gitt system.
     
-    [ -λ² M + λ(C + Cae) + (K + Kae) ] φ = 0
+    [ -λ² M + λ(C - Cae) + (K - Kae) ] φ = 0
 
     Parameters:
     -----------
@@ -35,8 +35,8 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     eigvals : ndarray
         Eigenvalues λ (complex), shape (n_dof*2,)
     """   
-    C = C_struc + C_aero
-    K = K_struc + K_aero
+    C = C_struc - C_aero
+    K = K_struc - K_aero
 
     # State-space A-matrix
     A = np.block([
@@ -239,7 +239,7 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
     damping_ratios  = np.empty((N, n_modes))
     omega_all = np.empty((N, n_modes))
 
-    V_list = np.linspace(0, 180, N) #m/s
+    V_list = np.linspace(0, 300, N) #m/s
 
     #skip_mode = [False] * n_modes   # skip mode once flutter is detected
 
@@ -292,7 +292,7 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                     else:
                         dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
 
- 
+                    # ?? dette kan man vurdere å fjerne
                     C_aero = np.zeros_like(Ms)  # Set aerodynamic damping to zero ??
                     K_aero = np.zeros_like(Ms)  # Set aerodynamic stiffness to zero
 
@@ -300,6 +300,7 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                     eigvals_pos = eigvals[np.imag(eigvals) > 0]
                     eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]
 
+                    # ?? dette kan endres
                     I = np.eye(Ms.shape[0])  # Identity matrix
                     lambda_j = -damping_old[j] * omega_old[j] + 1j * omega_old[j] * np.sqrt(1 - damping_old[j]**2)
                     omega_all[i,j]=omega_old[j]  # or np.nan
@@ -316,20 +317,20 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                     eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  
 
 
-                    # omega_pos = np.imag(eigvals_pos)
-                    # damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
+                    omega_pos = np.imag(eigvals_pos)
+                    damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
 
                     # # Find correct mode j ??
-                    # if eigvec_old[j] is None:
-                    #     score = np.abs(omega_pos - omega_old[j]) +5 *np.abs(damping_pos - damping_old[j])
-                    #     idx2 = np.argmin(score)
-                    # else:
-                    #     # Calculate similarity with previous eigenvector
-                    #     # similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
-                    #     # idx2 = np.argmax(similarities)
-                    #     # Calculate similarity with previous damping and frequency
-                    #     score = np.abs(omega_pos - omega_old[j]) + 5*np.abs(damping_pos - damping_old[j]) # Kan kanskje vurdere å vekte de ulikt ??
-                    #     idx2 = np.argmin(score)
+                    if eigvec_old[j] is None:
+                        score = np.abs(omega_pos - omega_old[j]) +5 *np.abs(damping_pos - damping_old[j])
+                        idx2 = np.argmin(score)
+                    else:
+                        # Calculate similarity with previous eigenvector
+                        # similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
+                        # idx2 = np.argmax(similarities)
+                        # Calculate similarity with previous damping and frequency
+                        score = np.abs(omega_pos - omega_old[j]) + 5*np.abs(damping_pos - damping_old[j]) # Kan kanskje vurdere å vekte de ulikt ??
+                        idx2 = np.argmin(score)
                     
                     # score = (
                     #     np.abs(omega_pos - omega_old[j]) +
@@ -338,18 +339,18 @@ def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single =
                     # )
                     # idx = np.argmin(score)
 
-                    best_idx = None
-                    max_val = -np.inf
+                    # best_idx = None
+                    # max_val = -np.inf
 
-                    # For mode j, finn den vektoren som ligner mest på tidligere dominant frihetsgrad
-                    for idx in range(eigvecs_pos.shape[1]): 
-                        mag = np.abs(eigvecs_pos[dominant_dofs[j], idx])
-                        if mag > max_val:
-                            max_val = mag
-                            best_idx = idx
+                    # # For mode j, finn den vektoren som ligner mest på tidligere dominant frihetsgrad
+                    # for idx in range(eigvecs_pos.shape[1]): 
+                    #     mag = np.abs(eigvecs_pos[dominant_dofs[j], idx])
+                    #     if mag > max_val:
+                    #         max_val = mag
+                    #         best_idx = idx
 
-                    λj = eigvals_pos[best_idx]
-                    φj = eigvecs_pos[:n, best_idx]
+                    λj = eigvals_pos[idx2]
+                    φj = eigvecs_pos[:n, idx2]
                         # eigvecs_pos[:, j] = 4 komponenter i single-deck → skyldes at du henter hele state-vektoen (inkl. hastighet)
 
 
@@ -415,7 +416,7 @@ def solve_flutter_speed(damping_ratios, N = 100, single = True):
     n_modes = 2 if single else 4
     flutter_speed_modes = np.full(n_modes, np.nan)
     flutter_idx_modes = np.full(n_modes, np.nan)
-    V_list = np.linspace(0, 180, N)
+    V_list = np.linspace(0, 300, N)
 
     for j in range(n_modes):
         for i, V in enumerate(V_list):
@@ -444,10 +445,10 @@ def plot_damping_vs_wind_speed_single(damping_ratios, dist="Fill in dist", N = 1
         Global angular frequencies per mode..
     """
 
-    V_list = np.linspace(0, 180, N)  # m/s
+    V_list = np.linspace(0, 300, N)  # m/s
     markers = ['o', 's', '^', 'x']
-    markersizes = [2.8, 2.5, 3, 3]
-    colors = ['blue', 'red', 'green', 'orange']
+    markersizes = [2.6, 2.4, 3, 3]
+    colors = ['blue', 'green', 'red', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
     plt.figure(figsize=(10, 6))
@@ -493,13 +494,13 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist"
         Number of points.
     single : bool
     """
-    colors = ['blue', 'red', 'green', 'orange']
     markers = ['o', 's', '^', 'x']
-    markersizes = [2.8, 2.5, 3, 3]
+    markersizes = [2.6, 2.4, 3, 3]
+    colors = ['blue', 'green', 'red', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
     frequencies = omega_all / (2 * np.pi)       # Convert to Hz
-    V_list = np.linspace(0, 180, N)             # Wind speed [m/s]
+    V_list = np.linspace(0, 300, N)             # Wind speed [m/s]
 
     plt.figure(figsize=(10, 6))
 
@@ -557,7 +558,7 @@ def plot_flutter_mode_shape(eigvecs_all, flutter_idx_modes, dist="Fill in dist",
     ax[0].set_ylabel(r"|$\Phi$| [-]")
     ax[0].set_ylim(0, 1.1)
     ax[1].set_ylabel(r"∠$\Phi$ [deg]")
-    ax[1].set_ylim(-180, 180)
+    ax[1].set_ylim(-100, 100)
     ax[1].axhline(0, color='k', linestyle='--', linewidth=0.5)
     ax[0].grid(True, linestyle='--', linewidth=0.5)
     ax[1].grid(True, linestyle='--', linewidth=0.5)
@@ -565,9 +566,12 @@ def plot_flutter_mode_shape(eigvecs_all, flutter_idx_modes, dist="Fill in dist",
     ax[0].set_title(f"Magnitude and phase of normalized eigenvector at flutter wind speed - {dist}", fontsize=14)
     ax[1].set_xlabel("DOFs")
 
-        # for i in range(n_modes):
-        #    ax[0].text(i, magnitudes[i] + 0.05, f"{magnitudes[i]:.2f}", ha='center', fontsize=9)
-        #    ax[1].text(i, phases[i] + 10*np.sign(phases[i]), f"{phases[i]:.1f}°", ha='center', fontsize=9)
+    for i in range(n_modes):
+        if abs(magnitudes[i]) > 1e-3: 
+            ax[0].text(i, magnitudes[i] + 0.05, f"{magnitudes[i]:.2f}", ha='center', fontsize=9)
+
+        if abs(phases[i]) > 1: 
+            ax[1].text(i, phases[i] + 10*np.sign(phases[i]), f"{phases[i]:.1f}°", ha='center', fontsize=9)
 
     plt.tight_layout()
     plt.show()
@@ -579,4 +583,22 @@ def plot_flutter_mode_shape(eigvecs_all, flutter_idx_modes, dist="Fill in dist",
 
 #def plot_compare_with_single():
 
-#def plot_compare_with_dist():
+# def plot_compare_with_dist(V_list, flutter_idx_modes1, flutter_idx_modes2,flutter_idx_modes3,flutter_idx_modes4,flutter_idx_modes5,damping_ratios1, damping_ratios2, damping_ratios3, damping_ratios4, damping_ratios5, dist="Fill in dist", single = True):
+
+#     colors = ['blue', 'green', 'red', 'orange', 'purple']
+#     labels = ['1D', '2D', '3D', '4D', '5D']
+
+#     plt.figure(figsize=(10, 6))
+#     damping_1D = damping_ratios1[:,np.nanargmin(flutter_idx_modes1)] # Velg riktig mode ved flutter
+#     damping_2D = damping_ratios2[:,np.nanargmin(flutter_idx_modes2)] 
+#     damping_3D = damping_ratios3[:,np.nanargmin(flutter_idx_modes3)] 
+#     damping_4D = damping_ratios4[:,np.nanargmin(flutter_idx_modes4)] 
+#     damping_5D = damping_ratios5[:,np.nanargmin(flutter_idx_modes5)] 
+
+#     damping = [damping_1D, damping_2D, damping_3D, damping_4D, damping_5D]
+
+#     for j in range(len(damping)):
+#         plt.plot(V_list, damping[j], color=colors[j], label=labels[j])
+
+    
+    

@@ -87,7 +87,7 @@ else:
 
 damping_ratios_1D, omega_all_1D, eigvals_all_1D, eigvecs_all_1D= _eigVal.solve_omega(poly_coeff_1D, m1V, m1T, f1V, f1T, B, rho, zeta,  eps, N = 100, single = False)
 
-flutter_speed_modes_1D, flutter_idx_modes_1D=_eigVal.solve_flutter_speed( damping_ratios_1D, N = 100, single = False)
+#flutter_speed_modes_1D, flutter_idx_modes_1D=_eigVal.solve_flutter_speed( damping_ratios_1D, N = 100, single = False)
 
 if flutter_speed_modes_1D[0] is not None:
     print(f"Flutter speed mode 1 - 1D: {flutter_speed_modes_1D[0]:.2f}")
