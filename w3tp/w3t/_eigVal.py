@@ -6,7 +6,6 @@ Created in April 2025
 
 import numpy as np
 from scipy import linalg as spla
-from mode_shapes import mode_shape_single
 from mode_shapes import mode_shape_twin
 
 import matplotlib.pyplot as plt
@@ -105,7 +104,7 @@ def structural_matrices(m1, m2, f1, f2, zeta, single = True):
 
 def cae_kae_single(poly_coeff, Vred_global, B):
     """
-    Evaluates the 8 aerodynamic derivatives for single-deck bridges.
+    Evaluates generalized aerodynamic damping and stiffness matrices for a single-deck bridge.
 
     Parameters:
     -----------
@@ -118,43 +117,57 @@ def cae_kae_single(poly_coeff, Vred_global, B):
 
     Returns:
     --------
-    C_ae_star : ndarray, shape (2, 2)
-        Dimensionless aerodynamic damping matrix.
-    K_ae_star : ndarray, shape (2, 2)
-        Dimensionless aerodynamic stiffness matrix.
+    C_ae_star_gen : ndarray, shape (2, 2)
+        Generalized aerodynamic damping matrix (projected via modal integration).
+    K_ae_star_gen : ndarray, shape (2, 2)
+        Generalized aerodynamic stiffness matrix (projected via modal integration).
     """
 
     Vred_global = float(Vred_global) 
     #Damping and stiffness matrices
-    C_aeN_star = np.zeros((2, 2)) #Dimensionless
-    K_aeN_star = np.zeros((2, 2)) #Dimensionless
+    C_ae_star = np.zeros((2, 2)) #Dimensionless
+    K_ae_star = np.zeros((2, 2)) #Dimensionless
 
     # AD
     H1, H2, H3, H4 = np.polyval(poly_coeff[0], Vred_global), np.polyval(poly_coeff[1][::-1], Vred_global), np.polyval(poly_coeff[2][::-1], Vred_global), np.polyval(poly_coeff[3][::-1], Vred_global)
     A1, A2, A3, A4 = np.polyval(poly_coeff[4], Vred_global), np.polyval(poly_coeff[5][::-1], Vred_global), np.polyval(poly_coeff[6][::-1], Vred_global), np.polyval(poly_coeff[7][::-1], Vred_global)
 
-    C_aeN_star = np.array([
+    C_ae_star = np.array([
         [H1,       B * H2],
         [B * A1,   B**2 * A2]
     ])
-    K_aeN_star = np.array([
+    K_ae_star = np.array([
         [H4,       B * H3],
         [B * A4,   B**2 * A3]
     ])
 
-    Phi_single, N = mode_shape_single(full_matrix=True)
-    for i in range(N):
-        C_aeN_star_gen = Phi_single[i].T @ C_aeN_star @ Phi_single[i]
-        K_aeN_star_gen = Phi_single[i].T @ K_aeN_star @ Phi_single[i]
+    from mode_shapes import mode_shape_single
+    Phi, N, x = mode_shape_single(full_matrix=True)
+
+    C_ae_star_gen = np.zeros((2, 2))
+    K_ae_star_gen = np.zeros((2, 2))
+
+    for i in range(N-1):
+        dx = x[i+1] - x[i] # discretized length
+
+        # Damping
+        C_integrand_left  = Phi[i].T @ C_ae_star @ Phi[i]
+        C_integrand_right = Phi[i+1].T @ C_ae_star @ Phi[i+1]
+        C_ae_star_gen += 0.5 * (C_integrand_left + C_integrand_right) * dx
+
+        # Stiffness
+        K_integrand_left = Phi[i].T @ K_ae_star @ Phi[i]
+        K_integrand_right = Phi[i+1].T @ K_ae_star @ Phi[i+1]
+        K_ae_star_gen += 0.5 * (K_integrand_left + K_integrand_right) * dx
         
-    return C_aeN_star_gen, K_aeN_star_gen
+    return C_ae_star_gen, K_ae_star_gen
 
 
 
 
 def cae_kae_twin(poly_coeff, Vred_global, B):
     """
-    Evaluates all 32 aerodynamic derivatives at given reduced velocities.
+    Evaluates the generalized aerodynamic damping and stiffness matrices for a twin-deck bridge.
 
     Parameters:
     -----------
@@ -167,10 +180,10 @@ def cae_kae_twin(poly_coeff, Vred_global, B):
 
     Returns:
     --------
-    C_ae_star : ndarray, shape (4, 4)
-        Non-dimensional aerodynamic damping matrix.
-    K_ae_star : ndarray, shape (4, 4)
-        Non-dimensional aerodynamic stiffness matrix.
+    C_ae_star_gen : ndarray, shape (4, 4)
+        Generalized aerodynamic damping matrix.
+    K_ae_star_gen : ndarray, shape (4, 4)
+        Generalized aerodynamic stiffness matrix.
     """
 
     Vred_global = float(Vred_global) 
@@ -198,7 +211,24 @@ def cae_kae_twin(poly_coeff, Vred_global, B):
         [B * k_θ2z1,   B**2 * k_θ2θ1,   B * k_θ2z2,   B**2 * k_θ2θ2]
     ])
 
-    return C_ae_star, K_ae_star
+    from mode_shapes import mode_shape_twin
+    Phi, N, x = mode_shape_twin(full_matrix=True)
+
+    # Initialize generalized matrices
+    C_ae_star_gen = np.zeros((4, 4))
+    K_ae_star_gen = np.zeros((4, 4))
+
+    for i in range(N-1):
+        dx = x[i+1] - x[i] # discretized length
+        C_integrand_left  = Phi[i].T @ C_ae_star @ Phi[i]
+        C_integrand_right = Phi[i+1].T @ C_ae_star @ Phi[i+1]
+        C_ae_star_gen += 0.5 * (C_integrand_left + C_integrand_right) * dx
+
+        K_integrand_left = Phi[i].T @ K_ae_star @ Phi[i]
+        K_integrand_right = Phi[i+1].T @ K_ae_star @ Phi[i+1]
+        K_ae_star_gen += 0.5 * (K_integrand_left + K_integrand_right) * dx
+
+    return C_ae_star_gen, K_ae_star_gen
 
 
 def solve_omega(poly_coeff, m1, m2, f1, f2, B, rho, zeta, eps, N = 100, single = True):

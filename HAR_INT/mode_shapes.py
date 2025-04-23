@@ -28,6 +28,7 @@ def mode_shape_single(full_matrix=True):
     Notes:
         - Each mode array has shape (N, 6), where N is the number of nodes.
         - Each row contains [x, y, z, dx, dy, dz] for a single node.
+        - The x array contains the corresponding physical positions along the bridge.
         - x ranges from -654 to 654.
 
     Parameters:
@@ -39,11 +40,14 @@ def mode_shape_single(full_matrix=True):
         phi_single (np.ndarray): Array of shape (N, 2, 2), the generalized mode shape matrices
                                  at each node, with degrees of freedom [z, θ].
         N (int): Number of nodes along the bridge span.
+        x (np.ndarray): 1D array of length N containing the physical x-coordinates.
+
     """
     data4 = np.load('mode4_data.npz')
     data15 = np.load('mode_15_data.npz')
     mode_4 = data4['mode']
     mode_15 = data15['mode']
+    x = data4['x']
 
     N = mode_4.shape[0]
     phi_single = np.zeros((N, 2, 2))
@@ -62,7 +66,7 @@ def mode_shape_single(full_matrix=True):
             phi_single[i, 1, 0] = t1V
             phi_single[i, 0, 1] = z1T
 
-    return phi_single, N
+    return phi_single, N, x
 
 #Double deck
 def mode_shape_twin(full_matrix=True):
@@ -77,6 +81,7 @@ def mode_shape_twin(full_matrix=True):
     Notes:
         - Each mode array has shape (N, 6), where N is the number of nodes along the bridge.
         - Each row contains [x, y, z, dx, dy, dz] for a single node.
+        - The x array contains the corresponding physical positions along the bridge.
         - x ranges from -654 to 654.
 
     Parameters:
@@ -88,11 +93,14 @@ def mode_shape_twin(full_matrix=True):
         phi_double (np.ndarray): Array of shape (N, 4, 4), containing the mode shape matrices
                                  at each node. DOFs are ordered as [z1, θ1, z2, θ2].
         N (int): Number of nodes.
+        x (np.ndarray): 1D array of length N containing the physical x-coordinates.
+
     """
     data4 = np.load('mode4_data.npz')
     data15 = np.load('mode_15_data.npz')
     mode_4 = data4['mode']
     mode_15 = data15['mode']
+    x = data4['x']
 
     N = mode_4.shape[0]
     phi_double = np.zeros((N, 4, 4))
@@ -118,4 +126,4 @@ def mode_shape_twin(full_matrix=True):
             phi_double[i, 3, 2] = t1V
             phi_double[i, 2, 3] = z1T
 
-    return phi_double, N
+    return phi_double, N, x
