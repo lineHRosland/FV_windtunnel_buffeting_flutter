@@ -275,10 +275,8 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
 
     if single:
         n_modes = 2 # 2 modes for single deck
-        n = 2
     else:
         n_modes = 4 # 4 modes for twin deck
-        n = 4
 
     # empty() creates an array of the given shape and type, EVERY ELEMENT MUST BE INITIALIZED LATER
     eigvals_all = np.empty((N, n_modes), dtype=complex)
@@ -290,7 +288,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
 
     #skip_mode = [False] * n_modes   # skip mode once flutter is detected
 
-   
+
 
     for i, V in enumerate(V_list):
         if single:
@@ -349,8 +347,6 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                     eigvals_all[i,j]= lambda_j   # or np.nan
                     eigvecs_all[i,j]=  I[:, j] 
 
-                    print("Initial damping:", damping_ratios[0, :])
-
                     converge = True
                 else:
                     eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
@@ -363,24 +359,24 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                     omega_pos = np.imag(eigvals_pos)
                     damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
 
-                    # # Find correct mode j ??
-                    # if eigvec_old[j] is None:
-                    #     score = np.abs(omega_pos - omega_old[j]) #  +np.abs(damping_pos - damping_old[j])
-                    #     idx2 = np.argmin(score)
-                    # else:
-                    #     # Calculate similarity with previous eigenvector
-                    #     # similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
-                    #     # idx2 = np.argmax(similarities)
-                    #     # Calculate similarity with previous damping and frequency
-                    #     score = np.abs(omega_pos - omega_old[j])  # Kan kanskje vurdere å vekte de ulikt ?? + np.abs(damping_pos - damping_old[j])
-                    #     idx2 = np.argmin(score)
-                    
-                    # score = (
-                    #     np.abs(omega_pos - omega_old[j]) +
-                    #     2 * np.abs(damping_pos - damping_old[j]) -
-                    #     10 * np.abs(eigvecs_pos[dominant_dofs[j], :])
-                    # )
-                    # idx = np.argmin(score)
+                    # Find correct mode j ??
+                    if eigvec_old[j] is None:
+                        score = np.abs(omega_pos - omega_old[j]) #  +np.abs(damping_pos - damping_old[j])
+                        idx2 = np.argmin(score)
+                    else:
+                        # Calculate similarity with previous eigenvector
+                        similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:, k])) for k in range(eigvecs_pos.shape[1])]
+                        idx2 = np.argmax(similarities)
+                        # Calculate similarity with previous damping and frequency
+                        score = np.abs(omega_pos - omega_old[j])  # Kan kanskje vurdere å vekte de ulikt ?? + np.abs(damping_pos - damping_old[j])
+                        idx1 = np.argmin(score)
+                        # Forsøk 3
+                        score = (
+                            np.abs(omega_pos - omega_old[j]) +
+                            2 * np.abs(damping_pos - damping_old[j]) -
+                            10 * np.abs(eigvecs_pos[dominant_dofs[j], :])
+                        )
+                        idx = np.argmin(score)
 
                     best_idx = None
                     max_val = -np.inf
@@ -392,8 +388,8 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                             max_val = mag
                             best_idx = idx
 
-                    λj = eigvals_pos[best_idx]
-                    φj = eigvecs_pos[:n, best_idx]
+                    λj = eigvals_pos[idx2]
+                    φj = eigvecs_pos[:n_modes, idx2]
                         # eigvecs_pos[:, j] = 4 komponenter i single-deck → skyldes at du henter hele state-vektoen (inkl. hastighet)
 
 
