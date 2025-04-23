@@ -331,13 +331,15 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
 
                 if single:
                     Cae_star, Kae_star = cae_kae_single(poly_coeff, Vred_global, B)
-                    Cae_star_gen, Kae_star_gen =generalize_C_k(Cae_star, Kae_star, single=True)
+                    C_aero = 0.5 * rho * B**2 * omega_old[j] * Cae_star
+                    K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star
+                    Cae_gen, Kae_gen =generalize_C_k(C_aero, K_aero, single=True)
                 else:
                     Cae_star, Kae_star = cae_kae_twin(poly_coeff, Vred_global, B)
-                    Cae_star_gen, Kae_star_gen =generalize_C_k(Cae_star, Kae_star, single=False)
+                    C_aero = 0.5 * rho * B**2 * omega_old[j] * Cae_star
+                    K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star
+                    Cae_gen, Kae_gen =generalize_C_k(C_aero, K_aero, single=False)
 
-                C_aero = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen
-                K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen
 
 
                
@@ -349,56 +351,51 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                     else:
                         dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
 
-                    I = np.eye(Ms.shape[0])  # Identity matrix
-                    lambda_j = -damping_old[j] * omega_old[j] + 1j * omega_old[j] * np.sqrt(1 - damping_old[j]**2)
-                    omega_all[i,j]= omega_old[j] # or np.nan 
-                    damping_ratios[i,j]= damping_old[j]   # or np.nan
-                    eigvals_all[i,j]= lambda_j   # or np.nan
-                    eigvecs_all[i,j]=  I[:, j] 
-
-                    converge = True
-                else:
-                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, C_aero, K_aero)
+                    Cae_gen = np.zeros_like(Ms)
+                    Kae_gen = np.zeros_like(Ms)
+                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
                     # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
                     eigvals_pos = eigvals[np.imag(eigvals) > 0]
                     eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  
 
+                    λj = eigvals_pos[j]
+                    φj = eigvecs_pos[:n_modes, j]
+
+                    omega_all[i,j]= np.imag(λj) 
+                    damping_ratios[i,j]= -np.real(λj) / np.abs(λj)
+                    eigvals_all[i,j]= λj  
+                    eigvecs_all[i,j]= φj
+                    eigvec_old[j] = φj
+
+                    converge = True
+                else:
+                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
+
+                    # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
+                    eigvals_pos = eigvals[np.imag(eigvals) > 0]
+                    eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  
 
                     omega_pos = np.imag(eigvals_pos)
                     damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
 
-                    # Find correct mode j ??
-                    if eigvec_old[j] is None:
-                        score = np.abs(omega_pos - omega_old[j]) #  +np.abs(damping_pos - damping_old[j])
-                        idx1 = np.argmin(score)
-                    else:
-                        # Calculate similarity with previous eigenvector
-                        similarities = [np.abs(np.dot(eigvec_old[j].conj().T, eigvecs_pos[:n_modes, k])) for k in range(eigvecs_pos.shape[1])]
-                        idx2 = np.argmax(similarities)
-                        # Calculate similarity with previous damping and frequency
-                        score =  np.abs(damping_pos - damping_old[j])  # Kan kanskje vurdere å vekte de ulikt ?? + np.abs(damping_pos - damping_old[j])
-                        idx1 = np.argmin(score)
-                        # Forsøk 3
-                        score = (
+                    alpha = 5
+                    beta = 0
+
+                    score = (
                             np.abs(omega_pos - omega_old[j]) +
-                            2 * np.abs(damping_pos - damping_old[j]) -
-                            10 * np.abs(eigvecs_pos[dominant_dofs[j], :])
+                            alpha * np.abs(damping_pos - damping_old[j]) -
+                            beta * np.abs(eigvecs_pos[dominant_dofs[j], :])
                         )
-                        idx = np.argmin(score)
+                    best_idx = np.argmin(score)
+                    
+                    if not single:
+                        if V < 10:
+                            best_idx = np.argmax(np.abs(eigvecs_pos[dominant_dofs[j], :]))
 
-                    best_idx = None
-                    max_val = -np.inf
 
-                    # For mode j, finn den vektoren som ligner mest på tidligere dominant frihetsgrad
-                    for idx in range(eigvecs_pos.shape[1]): 
-                        mag = np.abs(eigvecs_pos[dominant_dofs[j], idx])
-                        if mag > max_val:
-                            max_val = mag
-                            best_idx = idx
-
-                    λj = eigvals_pos[idx1]
-                    φj = eigvecs_pos[:n_modes, idx1]
+                    λj = eigvals_pos[best_idx]
+                    φj = eigvecs_pos[:n_modes, best_idx]
                         # eigvecs_pos[:, j] = 4 komponenter i single-deck → skyldes at du henter hele state-vektoen (inkl. hastighet)
 
 
@@ -427,8 +424,12 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                         #     eigvals_all[j].append(λj)                   
                         #     eigvecs_all[j].append(φj) 
                             
-                        print("C: (-)", Cs - C_aero)
-                        print("K: (-)", Ks - K_aero)
+                        print("C: (-)", Cs - Cae_gen)
+                        print("K: (-)", Ks - Kae_gen)
+
+
+                        C_ratio = np.abs(Cae_gen) / np.abs(Cs - Cae_gen)
+                        print(f"V = {V:.2f} m/s → C_aero / C_total ratio:\n{C_ratio}")
 
                         omega_all[i,j]=omega_new    
                         damping_ratios[i,j]=damping_new
