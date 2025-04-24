@@ -8,59 +8,8 @@ import numpy as np
 from scipy import linalg as spla
 import matplotlib.pyplot as plt
 import time
-
-
-# x går fra -654 til 654, og mode inneholder verdiene for alle 6 forskyvningskomponenter i alle nodene
-
-def generalize_C_k(C, K, single=True):
-    """
-    Projects the aerodynamic damping (C) and stiffness (K) matrices into generalized modal form
-    using mode shapes and trapezoidal integration.
-
-    Parameters:
-    -----------
-    C : ndarray, shape (2x2 or 4x4)
-        Dimensionless aerodynamic damping matrix.
-    K : ndarray, shape (2x2 or 4x4)
-        Dimensionless aerodynamic stiffness matrix.
-    single : bool, default=True
-        If True, use single-deck mode shapes (2 DOFs).
-        If False, use twin-deck mode shapes (4 DOFs).
-
-    Returns:
-    --------
-    C_gen : ndarray
-        Generalized aerodynamic damping matrix (2x2 or 4x4).
-    K_gen : ndarray
-        Generalized aerodynamic stiffness matrix (2x2 or 4x4).
-    """
-    if single:
-        from mode_shapes import mode_shape_single
-        Phi, N, x = mode_shape_single(full_matrix=True)
-        C_gen = np.zeros((2, 2))
-        K_gen = np.zeros((2, 2))
-    else:
-        from mode_shapes import mode_shape_twin
-        Phi, N, x = mode_shape_twin(full_matrix=True)
-        C_gen = np.zeros((4, 4))
-        K_gen = np.zeros((4, 4))
-
-    # Trapezoidal integration over x
-    for i in range(N - 1):
-        dx = x[i+1] - x[i]
-
-        C_gen += 0.5 * (
-            Phi[i].T @ C @ Phi[i] +
-            Phi[i+1].T @ C @ Phi[i+1]
-        ) * dx
-
-        K_gen += 0.5 * (
-            Phi[i].T @ K @ Phi[i] +
-            Phi[i+1].T @ K @ Phi[i+1]
-        ) * dx
-
-    return C_gen, K_gen
-
+from mode_shapes import mode_shape_single
+from mode_shapes import mode_shape_twin
 
 def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
@@ -101,6 +50,115 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     eigvals, eigvecs = spla.eig(A)
 
     return eigvals, eigvecs
+
+ 
+    # C_ae_star_gen = np.zeros((2, 2))
+    # K_ae_star_gen = np.zeros((2, 2))
+ 
+    # for i in range(N-1):
+    #     dx = x[i+1] - x[i] # discretized length
+ 
+    #     # Damping
+    #     C_integrand_left  = Phi[i].T @ C_ae_star @ Phi[i]
+    #     C_integrand_right = Phi[i+1].T @ C_ae_star @ Phi[i+1]
+    #     C_ae_star_gen += 0.5 * (C_integrand_left + C_integrand_right) * dx
+ 
+    #     # Stiffness
+    #     K_integrand_left = Phi[i].T @ K_ae_star @ Phi[i]
+    #     K_integrand_right = Phi[i+1].T @ K_ae_star @ Phi[i+1]
+    #     K_ae_star_gen += 0.5 * (K_integrand_left + K_integrand_right) * dx
+
+def generalize_global(C, K, Phi):
+    """
+    Generalizes full global aerodynamic matrices C and K using modal matrix Phi.
+
+    Parameters:
+    -----------
+    C : ndarray, shape (n, n)
+        Full aerodynamic damping matrix (global DOFs).
+    K : ndarray, shape (n, n)
+        Full aerodynamic stiffness matrix (global DOFs).
+    Phi : ndarray, shape (n, n)
+        Modal matrix (columns are mode shapes, usually mass-normalized).
+
+    Returns:
+    --------
+    C_gen : ndarray, shape (n, n)
+        Generalized (modal) damping matrix.
+    K_gen : ndarray, shape (n, n)
+        Generalized (modal) stiffness matrix.
+    """
+    C_gen = Phi.T @ C @ Phi # shape: Single - (2, 2) or Twin - (4, 4)
+    K_gen = Phi.T @ K @ Phi
+    return C_gen, K_gen
+
+
+def normalize_modes(Phi, M):
+    """
+    Masse-normaliserer modeshapes for 2 DOF (single-deck) eller 4 DOF (twin-deck).
+    
+    Parameters:
+    -----------
+    Phi : ndarray of shape (N, n, n)
+        Modalmatriser langs broen. n = 2 for single-deck, n = 4 for twin-deck.
+    M : ndarray of shape (n, n)
+        Massematrise i fysisk DOF-rom (typisk diagonal).
+    
+    Returns:
+    --------
+    Phi_norm : ndarray of shape (N, n, n)
+        Masse-normaliserte modeshapes.
+    """
+    N, n, _ = Phi.shape
+    Phi_norm = np.zeros_like(Phi)
+
+    for i in range(N):
+        for j in range(n):  # én mode om gangen
+            phi_j = Phi[i][:, j]  # shape: (n,)
+            m_j = phi_j.T @ M @ phi_j
+            Phi_norm[i][:, j] = phi_j / np.sqrt(m_j)
+        
+    return Phi_norm
+
+def global_massnorm_modeshapes(M, single = True):
+
+    if single:
+        n = 2  
+        Phi = mode_shape_single(full_matrix=True)[0]
+
+    else:
+        n = 4
+        Phi= mode_shape_twin(full_matrix=True)[0]
+    
+    # Phi shape: (n_nodes, n_dof, n_modes)
+    # M shape: (n_dof, n_dof) (2x2 or 4x4)
+    
+    Phi_massNorm = normalize_modes(Phi, M) 
+
+    Phi_global = Phi_massNorm.reshape(-1,n) 
+
+    return Phi_global
+
+
+
+def structural_matrices_massnorm(f1, f2, zeta, single=True):
+    """
+    Return mass-normalized structural matrices:
+    M = I, K = diag(omega^2), C = diag(2*zeta*omega)
+    """
+    ω1 = 2 * np.pi * f1
+    ω2 = 2 * np.pi * f2
+
+    Ms = np.eye(2)
+    Ks = np.diag([ω1**2, ω2**2])
+    Cs = np.diag([2 * zeta * ω1, 2 * zeta * ω2])
+
+    if not single:
+        Ms = np.eye(4)
+        Ks = np.kron(np.eye(2), Ks)
+        Cs = np.kron(np.eye(2), Cs)
+
+    return Ms, Cs, Ks
 
 def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     """
@@ -152,7 +210,8 @@ def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     return Ms, Cs, Ks
 
 
-def cae_kae_single(poly_coeff, Vred_global, B):
+
+def cae_kae_single(poly_coeff, Vred_global, x, B):
     """
     Evaluates generalized aerodynamic damping and stiffness matrices for a single-deck bridge.
 
@@ -172,30 +231,59 @@ def cae_kae_single(poly_coeff, Vred_global, B):
     """
 
     Vred_global = float(Vred_global) 
-    #Damping and stiffness matrices
-    C_ae_star = np.zeros((2, 2)) #Dimensionless
-    K_ae_star = np.zeros((2, 2)) #Dimensionless
 
     # AD
     H1, H2, H3, H4 = np.polyval(poly_coeff[0], Vred_global), np.polyval(poly_coeff[1][::-1], Vred_global), np.polyval(poly_coeff[2][::-1], Vred_global), np.polyval(poly_coeff[3][::-1], Vred_global)
     A1, A2, A3, A4 = np.polyval(poly_coeff[4], Vred_global), np.polyval(poly_coeff[5][::-1], Vred_global), np.polyval(poly_coeff[6][::-1], Vred_global), np.polyval(poly_coeff[7][::-1], Vred_global)
 
-    C_ae_star = np.array([
+    # Per meter
+    C_ae_star_per_m = np.array([
         [H1,       B * H2],
         [B * A1,   B**2 * A2]
     ])
-    K_ae_star = np.array([
+    K_ae_star_per_m = np.array([
         [H4,       B * H3],
         [B * A4,   B**2 * A3]
     ])
 
+    # 66 segments
+    # standard_segment_length = 19 meters
+    # end_segment_length = 14 meters
+
+    dxs = np.diff(x) # shape: (66,)
+    N = len(x) 
+
+    # segment_lengths = [dxs[0]] + list(dxs)
+
+    # C_blocks = [C_ae_star_per_m * dx for dx in segment_lengths]  # liste med 66 stk (2x2)
+    # K_blocks = [K_ae_star_per_m * dx for dx in segment_lengths]
+
+    # C_aero_global = spla.block_diag(*C_blocks)  # Shape (2N, 2N)
+    # K_aero_global = spla.block_diag(*K_blocks)
+
+    C_blocks = [np.zeros_like(C_ae_star_per_m) for _ in range(N)]
+    for i, dx in enumerate(dxs):
+        C_seg = C_ae_star_per_m * dx
+        C_blocks[i] += 0.5 * C_seg
+        C_blocks[i+1] += 0.5 * C_seg
+    
+    C_aero_global = spla.block_diag(*C_blocks) 
+
+    K_blocks = [np.zeros_like(K_ae_star_per_m) for _ in range(N)]
+    for i, dx in enumerate(dxs):
+        K_seg = K_ae_star_per_m * dx
+        K_blocks[i] += 0.5 * K_seg
+        K_blocks[i+1] += 0.5 * K_seg
+
+    K_aero_global = spla.block_diag(*K_blocks)
+    
         
-    return C_ae_star, K_ae_star
+    return C_aero_global, K_aero_global
 
 
 
 
-def cae_kae_twin(poly_coeff, Vred_global, B):
+def cae_kae_twin(poly_coeff, Vred_global,x, B):
     """
     Evaluates the generalized aerodynamic damping and stiffness matrices for a twin-deck bridge.
 
@@ -225,26 +313,38 @@ def cae_kae_twin(poly_coeff, Vred_global, B):
     k_z2z1, k_z2θ1, k_z2z2, k_z2θ2 = np.polyval(poly_coeff[24][::-1],Vred_global), np.polyval(poly_coeff[25][::-1],Vred_global), np.polyval(poly_coeff[26][::-1],Vred_global), np.polyval(poly_coeff[27][::-1],Vred_global)
     k_θ2z1, k_θ2θ1, k_θ2z2, k_θ2θ2 = np.polyval(poly_coeff[28][::-1],Vred_global), np.polyval(poly_coeff[29][::-1],Vred_global), np.polyval(poly_coeff[30][::-1],Vred_global), np.polyval(poly_coeff[31][::-1],Vred_global)
 
-    C_ae_star = np.array([
+    C_ae_star_per_m = np.array([
         [c_z1z1,       B * c_z1θ1,       c_z1z2,       B * c_z1θ2],
         [B * c_θ1z1,   B**2 * c_θ1θ1,   B * c_θ1z2,   B**2 * c_θ1θ2],
         [c_z2z1,       B * c_z2θ1,       c_z2z2,       B * c_z2θ2],
         [B * c_θ2z1,   B**2 * c_θ2θ1,   B * c_θ2z2,   B**2 * c_θ2θ2]
     ])
 
-    K_ae_star = np.array([
+    K_ae_star_per_m = np.array([
         [k_z1z1,       B * k_z1θ1,       k_z1z2,       B * k_z1θ2],
         [B * k_θ1z1,   B**2 * k_θ1θ1,   B * k_θ1z2,   B**2 * k_θ1θ2],
         [k_z2z1,       B * k_z2θ1,       k_z2z2,       B * k_z2θ2],
         [B * k_θ2z1,   B**2 * k_θ2θ1,   B * k_θ2z2,   B**2 * k_θ2θ2]
     ])
 
+    # 66 segments
+    # standard_segment_length = 19 meters
+    # end_segment_length = 14 meters
 
-    return C_ae_star, K_ae_star
+    dxs = np.diff(x) # shape: (66,)
+    segment_lengths = [dxs[0]] + list(dxs) + [dxs[-1]]
+    C_blocks = [C_ae_star_per_m * dx for dx in segment_lengths]  # liste med 66 stk (4x4)
+    K_blocks = [K_ae_star_per_m * dx for dx in segment_lengths]
+
+    C_aero_global = spla.block_diag(*C_blocks)  # Shape (4N, 4N)
+    K_aero_global = spla.block_diag(*K_blocks)
+
+
+    return C_aero_global, K_aero_global
 
 
 
-def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, single = True):
+def solve_omega(poly_coeff, I, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, V_list,  x, single = True):
     '''
     Solves flutter analysis using an iterative method for either single-deck (2DOF) or twin-deck (4DOF).
     Returns global results (and optionally local for twin-deck).
@@ -282,12 +382,11 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
         n_modes = 4 # 4 modes for twin deck
 
     # empty() creates an array of the given shape and type, EVERY ELEMENT MUST BE INITIALIZED LATER
-    eigvals_all = np.empty((N, n_modes), dtype=complex)
-    eigvecs_all = np.empty((N, n_modes), dtype=object) 
-    damping_ratios  = np.empty((N, n_modes))
-    omega_all = np.empty((N, n_modes))
+    eigvals_all = np.empty((len(V_list), n_modes), dtype=complex)
+    eigvecs_all = np.empty((len(V_list), n_modes), dtype=object) 
+    damping_ratios  = np.empty((len(V_list), n_modes))
+    omega_all = np.empty((len(V_list), n_modes))
 
-    V_list = np.linspace(0, 100, N) # m/s
 
     #skip_mode = [False] * n_modes   # skip mode once flutter is detected
 
@@ -330,17 +429,17 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
                 iter += 1
 
                 if single:
-                    Cae_star, Kae_star = cae_kae_single(poly_coeff, Vred_global, B)
-                    C_aero = 0.5 * rho * B**2 * omega_old[j] * Cae_star
-                    K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star
-                    Cae_gen, Kae_gen =generalize_C_k(C_aero, K_aero, single=True)
+                    Cae_star_glob, Kae_star_glob = cae_kae_single(poly_coeff, Vred_global,x, B)
+                    C_aero_glob = 0.5 * rho * B**2 * omega_old[j] * Cae_star_glob
+                    K_aero_glob = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_glob
+                    Phi_global = global_massnorm_modeshapes(Ms, single = True)
+                    Cae_gen, Kae_gen =  generalize_global(C_aero_glob, K_aero_glob, Phi_global)
                 else:
-                    Cae_star, Kae_star = cae_kae_twin(poly_coeff, Vred_global, B)
-                    C_aero = 0.5 * rho * B**2 * omega_old[j] * Cae_star
-                    K_aero = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star
-                    Cae_gen, Kae_gen =generalize_C_k(C_aero, K_aero, single=False)
-
-
+                    Cae_star_glob, Kae_star_glob = cae_kae_twin(poly_coeff, Vred_global,x, B)
+                    C_aero_glob = 0.5 * rho * B**2 * omega_old[j] * Cae_star_glob
+                    K_aero_glob = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_glob
+                    Phi_global = global_massnorm_modeshapes(Ms, single = False)
+                    Cae_gen, Kae_gen =  generalize_global(C_aero_glob, K_aero_glob, Phi_global)
 
                
                 if np.isclose(V, 0.0): # still air
@@ -353,7 +452,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
 
                     Cae_gen = np.zeros_like(Ms)
                     Kae_gen = np.zeros_like(Ms)
-                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
+                    eigvals, eigvecs = solve_eigvalprob(I, Cs, Ks, Cae_gen, Kae_gen)
 
                     # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
                     eigvals_pos = eigvals[np.imag(eigvals) > 0]
@@ -370,7 +469,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
 
                     converge = True
                 else:
-                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
+                    eigvals, eigvecs = solve_eigvalprob(I, Cs, Ks, Cae_gen, Kae_gen)
 
                     # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
                     eigvals_pos = eigvals[np.imag(eigvals) > 0]
@@ -378,6 +477,9 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
 
                     omega_pos = np.imag(eigvals_pos)
                     damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
+
+                    print(f"\nV = {V:.2f} m/s, mode {j+1}")
+                    print("Egenverdier (λ):", eigvals)
 
                     alpha = 5
                     beta = 0
@@ -455,7 +557,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, N = 100, sing
 
     return damping_ratios, omega_all, eigvals_all, eigvecs_all
 
-def solve_flutter_speed(damping_ratios, N = 100, single = True):
+def solve_flutter_speed(damping_ratios, V_list, single = True):
     """
     Finds the flutter speed for each mode where the damping becomes negative.
 
@@ -463,8 +565,7 @@ def solve_flutter_speed(damping_ratios, N = 100, single = True):
     -----------
     damping_ratios : list of arrays
         Damping ratios for each mode (shape: list of length n_modes with N elements each).
-    N : int
-        Number of wind speed steps.
+    V_list
     single : bool
         True if single-deck (2 modes), False if twin-deck (4 modes).
 
@@ -478,7 +579,6 @@ def solve_flutter_speed(damping_ratios, N = 100, single = True):
     n_modes = 2 if single else 4
     flutter_speed_modes = np.full(n_modes, np.nan)
     flutter_idx_modes = np.full(n_modes, np.nan)
-    V_list = np.linspace(0, 100, N)
 
     for j in range(n_modes):
         for i, V in enumerate(V_list):
@@ -494,7 +594,7 @@ def solve_flutter_speed(damping_ratios, N = 100, single = True):
      
 
      
-def plot_damping_vs_wind_speed_single(damping_ratios, dist="Fill in dist", N = 100, single = True):
+def plot_damping_vs_wind_speed_single(damping_ratios, V_list, dist="Fill in dist",  single = True):
     """
     Plot damping ratios as a function of wind speed, and mark AD-validity range.
 
@@ -507,7 +607,6 @@ def plot_damping_vs_wind_speed_single(damping_ratios, dist="Fill in dist", N = 1
         Global angular frequencies per mode..
     """
 
-    V_list = np.linspace(0, 100, N)  # m/s
     markers = ['o', 's', '^', 'x']
     markersizes = [2.6, 2.4, 3, 3]
     colors = ['blue', 'green', 'red', 'orange']
@@ -538,7 +637,7 @@ def plot_damping_vs_wind_speed_single(damping_ratios, dist="Fill in dist", N = 1
     plt.xlim(0,)
     plt.show()
 
-def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist", N = 100, single = True):
+def plot_frequency_vs_wind_speed(B, Vred_defined, V_list, omega_all,   dist="Fill in dist", single = True):
     """
     Plots natural frequencies as a function of wind speed, marking valid AD regions.
 
@@ -552,8 +651,7 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist"
         Local angular frequencies (from Vred_local loop).
     B : float
         Deck width.
-    N : int
-        Number of points.
+ 
     single : bool
     """
     markers = ['o', 's', '^', 'x']
@@ -562,7 +660,6 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, omega_all, dist="Fill in dist"
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
     frequencies = omega_all / (2 * np.pi)       # Convert to Hz
-    V_list = np.linspace(0, 300, N)             # Wind speed [m/s]
 
     plt.figure(figsize=(10, 6))
 

@@ -50,6 +50,7 @@ def mode_shape_single(full_matrix=True):
     x = data4['x']
 
     N = mode_4.shape[0]
+    print(f"Number of nodes: {N}")
     phi_single = np.zeros((N, 2, 2))
 
     # Extract vertical and rotational components from mode data
@@ -63,10 +64,12 @@ def mode_shape_single(full_matrix=True):
         phi_single[i, 1, 1] = t1T
 
         if full_matrix:
-            phi_single[i, 1, 0] = t1V
-            phi_single[i, 0, 1] = z1T
+            phi_single[i, 1, 0] = z1T
+            phi_single[i, 0, 1] = t1V
+    # phi_single.shape: (n_nodes, n_DOF,n_modes)
 
-    return phi_single, N, x
+
+    return phi_single, x
 
 #Double deck
 def mode_shape_twin(full_matrix=True):
@@ -102,6 +105,7 @@ def mode_shape_twin(full_matrix=True):
     mode_15 = data15['mode']
     x = data4['x']
 
+
     N = mode_4.shape[0]
     phi_double = np.zeros((N, 4, 4))
 
@@ -121,9 +125,12 @@ def mode_shape_twin(full_matrix=True):
         phi_double[i, 3, 3] = t1T
 
         if full_matrix:
-            phi_double[i, 1, 0] = t1V
-            phi_double[i, 0, 1] = z1T
-            phi_double[i, 3, 2] = t1V
-            phi_double[i, 2, 3] = z1T
+            phi_double[i, 1, 0] = z1T
+            phi_double[i, 0, 1] = t1V 
+            phi_double[i, 3, 2] = z1T
+            phi_double[i, 2, 3] = t1V
 
-    return phi_double, N, x
+    # phi_double.shape: (n_nodes, n_DOF,n_modes)
+
+
+    return phi_double, x
