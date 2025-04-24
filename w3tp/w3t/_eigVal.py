@@ -133,9 +133,9 @@ def global_massnorm_modeshapes(M, single = True):
     # Phi shape: (n_nodes, n_dof, n_modes)
     # M shape: (n_dof, n_dof) (2x2 or 4x4)
     
-    Phi_massNorm = normalize_modes(Phi, M) 
+    #Phi_massNorm = normalize_modes(Phi, M) 
 
-    Phi_global = Phi_massNorm.reshape(-1,n) 
+    Phi_global = Phi.reshape(-1,n) 
 
     return Phi_global
 
@@ -327,16 +327,31 @@ def cae_kae_twin(poly_coeff, Vred_global,x, B):
         [B * k_θ2z1,   B**2 * k_θ2θ1,   B * k_θ2z2,   B**2 * k_θ2θ2]
     ])
 
-    # 66 segments
-    # standard_segment_length = 19 meters
-    # end_segment_length = 14 meters
-
     dxs = np.diff(x) # shape: (66,)
-    segment_lengths = [dxs[0]] + list(dxs) + [dxs[-1]]
-    C_blocks = [C_ae_star_per_m * dx for dx in segment_lengths]  # liste med 66 stk (4x4)
-    K_blocks = [K_ae_star_per_m * dx for dx in segment_lengths]
+    N = len(x) 
 
-    C_aero_global = spla.block_diag(*C_blocks)  # Shape (4N, 4N)
+    # segment_lengths = [dxs[0]] + list(dxs)
+
+    # C_blocks = [C_ae_star_per_m * dx for dx in segment_lengths]  # liste med 66 stk (2x2)
+    # K_blocks = [K_ae_star_per_m * dx for dx in segment_lengths]
+
+    # C_aero_global = spla.block_diag(*C_blocks)  # Shape (2N, 2N)
+    # K_aero_global = spla.block_diag(*K_blocks)
+
+    C_blocks = [np.zeros_like(C_ae_star_per_m) for _ in range(N)]
+    for i, dx in enumerate(dxs):
+        C_seg = C_ae_star_per_m * dx
+        C_blocks[i] += 0.5 * C_seg
+        C_blocks[i+1] += 0.5 * C_seg
+    
+    C_aero_global = spla.block_diag(*C_blocks) 
+
+    K_blocks = [np.zeros_like(K_ae_star_per_m) for _ in range(N)]
+    for i, dx in enumerate(dxs):
+        K_seg = K_ae_star_per_m * dx
+        K_blocks[i] += 0.5 * K_seg
+        K_blocks[i+1] += 0.5 * K_seg
+
     K_aero_global = spla.block_diag(*K_blocks)
 
 
@@ -344,7 +359,7 @@ def cae_kae_twin(poly_coeff, Vred_global,x, B):
 
 
 
-def solve_omega(poly_coeff, I, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, V_list,  x, single = True):
+def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, V_list,  x, single = True):
     '''
     Solves flutter analysis using an iterative method for either single-deck (2DOF) or twin-deck (4DOF).
     Returns global results (and optionally local for twin-deck).
@@ -378,9 +393,11 @@ def solve_omega(poly_coeff, I, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, V_list,  x
 
     if single:
         n_modes = 2 # 2 modes for single deck
-    else:
+        dominant_dofs = [0, 1]  # z, θ
+    else:   
         n_modes = 4 # 4 modes for twin deck
-
+        dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
+   
     # empty() creates an array of the given shape and type, EVERY ELEMENT MUST BE INITIALIZED LATER
     eigvals_all = np.empty((len(V_list), n_modes), dtype=complex)
     eigvecs_all = np.empty((len(V_list), n_modes), dtype=object) 
@@ -432,27 +449,24 @@ def solve_omega(poly_coeff, I, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, V_list,  x
                     Cae_star_glob, Kae_star_glob = cae_kae_single(poly_coeff, Vred_global,x, B)
                     C_aero_glob = 0.5 * rho * B**2 * omega_old[j] * Cae_star_glob
                     K_aero_glob = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_glob
-                    Phi_global = global_massnorm_modeshapes(Ms, single = True)
+                    Phi_global = global_massnorm_modeshapes(Ms_not_massnorm, single = True)
                     Cae_gen, Kae_gen =  generalize_global(C_aero_glob, K_aero_glob, Phi_global)
                 else:
                     Cae_star_glob, Kae_star_glob = cae_kae_twin(poly_coeff, Vred_global,x, B)
                     C_aero_glob = 0.5 * rho * B**2 * omega_old[j] * Cae_star_glob
                     K_aero_glob = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_glob
-                    Phi_global = global_massnorm_modeshapes(Ms, single = False)
+                    Phi_global = global_massnorm_modeshapes(Ms_not_massnorm, single = False)
                     Cae_gen, Kae_gen =  generalize_global(C_aero_glob, K_aero_glob, Phi_global)
 
                
                 if np.isclose(V, 0.0): # still air
                     # Egenverdiene og egenvektorene kommer i riktig rekkefølge
                     # Save which DOFs that dominate the mode shape
-                    if single: 
-                        dominant_dofs = [0, 1]  # z, θ
-                    else:
-                        dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
+                    
 
                     Cae_gen = np.zeros_like(Ms)
                     Kae_gen = np.zeros_like(Ms)
-                    eigvals, eigvecs = solve_eigvalprob(I, Cs, Ks, Cae_gen, Kae_gen)
+                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
                     # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
                     eigvals_pos = eigvals[np.imag(eigvals) > 0]
@@ -469,11 +483,21 @@ def solve_omega(poly_coeff, I, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, V_list,  x
 
                     converge = True
                 else:
-                    eigvals, eigvecs = solve_eigvalprob(I, Cs, Ks, Cae_gen, Kae_gen)
+                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
                     # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
-                    eigvals_pos = eigvals[np.imag(eigvals) > 0]
-                    eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  
+                    threshold = 1e-6  
+                    imag_mask = np.imag(eigvals) > threshold
+                    eigvals_pos = eigvals[imag_mask]
+                    eigvecs_pos = eigvecs[:, imag_mask]  
+
+                    if eigvals_pos.size == 0:
+                        print(f"Ingen komplekse egenverdier ved V = {V:.2f} m/s, mode {j+1}. Skipper mode.")
+                        omega_all[i, j] = np.nan
+                        damping_ratios[i, j] = np.nan
+                        eigvals_all[i, j] = np.nan
+                        eigvecs_all[i, j] = None
+                        break
 
                     omega_pos = np.imag(eigvals_pos)
                     damping_pos = -np.real(eigvals_pos) / np.abs(eigvals_pos)
@@ -481,8 +505,8 @@ def solve_omega(poly_coeff, I, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, V_list,  x
                     print(f"\nV = {V:.2f} m/s, mode {j+1}")
                     print("Egenverdier (λ):", eigvals)
 
-                    alpha = 5
-                    beta = 0
+                    alpha = 0.8
+                    beta = 0.5
 
                     score = (
                             np.abs(omega_pos - omega_old[j]) +
@@ -491,9 +515,9 @@ def solve_omega(poly_coeff, I, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, V_list,  x
                         )
                     best_idx = np.argmin(score)
                     
-                    if not single:
-                        if V < 10:
-                            best_idx = np.argmax(np.abs(eigvecs_pos[dominant_dofs[j], :]))
+                    # if not single:
+                    #     if V < 10:
+                    #         best_idx = np.argmax(np.abs(eigvecs_pos[dominant_dofs[j], :]))
 
 
                     λj = eigvals_pos[best_idx]

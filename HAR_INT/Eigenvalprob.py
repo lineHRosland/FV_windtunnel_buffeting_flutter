@@ -35,13 +35,12 @@ zeta = 0.005 # 0.5 %, critical damping
 rho = 1.25 # kg/m^3, air density ??
 
 
-V_list = np.linspace(0, 300, 200) # m/s
+V_list = np.linspace(0, 100, 200) # m/s
 
 
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
 eps = 1e-4 # Konvergensterske
 
-#%%
 # Single
 x_single = mode_shape_single(full_matrix=True)[1]
 
@@ -50,7 +49,7 @@ Ms_single, Cs_single, Ks_single = _eigVal.structural_matrices(m1V, m1T, f1V, f1T
 Ms_single_massnorm, Cs_single_massnorm, Ks_single_massnorm = _eigVal.structural_matrices_massnorm(f1V, f1T, zeta, single=True)
 
 
-#%%
+
 # Twin
 
 x_twin = mode_shape_twin(full_matrix=True)[1]
@@ -74,7 +73,7 @@ else:
 
 
 #Solve for eigenvalues and eigenvectors
-damping_ratios_single, omega_all_single, eigvals_all_single, eigvecs_all_single = _eigVal.solve_omega(poly_coeff_single, Ms_single_massnorm,Ms_single, Cs_single_massnorm, Ks_single_massnorm, f1V, f1T, B, rho, zeta,  eps, V_list,  x_single, single = True)
+damping_ratios_single, omega_all_single, eigvals_all_single, eigvecs_all_single = _eigVal.solve_omega(poly_coeff_single, Ms_single,Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, zeta,  eps, V_list,  x_single, single = True)
 
 
 #Flutter
