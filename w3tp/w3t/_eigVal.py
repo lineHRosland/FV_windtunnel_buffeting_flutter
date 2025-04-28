@@ -481,43 +481,104 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
 
     '''
 
-
-    if single:
-        n_modes = 2 # 2 modes for single deck
-        dominant_dofs = [0, 1]  # z, θ
-    else:   
-        n_modes = 4 # 4 modes for twin deck
-        dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
-   
-    # empty() creates an array of the given shape and type, EVERY ELEMENT MUST BE INITIALIZED LATER
-    eigvals_all = np.empty((len(V_list), n_modes), dtype=complex)
-    eigvecs_all = np.empty((len(V_list), n_modes), dtype=object) 
-    damping_ratios  = np.empty((len(V_list), n_modes))
-    omega_all = np.empty((len(V_list), n_modes))
-
+    # # empty() creates an array of the given shape and type, EVERY ELEMENT MUST BE INITIALIZED LATER
+    # eigvals_all = np.empty((len(V_list), n_modes), dtype=complex)
+    # eigvecs_all = np.empty((len(V_list), n_modes), dtype=object) 
+    # damping_ratios  = np.empty((len(V_list), n_modes))
+    # omega_all = np.empty((len(V_list), n_modes))
 
     #skip_mode = [False] * n_modes   # skip mode once flutter is detected
 
-    damping_z_list = [] if single or (not single and n_modes >= 1) else None
-    V_damping_z = []
-    V_damping_theta = []
-    damping_theta_list = [] if single or (not single and n_modes >= 1) else None
+    # damping_z_list = [] if single or (not single and n_modes >= 1) else None
+    # V_damping_z = []
+    # V_damping_theta = []
+    # damping_theta_list = [] if single or (not single and n_modes >= 1) else None
+
+    # damping_old = [zeta]*n_modes
+    # eigvec_old = [None] * n_modes
+
+    if single:
+        n_modes = 2 # 2 modes for single deck
+        #dominant_dofs = [0, 1]  # z, θ
+    else:   
+        n_modes = 4 # 4 modes for twin deck
+        #dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
+   
+    # Flutter detection
+    Vcritical = []
+    omegacritical = []
+
+    # Global results
+    V = [] # Wind speed, m/s
+    omega = [] # Frequency, rad/s
+    damping = [] # Damping ratio
+    eigvecs = [] # Eigenvectors 
+
 
     if single:
         omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
     else:
         omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) #Først brudekke 1, deretter brudekke 2
             
-    damping_old = [zeta]*n_modes
-    eigvec_old = [None] * n_modes
-    ResMat = np.zeros((2, 2 * MM.shape[0]))
-    stopWind = 0
+    ResMat = np.zeros((2, 2 * Ms.shape[0]))
+        # Første rad (ResMat[0, :]) skal lagre imag(λ) → altså frekvensene (ω) for alle modene. (Omega: np.imag(λj))
+        # Andre rad (ResMat[1, :]) skal lagre real(λ) → altså "rå" demping (ζ) for alle modene. (Damping:-np.real(λj) / np.abs(λj))
+        # Når du løser et 2. ordens differensialligningssystem (som flutterproblemet), får du 2 × n_modes egenverdier.
+        # For hver fysisk mode får du én positiv og én negativ imaginærdel (komplekse konjugatpar).
+        # Derfor trenger du dobbelt så mange plasser.
 
+
+    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks,  np.zeros_like(Cs), np.zeros_like(Ks)) 
+
+    # Sorter etter imaginærdel
+    sort_idx = np.argsort(np.imag(eigvals))
+    eigvals_sorted = eigvals[sort_idx]
+    eigvecs_sorted = eigvecs[:, sort_idx] 
+    
+    # Fyll ResMat for V=0 (inkluderer hele konjugatparet)
+    ResMat[0, :] = np.imag(eigvals_sorted[:2*n_modes])
+    ResMat[1, :] = np.real(eigvals_sorted[:2*n_modes])
+    
+    V.append(0.0) # V = 0.0 m/s
+    omega.append(ResMat[0, :n_modes])
+    damping.append(ResMat[1, :n_modes])
+    eigvecs.append(eigvecs[:n_modes, :n_modes]) # Egenvektorene kommer i riktig rekkefølge   
+
+
+                if np.isclose(V, 0.0): # still air
+                    # Egenverdiene og egenvektorene kommer i riktig rekkefølge
+                    # Save which DOFs that dominate the mode shape
+                    
+
+                    Cae_gen = np.zeros_like(Ms)
+                    Kae_gen = np.zeros_like(Ms)
+                    
+                    # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
+                    eigvals_pos = eigvals[np.imag(eigvals) > 0]
+                    eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  
+
+                    λj = eigvals_pos[j]
+                    φj = eigvecs_pos[:n_modes, j]
+
+                    omega_all[iterWind,j]= np.imag(λj) 
+                    damping_ratios[iterWind,j]= -np.real(λj) / np.abs(λj)
+                    eigvals_all[iterWind,j]= λj  
+                    eigvecs_all[iterWind,j]= φj
+                    eigvec_old[j] = φj
+
+                    converge = True
+
+
+    pos = 0
+
+    stopWind = 0
     iterWind = 0
-    V = 0 # Initial wind speed, m/s
+    V = 1 # Initial wind speed, m/s
     dV = 1 # Hvor mye vi øker vindhastighet per iterasjon. 
-    while (iterWind<1000 and stopWind == 0): #iterer over vindhastigheter
+
+    while (iterWind < 1000 and stopWind == 0): # iterer over vindhastigheter
     #stopper etter 1000 forsøk hvis ikke flutter er funnet.
+
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
 
             # if skip_mode[j]:
@@ -558,30 +619,6 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
                     Phi_global = global_massnorm_modeshapes(Ms_not_massnorm, single = False)
                     Cae_gen, Kae_gen =  generalize_global(C_aero_glob, K_aero_glob, Phi_global)
 
-               
-                if np.isclose(V, 0.0): # still air
-                    # Egenverdiene og egenvektorene kommer i riktig rekkefølge
-                    # Save which DOFs that dominate the mode shape
-                    
-
-                    Cae_gen = np.zeros_like(Ms)
-                    Kae_gen = np.zeros_like(Ms)
-                    eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
-
-                    # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
-                    eigvals_pos = eigvals[np.imag(eigvals) > 0]
-                    eigvecs_pos = eigvecs[:, np.imag(eigvals) > 0]  
-
-                    λj = eigvals_pos[j]
-                    φj = eigvecs_pos[:n_modes, j]
-
-                    omega_all[iterWind,j]= np.imag(λj) 
-                    damping_ratios[iterWind,j]= -np.real(λj) / np.abs(λj)
-                    eigvals_all[iterWind,j]= λj  
-                    eigvecs_all[iterWind,j]= φj
-                    eigvec_old[j] = φj
-
-                    converge = True
                 else:
                     eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
@@ -779,9 +816,9 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
             V -= 0.5 * dV
             dV *= 0.5
         else: #system stabilt
-            plottV[pos] = V
-            plotfrekvenser[:, pos] = ResMat[0, :]
-            plotdemp[:, pos] = ResMat[1, :]
+            V[pos] = V
+            omega[:, pos] = ResMat[0, :]
+            damping[:, pos] = ResMat[1, :]
             pos += 1
             V += dV
 
@@ -794,8 +831,8 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
             VCR = V
 
         ResMat=zeros(2,2*size(MM,1))
-        plotfrekvenser(:,pos)=ResMat(1,:)';
-        plotdemp(:,pos)=ResMat(2,:)';
+        omega(:,pos)=ResMat(1,:)'
+        damping(:,pos)=ResMat(2,:)'
 
     return damping_ratios, omega_all, eigvals_all, eigvecs_all
 
