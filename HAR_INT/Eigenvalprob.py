@@ -19,6 +19,7 @@ file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Arrays_AD"
 
 B = 18.3 # m, section width 
 
+
 # Values from FEM-model (Pure structural modes in still air)
 m1V = 4440631 #kg, vertical 
 m2V = 6683762 #kg, vertical 
@@ -32,14 +33,17 @@ w2V = 2*np.pi*f2V # rad/s, vertical FØRSTE ITERASJON
 w1T = 2*np.pi*f1T # rad/s, torsion FØRSTE ITERASJON
 
 zeta = 0.005 # 0.5 %, critical damping
-rho = 1.25 # kg/m^3, air density ??
+rho = 1.25 # kg/m^3, air density 
+
+#fn = np.array([f1V, f1T])*2*np.pi  # Konverterer Hz til rad/s
+#zeta = np.ones_like(fn)*0.5/100            # Kritisk demping 0.5%
 
 
 V_list = np.linspace(0, 100, 200) # m/s
 
 
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
-eps = 1e-4 # Konvergensterske
+eps = 1e-8 # Konvergensterske
 
 # Single
 x_single = mode_shape_single(full_matrix=True)[1]
@@ -158,7 +162,7 @@ else:
 
 
 
-damping_ratios_2D, omega_all_2D, eigvals_all_2D, eigvecs_all_2D = _eigVal.solve_omega(poly_coeff_2D, Ms, Cs, Ks,  f1V, f1T, B, rho, zeta,  eps, V_list, single = False)
+damping_ratios_2D, omega_all_2D, eigvals_all_2D, eigvecs_all_2D = _eigVal.solve_omega(poly_coeff_2D,  Ms_twin, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, zeta,  eps, V_list,  x_twin, single = False)
 
 
 flutter_speed_modes_2D, flutter_idx_modes_2D=_eigVal.solve_flutter_speed( damping_ratios_2D, V_list, single = False)
@@ -205,8 +209,7 @@ else:
 
 
 
-damping_ratios_3D, omega_all_3D, eigvals_all_3D, eigvecs_all_3D = _eigVal.solve_omega(poly_coeff_3D, Ms, Cs, Ks, f1V, f1T, B, rho, zeta,  eps, V_list, single = False)
-
+damping_ratios_3D, omega_all_3D, eigvals_all_3D, eigvecs_all_3D = _eigVal.solve_omega(poly_coeff_3D, Ms_twin, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, zeta,  eps, V_list,  x_twin, single = False)
 
 flutter_speed_modes_3D, flutter_idx_modes_3D=_eigVal.solve_flutter_speed( damping_ratios_3D, V_list, single = False)
 
@@ -247,7 +250,7 @@ if os.path.exists(os.path.join(file_path, "v_range_4D.npy")):
 else:
     raise FileNotFoundError(f"The file 'v_range_4D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-damping_ratios_4D, omega_all_4D, eigvals_all_4D, eigvecs_all_4D = _eigVal.solve_omega(poly_coeff_4D, Ms, Cs, Ks,  f1V, f1T, B, rho, zeta,  eps, V_list, single = False)
+damping_ratios_4D, omega_all_4D, eigvals_all_4D, eigvecs_all_4D = _eigVal.solve_omega(poly_coeff_4D, Ms_twin, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, zeta,  eps, V_list,  x_twin, single = False)
 
 flutter_speed_modes_4D, flutter_idx_modes_4D=_eigVal.solve_flutter_speed( damping_ratios_4D, V_list, single = False)
 
@@ -287,7 +290,7 @@ if os.path.exists(os.path.join(file_path, "v_range_5D.npy")):
 else:
     raise FileNotFoundError(f"The file 'v_range_5D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-damping_ratios_5D, omega_all_5D, eigvals_all_5D, eigvecs_all_5D = _eigVal.solve_omega(poly_coeff_5D, Ms, Cs, Ks, f1V, f1T, B, rho, zeta,  eps, V_list, single = False)
+damping_ratios_5D, omega_all_5D, eigvals_all_5D, eigvecs_all_5D = _eigVal.solve_omega(poly_coeff_5D, Ms_twin, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, zeta,  eps, V_list,  x_twin, single = False)
 
 
 flutter_speed_modes_5D, flutter_idx_modes_5D=_eigVal.solve_flutter_speed( damping_ratios_5D, V_list, single = False)
@@ -315,3 +318,5 @@ else:
 _eigVal.plot_damping_vs_wind_speed_single(damping_ratios_5D,V_list,  dist="5D",single = False)
 _eigVal.plot_frequency_vs_wind_speed(B, v_range_5D, V_list, omega_all=omega_all_5D, dist="5D", single = False)
 _eigVal.plot_flutter_mode_shape(eigvecs_all_5D,flutter_idx_modes_5D, dist="5D", single = False)
+
+# %%
