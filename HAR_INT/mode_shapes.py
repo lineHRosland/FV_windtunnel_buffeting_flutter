@@ -67,13 +67,20 @@ def mode_shape_single(full_matrix=True):
     #         phi_single[i, 0, 1] = t1V
     # phi_single.shape: (n_nodes, n_DOF,n_modes)
 
-    # mode 0: vertical mode (mode 4)
-    phi_single[0, 0, :] = mode_4[:, 2]  # zz
-    phi_single[0, 1, :] = mode_4[:, 3]  # θz
+    # # mode 0: vertical mode (mode 4)
+    # phi_single[0, 0, :] = mode_4[:, 2]  # zz
+    # phi_single[0, 1, :] = mode_4[:, 3]  # θz
 
-    # mode 1: torsional mode (mode 15)
-    phi_single[1, 0, :] = mode_15[:, 2]  # zθ
-    phi_single[1, 1, :] = mode_15[:, 3]  # θθ
+    # # mode 1: torsional mode (mode 15)
+    # phi_single[1, 0, :] = mode_15[:, 2]  # zθ
+    # phi_single[1, 1, :] = mode_15[:, 3]  # θθ
+
+    for i in range(N):
+        phi_single[i, 0, 0] = mode_4[i, 2]  # zz, vertical
+        phi_single[i, 0, 1] = mode_4[i, 3]  # θz, rotation
+        phi_single[i, 1, 0] = mode_15[i, 2] # zθ
+        phi_single[i, 1, 1] = mode_15[i, 3] # θθ
+
 
     return phi_single, x
 
@@ -136,21 +143,32 @@ def mode_shape_twin(full_matrix=True):
     #         phi_double[i, 3, 2] = z1T
     #         phi_double[i, 2, 3] = t1V
 
-    # mode 0: vertical mode (mode 4)
-    phi_double[0, 0, :] = mode_4[:, 2]  # zz
-    phi_double[0, 1, :] = mode_4[:, 3]  # θz
+    # # mode 0: vertical mode (mode 4)
+    # phi_double[0, 0, :] = mode_4[:, 2]  # zz
+    # phi_double[0, 1, :] = mode_4[:, 3]  # θz
 
-    # mode 1: torsional mode (mode 15)
-    phi_double[1, 0, :] = mode_15[:, 2]  # zθ
-    phi_double[1, 1, :] = mode_15[:, 3]  # θθ
+    # # mode 1: torsional mode (mode 15)
+    # phi_double[1, 0, :] = mode_15[:, 2]  # zθ
+    # phi_double[1, 1, :] = mode_15[:, 3]  # θθ
 
-    # mode 0: vertical mode (mode 4)
-    phi_double[2, 2, :] = mode_4[:, 2]  # zz
-    phi_double[2, 3, :] = mode_4[:, 3]  # θz
+    # # mode 0: vertical mode (mode 4)
+    # phi_double[2, 2, :] = mode_4[:, 2]  # zz
+    # phi_double[2, 3, :] = mode_4[:, 3]  # θz
 
-    # mode 1: torsional mode (mode 15)
-    phi_double[3, 2, :] = mode_15[:, 2]  # zθ
-    phi_double[3, 3, :] = mode_15[:, 3]  # θθ
+    # # mode 1: torsional mode (mode 15)
+    # phi_double[3, 2, :] = mode_15[:, 2]  # zθ
+    # phi_double[3, 3, :] = mode_15[:, 3]  # θθ
+
+    for i in range(N):
+        phi_double[i, 0, 0] = mode_4[i, 2]  # zz, vertical
+        phi_double[i, 0, 1] = mode_4[i, 3]  # θz, rotation
+        phi_double[i, 1, 0] = mode_15[i, 2] # zθ
+        phi_double[i, 1, 1] = mode_15[i, 3] # θθ
+        phi_double[i, 2, 2] = mode_4[i, 2]  # zz, vertical
+        phi_double[i, 2, 3] = mode_4[i, 3]  # θz, rotation
+        phi_double[i, 3, 2] = mode_15[i, 2] # zθ
+        phi_double[i, 3, 3] = mode_15[i, 3] # θθ
+
 
     # phi_double.shape: (n_nodes, n_DOF,n_modes)
 

@@ -68,97 +68,97 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     #     K_integrand_right = Phi[i+1].T @ K_ae_star @ Phi[i+1]
     #     K_ae_star_gen += 0.5 * (K_integrand_left + K_integrand_right) * dx
 
-def generalize_global(C, K, Phi):
-    """
-    Generalizes full global aerodynamic matrices C and K using modal matrix Phi.
+# def generalize_global(C, K, Phi):
+#     """
+#     Generalizes full global aerodynamic matrices C and K using modal matrix Phi.
 
-    Parameters:
-    -----------
-    C : ndarray, shape (n, n)
-        Full aerodynamic damping matrix (global DOFs).
-    K : ndarray, shape (n, n)
-        Full aerodynamic stiffness matrix (global DOFs).
-    Phi : ndarray, shape (n, n)
-        Modal matrix (columns are mode shapes, usually mass-normalized).
+#     Parameters:
+#     -----------
+#     C : ndarray, shape (n, n)
+#         Full aerodynamic damping matrix (global DOFs).
+#     K : ndarray, shape (n, n)
+#         Full aerodynamic stiffness matrix (global DOFs).
+#     Phi : ndarray, shape (n, n)
+#         Modal matrix (columns are mode shapes, usually mass-normalized).
 
-    Returns:
-    --------
-    C_gen : ndarray, shape (n, n)
-        Generalized (modal) damping matrix.
-    K_gen : ndarray, shape (n, n)
-        Generalized (modal) stiffness matrix.
-    """
-    C_gen = Phi.T @ C @ Phi # shape: Single - (2, 2) or Twin - (4, 4)
-    K_gen = Phi.T @ K @ Phi
-    return C_gen, K_gen
+#     Returns:
+#     --------
+#     C_gen : ndarray, shape (n, n)
+#         Generalized (modal) damping matrix.
+#     K_gen : ndarray, shape (n, n)
+#         Generalized (modal) stiffness matrix.
+#     """
+#     C_gen = Phi.T @ C @ Phi # shape: Single - (2, 2) or Twin - (4, 4)
+#     K_gen = Phi.T @ K @ Phi
+#     return C_gen, K_gen
 
 
-def normalize_modes(Phi, M):
-    """
-    Masse-normaliserer modeshapes for 2 DOF (single-deck) eller 4 DOF (twin-deck).
+# def normalize_modes(Phi, M):
+#     """
+#     Masse-normaliserer modeshapes for 2 DOF (single-deck) eller 4 DOF (twin-deck).
     
-    Parameters:
-    -----------
-    Phi : ndarray of shape (N, n, n)
-        Modalmatriser langs broen. n = 2 for single-deck, n = 4 for twin-deck.
-    M : ndarray of shape (n, n)
-        Massematrise i fysisk DOF-rom (typisk diagonal).
+#     Parameters:
+#     -----------
+#     Phi : ndarray of shape (N, n, n)
+#         Modalmatriser langs broen. n = 2 for single-deck, n = 4 for twin-deck.
+#     M : ndarray of shape (n, n)
+#         Massematrise i fysisk DOF-rom (typisk diagonal).
     
-    Returns:
-    --------
-    Phi_norm : ndarray of shape (N, n, n)
-        Masse-normaliserte modeshapes.
-    """
-    N, n, _ = Phi.shape
-    Phi_norm = np.zeros_like(Phi)
+#     Returns:
+#     --------
+#     Phi_norm : ndarray of shape (N, n, n)
+#         Masse-normaliserte modeshapes.
+#     """
+#     N, n, _ = Phi.shape
+#     Phi_norm = np.zeros_like(Phi)
 
-    for i in range(N):
-        for j in range(n):  # én mode om gangen
-            phi_j = Phi[i][:, j]  # shape: (n,)
-            m_j = phi_j.T @ M @ phi_j
-            Phi_norm[i][:, j] = phi_j / np.sqrt(m_j)
+#     for i in range(N):
+#         for j in range(n):  # én mode om gangen
+#             phi_j = Phi[i][:, j]  # shape: (n,)
+#             m_j = phi_j.T @ M @ phi_j
+#             Phi_norm[i][:, j] = phi_j / np.sqrt(m_j)
         
-    return Phi_norm
+#     return Phi_norm
 
-def global_massnorm_modeshapes(M, single = True):
+# def global_massnorm_modeshapes(M, single = True):
 
-    if single:
-        n = 2  
-        Phi = mode_shape_single(full_matrix=True)[0]
+#     if single:
+#         n = 2  
+#         Phi = mode_shape_single(full_matrix=True)[0]
 
-    else:
-        n = 4
-        Phi= mode_shape_twin(full_matrix=True)[0]
+#     else:
+#         n = 4
+#         Phi= mode_shape_twin(full_matrix=True)[0]
     
-    # Phi shape: (n_nodes, n_dof, n_modes)
-    # M shape: (n_dof, n_dof) (2x2 or 4x4)
+#     # Phi shape: (n_nodes, n_dof, n_modes)
+#     # M shape: (n_dof, n_dof) (2x2 or 4x4)
     
-    #Phi_massNorm = normalize_modes(Phi, M) 
+#     #Phi_massNorm = normalize_modes(Phi, M) 
 
-    Phi_global = Phi.reshape(-1,n) 
+#     Phi_global = Phi.reshape(-1,n) 
 
-    return Phi_global
+#     return Phi_global
 
 
 
-def structural_matrices_massnorm(f1, f2, zeta, single=True):
-    """
-    Return mass-normalized structural matrices:
-    M = I, K = diag(omega^2), C = diag(2*zeta*omega)
-    """
-    ω1 = 2 * np.pi * f1
-    ω2 = 2 * np.pi * f2
+# def structural_matrices_massnorm(f1, f2, zeta, single=True):
+#     """
+#     Return mass-normalized structural matrices:
+#     M = I, K = diag(omega^2), C = diag(2*zeta*omega)
+#     """
+#     ω1 = 2 * np.pi * f1
+#     ω2 = 2 * np.pi * f2
 
-    Ms = np.eye(2)
-    Ks = np.diag([ω1**2, ω2**2])
-    Cs = np.diag([2 * zeta * ω1, 2 * zeta * ω2])
+#     Ms = np.eye(2)
+#     Ks = np.diag([ω1**2, ω2**2])
+#     Cs = np.diag([2 * zeta * ω1, 2 * zeta * ω2])
 
-    if not single:
-        Ms = np.eye(4)
-        Ks = np.kron(np.eye(2), Ks)
-        Cs = np.kron(np.eye(2), Cs)
+#     if not single:
+#         Ms = np.eye(4)
+#         Ks = np.kron(np.eye(2), Ks)
+#         Cs = np.kron(np.eye(2), Cs)
 
-    return Ms, Cs, Ks
+#     return Ms, Cs, Ks
 
 def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     """
@@ -247,7 +247,7 @@ def cae_kae_single(poly_coeff, Vred_global, Phi, x, B):
     AA[7, 1, 1] = B**2 * A3
 
     AA_tilde = np.zeros((8, 2, 2))  # Generalisert aero-matriser
-    phiphi_p = np.transpose(Phi, [1, 0, 2])  # (DOF, mode, x)
+    phiphi_p = np.transpose(Phi, [1, 2, 0])  # (DOF, mode, x)
 
     length = x[-1] - x[0]  # Lengde på bro
     nlength = len(x)  # Antall punkter
@@ -384,7 +384,7 @@ def cae_kae_twin(poly_coeff, Vred_global, Phi, x, B):
     AA[31, 3, 3] = B**2 * AD[31]
 
     AA_tilde = np.zeros((32, 4, 4))  # Generalisert aero-matriser
-    phiphi_p = np.transpose(Phi, [1, 0, 2])  # (DOF, mode, x)
+    phiphi_p = np.transpose(Phi, [1, 2, 0])  # (DOF, mode, x)
 
     length = x[-1] - x[0]  # Lengde på bro
     nlength = len(x)  # Antall punkter
@@ -449,7 +449,7 @@ def cae_kae_twin(poly_coeff, Vred_global, Phi, x, B):
 
 
 
-def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, eps, Vs,  x, single = True):
+def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = True):
     '''
     Solves flutter analysis using an iterative method for either single-deck (2DOF) or twin-deck (4DOF).
     Returns global results (and optionally local for twin-deck).
@@ -508,11 +508,11 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
         #dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
    
     # Flutter detection
-    Vcritical = []
-    omegacritical = []
+    Vcritical = None  # Critical wind speed
+    omegacritical = None  # Critical frequency
 
     # Global results
-    V = [] # Wind speed, m/s
+    V_list = [] # Wind speed, m/s
     omega = [] # Frequency, rad/s
     damping = [] # Damping ratio
     eigvecs = [] # Eigenvectors 
@@ -520,12 +520,12 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
     eigvals0, eigvecs0 = solve_eigvalprob(Ms, Cs, Ks,  np.zeros_like(Cs), np.zeros_like(Ks)) 
 
     # Sorter etter imaginærdel
-    sort_idx = np.argsort(np.imag(eigvals))
+    sort_idx = np.argsort(np.imag(eigvals0))
     eigvals0_sorted = eigvals0[sort_idx]
     eigvecs0_sorted = eigvecs0[:, sort_idx] 
    
     
-    V.append(0.0) # V = 0.0 m/s
+    V_list.append(0.0) # V = 0.0 m/s
     omega.append(np.imag(eigvals0_sorted[:2*n_modes])) #konjugatpar
     damping.append(np.real(eigvals0_sorted[:2*n_modes])) #konjugatpar, ikke normalisert 
     eigvecs.append(eigvecs0_sorted[:, :2*n_modes]) 
@@ -561,16 +561,14 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
         # For hver fysisk mode får du én positiv og én negativ imaginærdel (komplekse konjugatpar).
         # Derfor trenger du dobbelt så mange plasser.
 
-    pos = 1 # Allerede lagt inn verdier for V = 0.0 m/s, så starter på 1
-
-    stopWind = 0
+    stopWind = False
     iterWind = 0
-    V = 1 # Initial wind speed, m/s
-    dV = 1 # Hvor mye vi øker vindhastighet per iterasjon. 
+    V = 1.0 # Initial wind speed, m/s
+    dV = 1.0 # Hvor mye vi øker vindhastighet per iterasjon. 
 
-    while (iterWind < 1000 and stopWind == 0): # iterer over vindhastigheter
+    while (iterWind < 1000 and not stopWind): # iterer over vindhastigheter
     #stopper etter 1000 forsøk hvis ikke flutter er funnet.
-
+        idxResMat = 0
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
 
             # if skip_mode[j]:
@@ -582,7 +580,7 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
 
             #omegacritical: omega0[j]
 
-            stopFreq = 0
+            stopFreq = False
             iterFreq = 0 # Teller hvor mange frekvens-iterasjoner
 
             omegacr = omega0[j] # Startverdi for omegacr (kritisk frekvens) er den naturlige frekvensen til modusen
@@ -591,15 +589,13 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
 
             print(f"Wind speed iteration {iterWind+1}: V = {V} m/s")
 
-            while (iterFreq < 10 and stopFreq == 0): # iterer over frekvens-iterasjoner
-    
-                #if V > 62: print(f"  Iteration {iter+1} for mode {j+1}")
-               
+            while (iterFreq < 1000 and not stopFreq): # iterer over frekvens-iterasjoner           
 
                 if single:
-                    Cae_star_gen, Kae_star_gen = cae_kae_single(poly_coeff, Vred,x, B)
+                    Cae_star_gen, Kae_star_gen = cae_kae_single(poly_coeff, Vred, Phi, x, B)
+
                 else:
-                    Cae_star_gen, Kae_star_gen = cae_kae_twin(poly_coeff, Vred,x, B)
+                    Cae_star_gen, Kae_star_gen = cae_kae_twin(poly_coeff, Vred,Phi, x, B)
 
                 Cae_gen = 0.5 * rho * B**2 * omegacr * Cae_star_gen
                 Kae_gen = 0.5 * rho * B**2 * omegacr**2 * Kae_star_gen
@@ -612,18 +608,17 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
                 eigvecs_sorted = eigvecs[:, sort_idx]
 
                 # Ta positiv halvdel
-                eigvals_sorted = eigvals_sorted[len(eigvals_sorted)//2:]
-                eigvecs_sorted = eigvecs_sorted[:, len(eigvals_sorted)//2:]
+                eigvals_sortedpos = eigvals_sorted[len(eigvals_sorted)//2:]
 
 
                 if single:
-                    best_idx = np.argmin(np.abs(np.imag(eigvals_sorted) - omega[-1][n_modes + j]))    
+                    best_idx = np.argmin(np.abs(np.imag(eigvals_sortedpos) - omega[-1][n_modes + j]))    
                 else:
-                    best_idx = np.argmin(np.abs(np.imag(eigvals_sorted) - omega[-1][n_modes + j]) + 10 * np.abs(np.real(eigvals_sorted) - damping[-1][n_modes + j]))
+                    best_idx = np.argmin(np.abs(np.imag(eigvals_sortedpos) - omega[-1][n_modes + j]) + 10 * np.abs(np.real(eigvals_sortedpos) - damping[-1][n_modes + j]))
                         
 
-                domega = omegacr - np.imag(eigvals_sorted[best_idx])
-                omegacr = np.imag(eigvals_sorted[best_idx])
+                domega = omegacr - np.imag(eigvals_sortedpos[best_idx])
+                omegacr = np.imag(eigvals_sortedpos[best_idx])
 
                     # # Min gamle versjon 
                     # # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
@@ -669,7 +664,9 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
                         
                     # Check if the mode is converged 
                     
-                if np.abs(domega) < eps and omegacr <= 0.0:
+                if np.abs(domega) < eps and omegacr <= 0.0: # omega har konvergert, jippi
+                    stopFreq = True # Stopper frekvens-iterasjonen hvis vi har funnet flutter
+
                         # # When flutter has occurred, we don't need to increase the speed further for this mode
                         # tmp_damping = damping_ratios[j] + [damping_new]
                         # sign_changes = np.where(np.diff(np.sign(tmp_damping)) != 0)[0]
@@ -748,123 +745,130 @@ def solve_omega(poly_coeff, Ms_not_massnorm, Ms, Cs, Ks, f1, f2, B, rho, zeta, e
                         #     plt.show()
 
 
-                    stopFreq = 1 # Stopper frekvens-iterasjonen hvis vi har funnet flutter
+
+                iterFreq += 1
+                
+                        # omega_all[iterWind,j]=omega_new    
+                        # damping_ratios[iterWind,j]=damping_new
+                        # eigvals_all[iterWind,j]=λj                
+                        # eigvecs_all[iterWind,j]=φj
+
+                        # if j ==0:
+                        #     damping_z_list.append(Cae_gen.copy())  # legg inn her
+                        #     V_damping_z.append(V)
+
+                        # if j == 1:
+                        #     damping_theta_list.append(Cae_gen.copy())
+                        #     V_damping_theta.append(V)
+
+                        # if time.time() - start_time > timeout:
+                        #     print(f"WARNING: Convergence timeout at V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
+                        #     omega_all[iterWind, j] = np.nan
+                        #     damping_ratios[iterWind, j] = np.nan
+                        #     eigvals_all[iterWind, j] = np.nan
+                        #     eigvecs_all[iterWind, j] = None
+                        #     #print("iteration:", iter)
+                        #     break
+
+                        # omega_old[j] = omega_new
+                        # damping_old[j] = damping_new
+                        # eigvec_old[j] = φj
                     
-                        V -= dV
-                        dV *= 0.5 #Hvis flutter er funnet, går tilbake litt i hastighet, for å gjøre søket mer presist.
-                        omega_all[iterWind,j]=omega_new    
-                        damping_ratios[iterWind,j]=damping_new
-                        eigvals_all[iterWind,j]=λj                
-                        eigvecs_all[iterWind,j]=φj
+                if iterFreq == 1000:
+                    print(f"WARNING: Frequancy iteration has not converged for V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
 
-                        if j ==0:
-                            damping_z_list.append(Cae_gen.copy())  # legg inn her
-                            V_damping_z.append(V)
+                    # Legger inn NaN-verdier så strukturen holdes ryddig
+                    ResMat[0, idxResMat:idxResMat+2] = np.nan  # ω
+                    ResMat[1, idxResMat:idxResMat+2] = np.nan  # ζ
+                    idxResMat += 2  # Hopper 2 videre som vanlig
 
-                        if j == 1:
-                            damping_theta_list.append(Cae_gen.copy())
-                            V_damping_theta.append(V)
-
-                        converge = True              
-
-                    else: # For the next iteration, use the new values as the old ones
-                        # Timeout check
-                        iterFreq += 1
-
-                        if time.time() - start_time > timeout:
-                            print(f"WARNING: Convergence timeout at V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
-                            omega_all[iterWind, j] = np.nan
-                            damping_ratios[iterWind, j] = np.nan
-                            eigvals_all[iterWind, j] = np.nan
-                            eigvecs_all[iterWind, j] = None
-                            #print("iteration:", iter)
-                            break
-
-                        omega_old[j] = omega_new
-                        damping_old[j] = damping_new
-                        eigvec_old[j] = φj
+                    stopFreq = True #bryter while løkke med en gang
                     
-                    if iterFreq == 10:
-                        print(f"WARNING: Frequancy iteration has not converged for V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
-                        stopWind = 1
-                        converge = True
 
 
-            posres = np.where(np.abs(np.imag(eigvals)) == omegacr)[0] # posisjon til rett egenverdi) må hentes når du er ferdig med å iterere på w
+            stopFreq = False # nullstiller
+            iterFreq = 0 # Teller hvor mange frekvens-iterasjoner
+
+            # OK, hvilken egenverdi var det egentlig som hadde denne ω?
+            posres = np.where(np.abs(np.imag(eigvals_sorted)) == omegacr)[0] # posisjon til rett egenverdi) må hentes når du er ferdig med å iterere på w
             # ResMat har 2 rader: første for ω, andre for ξ
             # Hvis flere treff på ωcr, skriver de inn flere kolonner
             if len(posres) > 2: # Hvis vi fant flere egenverdier som matcher ωcr
-                ResMat[0, 2*v-1:2*v-1+len(posres)] = np.imag(eigvals[posres])
-                ResMat[1, 2*v-1:2*v-1+len(posres)] = np.real(eigvals[posres])
-                v = v + len(posres)//2 - 1
+            #det finnes flere løsninger
+                ResMat[0, idxResMat : idxResMat + len(posres)] = np.imag(eigvals_sorted[posres])
+                ResMat[1, idxResMat : idxResMat + len(posres)] = np.real(eigvals_sorted[posres])
+                idxResMat += len(posres)  # Hopper videre
             else:
-                ResMat[0, 2*v-1:2*v] = np.imag(eigvals[posres])
-                ResMat[1, 2*v-1:2*v] = np.real(eigvals[posres])
+                ResMat[0, idxResMat : idxResMat + 2] = np.imag(eigvals_sorted[posres])
+                ResMat[1, idxResMat : idxResMat + 2] = np.real(eigvals_sorted[posres])
+                idxResMat += 2  # Konjugatpar ⇒ 2 verdier
         
-        stabind = np.max(ResMat[1, ResMat[1,:] != 0]) # største reel del, brukes til å sjekke om det finnes noen uastabile egenverdier
+        stabind = np.max(ResMat[1, ResMat[1,:] != 0]) # største reelle del, brukes til å sjekke om det finnes noen uastabile egenverdier
         iterWind += 1
-        if stabind > 0: #flutter observert
+        if stabind > 0: #flutter finnes, må finne nøyaktig flutterhastighet
             V -= 0.5 * dV
             dV *= 0.5
         else: #system stabilt
-            V[pos] = V
-            omega[:, pos] = ResMat[0, :]
-            damping[:, pos] = ResMat[1, :]
-            pos += 1
+
+            V_list.append(V)
+            omega.append(ResMat[0, :])
+            damping.append(ResMat[1, :])
+            eigvecs.append(eigvecs_sorted[:, :2*n_modes])
             V += dV
 
         if np.abs(stabind) < 1e-7: # hvis stabind = 0, akkurat ved flutter!
         # kritisk frekvens og vindhastighet lagres
-            stopWind = 1
-            Demping = np.max(ResMat[1, :])
             posCR = np.argmax(ResMat[1, :])
-            OmegaCR = ResMat[0, posCR]
-            VCR = V
+            omegacritical = ResMat[0, posCR]
+            Vcritical = V
+            stopWind = True
 
-        ResMat=zeros(2,2*size(MM,1))
-        omega(:,pos)=ResMat(1,:)'
-        damping(:,pos)=ResMat(2,:)'
+        
+        ResMat=np.zeros((2,2*Ms.shape[0]))
 
-    return damping_ratios, omega_all, eigvals_all, eigvecs_all
 
-def solve_flutter_speed(damping_ratios, V_list, single = True):
-    """
-    Finds the flutter speed for each mode where the damping becomes negative.
+        
 
-    Parameters:
-    -----------
-    damping_ratios : list of arrays
-        Damping ratios for each mode (shape: list of length n_modes with N elements each).
-    V_list
-    single : bool
-        True if single-deck (2 modes), False if twin-deck (4 modes).
+    return V_list, omega, damping, eigvecs, omegacritical, Vcritical
 
-    Returns:
-    --------
-    flutter_speed_modes : list
-        List of flutter speeds (None if not observed).
-    V_list : ndarray
-        Wind speed vector used in calculation.
-    """
-    n_modes = 2 if single else 4
-    flutter_speed_modes = np.full(n_modes, np.nan)
-    flutter_idx_modes = np.full(n_modes, np.nan)
+# def solve_flutter_speed(damping_ratios, V_list, single = True):
+#     """
+#     Finds the flutter speed for each mode where the damping becomes negative.
 
-    for j in range(n_modes):
-        for i, V in enumerate(V_list):
-            if damping_ratios[i, j] < 0 and np.isnan(flutter_speed_modes[j]):
-                flutter_speed_modes[j] = V
-                flutter_idx_modes[j] = i
-                break
+#     Parameters:
+#     -----------
+#     damping_ratios : list of arrays
+#         Damping ratios for each mode (shape: list of length n_modes with N elements each).
+#     V_list
+#     single : bool
+#         True if single-deck (2 modes), False if twin-deck (4 modes).
 
-    if np.all(np.isnan(flutter_speed_modes)):
-        print("Ingen flutter observert for noen moder!")
-        return None
-    return flutter_speed_modes, flutter_idx_modes
+#     Returns:
+#     --------
+#     flutter_speed_modes : list
+#         List of flutter speeds (None if not observed).
+#     V_list : ndarray
+#         Wind speed vector used in calculation.
+#     """
+#     n_modes = 2 if single else 4
+#     flutter_speed_modes = np.full(n_modes, np.nan)
+#     flutter_idx_modes = np.full(n_modes, np.nan)
+
+#     for j in range(n_modes):
+#         for i, V in enumerate(V_list):
+#             if damping_ratios[i, j] < 0 and np.isnan(flutter_speed_modes[j]):
+#                 flutter_speed_modes[j] = V
+#                 flutter_idx_modes[j] = i
+#                 break
+
+#     if np.all(np.isnan(flutter_speed_modes)):
+#         print("Ingen flutter observert for noen moder!")
+#         return None
+#     return flutter_speed_modes, flutter_idx_modes
      
 
      
-def plot_damping_vs_wind_speed_single(damping_ratios, V_list, dist="Fill in dist",  single = True):
+def plot_damping_vs_wind_speed_single(damping_list,omega_list, V_list, dist="Fill in dist",  single = True):
     """
     Plot damping ratios as a function of wind speed, and mark AD-validity range.
 
@@ -891,8 +895,18 @@ def plot_damping_vs_wind_speed_single(damping_ratios, V_list, dist="Fill in dist
         n_modes = 4
         title = f"Damping vs. wind speed - {dist}"
 
+    damping_array = []
+    for damp, omega in zip(damping_list, omega_list):
+        # Beregn -Re(λ)/|λ| for positiv halvdel
+        lambda_pos = 1j * omega + damp  # rekonstruerer λ (den ble splittet i ulike lister i solve_omega)
+        xi = -np.real(lambda_pos) / np.abs(lambda_pos)
+        damping_array.append(xi)
+
+    damping_array = np.array(damping_array)  # (Nvind, 2*n_modes)
+
+
     for j in range(n_modes):
-        plt.plot(V_list, damping_ratios[:, j], color=colors[j], marker=markers[j],  markersize=markersizes[j],  linestyle='None', label=labels[j])
+        plt.plot(V_list, damping_array[:, n_modes+j], color=colors[j], marker=markers[j],  markersize=markersizes[j],  linestyle='None', label=labels[j])
 
     plt.axhline(0, linestyle="--", color="grey", linewidth=1.1, label="Critical damping")
     plt.xlabel("Wind speed [m/s]", fontsize=16)
@@ -907,7 +921,7 @@ def plot_damping_vs_wind_speed_single(damping_ratios, V_list, dist="Fill in dist
     plt.xlim(0,)
     plt.show()
 
-def plot_frequency_vs_wind_speed(B, Vred_defined, V_list, omega_all,   dist="Fill in dist", single = True):
+def plot_frequency_vs_wind_speed(B, Vred_defined, V_list, omega_list,   dist="Fill in dist", single = True):
     """
     Plots natural frequencies as a function of wind speed, marking valid AD regions.
 
@@ -929,9 +943,7 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, V_list, omega_all,   dist="Fil
     colors = ['blue', 'green', 'red', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
 
-    frequencies = omega_all / (2 * np.pi)       # Convert to Hz
 
-    plt.figure(figsize=(10, 6))
 
     if single:
         n_modes = 2 
@@ -939,6 +951,10 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, V_list, omega_all,   dist="Fil
     else:
         n_modes = 4
         title = f"Natural frequencies vs wind speed - {dist}"
+    
+    frequencies = omega_list[:, n_modes:] / (2 * np.pi)       # Convert to Hz, velger kun positiv del av konjugatparet
+
+    plt.figure(figsize=(10, 6))
 
     for j in range(n_modes):
         plt.plot(V_list, frequencies[:, j], color=colors[j], marker = markers[j], markersize = markersizes[j], label = labels[j], linestyle='None')

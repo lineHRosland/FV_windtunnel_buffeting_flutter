@@ -35,32 +35,19 @@ w1T = 2*np.pi*f1T # rad/s, torsion FØRSTE ITERASJON
 zeta = 0.005 # 0.5 %, critical damping
 rho = 1.25 # kg/m^3, air density 
 
-#fn = np.array([f1V, f1T])*2*np.pi  # Konverterer Hz til rad/s
-#zeta = np.ones_like(fn)*0.5/100            # Kritisk demping 0.5%
-
-
-V_list = np.linspace(0, 100, 200) # m/s
-
-
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
 eps = 1e-8 # Konvergensterske
 
 # Single
-x_single = mode_shape_single(full_matrix=True)[1]
+phi_single, x_single = mode_shape_single(full_matrix=True)
 
 Ms_single, Cs_single, Ks_single = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = True)
 
-Ms_single_massnorm, Cs_single_massnorm, Ks_single_massnorm = _eigVal.structural_matrices_massnorm(f1V, f1T, zeta, single=True)
-
-
-
 # Twin
 
-x_twin = mode_shape_twin(full_matrix=True)[1]
+phi_twin, x_twin = mode_shape_twin(full_matrix=True)
 
 Ms_twin, Cs_twin, Ks_twin = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
-
-Ms_twin_massnorm, Cs_twin_massnorm, Ks_twin_massnorm = _eigVal.structural_matrices_massnorm(f1V, f1T, zeta, single=False)
 
 
 #%%
@@ -76,10 +63,13 @@ else:
 
 
 
+
 #Solve for eigenvalues and eigenvectors
-damping_ratios_single, omega_all_single, eigvals_all_single, eigvecs_all_single = _eigVal.solve_omega(poly_coeff_single, Ms_single,Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, zeta,  eps, V_list,  x_single, single = True)
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_omega(poly_coeff_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True)
 
+print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
+#%%
 #Flutter
 flutter_speed_modes_single, flutter_idx_modes_single =_eigVal.solve_flutter_speed( damping_ratios_single, V_list, single = True)
 
@@ -115,7 +105,7 @@ else:
 
 
 
-damping_ratios_1D, omega_all_1D, eigvals_all_1D, eigvecs_all_1D = _eigVal.solve_omega(poly_coeff_1D, Ms_twin, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, zeta,  eps, V_list,  x_twin, single = False)
+V_list_twin, omega_list_twin, damping_list_twin, eigvecs_list_twin, omegacritical_twin, Vcritical_twin = _eigVal.solve_omega(poly_coeff_1D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
 
 
 flutter_speed_modes_1D, flutter_idx_modes_1D=_eigVal.solve_flutter_speed( damping_ratios_1D, V_list, single = False)
