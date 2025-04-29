@@ -67,29 +67,17 @@ else:
 #Solve for eigenvalues and eigenvectors
 V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_omega(poly_coeff_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True)
 
+#Flutter
 print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #%%
-#Flutter
-flutter_speed_modes_single, flutter_idx_modes_single =_eigVal.solve_flutter_speed( damping_ratios_single, V_list, single = True)
-
-if flutter_speed_modes_single[0] is not None:
-    print(f"Flutter speed mode 1 - single deck: {flutter_speed_modes_single[0]:.2f}")
-else:
-    print("Flutter speed mode 1 - single deck: Not found")
-
-if flutter_speed_modes_single[1] is not None:   
-    print(f"Flutter speed mode 2 - single deck: {flutter_speed_modes_single[1]:.2f}")
-else:
-    print("Flutter speed mode 2 - single deck: Not found")
-
-
 #Plotting
-_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_single,V_list, dist="Single deck",  single = True)
 
-_eigVal.plot_frequency_vs_wind_speed(B,  v_range_single, V_list, omega_all_single, dist="Single deck", single = True)
+_eigVal.plot_damping_vs_wind_speed(damping_list_single,omega_list_single, V_list_single, dist="Single deck",  single = True)
 
-_eigVal.plot_flutter_mode_shape(eigvecs_all_single,flutter_idx_modes_single, dist="Single deck", single = True)
+_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
+
+_eigVal.plot_flutter_mode_shape(eigvecs_list_single, omega_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
 
 #%%
 #Double deck 1D
@@ -105,38 +93,20 @@ else:
 
 
 
-V_list_twin, omega_list_twin, damping_list_twin, eigvecs_list_twin, omegacritical_twin, Vcritical_twin = _eigVal.solve_omega(poly_coeff_1D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
+V_list_twin_1D, omega_list_twin_1D, damping_list_twin_1D, eigvecs_list_twin_1D, omegacritical_twin_1D, Vcritical_twin_1D = _eigVal.solve_omega(poly_coeff_1D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
 
 
-flutter_speed_modes_1D, flutter_idx_modes_1D=_eigVal.solve_flutter_speed( damping_ratios_1D, V_list, single = False)
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_twin_1D, Vcritical_twin_1D)
 
-if flutter_speed_modes_1D[0] is not None:
-    print(f"Flutter speed mode 1 - 1D: {flutter_speed_modes_1D[0]:.2f}")
-else:
-    print("Flutter speed mode 1 - 1D: Not found")
+#%%
+#Plotting
 
-if flutter_speed_modes_1D[1] is not None:   
-    print(f"Flutter speed mode 2 - 1D: {flutter_speed_modes_1D[1]:.2f}")
-else:
-    print("Flutter speed mode 2 - 1D: Not found")
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_1D,omega_list_twin_1D, V_list_twin_1D, dist="Single deck",  single = True)
 
-if flutter_speed_modes_1D[2] is not None:   
-    print(f"Flutter speed mode 3 - 1D: {flutter_speed_modes_1D[2]:.2f}")
-else:
-    print("Flutter speed mode 3 - 1D: Not found")
+_eigVal.plot_frequency_vs_wind_speed(V_list_twin_1D, omega_list_twin_1D, dist="Single deck", single = True)
 
-if flutter_speed_modes_1D[3] is not None:   
-    print(f"Flutter speed mode 4 - 1D: {flutter_speed_modes_1D[3]:.2f}")
-else:
-    print("Flutter speed mode 4 - 1D: Not found")
-
-
-
-_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_1D,  V_list, dist="1D", single = False)
-
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_1D, V_list, omega_all=omega_all_1D,  dist="1D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_all_1D,flutter_idx_modes_1D, dist="1D", single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_1D, omega_list_twin_1D, V_list_twin_1D, Vcritical_twin_1D, omegacritical_twin_1D, dist="Single deck", single = True)
 
 #%%
 #Double deck 2D
@@ -150,39 +120,21 @@ if os.path.exists(os.path.join(file_path, "v_range_2D.npy")):
 else:
     raise FileNotFoundError(f"The file 'v_range_2D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
+V_list_twin_2D, omega_list_twin_2D, damping_list_twin_2D, eigvecs_list_twin_2D, omegacritical_twin_2D, Vcritical_twin_2D = _eigVal.solve_omega(poly_coeff_1D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
 
 
-damping_ratios_2D, omega_all_2D, eigvals_all_2D, eigvecs_all_2D = _eigVal.solve_omega(poly_coeff_2D,  Ms_twin, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, zeta,  eps, V_list,  x_twin, single = False)
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_twin_2D, Vcritical_twin_2D)
 
+#%%
+#Plotting
 
-flutter_speed_modes_2D, flutter_idx_modes_2D=_eigVal.solve_flutter_speed( damping_ratios_2D, V_list, single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_2D,omega_list_twin_2D, V_list_twin_2D, dist="Single deck",  single = True)
 
-if flutter_speed_modes_2D[0] is not None:
-    print(f"Flutter speed mode 1 - 2D: {flutter_speed_modes_2D[0]:.2f}")
-else:
-    print("Flutter speed mode 1 - 2D: Not found")
+_eigVal.plot_frequency_vs_wind_speed(V_list_twin_2D, omega_list_twin_2D, dist="Single deck", single = True)
 
-if flutter_speed_modes_2D[1] is not None:   
-    print(f"Flutter speed mode 2 - 2D: {flutter_speed_modes_2D[1]:.2f}")
-else:
-    print("Flutter speed mode 2 - 2D: Not found")
+_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_2D, omega_list_twin_2D, V_list_twin_2D, Vcritical_twin_2D, omegacritical_twin_2D, dist="Single deck", single = True)
 
-if flutter_speed_modes_2D[2] is not None:   
-    print(f"Flutter speed mode 3 - 2D: {flutter_speed_modes_2D[2]:.2f}")
-else:
-    print("Flutter speed mode 3 - 2D: Not found")
-
-if flutter_speed_modes_2D[3] is not None:   
-    print(f"Flutter speed mode 4 - 2D: {flutter_speed_modes_2D[3]:.2f}")
-else:
-    print("Flutter speed mode 4 - 2D: Not found")
-
-
-_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_2D,  V_list, dist="2D", single = False)
-
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_2D, V_list, omega_all=omega_all_2D, dist="2D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_all_2D,flutter_idx_modes_2D, dist="2D", single = False)
 
 
 #%%
@@ -198,34 +150,20 @@ else:
     raise FileNotFoundError(f"The file 'v_range_3D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
 
+V_list_twin_3D, omega_list_twin_3D, damping_list_twin_3D, eigvecs_list_twin_3D, omegacritical_twin_3D, Vcritical_twin_3D = _eigVal.solve_omega(poly_coeff_1D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
 
-damping_ratios_3D, omega_all_3D, eigvals_all_3D, eigvecs_all_3D = _eigVal.solve_omega(poly_coeff_3D, Ms_twin, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, zeta,  eps, V_list,  x_twin, single = False)
 
-flutter_speed_modes_3D, flutter_idx_modes_3D=_eigVal.solve_flutter_speed( damping_ratios_3D, V_list, single = False)
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_twin_3D, Vcritical_twin_3D)
 
-if flutter_speed_modes_3D[0] is not None:
-    print(f"Flutter speed mode 1 - 3D: {flutter_speed_modes_3D[0]:.2f}")
-else:
-    print("Flutter speed mode 1 - 3D: Not found")
+#%%
+#Plotting
 
-if flutter_speed_modes_3D[1] is not None:   
-    print(f"Flutter speed mode 2 - 3D: {flutter_speed_modes_3D[1]:.2f}")
-else:
-    print("Flutter speed mode 2 - 3D: Not found")
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_3D,omega_list_twin_3D, V_list_twin_3D, dist="Single deck",  single = True)
 
-if flutter_speed_modes_3D[2] is not None:   
-    print(f"Flutter speed mode 3 - 3D: {flutter_speed_modes_3D[2]:.2f}")
-else:
-    print("Flutter speed mode 3 - 3D: Not found")
+_eigVal.plot_frequency_vs_wind_speed(V_list_twin_3D, omega_list_twin_3D, dist="Single deck", single = True)
 
-if flutter_speed_modes_3D[3] is not None:   
-    print(f"Flutter speed mode 4 - 3D: {flutter_speed_modes_3D[3]:.2f}")
-else:
-    print("Flutter speed mode 4 - 3D: Not found")
-
-_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_3D, V_list,  dist="3D",single = False)
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_3D, V_list, omega_all=omega_all_3D,dist="3D",single = False)
-_eigVal.plot_flutter_mode_shape(eigvecs_all_3D,flutter_idx_modes_3D, dist="3D", single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_3D, omega_list_twin_3D, V_list_twin_3D, Vcritical_twin_3D, omegacritical_twin_3D, dist="Single deck", single = True)
 
 
 #%%
@@ -240,33 +178,20 @@ if os.path.exists(os.path.join(file_path, "v_range_4D.npy")):
 else:
     raise FileNotFoundError(f"The file 'v_range_4D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-damping_ratios_4D, omega_all_4D, eigvals_all_4D, eigvecs_all_4D = _eigVal.solve_omega(poly_coeff_4D, Ms_twin, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, zeta,  eps, V_list,  x_twin, single = False)
+V_list_twin_4D, omega_list_twin_4D, damping_list_twin_4D, eigvecs_list_twin_4D, omegacritical_twin_4D, Vcritical_twin_4D = _eigVal.solve_omega(poly_coeff_1D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
 
-flutter_speed_modes_4D, flutter_idx_modes_4D=_eigVal.solve_flutter_speed( damping_ratios_4D, V_list, single = False)
 
-if flutter_speed_modes_4D[0] is not None:
-    print(f"Flutter speed mode 1 - 4D: {flutter_speed_modes_4D[0]:.2f}")
-else:
-    print("Flutter speed mode 1 - 4D: Not found")
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_twin_4D, Vcritical_twin_4D)
 
-if flutter_speed_modes_4D[1] is not None:   
-    print(f"Flutter speed mode 2 - 4D: {flutter_speed_modes_4D[1]:.2f}")
-else:
-    print("Flutter speed mode 2 - 4D: Not found")
+#%%
+#Plotting
 
-if flutter_speed_modes_4D[2] is not None:   
-    print(f"Flutter speed mode 3 - 4D: {flutter_speed_modes_4D[2]:.2f}")
-else:
-    print("Flutter speed mode 3 - 4D: Not found")
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_4D,omega_list_twin_4D, V_list_twin_4D, dist="Single deck",  single = True)
 
-if flutter_speed_modes_4D[3] is not None:   
-    print(f"Flutter speed mode 4 - 4D: {flutter_speed_modes_4D[3]:.2f}")
-else:
-    print("Flutter speed mode 4 - 4D: Not found")
+_eigVal.plot_frequency_vs_wind_speed(V_list_twin_4D, omega_list_twin_4D, dist="Single deck", single = True)
 
-_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_4D,V_list,dist="4D", single = False)
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_4D, V_list,omega_all=omega_all_4D,   dist="4D", single = False)
-_eigVal.plot_flutter_mode_shape(eigvecs_all_4D,flutter_idx_modes_4D, dist="4D", single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_4D, omega_list_twin_4D, V_list_twin_4D, Vcritical_twin_4D, omegacritical_twin_4D, dist="Single deck", single = True)
 
 #%%
 #Double deck 5D
@@ -280,33 +205,19 @@ if os.path.exists(os.path.join(file_path, "v_range_5D.npy")):
 else:
     raise FileNotFoundError(f"The file 'v_range_5D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-damping_ratios_5D, omega_all_5D, eigvals_all_5D, eigvecs_all_5D = _eigVal.solve_omega(poly_coeff_5D, Ms_twin, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, zeta,  eps, V_list,  x_twin, single = False)
+V_list_twin_5D, omega_list_twin_5D, damping_list_twin_5D, eigvecs_list_twin_5D, omegacritical_twin_5D, Vcritical_twin_5D = _eigVal.solve_omega(poly_coeff_1D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
 
 
-flutter_speed_modes_5D, flutter_idx_modes_5D=_eigVal.solve_flutter_speed( damping_ratios_5D, V_list, single = False)
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_twin_5D, Vcritical_twin_5D)
 
-if flutter_speed_modes_5D[0] is not None:
-    print(f"Flutter speed mode 1 - 5D: {flutter_speed_modes_5D[0]:.2f}")
-else:
-    print("Flutter speed mode 1 - 5D: Not found")
+#%%
+#Plotting
 
-if flutter_speed_modes_5D[1] is not None:   
-    print(f"Flutter speed mode 2 - 5D: {flutter_speed_modes_5D[1]:.2f}")
-else:
-    print("Flutter speed mode 2 - 5D: Not found")
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_5D,omega_list_twin_5D, V_list_twin_5D, dist="Single deck",  single = True)
 
-if flutter_speed_modes_5D[2] is not None:   
-    print(f"Flutter speed mode 3 - 5D: {flutter_speed_modes_5D[2]:.2f}")
-else:
-    print("Flutter speed mode 3 - 5D: Not found")
+_eigVal.plot_frequency_vs_wind_speed(V_list_twin_5D, omega_list_twin_5D, dist="Single deck", single = True)
 
-if flutter_speed_modes_5D[3] is not None:   
-    print(f"Flutter speed mode 4 - 5D: {flutter_speed_modes_5D[3]:.2f}")
-else:
-    print("Flutter speed mode 4 - 5D: Not found")
-
-_eigVal.plot_damping_vs_wind_speed_single(damping_ratios_5D,V_list,  dist="5D",single = False)
-_eigVal.plot_frequency_vs_wind_speed(B, v_range_5D, V_list, omega_all=omega_all_5D, dist="5D", single = False)
-_eigVal.plot_flutter_mode_shape(eigvecs_all_5D,flutter_idx_modes_5D, dist="5D", single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_5D, omega_list_twin_5D, V_list_twin_5D, Vcritical_twin_5D, omegacritical_twin_5D, dist="Single deck", single = True)
 
 # %%

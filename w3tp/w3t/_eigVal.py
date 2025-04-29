@@ -776,14 +776,13 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
                     
                 if iterFreq == 1000:
                     print(f"WARNING: Frequancy iteration has not converged for V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
+                    stopFreq = True
+                    # n_remaining = ResMat.shape[1] - idxResMat
+                    # to_fill = min(2, n_remaining)  # enten 2 eller mindre hvis på slutten
 
-                    # Legger inn NaN-verdier så strukturen holdes ryddig
-                    ResMat[0, idxResMat:idxResMat+2] = np.nan  # ω
-                    ResMat[1, idxResMat:idxResMat+2] = np.nan  # ζ
-                    idxResMat += 2  # Hopper 2 videre som vanlig
-
-                    stopFreq = True #bryter while løkke med en gang
-                    
+                    # ResMat[0, idxResMat : idxResMat + to_fill] = np.imag(eigvals_sorted[posres][:to_fill])
+                    # ResMat[1, idxResMat : idxResMat + to_fill] = np.real(eigvals_sorted[posres][:to_fill])
+                    # idxResMat += to_fill
 
 
             stopFreq = False # nullstiller
@@ -793,6 +792,17 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
             posres = np.where(np.abs(np.imag(eigvals_sorted)) == omegacr)[0] # posisjon til rett egenverdi) må hentes når du er ferdig med å iterere på w
             # ResMat har 2 rader: første for ω, andre for ξ
             # Hvis flere treff på ωcr, skriver de inn flere kolonner
+            
+            print("\n--- Debug info ---")
+            print(f"iterWind = {iterWind}, j = {j}")
+            print(f"Current idxResMat = {idxResMat}")
+            print(f"posres = {posres}")
+            print(f"len(posres) = {len(posres)}")
+            print(f"eigvals_sorted[posres] = {eigvals_sorted[posres]}")
+            print(f"Remaining space in ResMat = {ResMat.shape[1] - idxResMat}")
+            print("------------------\n")
+                        
+            
             if len(posres) > 2: # Hvis vi fant flere egenverdier som matcher ωcr
             #det finnes flere løsninger
                 ResMat[0, idxResMat : idxResMat + len(posres)] = np.imag(eigvals_sorted[posres])
@@ -868,7 +878,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
      
 
      
-def plot_damping_vs_wind_speed_single(damping_list,omega_list, V_list, dist="Fill in dist",  single = True):
+def plot_damping_vs_wind_speed(damping_list,omega_list, V_list, dist="Fill in dist",  single = True):
     """
     Plot damping ratios as a function of wind speed, and mark AD-validity range.
 
@@ -921,7 +931,7 @@ def plot_damping_vs_wind_speed_single(damping_list,omega_list, V_list, dist="Fil
     plt.xlim(0,)
     plt.show()
 
-def plot_frequency_vs_wind_speed(B, Vred_defined, V_list, omega_list,   dist="Fill in dist", single = True):
+def plot_frequency_vs_wind_speed(V_list, omega_list,   dist="Fill in dist", single = True):
     """
     Plots natural frequencies as a function of wind speed, marking valid AD regions.
 
@@ -971,21 +981,35 @@ def plot_frequency_vs_wind_speed(B, Vred_defined, V_list, omega_list,   dist="Fi
     plt.xlim(0,V_list[-1])
     plt.show()
 
-def plot_flutter_mode_shape(eigvecs_all, flutter_idx_modes, dist="Fill in dist", single = True):
+def plot_flutter_mode_shape(eigvecs_all, omega_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single = True):
     
-    flutter_idx = np.nanmin(flutter_idx_modes) 
-    critical_mode = np.nanargmin(flutter_idx_modes)
-    flutter_vec = eigvecs_all[int(flutter_idx),critical_mode] # Velg riktig mode ved flutter
+    if Vcritical is None or omegacritical is None:
+        print("Ingen flutter observert!")
+        return
+
+    if single:
+        n_modes = 2
+        dofs = ["V1", "T1"]
+
+    else:
+        n_modes = 4  
+        dofs = ["V1", "T1", "V2", "T2"]
+    
+    # Finn hvilken vindhastighet som tilsvarer Vcritical
+    idx_flutter = np.argmin(np.abs(np.array(V_list) - Vcritical))
+
+    # Finn hvilken mode som flutterer
+    freq_flutter = np.array(omega_list[idx_flutter])
+    freq_flutter = freq_flutter[n_modes:] / (2*np.pi)  # kun positive modes (Hz)
+
+    idx_mode_flutter = np.argmin(np.abs(freq_flutter - omegacritical/(2*np.pi)))
+
+    flutter_vec = eigvecs_all[idx_flutter][:, n_modes + idx_mode_flutter]
 
 
     # 2 subplot: én for amplitudene, én for fasevinklene. De deler x-aksen
     fig, ax = plt.subplots(2, 1, figsize=(6, 6), sharex=True)
-    dofs = ["V1", "T1", "V2", "T2"]
 
-    if single:
-        n_modes = 2
-    else:
-        n_modes = 4      
 
     abs_vec = np.abs(flutter_vec) # absoluttverdien av alle komponentene i egenvektoren
     max_idx = np.argmax(abs_vec) # Finner hvilken komponent som har størst amplitude
