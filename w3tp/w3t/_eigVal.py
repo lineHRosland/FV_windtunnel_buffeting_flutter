@@ -589,7 +589,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
 
             print(f"Wind speed iteration {iterWind+1}: V = {V} m/s")
 
-            while (iterFreq < 1000 and not stopFreq): # iterer over frekvens-iterasjoner           
+            while (iterFreq < 100 and not stopFreq): # iterer over frekvens-iterasjoner           
 
                 if single:
                     Cae_star_gen, Kae_star_gen = cae_kae_single(poly_coeff, Vred, Phi, x, B)
@@ -642,9 +642,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
                     #print(f"\nV = {V:.2f} m/s, mode {j+1}")
                     #print("Egenverdier (λ):", eigvals)
 
-                
 
-                    
                         #if V < 120:
                         #    best_idx = np.argmax(np.abs(eigvecs_pos[dominant_dofs[j], :]))
 
@@ -774,15 +772,13 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
                         # damping_old[j] = damping_new
                         # eigvec_old[j] = φj
                     
-                if iterFreq == 1000:
+                if iterFreq == 100:
                     print(f"WARNING: Frequancy iteration has not converged for V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
+                    ResMat[0, idxResMat : idxResMat + 2] = [np.nan, np.nan]
+                    ResMat[1, idxResMat : idxResMat + 2] = [np.nan, np.nan]
+                    idxResMat += 2
                     stopFreq = True
-                    # n_remaining = ResMat.shape[1] - idxResMat
-                    # to_fill = min(2, n_remaining)  # enten 2 eller mindre hvis på slutten
-
-                    # ResMat[0, idxResMat : idxResMat + to_fill] = np.imag(eigvals_sorted[posres][:to_fill])
-                    # ResMat[1, idxResMat : idxResMat + to_fill] = np.real(eigvals_sorted[posres][:to_fill])
-                    # idxResMat += to_fill
+                    
 
 
             stopFreq = False # nullstiller
@@ -837,7 +833,6 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
         ResMat=np.zeros((2,2*Ms.shape[0]))
 
 
-        
 
     return V_list, omega, damping, eigvecs, omegacritical, Vcritical
 
