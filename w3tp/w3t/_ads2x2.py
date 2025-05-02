@@ -669,8 +669,8 @@ class AerodynamicDerivatives2x2:
         damping_ad = np.array([True, True, False, False,  True, True, False, False])
         
         for k in range(8):
-            k_range[k,0] = 1/np.max(vreds)
-            k_range[k,1] = 1/np.min(vreds)
+            k_range[k,0] = 1/np.max(vreds[k,:])
+            k_range[k,1] = 1/np.min(vreds[k,:])
             
             if damping_ad[k] == True:
                 poly_coeff[k,-orders[k]-1:] = np.polyfit(1/vreds[k,:],1/vreds[k,:]*ad_matrix[k,:],orders[k])
@@ -715,8 +715,6 @@ class AerodynamicDerivatives2x2:
 
             # Fit a polynomial of order `orders[k]` to the k-th derivative
             poly_coeff[k, :] = np.polyfit(vreds_, ad_matrix_, orders[k])
-
-            print(poly_coeff[k, :])
 
         # Return the polynomial coefficients and velocity fitting ranges
         return poly_coeff, v_range

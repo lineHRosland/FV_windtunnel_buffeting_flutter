@@ -790,9 +790,8 @@ class AerodynamicDerivatives4x4:
         return ads, vreds
 
 
-    #Ikke benyttet
     def fit_poly_k(self,orders = np.ones(32,dtype=int)*2):
-        ad_matrix, vreds = self.ad_matrix
+        ad_matrix, vreds = self.ad_matrix_jagged()
         
         poly_coeff = np.zeros((32,np.max(orders)+1))
         k_range = np.zeros((32,2))
@@ -804,15 +803,14 @@ class AerodynamicDerivatives4x4:
         
         
         for k in range(32):
-            k_range[k,0] = 1/np.max(vreds)
-            k_range[k,1] = 1/np.min(vreds)
+            k_range[k,0] = 1/np.max(vreds[k])
+            k_range[k,1] = 1/np.min(vreds[k])
             
             if damping_ad[k] == True:
-                poly_coeff[k,-orders[k]-1:] = np.polyfit(1/vreds[k,:],1/vreds[k,:]*ad_matrix[k,:],orders[k])
+                poly_coeff[k,-orders[k]-1:] = np.polyfit(1/vreds[k], 1/vreds[k] * ad_matrix[k], orders[k])
             elif damping_ad[k] == False:
-                poly_coeff[k,-orders[k]-1:] = np.polyfit(1/vreds[k,:],(1/vreds[k,:])**2*ad_matrix[k,:],orders[k])
-            
-                
+                poly_coeff[k,-orders[k]-1:] = np.polyfit(1/vreds[k], (1/vreds[k])**2 * ad_matrix[k], orders[k])
+                      
         return poly_coeff, k_range
     
 
@@ -846,8 +844,6 @@ class AerodynamicDerivatives4x4:
 
             # Fit polynomial of specified order to current component
             poly_coeff[k, :] = np.polyfit(v_k, ad_k, orders[k])
-
-            print(poly_coeff[k, :])
 
         return poly_coeff, v_range
 
