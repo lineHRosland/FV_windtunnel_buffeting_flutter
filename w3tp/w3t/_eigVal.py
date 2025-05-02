@@ -589,7 +589,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
 
             print(f"Wind speed iteration {iterWind+1}: V = {V} m/s")
 
-            while (iterFreq < 100 and not stopFreq): # iterer over frekvens-iterasjoner           
+            while (iterFreq < 1000 and not stopFreq): # iterer over frekvens-iterasjoner           
 
                 if single:
                     Cae_star_gen, Kae_star_gen = cae_kae_single(poly_coeff, Vred, Phi, x, B)
@@ -772,11 +772,11 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
                         # damping_old[j] = damping_new
                         # eigvec_old[j] = φj
                     
-                if iterFreq == 100:
+                if iterFreq == 1000:
                     print(f"WARNING: Frequancy iteration has not converged for V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
-                    ResMat[0, idxResMat : idxResMat + 2] = [np.nan, np.nan]
-                    ResMat[1, idxResMat : idxResMat + 2] = [np.nan, np.nan]
-                    idxResMat += 2
+                    # ResMat[0, idxResMat : idxResMat + 2] = [np.nan, np.nan]
+                    # ResMat[1, idxResMat : idxResMat + 2] = [np.nan, np.nan]
+                    # idxResMat += 2
                     stopFreq = True
                     
 
@@ -785,7 +785,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
             iterFreq = 0 # Teller hvor mange frekvens-iterasjoner
 
             # OK, hvilken egenverdi var det egentlig som hadde denne ω?
-            posres = np.where(np.abs(np.imag(eigvals_sorted)) == omegacr)[0] # posisjon til rett egenverdi) må hentes når du er ferdig med å iterere på w
+            posres = np.where(np.isclose(np.imag(eigvals_sorted), omegacr, atol=1e-6))[0] # posisjon til rett egenverdi) må hentes når du er ferdig med å iterere på w
             # ResMat har 2 rader: første for ω, andre for ξ
             # Hvis flere treff på ωcr, skriver de inn flere kolonner
             
@@ -812,6 +812,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
         stabind = np.max(ResMat[1, ResMat[1,:] != 0]) # største reelle del, brukes til å sjekke om det finnes noen uastabile egenverdier
         iterWind += 1
         if stabind > 0: #flutter finnes, må finne nøyaktig flutterhastighet
+            print(f"Flutter detected at V = {V:.2f} m/s, iterWind = {iterWind}, j = {j}")
             V -= 0.5 * dV
             dV *= 0.5
         else: #system stabilt

@@ -15,7 +15,7 @@ from mode_shapes import mode_shape_single
 from mode_shapes import mode_shape_twin
 
 
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Arrays_AD"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Arrays_AD_ny"
 
 B = 18.3 # m, section width 
 
