@@ -20,6 +20,7 @@ from copy import deepcopy
 from ._exp import Experiment
 import pandas as pd
 import os
+import csv
 
 
 
@@ -279,6 +280,21 @@ class AerodynamicDerivative2x2:
             ax.set_xlabel(r"Reduced velocity $\hat{V}$")
             ax.legend()
             ax.grid(True)
+
+    def get_points(self):
+        """
+        Returns the aerodynamic derivative data points as a tuple.
+
+        Returns:
+        --------
+        tuple:
+            - reduced_velocities: Reduced velocities.
+            - ad_load_cell_a: Contribution from load cell A.
+            - ad_load_cell_b: Contribution from load cell B.
+        """
+        AD = self.ad_load_cell_a + self.ad_load_cell_b
+
+        return self.reduced_velocities, AD
 
 
 class AerodynamicDerivatives2x2:
@@ -541,7 +557,7 @@ class AerodynamicDerivatives2x2:
            
         return cls(h1, h2, h3, h4, a1, a2, a3, a4)
     
-    #Ikke benyttet
+
     @classmethod
     def from_poly_k(cls,poly_k,k_range, vred):
         vred[vred==0] = 1.0e-10
@@ -643,7 +659,7 @@ class AerodynamicDerivatives2x2:
         
         return frf_mat
     
-    #Ikke benyttet
+
     def fit_poly_k(self,orders = np.ones(8,dtype=int)*2):
         ad_matrix, vreds = self.ad_matrix
         
@@ -651,7 +667,6 @@ class AerodynamicDerivatives2x2:
         k_range = np.zeros((8,2))
         
         damping_ad = np.array([True, True, False, False,  True, True, False, False])
-        
         
         for k in range(8):
             k_range[k,0] = 1/np.max(vreds)
@@ -695,8 +710,11 @@ class AerodynamicDerivatives2x2:
             v_range[k, 1] = np.max(vreds)
             v_range[k, 0] = np.min(vreds)
 
+            vreds_ = np.concatenate([np.array([0]), vreds[k, :]])
+            ad_matrix_ = np.concatenate([np.array([0]), ad_matrix[k, :]])
+
             # Fit a polynomial of order `orders[k]` to the k-th derivative
-            poly_coeff[k, :] = np.polyfit(vreds[k, :], ad_matrix[k, :], orders[k])
+            poly_coeff[k, :] = np.polyfit(vreds_, ad_matrix_, orders[k])
 
         # Return the polynomial coefficients and velocity fitting ranges
         return poly_coeff, v_range
@@ -891,8 +909,82 @@ class AerodynamicDerivatives2x2:
         # Adjust layout to avoid overlap
         fig_damping.tight_layout()
         fig_stiffness.tight_layout()
-         
-    
+
+
+    def polyfit_to_excel(self, test_name, save_path, orders=np.ones(8, dtype=int)*2):
+        """
+        Fits polynomial models to aerodynamic derivatives and exports the coefficients to an Excel file.
+
+        Parameters:
+        -----------
+        test_name : str
+            Name of the test case, used in the Excel file title.
+        save_path : str
+            Directory path where the Excel file will be saved.
+        orders : np.ndarray of int, optional
+            Polynomial order for each aerodynamic derivative (default is second-order for all 32 terms).
+
+        The resulting Excel file will contain:
+            - Label of each aerodynamic derivative (AD)
+            - Polynomial order used
+            - Fitting range of reduced velocity (V̂_min, V̂_max)
+            - Polynomial coefficients (a₀, a₁, ..., aₙ)
+        """
+
+        # Fit polynomials to all aerodynamic derivatives using the specified polynomial orders
+        poly_coeff, v_range = self.fit_poly(orders=orders)
+        
+        # Labels for each aerodynamic derivative
+        labels = ["H_1*", "H_2*", "H_3*", "H_4*","A_1*", "A_2*", "A_3*", "A_4*"]
+        
+        data = []
+        for i, label in enumerate(labels):
+            # Get the polynomial coefficients for the i-th derivative and reverse their order (highest degree first)
+            coeff_row = list(poly_coeff[i])[::-1]
+            # Get the reduced velocity fitting range for this derivative
+            vmin, vmax = v_range[i]
+            # Create a row with label, polynomial order, velocity range, and coefficients
+            row = [label, orders[i], vmin, vmax] + coeff_row
+            data.append(row)
+
+        # Determine the maximum polynomial order used (to know how many coefficient columns to create)
+        max_order = max(orders)
+        # Define column names including coefficient names a0, a1, ..., an
+        col_names = ["AD label", "Order", "V̂_min", "V̂_max"] + [f"a{i}" for i in range(max_order+1)]
+        # Create a pandas DataFrame from the data
+        df = pd.DataFrame(data, columns=col_names)
+
+        # Define filename and full output path
+        filename = f"{test_name}_AD_polyfit.xlsx"
+        full_path = os.path.join(save_path, filename)
+
+        # Write DataFrame to Excel with some metadata and formula description
+        with pd.ExcelWriter(full_path, engine="openpyxl") as writer:
+            df.to_excel(writer, index=False, startrow=2)  # Write data starting from row 3 (0-based index)
+            worksheet = writer.sheets["Sheet1"]
+            worksheet.cell(row=1, column=1).value = f"Test Name: {test_name}"  # Add test name in row 1
+            worksheet.cell(row=1, column=4).value = "f(V̂) = a₀ + a₁·V̂ + a₂·V̂² + ..."  # Add formula description
+
+        print(f"Saved polynomial fit data to {full_path}")
+
+
+    def get_points(self):
+        all_points = []
+
+        for ad_id, ad in zip(
+            ['h1', 'h2', 'h3', 'h4', 'a1', 'a2', 'a3', 'a4'],
+            [self.h1, self.h2, self.h3, self.h4, self.a1, self.a2, self.a3, self.a4]
+        ):
+            x_array, y_array = ad.get_points()
+            for x, y in zip(x_array, y_array):
+                all_points.append([ad_id, x, y])
+
+        with open('single_AD_points.csv', 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['ad_id', 'x_value', 'y_value'])
+            writer.writerows(all_points)
+
+
     def plot_to_compare(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly only', orders=np.ones(8, dtype=int)*2):     
         """
         Plots aerodynamic derivatives for comparison purposes using polynomial fits only.

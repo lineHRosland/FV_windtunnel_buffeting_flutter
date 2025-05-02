@@ -835,13 +835,14 @@ class AerodynamicDerivatives4x4:
         poly_coeff = np.zeros((32, np.max(orders) + 1))                     # list to store polynomial coefficients for each component
         v_range = np.zeros((32, 2))         # Initialize velocity range array
 
+
         for k in range(32):
-            v_k = vreds[k]        # Reduced velocities for current component
-            ad_k = ad_matrix[k]   # Aerodynamic derivative data for current component
+            v_k = np.concatenate([[0], vreds[k]])  # Aerodynamic derivative data for current component
+            ad_k = np.concatenate([[0], ad_matrix[k]])
 
             # Store the min and max reduced velocity for each component
-            v_range[k, 0] = np.min(v_k)
-            v_range[k, 1] = np.max(v_k)
+            v_range[k, 0] = np.min(vreds[k])
+            v_range[k, 1] = np.max(vreds[k])
 
             # Fit polynomial of specified order to current component
             poly_coeff[k, :] = np.polyfit(v_k, ad_k, orders[k])
