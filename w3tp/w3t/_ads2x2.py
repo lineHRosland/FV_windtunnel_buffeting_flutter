@@ -557,7 +557,7 @@ class AerodynamicDerivatives2x2:
            
         return cls(h1, h2, h3, h4, a1, a2, a3, a4)
     
-    #Ikke benyttet
+
     @classmethod
     def from_poly_k(cls,poly_k,k_range, vred):
         vred[vred==0] = 1.0e-10
@@ -659,7 +659,7 @@ class AerodynamicDerivatives2x2:
         
         return frf_mat
     
-    #Ikke benyttet
+
     def fit_poly_k(self,orders = np.ones(8,dtype=int)*2):
         ad_matrix, vreds = self.ad_matrix
         
@@ -667,7 +667,6 @@ class AerodynamicDerivatives2x2:
         k_range = np.zeros((8,2))
         
         damping_ad = np.array([True, True, False, False,  True, True, False, False])
-        
         
         for k in range(8):
             k_range[k,0] = 1/np.max(vreds)
@@ -711,8 +710,11 @@ class AerodynamicDerivatives2x2:
             v_range[k, 1] = np.max(vreds)
             v_range[k, 0] = np.min(vreds)
 
+            vreds_ = np.concatenate([np.array([0]), vreds[k, :]])
+            ad_matrix_ = np.concatenate([np.array([0]), ad_matrix[k, :]])
+
             # Fit a polynomial of order `orders[k]` to the k-th derivative
-            poly_coeff[k, :] = np.polyfit(vreds[k, :], ad_matrix[k, :], orders[k])
+            poly_coeff[k, :] = np.polyfit(vreds_, ad_matrix_, orders[k])
 
         # Return the polynomial coefficients and velocity fitting ranges
         return poly_coeff, v_range
