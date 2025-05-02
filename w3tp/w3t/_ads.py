@@ -624,8 +624,6 @@ class AerodynamicDerivatives:
             elif damping_ad[k] == False:
                 poly_coeff[k,-orders[k]-1:] = np.polyfit(1/vreds[k,:],(1/vreds[k,:])**2*ad_matrix[k,:],orders[k])
             
-                
-        
         return poly_coeff, k_range
     
     def to_excel(self,section_name, section_height=0, section_width=0, section_length=0):
