@@ -1,8 +1,4 @@
-"""
-Created in April 2025
 
-@author: linehro
-"""
 
 import numpy as np
 from scipy import linalg as spla
@@ -209,9 +205,18 @@ def structural_matrices(m1, m2, f1, f2, zeta, single = True):
 
     return Ms, Cs, Ks
 
+def from_poly_k(poly_k, k_range, vred):
+    if vred == 0:
+        vred = 1e-10
+    uit_step = lambda k,kc: 1./(1 + np.exp(-2*20*(k-kc)))
+    fit = lambda p,k,k1c,k2c : np.polyval(p,k)*uit_step(k,k1c)*(1-uit_step(k,k2c)) + np.polyval(p,k1c)*(1-uit_step(k,k1c)) + np.polyval(p,k2c)*(uit_step(k,k2c))
+   
+    ad_value = fit(poly_k,np.abs(1/vred),k_range[0],k_range[1])
+ 
+    return float(ad_value)
+ 
 
-
-def cae_kae_single(poly_coeff, Vred_global, Phi, x, B):
+def cae_kae_single(poly_coeff, k_range, Vred_global, Phi, x, B):
     """
     Evaluates generalized aerodynamic damping and stiffness matrices for a single-deck bridge.
 
@@ -233,8 +238,11 @@ def cae_kae_single(poly_coeff, Vred_global, Phi, x, B):
     Vred_global = float(Vred_global) 
 
     # AD
-    H1, H2, H3, H4 = np.polyval(poly_coeff[0][::-1], Vred_global), np.polyval(poly_coeff[1][::-1], Vred_global), np.polyval(poly_coeff[2][::-1], Vred_global), np.polyval(poly_coeff[3][::-1], Vred_global)
-    A1, A2, A3, A4 = np.polyval(poly_coeff[4][::-1], Vred_global), np.polyval(poly_coeff[5][::-1], Vred_global), np.polyval(poly_coeff[6][::-1], Vred_global), np.polyval(poly_coeff[7][::-1], Vred_global)
+    H1, H2, H3, H4 = from_poly_k(poly_coeff[0], k_range[0],Vred_global), from_poly_k(poly_coeff[1], k_range[1],Vred_global), from_poly_k(poly_coeff[2], k_range[2],Vred_global), from_poly_k(poly_coeff[3], k_range[3],Vred_global)
+    A1, A2, A3, A4 = from_poly_k(poly_coeff[4], k_range[4],Vred_global), from_poly_k(poly_coeff[5], k_range[5],Vred_global), from_poly_k(poly_coeff[6], k_range[6],Vred_global), from_poly_k(poly_coeff[7], k_range[7],Vred_global)
+
+    # H1, H2, H3, H4 = np.polyval(poly_coeff[0][::-1], Vred_global), np.polyval(poly_coeff[1][::-1], Vred_global), np.polyval(poly_coeff[2][::-1], Vred_global), np.polyval(poly_coeff[3][::-1], Vred_global)
+    # A1, A2, A3, A4 = np.polyval(poly_coeff[4][::-1], Vred_global), np.polyval(poly_coeff[5][::-1], Vred_global), np.polyval(poly_coeff[6][::-1], Vred_global), np.polyval(poly_coeff[7][::-1], Vred_global)
 
     AA = np.zeros((8, 2, 2))
     AA[0, 0, 0] = H1
@@ -315,7 +323,7 @@ def cae_kae_single(poly_coeff, Vred_global, Phi, x, B):
 
 
 
-def cae_kae_twin(poly_coeff, Vred_global, Phi, x, B):
+def cae_kae_twin(poly_coeff, k_range, Vred_global, Phi, x, B):
     """
     Evaluates the generalized aerodynamic damping and stiffness matrices for a twin-deck bridge.
 
@@ -336,7 +344,9 @@ def cae_kae_twin(poly_coeff, Vred_global, Phi, x, B):
 
     Vred_global = float(Vred_global) 
     # AD
-    AD = [np.polyval(poly[::-1], Vred_global) for poly in poly_coeff]  # reversed for polyval
+
+    AD = [ from_poly_k(poly, k_range,Vred_global) for poly, k_rage_row in zip(poly_coeff, k_range)]
+    #AD = [np.polyval(poly[::-1], Vred_global) for poly in poly_coeff]  # reversed for polyval
 
     # Initialiser 32 matriser (16 for C, 16 for K)
     AA = np.zeros((32, 4, 4))
@@ -449,7 +459,7 @@ def cae_kae_twin(poly_coeff, Vred_global, Phi, x, B):
 
 
 
-def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = True):
+def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = True):
     '''
     Solves flutter analysis using an iterative method for either single-deck (2DOF) or twin-deck (4DOF).
     Returns global results (and optionally local for twin-deck).
@@ -517,18 +527,22 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
     damping = [] # Damping ratio
     eigvecs = [] # Eigenvectors 
 
-    eigvals0, eigvecs0 = solve_eigvalprob(Ms, Cs, Ks,  np.zeros_like(Cs), np.zeros_like(Ks)) 
+    #!!
 
-    # Sorter etter imaginærdel
-    sort_idx = np.argsort(np.imag(eigvals0))
-    eigvals0_sorted = eigvals0[sort_idx]
-    eigvecs0_sorted = eigvecs0[:, sort_idx] 
+    # eigvals0, eigvecs0 = solve_eigvalprob(Ms, Cs, Ks,  np.zeros_like(Cs), np.zeros_like(Ks)) 
+
+    # # Sorter etter imaginærdel
+    # sort_idx = np.argsort(np.imag(eigvals0))
+    # eigvals0_sorted = eigvals0[sort_idx]
+    # eigvecs0_sorted = eigvecs0[:, sort_idx] 
    
     
-    V_list.append(0.0) # V = 0.0 m/s
-    omega.append(np.imag(eigvals0_sorted[:2*n_modes])) #konjugatpar
-    damping.append(np.real(eigvals0_sorted[:2*n_modes])) #konjugatpar, ikke normalisert 
-    eigvecs.append(eigvecs0_sorted[:, :2*n_modes]) 
+    # V_list.append(0.0) # V = 0.0 m/s
+    # omega.append(np.imag(eigvals0_sorted[:2*n_modes])) #konjugatpar
+    # damping.append(np.real(eigvals0_sorted[:2*n_modes])) #konjugatpar, ikke normalisert 
+    # eigvecs.append(eigvecs0_sorted[:, :2*n_modes]) 
+
+    #!!
 
 
                 # if np.isclose(V, 0.0): # still air
@@ -563,7 +577,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
 
     stopWind = False
     iterWind = 0
-    V = 1.0 # Initial wind speed, m/s
+    V = 0.0 # Initial wind speed, m/s
     dV = 1.0 # Hvor mye vi øker vindhastighet per iterasjon. 
 
     while (iterWind < 1000 and not stopWind): # iterer over vindhastigheter
@@ -592,10 +606,10 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
             while (iterFreq < 1000 and not stopFreq): # iterer over frekvens-iterasjoner           
 
                 if single:
-                    Cae_star_gen, Kae_star_gen = cae_kae_single(poly_coeff, Vred, Phi, x, B)
+                    Cae_star_gen, Kae_star_gen = cae_kae_single(poly_coeff, k_range, Vred, Phi, x, B)
 
                 else:
-                    Cae_star_gen, Kae_star_gen = cae_kae_twin(poly_coeff, Vred,Phi, x, B)
+                    Cae_star_gen, Kae_star_gen = cae_kae_twin(poly_coeff,k_range,  Vred,Phi, x, B)
 
                 Cae_gen = 0.5 * rho * B**2 * omegacr * Cae_star_gen
                 Kae_gen = 0.5 * rho * B**2 * omegacr**2 * Kae_star_gen
