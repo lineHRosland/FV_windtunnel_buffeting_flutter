@@ -847,6 +847,8 @@ class AerodynamicDerivatives4x4:
             # Fit polynomial of specified order to current component
             poly_coeff[k, :] = np.polyfit(v_k, ad_k, orders[k])
 
+            print(poly_coeff[k, :])
+
         return poly_coeff, v_range
 
 

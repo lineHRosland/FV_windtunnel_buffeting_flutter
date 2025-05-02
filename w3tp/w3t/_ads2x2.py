@@ -716,6 +716,8 @@ class AerodynamicDerivatives2x2:
             # Fit a polynomial of order `orders[k]` to the k-th derivative
             poly_coeff[k, :] = np.polyfit(vreds_, ad_matrix_, orders[k])
 
+            print(poly_coeff[k, :])
+
         # Return the polynomial coefficients and velocity fitting ranges
         return poly_coeff, v_range
 
