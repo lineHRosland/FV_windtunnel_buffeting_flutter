@@ -233,8 +233,8 @@ def cae_kae_single(poly_coeff, Vred_global, Phi, x, B):
     Vred_global = float(Vred_global) 
 
     # AD
-    H1, H2, H3, H4 = np.polyval(poly_coeff[0], Vred_global), np.polyval(poly_coeff[1][::-1], Vred_global), np.polyval(poly_coeff[2][::-1], Vred_global), np.polyval(poly_coeff[3][::-1], Vred_global)
-    A1, A2, A3, A4 = np.polyval(poly_coeff[4], Vred_global), np.polyval(poly_coeff[5][::-1], Vred_global), np.polyval(poly_coeff[6][::-1], Vred_global), np.polyval(poly_coeff[7][::-1], Vred_global)
+    H1, H2, H3, H4 = np.polyval(poly_coeff[0][::-1], Vred_global), np.polyval(poly_coeff[1][::-1], Vred_global), np.polyval(poly_coeff[2][::-1], Vred_global), np.polyval(poly_coeff[3][::-1], Vred_global)
+    A1, A2, A3, A4 = np.polyval(poly_coeff[4][::-1], Vred_global), np.polyval(poly_coeff[5][::-1], Vred_global), np.polyval(poly_coeff[6][::-1], Vred_global), np.polyval(poly_coeff[7][::-1], Vred_global)
 
     AA = np.zeros((8, 2, 2))
     AA[0, 0, 0] = H1
@@ -600,25 +600,37 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
                 Cae_gen = 0.5 * rho * B**2 * omegacr * Cae_star_gen
                 Kae_gen = 0.5 * rho * B**2 * omegacr**2 * Kae_star_gen
 
-                eigvals, eigvecs = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
+                eigvals, eigvecsV = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
-                # Sorter etter imaginærdel
+                eigvals_pos = eigvals[np.imag(eigvals) > 0]
+                sort_idx_pos = np.argsort(np.imag(eigvals_pos))
+                eigvals_sortedpos = eigvals_pos[sort_idx_pos]
+
                 sort_idx = np.argsort(np.imag(eigvals))
                 eigvals_sorted = eigvals[sort_idx]
-                eigvecs_sorted = eigvecs[:, sort_idx]
-
-                # Ta positiv halvdel
-                eigvals_sortedpos = eigvals_sorted[len(eigvals_sorted)//2:]
+                eigvecs_sorted = eigvecsV[:, sort_idx]
 
 
-                if single:
-                    best_idx = np.argmin(np.abs(np.imag(eigvals_sortedpos) - omega[-1][n_modes + j]))    
-                else:
-                    best_idx = np.argmin(np.abs(np.imag(eigvals_sortedpos) - omega[-1][n_modes + j]) + 10 * np.abs(np.real(eigvals_sortedpos) - damping[-1][n_modes + j]))
+                # # Sorter etter imaginærdel
+                # sort_idx = np.argsort(np.imag(eigvals))
+                # eigvals_sorted = eigvals[sort_idx]
+                # eigvecs_sorted = eigvecsV[:, sort_idx]
+
+                # # Ta positiv halvdel
+                # eigvals_sortedpos = eigvals_sorted[len(eigvals_sorted)//2:]
+
+
+                # if single:
+                #     best_idx = np.argmin(np.abs(np.imag(eigvals_sortedpos) - omegacr))    
+                # else:
+                #     best_idx = np.argmin(np.abs(np.imag(eigvals_sortedpos) - omegacr) + 10 * np.abs(np.real(eigvals_sortedpos) - damping[-1][n_modes + j]))
                         
 
-                domega = omegacr - np.imag(eigvals_sortedpos[best_idx])
-                omegacr = np.imag(eigvals_sortedpos[best_idx])
+                # domega = omegacr - np.imag(eigvals_sortedpos[best_idx])
+                # omegacr = np.imag(eigvals_sortedpos[best_idx])
+
+                domega = omegacr - np.imag(eigvals_sortedpos[j])
+                omegacr = np.imag(eigvals_sortedpos[j])
 
                     # # Min gamle versjon 
                     # # Keep only the eigenvalues with positive imaginary part (complex conjugate pairs)
@@ -662,7 +674,7 @@ def solve_omega(poly_coeff, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = Tr
                         
                     # Check if the mode is converged 
                     
-                if np.abs(domega) < eps and omegacr <= 0.0: # omega har konvergert, jippi
+                if np.abs(domega) < eps or omegacr <= 0.0: # omega har konvergert, jippi
                     stopFreq = True # Stopper frekvens-iterasjonen hvis vi har funnet flutter
 
                         # # When flutter has occurred, we don't need to increase the speed further for this mode
@@ -957,8 +969,9 @@ def plot_frequency_vs_wind_speed(V_list, omega_list,   dist="Fill in dist", sing
     else:
         n_modes = 4
         title = f"Natural frequencies vs wind speed - {dist}"
-    
-    frequencies = omega_list[:, n_modes:] / (2 * np.pi)       # Convert to Hz, velger kun positiv del av konjugatparet
+
+    omega_array = np.array(omega_list) 
+    frequencies = omega_array[:, n_modes:] / (2 * np.pi)       # Convert to Hz, velger kun positiv del av konjugatparet
 
     plt.figure(figsize=(10, 6))
 

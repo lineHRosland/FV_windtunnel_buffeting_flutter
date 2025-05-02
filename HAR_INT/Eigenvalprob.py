@@ -32,7 +32,7 @@ w1V = 2*np.pi*f1V # rad/s, vertical FØRSTE ITERASJON
 w2V = 2*np.pi*f2V # rad/s, vertical FØRSTE ITERASJON
 w1T = 2*np.pi*f1T # rad/s, torsion FØRSTE ITERASJON
 
-zeta = 0.005 # 0.5 %, critical damping
+zeta = 0.05 # 5 %, critical damping
 rho = 1.25 # kg/m^3, air density 
 
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
@@ -70,7 +70,7 @@ V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, omeg
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
-#%%
+
 #Plotting
 
 _eigVal.plot_damping_vs_wind_speed(damping_list_single,omega_list_single, V_list_single, dist="Single deck",  single = True)
