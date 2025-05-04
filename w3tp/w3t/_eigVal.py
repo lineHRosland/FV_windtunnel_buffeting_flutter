@@ -279,9 +279,9 @@ def cae_kae_single(poly_coeff, k_range, Vred_global, Phi, x, B):
     # A1, A2, A3, A4 = np.polyval(poly_coeff[4][::-1], Vred_global), np.polyval(poly_coeff[5][::-1], Vred_global), np.polyval(poly_coeff[6][::-1], Vred_global), np.polyval(poly_coeff[7][::-1], Vred_global)
 
 
-    print(f"H1* = {H1:.3f}, H2* = {H2:.3f}, H3* = {H3:.3f}, H4* = {H4:.3f}")
-    print(f"A1* = {A1:.3f}, A2* = {A2:.3f}, A3* = {A3:.3f}, A4* = {A4:.3f}")
-    print("---")
+    # print(f"H1* = {H1:.3f}, H2* = {H2:.3f}, H3* = {H3:.3f}, H4* = {H4:.3f}")
+    # print(f"A1* = {A1:.3f}, A2* = {A2:.3f}, A3* = {A3:.3f}, A4* = {A4:.3f}")
+    # print("---")
 
     AA = np.zeros((8, 2, 2))
     AA[0, 0, 0] = H1
@@ -548,7 +548,7 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
     stopWind = False
     iterWind = 0
     maxIterWind = 200
-    V = 10.0 # Initial wind speed, m/s
+    V = 1.0 # Initial wind speed, m/s
     dV = 1.0 # Hvor mye vi øker vindhastighet per iterasjon. 
 
     # # Global results
@@ -577,7 +577,6 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
 
     while (iterWind < maxIterWind and not stopWind): # iterer over vindhastigheter
         flutter_detected_this_round = False
-        iterWind +=1
         
         if verbose:
             print(f"Wind speed iteration {iterWind+1}: V = {V} m/s")
@@ -585,18 +584,19 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
             if skip_mode[j]:
                 continue
+
+            print("Mode:", j+1)
           
             stopFreq = False
             iterFreq = 0 # Teller hvor mange frekvens-iterasjoner
             maxIterFreq = 1000 # Maks antall iterasjoner for frekvens
 
 
-            Vred = V/(omega_old[j]*B) # reduced velocity 
-
 
             while (iterFreq < maxIterFreq and not stopFreq): # iterer over frekvens-iterasjoner           
 
-                
+                Vred = V/(omega_old[j]*B) # reduced velocity 
+
                 if single:
                     Cae_star_gen, Kae_star_gen = cae_kae_single(poly_coeff, k_range, Vred, Phi, x, B)
 
@@ -636,9 +636,9 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                 # if verbose:
                 #     print(f"[DEBUG] IterFreq {iterFreq}, omega_old = {omega_old[j]:.4f}, omega_new = {omega_new:.4f}, diff = {np.abs(omega_old[j] - omega_new):.4e}")
 
-                # if verbose:
-                #     print(f"  IterFreq {iterFreq}: omega_old = {omega_old[j]:.5f}, omega_new = {omega_new:.5f}, diff = {np.abs(omega_old[j] - omega_new):.2e}")
-                #     print(f"  V_red = {Vred:.5f}")
+                if verbose:
+                    print(f"  IterFreq {iterFreq}: omega_old = {omega_old[j]:.5f}, omega_new = {omega_new:.5f}, diff = {np.abs(omega_old[j] - omega_new):.2e}")
+                    print(f"  V_red = {Vred:.5f}")
 
                                             
                 if np.abs(omega_old[j] - omega_new) < eps or omega_old[j] <= 0.0: # omega har konvergert, jippi
@@ -717,6 +717,9 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
         elif not all(skip_mode):  # flutter har startet, men ikke funnet nøyaktig
             V -= 0.5 * dV
             dV *= 0.5
+
+        iterWind +=1
+
 
     # Truncate arrays to actual size
     omega_all = omega_all[:velocity_counter, :]
