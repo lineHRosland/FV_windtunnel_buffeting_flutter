@@ -61,7 +61,7 @@ else:
 
 
 #Solve for eigenvalues and eigenvectors
-V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_omega(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True)
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, omegacritical_single, Vcritical_single =_eigVal.solve_omega(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, verbose=True)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
@@ -75,7 +75,7 @@ _eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Sin
 
 _eigVal.plot_flutter_mode_shape(eigvecs_list_single, omega_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
 
-#%%
+ #%%
 #Double deck 1D
 if os.path.exists(os.path.join(file_path, "poly_coeff_1D.npy")):
     poly_coeff_1D = np.load(os.path.join(file_path, "poly_coeff_1D.npy"))
@@ -89,7 +89,7 @@ else:
 
 
 
-V_list_twin_1D, omega_list_twin_1D, damping_list_twin_1D, eigvecs_list_twin_1D, omegacritical_twin_1D, Vcritical_twin_1D = _eigVal.solve_omega(poly_coeff_1D,k_range_1D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
+V_list_twin_1D, omega_list_twin_1D, damping_list_twin_1D, eigvecs_list_twin_1D, omegacritical_twin_1D, Vcritical_twin_1D = _eigVal.solve_omega(poly_coeff_1D,k_range_1D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False, verbose=True)
 
 
 #Flutter
@@ -116,7 +116,7 @@ if os.path.exists(os.path.join(file_path, "k_range_2D.npy")):
 else:
     raise FileNotFoundError(f"The file 'k_range_2D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-V_list_twin_2D, omega_list_twin_2D, damping_list_twin_2D, eigvecs_list_twin_2D, omegacritical_twin_2D, Vcritical_twin_2D = _eigVal.solve_omega(poly_coeff_2D,k_range_2D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
+V_list_twin_2D, omega_list_twin_2D, damping_list_twin_2D, eigvecs_list_twin_2D, omegacritical_twin_2D, Vcritical_twin_2D = _eigVal.solve_omega(poly_coeff_2D,k_range_2D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False, verbose=True)
 
 
 #Flutter
@@ -146,7 +146,7 @@ else:
     raise FileNotFoundError(f"The file 'k_range_3D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
 
-V_list_twin_3D, omega_list_twin_3D, damping_list_twin_3D, eigvecs_list_twin_3D, omegacritical_twin_3D, Vcritical_twin_3D = _eigVal.solve_omega(poly_coeff_3D, k_range_3D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
+V_list_twin_3D, omega_list_twin_3D, damping_list_twin_3D, eigvecs_list_twin_3D, omegacritical_twin_3D, Vcritical_twin_3D = _eigVal.solve_omega(poly_coeff_3D, k_range_3D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False, verbose=True)
 
 
 #Flutter
@@ -174,7 +174,7 @@ if os.path.exists(os.path.join(file_path, "k_range_4D.npy")):
 else:
     raise FileNotFoundError(f"The file 'k_range_4D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-V_list_twin_4D, omega_list_twin_4D, damping_list_twin_4D, eigvecs_list_twin_4D, omegacritical_twin_4D, Vcritical_twin_4D = _eigVal.solve_omega(poly_coeff_4D, k_range_4D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
+V_list_twin_4D, omega_list_twin_4D, damping_list_twin_4D, eigvecs_list_twin_4D, omegacritical_twin_4D, Vcritical_twin_4D = _eigVal.solve_omega(poly_coeff_4D, k_range_4D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False, verbose=True)
 
 
 #Flutter
@@ -201,7 +201,7 @@ if os.path.exists(os.path.join(file_path, "k_range_5D.npy")):
 else:
     raise FileNotFoundError(f"The file 'k_range_5D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-V_list_twin_5D, omega_list_twin_5D, damping_list_twin_5D, eigvecs_list_twin_5D, omegacritical_twin_5D, Vcritical_twin_5D = _eigVal.solve_omega(poly_coeff_5D, k_range_5D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False)
+V_list_twin_5D, omega_list_twin_5D, damping_list_twin_5D, eigvecs_list_twin_5D, omegacritical_twin_5D, Vcritical_twin_5D = _eigVal.solve_omega(poly_coeff_5D, k_range_5D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False, verbose=True)
 
 
 #Flutter
