@@ -526,11 +526,11 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
     '''
     if single:
         n_modes = 2 # 2 modes for single deck
-        omega0 = np.array([2*np.pi*f1, 2*np.pi*f2])
+        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
         #dominant_dofs = [0, 1]  # z, θ
     else:   
         n_modes = 4 # 4 modes for twin deck
-        omega0 = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) #Først brudekke 1, deretter brudekke 2
+        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) #Først brudekke 1, deretter brudekke 2
         #dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
    
     # Flutter detection
@@ -565,13 +565,17 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
         eigvecs_all[0, j_mode] = np.nan
         eigvals_all[0,j_mode] = np.nan
 
-        omega_all[0,j_mode] = omega0[j_mode] # Startverdi for omega er den naturlige frekvensen til modusen
+        omega_all[0,j_mode] = omega_old[j_mode] # Startverdi for omega er den naturlige frekvensen til modusen
         damping_ratios [0,j_mode] = zeta
   
     velocity_counter = 1
 
     while (iterWind < maxIterWind and not stopWind): # iterer over vindhastigheter
         flutter_detected_this_round = False
+        iterWind +=1
+        
+        if verbose:
+            print(f"Wind speed iteration {iterWind+1}: V = {V} m/s")
 
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
             if skip_mode[j]:
@@ -581,12 +585,9 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
             iterFreq = 0 # Teller hvor mange frekvens-iterasjoner
             maxIterFreq = 1000 # Maks antall iterasjoner for frekvens
 
-            omegacr = omega0[j] # Startverdi for omegacr (kritisk frekvens) er den naturlige frekvensen til modusen
 
-            Vred = V/(omegacr*B) # reduced velocity 
+            Vred = V/(omega_old[j]*B) # reduced velocity 
 
-            if verbose:
-                print(f"Wind speed iteration {iterWind+1}: V = {V} m/s")
 
             while (iterFreq < maxIterFreq and not stopFreq): # iterer over frekvens-iterasjoner           
 
@@ -596,8 +597,8 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                 else:
                     Cae_star_gen, Kae_star_gen = cae_kae_twin(poly_coeff,k_range,  Vred,Phi, x, B)
 
-                Cae_gen = 0.5 * rho * B**2 * omegacr * Cae_star_gen
-                Kae_gen = 0.5 * rho * B**2 * omegacr**2 * Kae_star_gen
+                Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen
+                Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen
 
                 eigvalsV, eigvecsV = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
@@ -617,20 +618,20 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
 
 
                 if single:
-                    best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omegacr))
+                    best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]))
                 else:
-                    best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omegacr) + 10 * np.abs(np.real(eigvals_pos) - damping_ratios[velocity_counter-1, j]))
+                    best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]) + 10 * np.abs(np.real(eigvals_pos) - damping_ratios[velocity_counter-1, j]))
                         
                 λj = eigvals_pos[best_idx]
                 φj = eigvecs_pos[:n_modes, best_idx]
                 omega_new = np.imag(λj)
                 damping_new = -np.real(λj) / np.abs(λj)
 
-                if verbose:
-                    print(f"[DEBUG] IterFreq {iterFreq}, omega_old = {omegacr:.4f}, omega_new = {omega_new:.4f}, diff = {np.abs(omegacr - omega_new):.4e}")
+                # if verbose:
+                #     print(f"[DEBUG] IterFreq {iterFreq}, omega_old = {omega_old[j]:.4f}, omega_new = {omega_new:.4f}, diff = {np.abs(omega_old[j] - omega_new):.4e}")
 
                                             
-                if np.abs(omegacr - omega_new) < eps or omegacr <= 0.0: # omega har konvergert, jippi
+                if np.abs(omega_old[j] - omega_new) < eps or omega_old[j] <= 0.0: # omega har konvergert, jippi
                     omega_all[velocity_counter, j] = omega_new
                     damping_ratios[velocity_counter, j] = damping_new
                     eigvals_all[velocity_counter, j] = λj
@@ -638,7 +639,8 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                     stopFreq = True # Stopper frekvens-iterasjonen hvis vi har funnet flutter
 
                 iterFreq += 1
-                 
+                omega_old[j] = omega_new
+
                 if iterFreq == 1000:
                     if verbose:
                         print(f"WARNING: Frequancy iteration has not converged for V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
@@ -648,48 +650,63 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                     eigvecs_all[velocity_counter, j] = None
                     break
 
+         
+
+
             if damping_new < 0: # flutter finnes, må finne nøyaktig flutterhastighe
+                for other_j in range(n_modes): #Flutter funnet på en mode, fokuser kunn på denne moden, og stopper til slutt hastighetiterasjonen.
+                    if other_j != j:
+                        skip_mode[other_j] = True
+
                 if verbose:
                     print(f"Flutter detected at V = {V:.2f} m/s, iterWind = {iterWind}, j = {j}")
-                flutter_detected_this_round = True
 
-                if Vcritical_guess is not None and abs(V - Vcritical_guess) < 1e-6:
-                    count_same += 1
-                else:
-                    count_same = 0
-                    Vcritical_guess = V
-
-                if count_same > 2: # hvis vi har vært på samme hastighet i 5 iterasjoner, så gidder vi ikke mer
+                if np.abs(damping_new) < 1e-7: #Akkurat ved flutter
                     if verbose:
                         print(f"Flutter converged at V ≈ {V:.5f} m/s")
-                    omegacritical = omega_new
-                    skip_mode[j] = True
-                    Vcritical = V
+                    omegacritical[j] = omega_new
+                    Vcritical[j] = V
+                    skip_mode[j] = True  
+
+                # if Vcritical_guess is not None and abs(V - Vcritical_guess) < 1e-6:
+                #     count_same += 1
+                # else:
+                #     count_same = 0
+                #     Vcritical_guess = V
+
+                # if count_same > 5: # hvis vi har vært på samme hastighet i 5 iterasjoner, så gidder vi ikke mer
+                #     if verbose:
+                #         print(f"Flutter converged at V ≈ {V:.5f} m/s")
+                #     omegacritical = omega_new
+                #     Vcritical = V
+                #     skip_mode[j] = True
+                #     stopWind = True
+
                 
             else: #system stabilt
                 omega_all[velocity_counter, j] = omega_new
                 damping_ratios[velocity_counter, j] = damping_new
                 eigvals_all[velocity_counter, j] = λj   
                 eigvecs_all[velocity_counter, j] = φj
-                
 
-            if np.abs(damping_new) < 1e-5: #Akkurat ved flutter
+            if dV < 1e-8:
                 if verbose:
-                    print(f"Flutter converged at V ≈ {V:.5f} m/s")
-                omegacritical[j] = omega_new
-                skip_mode[j] = True
+                    print(f"Stopping refinement: dV too small ({dV:.2e}). Flutter converged at V ≈ {V:.5f} m/s")
                 Vcritical[j] = V
+                omegacritical[j] = omega_new
+                skip_mode = [True] * n_modes
+                stopWind = True
         
         if all(skip_mode):
             stopWind = True
 
-        if flutter_detected_this_round:
-            V -= 0.5 * dV
-            dV *= 0.5
-        else:
+        if not any(skip_mode):  
             V_list.append(V)
             V += dV
             velocity_counter += 1
+        else:
+            V -= 0.5 * dV
+            dV *= 0.5
 
         
     return V_list, omega_all, damping_ratios, eigvecs_all, eigvals_all, omegacritical, Vcritical 
@@ -1031,7 +1048,7 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
      
 
      
-def plot_damping_vs_wind_speed(damping_list,omega_list, V_list, dist="Fill in dist",  single = True):
+def plot_damping_vs_wind_speed0(damping_list,omega_list, V_list, dist="Fill in dist",  single = True):
     """
     Plot damping ratios as a function of wind speed, and mark AD-validity range.
 
@@ -1083,6 +1100,56 @@ def plot_damping_vs_wind_speed(damping_list,omega_list, V_list, dist="Fill in di
     plt.ylim(-0.05, )
     plt.xlim(0,)
     plt.show()
+
+def plot_damping_vs_wind_speed(damping_ratios, V_list, dist="Fill in dist", single=True):
+    """
+    Plot damping ratios as a function of wind speed.
+
+    Parameters:
+    -----------
+    damping_ratios : ndarray, shape (Nvind, n_modes)
+        Damping ratios for each mode and wind speed.
+    V_list : list or ndarray
+        Wind speed values.
+    dist : str
+        Description of deck distance or test case.
+    single : bool
+        True if single-deck (2 modes), False if twin-deck (4 modes).
+    """
+    markers = ['o', 's', '^', 'x']
+    markersizes = [2.6, 2.4, 3, 3]
+    colors = ['blue', 'green', 'red', 'orange']
+    labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
+
+    plt.figure(figsize=(10, 6))
+    
+    n_modes = 2 if single else 4
+    title = f"Damping vs. wind speed - {dist}"
+
+    for j in range(n_modes):
+        plt.plot(
+            V_list,
+            damping_ratios[:, j],
+            color=colors[j],
+            marker=markers[j],
+            markersize=markersizes[j],
+            linestyle='None',
+            label=labels[j]
+        )
+
+    plt.axhline(0, linestyle="--", color="grey", linewidth=1.1, label="Critical damping")
+    plt.xlabel("Wind speed [m/s]", fontsize=16)
+    plt.ylabel("Damping ratio [-]", fontsize=16)
+    plt.title(title, fontsize=18)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.legend(fontsize=14)
+    plt.grid(True, linestyle='--', linewidth=0.5)
+    plt.tight_layout()
+    plt.ylim(-0.05, )
+    plt.xlim(0, )
+    plt.show()
+
 
 def plot_frequency_vs_wind_speed(V_list, omega_list,   dist="Fill in dist", single = True):
     """
