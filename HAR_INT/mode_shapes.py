@@ -170,6 +170,7 @@ def mode_shape_twin(full_matrix=True):
         phi_double[i, 3, 3] = mode_15[i, 3] # θθ
 
 
+
     # phi_double.shape: (n_nodes, n_DOF,n_modes)
 
 

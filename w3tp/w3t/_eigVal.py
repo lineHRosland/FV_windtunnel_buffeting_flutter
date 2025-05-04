@@ -314,6 +314,109 @@ def cae_kae_single(poly_coeff, k_range, Vred_global, Phi, x, B):
     # Generaliserte aero-matriser
     Cae_star_gen = np.sum(AA_tilde[0:4], axis=0)
     Kae_star_gen = np.sum(AA_tilde[4:8], axis=0)
+        
+    return Cae_star_gen, Kae_star_gen
+
+def cae_kae_twin(poly_coeff, k_range, Vred_global, Phi, x, B):
+    """
+    Evaluates the generalized aerodynamic damping and stiffness matrices for a twin-deck bridge.
+
+    Parameters:
+    -----------
+    poly_coeff : ndarray, shape (32, 3)
+        Polynomial coefficients for each aerodynamic derivative (2nd order).
+    V : ndarray, shape (32,)
+        Reduced velocity for each derivative.
+    B : float
+        Section width (m).
+
+    Returns:
+    --------
+    C_ae_star: ndarray, shape (4, 4)
+    K_ae_star: ndarray, shape (4, 4)
+    """
+
+    Vred_global = float(Vred_global) 
+
+    # AD
+    c_z1z1, c_z1θ1, c_z1z2, c_z1θ2 = from_poly_k(poly_coeff[0], k_range[0],Vred_global, damping_ad=True), from_poly_k(poly_coeff[1], k_range[1],Vred_global, damping_ad=True), from_poly_k(poly_coeff[2], k_range[2],Vred_global, damping_ad=True), from_poly_k(poly_coeff[3], k_range[3],Vred_global, damping_ad=True)
+    c_θ1z1, c_θ1θ1, c_θ1z2, c_θ1θ2 = from_poly_k(poly_coeff[4], k_range[4],Vred_global, damping_ad=True), from_poly_k(poly_coeff[5], k_range[5],Vred_global, damping_ad=True), from_poly_k(poly_coeff[6], k_range[6],Vred_global, damping_ad=True), from_poly_k(poly_coeff[7], k_range[7],Vred_global, damping_ad=True)
+    c_z2z1, c_z2θ1, c_z2z2, c_z2θ2 = from_poly_k(poly_coeff[8], k_range[8],Vred_global, damping_ad=True), from_poly_k(poly_coeff[9], k_range[9],Vred_global, damping_ad=True), from_poly_k(poly_coeff[10], k_range[10],Vred_global, damping_ad=True), from_poly_k(poly_coeff[11], k_range[11],Vred_global, damping_ad=True)
+    c_θ2z1, c_θ2θ1, c_θ2z2, c_θ2θ2 = from_poly_k(poly_coeff[12], k_range[12],Vred_global, damping_ad=True), from_poly_k(poly_coeff[13], k_range[13],Vred_global, damping_ad=True), from_poly_k(poly_coeff[14], k_range[14],Vred_global, damping_ad=True), from_poly_k(poly_coeff[15], k_range[15],Vred_global, damping_ad=True)
+    k_z1z1, k_z1θ1, k_z1z2, k_z1θ2 = from_poly_k(poly_coeff[16], k_range[16],Vred_global, damping_ad=False), from_poly_k(poly_coeff[17], k_range[17],Vred_global, damping_ad=False), from_poly_k(poly_coeff[18], k_range[18],Vred_global, damping_ad=False), from_poly_k(poly_coeff[19], k_range[19],Vred_global, damping_ad=False)
+    k_θ1z1, k_θ1θ1, k_θ1z2, k_θ1θ2 = from_poly_k(poly_coeff[20], k_range[20],Vred_global, damping_ad=False), from_poly_k(poly_coeff[21], k_range[21],Vred_global, damping_ad=False), from_poly_k(poly_coeff[22], k_range[22],Vred_global, damping_ad=False), from_poly_k(poly_coeff[23], k_range[23],Vred_global, damping_ad=False)
+    k_z2z1, k_z2θ1, k_z2z2, k_z2θ2 = from_poly_k(poly_coeff[24], k_range[24],Vred_global, damping_ad=False), from_poly_k(poly_coeff[25], k_range[25],Vred_global, damping_ad=False), from_poly_k(poly_coeff[26], k_range[26],Vred_global, damping_ad=False), from_poly_k(poly_coeff[27], k_range[27],Vred_global, damping_ad=False)
+    k_θ2z1, k_θ2θ1, k_θ2z2, k_θ2θ2 = from_poly_k(poly_coeff[28], k_range[28],Vred_global, damping_ad=False), from_poly_k(poly_coeff[29], k_range[29],Vred_global, damping_ad=False), from_poly_k(poly_coeff[30], k_range[30],Vred_global, damping_ad=False), from_poly_k(poly_coeff[31], k_range[31],Vred_global, damping_ad=False)
+    
+    
+    
+    AD = [ from_poly_k(poly, k_range_row,Vred_global) for poly, k_range_row in zip(poly_coeff, k_range)]
+    #AD = [np.polyval(poly[::-1], Vred_global) for poly in poly_coeff]  # reversed for polyval
+
+    # Initialiser 32 matriser (16 for C, 16 for K)
+    AA = np.zeros((32, 4, 4))
+
+    # Demping: fyll inn de 16 første
+    AA[0, 0, 0] = c_z1z1
+    AA[1, 0, 1] = B * c_z1θ1
+    AA[2, 0, 2] = c_z1z2
+    AA[3, 0, 3] = B * c_z1θ2
+
+    AA[4, 1, 0] = B * c_θ1z1
+    AA[5, 1, 1] = B**2 *c_θ1θ1
+    AA[6, 1, 2] = B *  c_θ1z2
+    AA[7, 1, 3] = B**2 * c_θ1θ2
+
+    AA[8, 2, 0] = c_z2z1
+    AA[9, 2, 1] = B *c_z2θ1
+    AA[10, 2, 2] = c_z2z2
+    AA[11, 2, 3] = B * c_z2θ2
+
+    AA[12, 3, 0] = B *c_θ2z1
+    AA[13, 3, 1] = B**2 * c_θ2θ1
+    AA[14, 3, 2] = B * c_θ2z2
+    AA[15, 3, 3] = B**2 * c_θ2θ2
+
+    # Stivhet: fyll inn de 16 neste
+    AA[16, 0, 0] = k_z1z1
+    AA[17, 0, 1] = B * k_z1θ1
+    AA[18, 0, 2] = k_z1z2
+    AA[19, 0, 3] = B * k_z1θ2
+
+    AA[20, 1, 0] = B * k_θ1z1
+    AA[21, 1, 1] = B**2 * k_θ1θ1
+    AA[22, 1, 2] = B *k_θ1z2
+    AA[23, 1, 3] = B**2 * k_θ1θ2
+
+    AA[24, 2, 0] = k_z2z1
+    AA[25, 2, 1] = B * k_z2θ1
+    AA[26, 2, 2] =k_z2z2
+    AA[27, 2, 3] = B *  k_z2θ2
+
+    AA[28, 3, 0] = B * k_θ2z1
+    AA[29, 3, 1] = B**2 * k_θ2θ1
+    AA[30, 3, 2] = B *k_θ2z2
+    AA[31, 3, 3] = B**2 * k_θ2θ2
+
+    AA_tilde = np.zeros((32, 4, 4))  # Generalisert aero-matriser
+    phiphi_p = np.transpose(Phi, [1, 2, 0])  # (DOF, mode, x)
+
+    length = x[-1] - x[0]  # Lengde på bro
+    nlength = len(x)  # Antall punkter
+    beam = np.linspace(0, length, nlength)  # x-akse for integrasjon
+
+    for k in range(32):
+        integrand = np.zeros((len(beam),4, 4))
+        for m in range(len(beam)):
+            integrand[m] = phiphi_p[:, :, m].T @ AA[k] @ phiphi_p[:, :, m]
+        for i in range(4):
+            for j in range(4):
+                AA_tilde[k, i, j] = np.trapz(integrand[:, i, j], beam)
+
+    # Generaliserte aero-matriser
+    Cae_star_gen = np.sum(AA_tilde[0:16], axis=0)
+    Kae_star_gen = np.sum(AA_tilde[16:32], axis=0)
+    return Cae_star_gen, Kae_star_gen
 
     # # Per meter
     # C_ae_star_per_m = np.array([
@@ -356,101 +459,6 @@ def cae_kae_single(poly_coeff, k_range, Vred_global, Phi, x, B):
 
     # K_aero_global = spla.block_diag(*K_blocks)
     
-        
-    return Cae_star_gen, Kae_star_gen
-
-
-
-
-def cae_kae_twin(poly_coeff, k_range, Vred_global, Phi, x, B):
-    """
-    Evaluates the generalized aerodynamic damping and stiffness matrices for a twin-deck bridge.
-
-    Parameters:
-    -----------
-    poly_coeff : ndarray, shape (32, 3)
-        Polynomial coefficients for each aerodynamic derivative (2nd order).
-    V : ndarray, shape (32,)
-        Reduced velocity for each derivative.
-    B : float
-        Section width (m).
-
-    Returns:
-    --------
-    C_ae_star: ndarray, shape (4, 4)
-    K_ae_star: ndarray, shape (4, 4)
-    """
-
-    Vred_global = float(Vred_global) 
-    # AD
-
-    AD = [ from_poly_k(poly, k_range,Vred_global) for poly, k_rage_row in zip(poly_coeff, k_range)]
-    #AD = [np.polyval(poly[::-1], Vred_global) for poly in poly_coeff]  # reversed for polyval
-
-    # Initialiser 32 matriser (16 for C, 16 for K)
-    AA = np.zeros((32, 4, 4))
-
-    # Demping: fyll inn de 16 første
-    AA[0, 0, 0] = AD[0]
-    AA[1, 0, 1] = B * AD[1]
-    AA[2, 0, 2] = AD[2]
-    AA[3, 0, 3] = B * AD[3]
-
-    AA[4, 1, 0] = B * AD[4]
-    AA[5, 1, 1] = B**2 * AD[5]
-    AA[6, 1, 2] = B * AD[6]
-    AA[7, 1, 3] = B**2 * AD[7]
-
-    AA[8, 2, 0] = AD[8]
-    AA[9, 2, 1] = B * AD[9]
-    AA[10, 2, 2] = AD[10]
-    AA[11, 2, 3] = B * AD[11]
-
-    AA[12, 3, 0] = B * AD[12]
-    AA[13, 3, 1] = B**2 * AD[13]
-    AA[14, 3, 2] = B * AD[14]
-    AA[15, 3, 3] = B**2 * AD[15]
-
-    # Stivhet: fyll inn de 16 neste
-    AA[16, 0, 0] = AD[16]
-    AA[17, 0, 1] = B * AD[17]
-    AA[18, 0, 2] = AD[18]
-    AA[19, 0, 3] = B * AD[19]
-
-    AA[20, 1, 0] = B * AD[20]
-    AA[21, 1, 1] = B**2 * AD[21]
-    AA[22, 1, 2] = B * AD[22]
-    AA[23, 1, 3] = B**2 * AD[23]
-
-    AA[24, 2, 0] = AD[24]
-    AA[25, 2, 1] = B * AD[25]
-    AA[26, 2, 2] = AD[26]
-    AA[27, 2, 3] = B * AD[27]
-
-    AA[28, 3, 0] = B * AD[28]
-    AA[29, 3, 1] = B**2 * AD[29]
-    AA[30, 3, 2] = B * AD[30]
-    AA[31, 3, 3] = B**2 * AD[31]
-
-    AA_tilde = np.zeros((32, 4, 4))  # Generalisert aero-matriser
-    phiphi_p = np.transpose(Phi, [1, 2, 0])  # (DOF, mode, x)
-
-    length = x[-1] - x[0]  # Lengde på bro
-    nlength = len(x)  # Antall punkter
-    beam = np.linspace(0, length, nlength)  # x-akse for integrasjon
-
-    for k in range(32):
-        integrand = np.zeros((len(beam),4, 4))
-        for m in range(len(beam)):
-            integrand[m] = phiphi_p[:, :, m].T @ AA[k] @ phiphi_p[:, :, m]
-        for i in range(4):
-            for j in range(4):
-                AA_tilde[k, i, j] = np.trapz(integrand[:, i, j], beam)
-
-    # Generaliserte aero-matriser
-    Cae_star_gen = np.sum(AA_tilde[0:16], axis=0)
-    Kae_star_gen = np.sum(AA_tilde[16:8], axis=0)
-
 
     # C_ae_star_per_m = np.array([
     #     [c_z1z1,       B * c_z1θ1,       c_z1z2,       B * c_z1θ2],
@@ -492,10 +500,6 @@ def cae_kae_twin(poly_coeff, k_range, Vred_global, Phi, x, B):
     #     K_blocks[i+1] += 0.5 * K_seg
 
     # K_aero_global = spla.block_diag(*K_blocks)
-
-
-    return Cae_star_gen, Kae_star_gen
-
 
 
 def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = True, verbose=True):
@@ -541,15 +545,13 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
     # Flutter detection
     Vcritical = None # Critical wind speed
     omegacritical = None # Critical frequency
-    Vcritical_guess = None
-    count_same = 0
 
 
     stopWind = False
     iterWind = 0
-    maxIterWind = 200
+    maxIterWind = 400
     V = 1.0 # Initial wind speed, m/s
-    dV = 1.0 # Hvor mye vi øker vindhastighet per iterasjon. 
+    dV = 0.5 # Hvor mye vi øker vindhastighet per iterasjon. 
 
     # # Global results
     V_list = [] # Wind speed, m/s
@@ -576,7 +578,6 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
     velocity_counter = 1
 
     while (iterWind < maxIterWind and not stopWind): # iterer over vindhastigheter
-        flutter_detected_this_round = False
         
         if verbose:
             print(f"Wind speed iteration {iterWind+1}: V = {V} m/s")
@@ -626,8 +627,15 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                 if single:
                     best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]))
                 else:
-                    best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]) + 10 * np.abs(np.real(eigvals_pos) - damping_ratios[velocity_counter-1, j]))
-                        
+                    #best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]) + 10 * (np.abs(np.real(eigvals_pos) - damping_ratios[velocity_counter-1, j])) - 10 * (np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])))
+                    
+                    dominance_scores = np.array([np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])])
+                    best_idx = np.argmin(
+                            np.abs(np.imag(eigvals_pos) - omega_old[j])
+                            + 10 * np.abs(np.real(eigvals_pos) - damping_ratios[velocity_counter - 1, j])
+                            - 10 * dominance_scores
+                        )
+
                 λj = eigvals_pos[best_idx]
                 φj = eigvecs_pos[:n_modes, best_idx]
                 omega_new = np.imag(λj)
@@ -849,7 +857,7 @@ def plot_flutter_mode_shape(eigvecs_all, omega_list, V_list, Vcritical, omegacri
     idx_mode_flutter = np.argmin(np.abs(freq_flutter - omegacritical / (2 * np.pi)))
 
     # Hent ut tilhørende egenvektor
-    flutter_vec = eigvecs_all[idx_flutter][:, idx_mode_flutter]
+    flutter_vec = eigvecs_all[idx_flutter][idx_mode_flutter]
 
     # 2 subplot: magnituder og faser
     fig, ax = plt.subplots(2, 1, figsize=(6, 6), sharex=True)
@@ -867,7 +875,7 @@ def plot_flutter_mode_shape(eigvecs_all, omega_list, V_list, Vcritical, omegacri
     ax[0].set_ylabel(r"|$\Phi$| [-]")
     ax[0].set_ylim(0, 1.1)
     ax[1].set_ylabel(r"∠$\Phi$ [deg]")
-    ax[1].set_ylim(-100, 100)
+    ax[1].set_ylim(-230, 230)
     ax[1].axhline(0, color='k', linestyle='--', linewidth=0.5)
     ax[0].grid(True, linestyle='--', linewidth=0.5)
     ax[1].grid(True, linestyle='--', linewidth=0.5)
@@ -876,8 +884,8 @@ def plot_flutter_mode_shape(eigvecs_all, omega_list, V_list, Vcritical, omegacri
     ax[1].set_xlabel("DOFs")
 
     for i in range(n_modes):
-        if abs(magnitudes[i]) > 1e-3:
-            ax[0].text(i, magnitudes[i] + 0.05, f"{magnitudes[i]:.2f}", ha='center', fontsize=9)
+        if abs(magnitudes[i]) > 1e-3 or magnitudes[i] !=1:
+            ax[0].text(i, magnitudes[i] + 0.02, f"{magnitudes[i]:.2f}", ha='center', fontsize=9)
         if abs(phases[i]) > 1:
             ax[1].text(i, phases[i] + 10*np.sign(phases[i]), f"{phases[i]:.1f}°", ha='center', fontsize=9)
 
