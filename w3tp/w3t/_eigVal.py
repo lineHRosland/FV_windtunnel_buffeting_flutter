@@ -661,7 +661,7 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                 if verbose:
                     print(f"Flutter detected at V = {V:.2f} m/s, iterWind = {iterWind}, j = {j}")
 
-                if np.abs(damping_new) < 1e-7: #Akkurat ved flutter
+                if np.abs(damping_new) < 1e-5: #Akkurat ved flutter
                     if verbose:
                         print(f"Flutter converged at V ≈ {V:.5f} m/s")
                     omegacritical[j] = omega_new
@@ -700,13 +700,14 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
         if all(skip_mode):
             stopWind = True
 
-        if not any(skip_mode):  
+        if all(not s for s in skip_mode):  
             V_list.append(V)
             V += dV
             velocity_counter += 1
-        else:
+        elif not all(skip_mode):  # flutter har startet, men ikke funnet nøyaktig
             V -= 0.5 * dV
             dV *= 0.5
+
 
         
     return V_list, omega_all, damping_ratios, eigvecs_all, eigvals_all, omegacritical, Vcritical 
@@ -1150,7 +1151,7 @@ def plot_damping_vs_wind_speed(damping_ratios, V_list, dist="Fill in dist", sing
     plt.xlim(0, )
     plt.show()
 
-
+ 
 def plot_frequency_vs_wind_speed(V_list, omega_list,   dist="Fill in dist", single = True):
     """
     Plots natural frequencies as a function of wind speed, marking valid AD regions.
