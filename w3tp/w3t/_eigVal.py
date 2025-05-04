@@ -278,6 +278,11 @@ def cae_kae_single(poly_coeff, k_range, Vred_global, Phi, x, B):
     # H1, H2, H3, H4 = np.polyval(poly_coeff[0][::-1], Vred_global), np.polyval(poly_coeff[1][::-1], Vred_global), np.polyval(poly_coeff[2][::-1], Vred_global), np.polyval(poly_coeff[3][::-1], Vred_global)
     # A1, A2, A3, A4 = np.polyval(poly_coeff[4][::-1], Vred_global), np.polyval(poly_coeff[5][::-1], Vred_global), np.polyval(poly_coeff[6][::-1], Vred_global), np.polyval(poly_coeff[7][::-1], Vred_global)
 
+
+    print(f"H1* = {H1:.3f}, H2* = {H2:.3f}, H3* = {H3:.3f}, H4* = {H4:.3f}")
+    print(f"A1* = {A1:.3f}, A2* = {A2:.3f}, A3* = {A3:.3f}, A4* = {A4:.3f}")
+    print("---")
+
     AA = np.zeros((8, 2, 2))
     AA[0, 0, 0] = H1
     AA[1, 0, 1] = B * H2
@@ -534,8 +539,8 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
         #dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
    
     # Flutter detection
-    Vcritical = [None] * n_modes # Critical wind speed
-    omegacritical = [None] * n_modes # Critical frequency
+    Vcritical = None # Critical wind speed
+    omegacritical = None # Critical frequency
     Vcritical_guess = None
     count_same = 0
 
@@ -591,6 +596,7 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
 
             while (iterFreq < maxIterFreq and not stopFreq): # iterer over frekvens-iterasjoner           
 
+                
                 if single:
                     Cae_star_gen, Kae_star_gen = cae_kae_single(poly_coeff, k_range, Vred, Phi, x, B)
 
@@ -630,6 +636,10 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                 # if verbose:
                 #     print(f"[DEBUG] IterFreq {iterFreq}, omega_old = {omega_old[j]:.4f}, omega_new = {omega_new:.4f}, diff = {np.abs(omega_old[j] - omega_new):.4e}")
 
+                # if verbose:
+                #     print(f"  IterFreq {iterFreq}: omega_old = {omega_old[j]:.5f}, omega_new = {omega_new:.5f}, diff = {np.abs(omega_old[j] - omega_new):.2e}")
+                #     print(f"  V_red = {Vred:.5f}")
+
                                             
                 if np.abs(omega_old[j] - omega_new) < eps or omega_old[j] <= 0.0: # omega har konvergert, jippi
                     omega_all[velocity_counter, j] = omega_new
@@ -661,11 +671,11 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                 if verbose:
                     print(f"Flutter detected at V = {V:.2f} m/s, iterWind = {iterWind}, j = {j}")
 
-                if np.abs(damping_new) < 1e-5: #Akkurat ved flutter
+                if np.abs(damping_new) < 0.0000001: #Akkurat ved flutter
                     if verbose:
                         print(f"Flutter converged at V ≈ {V:.5f} m/s")
-                    omegacritical[j] = omega_new
-                    Vcritical[j] = V
+                    omegacritical = omega_new
+                    Vcritical = V
                     skip_mode[j] = True  
 
                 # if Vcritical_guess is not None and abs(V - Vcritical_guess) < 1e-6:
@@ -692,8 +702,8 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
             if dV < 1e-8:
                 if verbose:
                     print(f"Stopping refinement: dV too small ({dV:.2e}). Flutter converged at V ≈ {V:.5f} m/s")
-                Vcritical[j] = V
-                omegacritical[j] = omega_new
+                Vcritical = V
+                omegacritical = omega_new
                 skip_mode = [True] * n_modes
                 stopWind = True
         
@@ -708,9 +718,168 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
             V -= 0.5 * dV
             dV *= 0.5
 
+    # Truncate arrays to actual size
+    omega_all = omega_all[:velocity_counter, :]
+    damping_ratios = damping_ratios[:velocity_counter, :]
+    eigvals_all = eigvals_all[:velocity_counter, :]
+    eigvecs_all = eigvecs_all[:velocity_counter, :]
 
         
     return V_list, omega_all, damping_ratios, eigvecs_all, eigvals_all, omegacritical, Vcritical 
+
+def plot_damping_vs_wind_speed(damping_ratios, V_list, dist="Fill in dist", single=True):
+    """
+    Plot damping ratios as a function of wind speed.
+
+    Parameters:
+    -----------
+    damping_ratios : ndarray, shape (Nvind, n_modes)
+        Damping ratios for each mode and wind speed.
+    V_list : list or ndarray
+        Wind speed values.
+    dist : str
+        Description of deck distance or test case.
+    single : bool
+        True if single-deck (2 modes), False if twin-deck (4 modes).
+    """
+    markers = ['o', 's', '^', 'x']
+    markersizes = [2.6, 2.4, 3, 3]
+    colors = ['blue', 'green', 'red', 'orange']
+    labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
+
+    plt.figure(figsize=(10, 6))
+    
+    n_modes = 2 if single else 4
+    title = f"Damping vs. wind speed - {dist}"
+
+    for j in range(n_modes):
+        plt.plot(
+            V_list,
+            damping_ratios[:, j],
+            color=colors[j],
+            marker=markers[j],
+            markersize=markersizes[j],
+            linestyle='None',
+            label=labels[j]
+        )
+
+    plt.axhline(0, linestyle="--", color="grey", linewidth=1.1, label="Critical damping")
+    plt.xlabel("Wind speed [m/s]", fontsize=16)
+    plt.ylabel("Damping ratio [-]", fontsize=16)
+    plt.title(title, fontsize=18)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.legend(fontsize=14)
+    plt.grid(True, linestyle='--', linewidth=0.5)
+    plt.tight_layout()
+    plt.ylim(-0.05, )
+    plt.xlim(0, )
+    plt.show()
+
+
+def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single=True):
+    """
+    Plots natural frequencies as a function of wind speed.
+
+    Parameters:
+    -----------
+    V_list : list
+        Wind speeds.
+    omega_list : ndarray
+        Angular frequencies (shape: N x n_modes).
+    dist : str
+        Description for plot title.
+    single : bool
+        True for 2DOF (single-deck), False for 4DOF (twin-deck).
+    """
+
+    markers = ['o', 's', '^', 'x']
+    markersizes = [2.6, 2.4, 3, 3]
+    colors = ['blue', 'green', 'red', 'orange']
+    labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
+
+    n_modes = 2 if single else 4
+    title = f"Natural frequencies vs wind speed - {dist}"
+
+    omega_array = np.array(omega_list)
+    frequencies = omega_array / (2 * np.pi)  # Convert from rad/s to Hz
+
+    plt.figure(figsize=(10, 6))
+    for j in range(n_modes):
+        plt.plot(
+            V_list,
+            frequencies[:, j],
+            color=colors[j],
+            marker=markers[j],
+            markersize=markersizes[j],
+            linestyle='None',
+            label=labels[j]
+        )
+
+    plt.xlabel("Wind speed [m/s]", fontsize=16)
+    plt.ylabel("Natural frequency [Hz]", fontsize=16)
+    plt.title(title, fontsize=18)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.legend(fontsize=14)
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+    plt.tight_layout()
+    plt.xlim(0, V_list[-1])
+    plt.show()
+
+def plot_flutter_mode_shape(eigvecs_all, omega_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single=True):
+    if Vcritical is None or omegacritical is None:
+        print("Ingen flutter observert!")
+        return
+
+    if single:
+        n_modes = 2
+        dofs = ["V1", "T1"]
+    else:
+        n_modes = 4
+        dofs = ["V1", "T1", "V2", "T2"]
+
+    idx_flutter = np.argmin(np.abs(np.array(V_list) - Vcritical))
+    freq_flutter = np.array(omega_list[idx_flutter]) / (2 * np.pi)
+
+    # Finn moden som har frekvens nærmest den kritiske
+    idx_mode_flutter = np.argmin(np.abs(freq_flutter - omegacritical / (2 * np.pi)))
+
+    # Hent ut tilhørende egenvektor
+    flutter_vec = eigvecs_all[idx_flutter][:, idx_mode_flutter]
+
+    # 2 subplot: magnituder og faser
+    fig, ax = plt.subplots(2, 1, figsize=(6, 6), sharex=True)
+
+    abs_vec = np.abs(flutter_vec)
+    max_idx = np.argmax(abs_vec)
+    normalized_vec = flutter_vec / flutter_vec[max_idx]
+
+    magnitudes = np.abs(normalized_vec)
+    phases = np.angle(normalized_vec, deg=True)
+
+    ax[0].bar(dofs, magnitudes, color='blue', width=0.5)
+    ax[1].bar(dofs, phases, color='orange', width=0.5)
+
+    ax[0].set_ylabel(r"|$\Phi$| [-]")
+    ax[0].set_ylim(0, 1.1)
+    ax[1].set_ylabel(r"∠$\Phi$ [deg]")
+    ax[1].set_ylim(-100, 100)
+    ax[1].axhline(0, color='k', linestyle='--', linewidth=0.5)
+    ax[0].grid(True, linestyle='--', linewidth=0.5)
+    ax[1].grid(True, linestyle='--', linewidth=0.5)
+
+    ax[0].set_title(f"Magnitude and phase of normalized eigenvector at flutter wind speed - {dist}", fontsize=14)
+    ax[1].set_xlabel("DOFs")
+
+    for i in range(n_modes):
+        if abs(magnitudes[i]) > 1e-3:
+            ax[0].text(i, magnitudes[i] + 0.05, f"{magnitudes[i]:.2f}", ha='center', fontsize=9)
+        if abs(phases[i]) > 1:
+            ax[1].text(i, phases[i] + 10*np.sign(phases[i]), f"{phases[i]:.1f}°", ha='center', fontsize=9)
+
+    plt.tight_layout()
+    plt.show()
 
 #def solve_omega
 
@@ -1102,57 +1271,8 @@ def plot_damping_vs_wind_speed0(damping_list,omega_list, V_list, dist="Fill in d
     plt.xlim(0,)
     plt.show()
 
-def plot_damping_vs_wind_speed(damping_ratios, V_list, dist="Fill in dist", single=True):
-    """
-    Plot damping ratios as a function of wind speed.
 
-    Parameters:
-    -----------
-    damping_ratios : ndarray, shape (Nvind, n_modes)
-        Damping ratios for each mode and wind speed.
-    V_list : list or ndarray
-        Wind speed values.
-    dist : str
-        Description of deck distance or test case.
-    single : bool
-        True if single-deck (2 modes), False if twin-deck (4 modes).
-    """
-    markers = ['o', 's', '^', 'x']
-    markersizes = [2.6, 2.4, 3, 3]
-    colors = ['blue', 'green', 'red', 'orange']
-    labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
-
-    plt.figure(figsize=(10, 6))
-    
-    n_modes = 2 if single else 4
-    title = f"Damping vs. wind speed - {dist}"
-
-    for j in range(n_modes):
-        plt.plot(
-            V_list,
-            damping_ratios[:, j],
-            color=colors[j],
-            marker=markers[j],
-            markersize=markersizes[j],
-            linestyle='None',
-            label=labels[j]
-        )
-
-    plt.axhline(0, linestyle="--", color="grey", linewidth=1.1, label="Critical damping")
-    plt.xlabel("Wind speed [m/s]", fontsize=16)
-    plt.ylabel("Damping ratio [-]", fontsize=16)
-    plt.title(title, fontsize=18)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
-    plt.legend(fontsize=14)
-    plt.grid(True, linestyle='--', linewidth=0.5)
-    plt.tight_layout()
-    plt.ylim(-0.05, )
-    plt.xlim(0, )
-    plt.show()
-
- 
-def plot_frequency_vs_wind_speed(V_list, omega_list,   dist="Fill in dist", single = True):
+def plot_frequency_vs_wind_speed0(V_list, omega_list,   dist="Fill in dist", single = True):
     """
     Plots natural frequencies as a function of wind speed, marking valid AD regions.
 
@@ -1173,8 +1293,6 @@ def plot_frequency_vs_wind_speed(V_list, omega_list,   dist="Fill in dist", sing
     markersizes = [2.6, 2.4, 3, 3]
     colors = ['blue', 'green', 'red', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
-
-
 
     if single:
         n_modes = 2 
@@ -1203,7 +1321,9 @@ def plot_frequency_vs_wind_speed(V_list, omega_list,   dist="Fill in dist", sing
     plt.xlim(0,V_list[-1])
     plt.show()
 
-def plot_flutter_mode_shape(eigvecs_all, omega_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single = True):
+
+
+def plot_flutter_mode_shape0(eigvecs_all, omega_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single = True):
     
     if Vcritical is None or omegacritical is None:
         print("Ingen flutter observert!")
