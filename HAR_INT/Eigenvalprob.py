@@ -32,7 +32,7 @@ zeta = 0.005 # 5 %, critical damping
 rho = 1.25 # kg/m^3, air density 
 
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
-eps = 1e-8 # Konvergensterske
+eps = 0.0001 # Konvergensterske
 
 # Single
 phi_single, x_single = mode_shape_single(full_matrix=True)
