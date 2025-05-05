@@ -303,11 +303,11 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
     if single:
         n_modes = 2 # 2 modes for single deck
         omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
-        #dominant_dofs = [0, 1]  # z, θ
+        dominant_dofs = [0, 1]  # z, θ
     else:   
         n_modes = 4 # 4 modes for twin deck
         omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) #Først brudekke 1, deretter brudekke 2
-        #dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
+        dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
    
     # Flutter detection
     Vcritical = None # Critical wind speed
@@ -374,6 +374,251 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
 
                 Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen
                 Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen
+
+                eigvalsV, eigvecsV = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
+
+
+                eigvals_pos = eigvalsV[np.imag(eigvalsV) > 0]
+                eigvecs_pos = eigvecsV[:, np.imag(eigvalsV) > 0]  
+
+                
+                if eigvals_pos.size == 0:
+                    if verbose:
+                        print(f"Ingen komplekse egenverdier ved V = {V:.2f} m/s, mode {j+1}. Skipper mode.")
+                    omega_all[velocity_counter, j] = np.nan
+                    damping_ratios[velocity_counter, j] = np.nan
+                    eigvals_all[velocity_counter, j] = np.nan
+                    eigvecs_all[velocity_counter, j] = None
+                    break
+
+
+                if single:
+                    best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]))
+      
+                else:
+                    dominance_scores = np.array([np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])])
+                    prev_lambda = eigvals_all[velocity_counter - 1, j] 
+
+                    if V < 10:
+                        best_idx = np.argmax(dominance_scores) # Velg den største egenvektoren
+                    else:
+                        best_idx = np.argmin(
+                                np.abs(np.imag(eigvals_pos) - omega_old[j])
+                                + 10 * np.abs(np.real(eigvals_pos) - np.real(prev_lambda))
+                     )
+                        
+                λj = eigvals_pos[best_idx]
+                φj = eigvecs_pos[:n_modes, best_idx]
+                omega_new = np.imag(λj)
+                damping_new = -np.real(λj) / np.abs(λj)
+                                            
+                if np.abs(omega_old[j] - omega_new) < eps or omega_old[j] <= 0.0: # omega har konvergert, jippi
+                    omega_all[velocity_counter, j] = omega_new
+                    damping_ratios[velocity_counter, j] = damping_new
+                    eigvals_all[velocity_counter, j] = λj
+                    eigvecs_all[velocity_counter, j] = φj
+                    stopFreq = True # Stopper frekvens-iterasjonen hvis vi har funnet flutter
+
+                iterFreq += 1
+                omega_old[j] = omega_new
+
+                if iterFreq == 1000:
+                    if verbose:
+                        print(f"WARNING: Frequancy iteration has not converged for V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
+                    omega_all[velocity_counter, j] = np.nan
+                    damping_ratios[velocity_counter, j] = np.nan
+                    eigvals_all[velocity_counter, j] = np.nan
+                    eigvecs_all[velocity_counter, j] = None
+                    break
+
+         
+
+
+            if damping_new < 0: # flutter finnes, må finne nøyaktig flutterhastighe
+                for other_j in range(n_modes): #Flutter funnet på en mode, fokuser kunn på denne moden, og stopper til slutt hastighetiterasjonen.
+                    if other_j != j:
+                        skip_mode[other_j] = True
+
+                if verbose:
+                    print(f"Flutter detected at V = {V:.2f} m/s, iterWind = {iterWind}, j = {j}")
+
+                if np.abs(damping_new) < 0.0000001: #Akkurat ved flutter
+                    if verbose:
+                        print(f"Flutter converged at V ≈ {V:.5f} m/s")
+                    omegacritical = omega_new
+                    Vcritical = V
+                    skip_mode[j] = True  
+
+                
+            else: #system stabilt
+                omega_all[velocity_counter, j] = omega_new
+                damping_ratios[velocity_counter, j] = damping_new
+                eigvals_all[velocity_counter, j] = λj   
+                eigvecs_all[velocity_counter, j] = φj
+
+            if dV < 1e-8:
+                if verbose:
+                    print(f"Stopping refinement: dV too small ({dV:.2e}). Flutter converged at V ≈ {V:.5f} m/s")
+                Vcritical = V
+                omegacritical = omega_new
+                skip_mode = [True] * n_modes
+                stopWind = True
+        
+        if all(skip_mode):
+            stopWind = True
+
+        if all(not s for s in skip_mode):  
+            V_list.append(V)
+            V += dV
+            velocity_counter += 1
+        elif not all(skip_mode):  # flutter har startet, men ikke funnet nøyaktig
+            V -= 0.5 * dV
+            dV *= 0.5
+
+        iterWind +=1
+
+
+    # Truncate arrays to actual size
+    omega_all = omega_all[:velocity_counter, :]
+    damping_ratios = damping_ratios[:velocity_counter, :]
+    eigvals_all = eigvals_all[:velocity_counter, :]
+    eigvecs_all = eigvecs_all[:velocity_counter, :]
+
+    # Etter solve_omega er ferdig, gjør dette:
+    omega_all_phys = np.full_like(omega_all, np.nan)
+    damping_ratios_phys = np.full_like(damping_ratios, np.nan)
+    eigvals_all_phys = np.full_like(eigvals_all, np.nan, dtype=complex)
+    eigvecs_all_phys = np.empty_like(eigvecs_all)
+
+    sort_array = np.full((len(V_list), n_modes), -1)  # default -1 for manglende data
+    for i in range(len(V_list)):
+        for j in range(n_modes):
+            φj = eigvecs_all[i, j]
+            if φj is None:
+                continue
+            dominant_dof_idx = np.argmax(np.abs(φj))
+            sort_array[i, j] = dominant_dof_idx
+
+    for i in range(len(V_list)):
+        sort_order = sort_array[i, :]  # DOF for hver mode
+        if -1 in sort_order:
+            print("NOE MANGLER")
+            continue  # hopp over hvis noe mangler
+        sort_indices = np.argsort(sort_order)
+        # Bruk dette til å reorder de respektive listene
+        omega_all_phys[i, :] = omega_all[i, sort_indices]
+        damping_ratios_phys[i, :] = damping_ratios[i, sort_indices]
+        eigvals_all_phys[i, :] = eigvals_all[i, sort_indices]
+        eigvecs_all_phys[i, :] = eigvecs_all[i, sort_indices]
+
+
+    return V_list, omega_all_phys, damping_ratios_phys, eigvecs_all_phys, eigvals_all_phys, omegacritical, Vcritical 
+
+def solve_omega_buff(Ms,Cs, Ks, Cae, Kae,f1, f2,B, rho, eps, Phi, x, single = True, verbose=True):
+    """
+    Solves the eigenvalue problem for a given set of matrices and parameters.
+
+    Parameters:
+    -----------
+    Ms : ndarray
+        Mass matrix.
+    Cs : ndarray
+        Damping matrix.
+    Ks : ndarray
+        Stiffness matrix.
+    Cae : ndarray
+        Aerodynamic damping matrix.
+    Kae : ndarray
+        Aerodynamic stiffness matrix.
+    f1, f2 : float
+        Natural frequencies of the system.
+    B : float
+        Width of the bridge deck.
+    rho : float
+        Air density.
+    eps : float
+        Convergence tolerance.
+    Phi : ndarray
+        Mode shapes.
+    x : ndarray
+        Spatial coordinates along the bridge.
+
+    Returns:
+    --------
+    eigvalsV : ndarray
+        Eigenvalues of the system.
+    eigvecsV : ndarray
+        Eigenvectors of the system.
+    """
+
+    if single:
+        n_modes = 2 # 2 modes for single deck
+        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
+        dominant_dofs = [0, 1]  # z, θ
+    else:   
+        n_modes = 4 # 4 modes for twin deck
+        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) #Først brudekke 1, deretter brudekke 2
+        dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
+   
+    # Flutter detection
+    Vcritical = None # Critical wind speed
+    omegacritical = None # Critical frequency
+
+
+    stopWind = False
+    iterWind = 0
+    maxIterWind = 400
+    V = 1.0 # Initial wind speed, m/s
+    dV = 0.5 # Hvor mye vi øker vindhastighet per iterasjon. 
+
+    # # Global results
+    V_list = [] # Wind speed, m/s
+
+    skip_mode = [False] * n_modes
+    
+    zeta = 0.005 # Damping ratio for the structure (assumed equal for both modes)
+
+    # empty() creates an array of the given shape and type, EVERY ELEMENT MUST BE INITIALIZED LATER
+    omega_all = np.zeros((maxIterWind, n_modes))
+    damping_ratios = np.zeros((maxIterWind, n_modes))
+    eigvals_all = np.zeros((maxIterWind, n_modes), dtype=complex)
+    eigvecs_all = np.empty((maxIterWind, n_modes), dtype=object)
+
+    V_list.append(0.0) # V = 0.0 m/s
+
+    for j_mode in range(n_modes):
+        eigvecs_all[0, j_mode] = np.nan
+        eigvals_all[0,j_mode] = np.nan
+
+        omega_all[0,j_mode] = omega_old[j_mode] # Startverdi for omega er den naturlige frekvensen til modusen
+        damping_ratios [0,j_mode] = zeta
+  
+    velocity_counter = 1
+
+    while (iterWind < maxIterWind and not stopWind): # iterer over vindhastigheter
+        
+        if verbose:
+            print(f"Wind speed iteration {iterWind+1}: V = {V} m/s")
+
+        for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
+            if skip_mode[j]:
+                continue
+            
+            if verbose:
+                print("Mode:", j+1)
+          
+            stopFreq = False
+            iterFreq = 0 # Teller hvor mange frekvens-iterasjoner
+            maxIterFreq = 1000 # Maks antall iterasjoner for frekvens
+
+
+
+            while (iterFreq < maxIterFreq and not stopFreq): # iterer over frekvens-iterasjoner           
+
+                Vred = V/(omega_old[j]*B) # reduced velocity 
+  
+                Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae
+                Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae
 
                 eigvalsV, eigvecsV = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
