@@ -408,23 +408,59 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                     #     best_idx = np.argmin(
                     #             np.abs(np.imag(eigvals_pos) - omega_old[j])
                     #             + 10 * np.abs(np.real(eigvals_pos) - np.real(prev_lambda))
-                    #     )
-                    mode_order = []
-                    for d in range(n_modes):
-                        best_mode = np.argmax(np.abs(eigvecs_pos[d, :]))  # Hvilken DOF er størst i denne modusen?
-                        mode_order.append(best_mode)  # Lagre dette
+                    # #     )
+                    # mode_order = []
+                    # for d in range(n_modes):
+                    #     best_mode = np.argmax(np.abs(eigvecs_pos[d, :]))  # Hvilken DOF er størst i denne modusen?
+                    #     mode_order.append(best_mode)  # Lagre dette
 
+                    # λj = eigvals_pos[mode_order[j]]
+                    # φj = eigvecs_pos[:n_modes, mode_order[j]]
+                    # omega_new = np.imag(λj)
+                    # damping_new = -np.real(λj) / np.abs(λj)
+
+                    # print("mode_order =", mode_order)
+                    # print("unique =",mode_order[j])
+
+                    # -- Start: Robust og entydig mapping mellom DOFs og egenverdier --
+
+                    n_eig = eigvecs_pos.shape[1]  # Antall egenverdier/moder
+                    available = set(range(n_eig))  # Hvilke indekser er fortsatt "ledig" å bruke
+                    mode_order = []
+
+                    # For hver DOF (altså fysisk mode), finn den egenmoden som er mest dominant der,
+                    # men sørg for at ingen mode brukes to ganger
+                    for dof in range(n_modes):
+                        best_score = -np.inf
+                        best_idx = -1
+                        for idx in available:
+                            score = np.abs(eigvecs_pos[dof, idx])  # Sjekk hvor dominant DOF `dof` er i egenvektor `idx`
+                            if score > best_score:
+                                best_score = score
+                                best_idx = idx
+                        if best_idx != -1:
+                            mode_order.append(best_idx)
+                            available.remove(best_idx)  # Fjern så den ikke brukes igjen
+
+                    # Nå har du en unik mapping: j'te DOF → riktig indeks i eigvals_pos
                     λj = eigvals_pos[mode_order[j]]
                     φj = eigvecs_pos[:n_modes, mode_order[j]]
+
+                    # Beregn ny omega og demping
                     omega_new = np.imag(λj)
                     damping_new = -np.real(λj) / np.abs(λj)
+
+                    # Debug-print for kontroll
+                    if verbose:
+                        print("mode_order =", mode_order)
+                        print("unique =", mode_order[j])
 
                 # if verbose:
                 #     print(f"[DEBUG] IterFreq {iterFreq}, omega_old = {omega_old[j]:.4f}, omega_new = {omega_new:.4f}, diff = {np.abs(omega_old[j] - omega_new):.4e}")
 
-                if verbose:
-                    print(f"  IterFreq {iterFreq}: omega_old = {omega_old[j]:.5f}, omega_new = {omega_new:.5f}, diff = {np.abs(omega_old[j] - omega_new):.2e}")
-                    print(f"  V_red = {Vred:.5f}")
+                # if verbose:
+                #     print(f"  IterFreq {iterFreq}: omega_old = {omega_old[j]:.5f}, omega_new = {omega_new:.5f}, diff = {np.abs(omega_old[j] - omega_new):.2e}")
+                #     print(f"  V_red = {Vred:.5f}")
 
                                             
                 if np.abs(omega_old[j] - omega_new) < eps or omega_old[j] <= 0.0: # omega har konvergert, jippi
@@ -463,20 +499,6 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                     omegacritical = omega_new
                     Vcritical = V
                     skip_mode[j] = True  
-
-                # if Vcritical_guess is not None and abs(V - Vcritical_guess) < 1e-6:
-                #     count_same += 1
-                # else:
-                #     count_same = 0
-                #     Vcritical_guess = V
-
-                # if count_same > 5: # hvis vi har vært på samme hastighet i 5 iterasjoner, så gidder vi ikke mer
-                #     if verbose:
-                #         print(f"Flutter converged at V ≈ {V:.5f} m/s")
-                #     omegacritical = omega_new
-                #     Vcritical = V
-                #     skip_mode[j] = True
-                #     stopWind = True
 
                 
             else: #system stabilt
@@ -616,7 +638,7 @@ def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single
     plt.xlim(0, V_list[-1])
     plt.show()
 
-def plot_flutter_mode_shape(eigvecs_all, omega_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single=True):
+def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single=True):
     if Vcritical is None or omegacritical is None:
         print("Ingen flutter observert!")
         return
@@ -627,12 +649,14 @@ def plot_flutter_mode_shape(eigvecs_all, omega_list, V_list, Vcritical, omegacri
     else:
         n_modes = 4
         dofs = ["V1", "T1", "V2", "T2"]
+    
 
     idx_flutter = np.argmin(np.abs(np.array(V_list) - Vcritical))
-    freq_flutter = np.array(omega_list[idx_flutter]) / (2 * np.pi)
 
-    # Finn moden som har frekvens nærmest den kritiske
-    idx_mode_flutter = np.argmin(np.abs(freq_flutter - omegacritical / (2 * np.pi)))
+ 
+    damping_array = np.array(damping_list)  # shape (Nvind, n_modes)
+    last_damping = damping_array[idx_flutter]  # siste vindhastighet synlig
+    idx_mode_flutter = np.argmin(last_damping)  # den moden som først får negativ demping
 
     # Hent ut tilhørende egenvektor
     flutter_vec = eigvecs_all[idx_flutter][idx_mode_flutter]
@@ -662,7 +686,7 @@ def plot_flutter_mode_shape(eigvecs_all, omega_list, V_list, Vcritical, omegacri
     ax[1].set_xlabel("DOFs")
 
     for i in range(n_modes):
-        if abs(magnitudes[i]) > 1e-3 or magnitudes[i] !=1:
+        if abs(magnitudes[i]) > 1e-3:
             ax[0].text(i, magnitudes[i] + 0.02, f"{magnitudes[i]:.2f}", ha='center', fontsize=9)
         if abs(phases[i]) > 1:
             ax[1].text(i, phases[i] + 10*np.sign(phases[i]), f"{phases[i]:.1f}°", ha='center', fontsize=9)
