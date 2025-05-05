@@ -585,8 +585,9 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
         for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
             if skip_mode[j]:
                 continue
-
-            print("Mode:", j+1)
+            
+            if verbose:
+                print("Mode:", j+1)
           
             stopFreq = False
             iterFreq = 0 # Teller hvor mange frekvens-iterasjoner
@@ -627,14 +628,16 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                 if single:
                     best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]))
                 else:
-                    #best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]) + 10 * (np.abs(np.real(eigvals_pos) - damping_ratios[velocity_counter-1, j])) - 10 * (np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])))
-                    
                     dominance_scores = np.array([np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])])
-                    best_idx = np.argmin(
-                            np.abs(np.imag(eigvals_pos) - omega_old[j])
-                            + 10 * np.abs(np.real(eigvals_pos) - damping_ratios[velocity_counter - 1, j])
-                            - 10 * dominance_scores
-                        )
+                    prev_lambda = eigvals_all[velocity_counter - 1, j] 
+
+                    if V < 20:
+                        best_idx = np.argmax(dominance_scores) # Velg den største egenvektoren
+                    else:
+                        best_idx = np.argmin(
+                                np.abs(np.imag(eigvals_pos) - omega_old[j])
+                                + 10 * np.abs(np.real(eigvals_pos) - np.real(prev_lambda))
+                            )
 
                 λj = eigvals_pos[best_idx]
                 φj = eigvecs_pos[:n_modes, best_idx]
