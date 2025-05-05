@@ -348,10 +348,6 @@ def cae_kae_twin(poly_coeff, k_range, Vred_global, Phi, x, B):
     k_z2z1, k_z2θ1, k_z2z2, k_z2θ2 = from_poly_k(poly_coeff[24], k_range[24],Vred_global, damping_ad=False), from_poly_k(poly_coeff[25], k_range[25],Vred_global, damping_ad=False), from_poly_k(poly_coeff[26], k_range[26],Vred_global, damping_ad=False), from_poly_k(poly_coeff[27], k_range[27],Vred_global, damping_ad=False)
     k_θ2z1, k_θ2θ1, k_θ2z2, k_θ2θ2 = from_poly_k(poly_coeff[28], k_range[28],Vred_global, damping_ad=False), from_poly_k(poly_coeff[29], k_range[29],Vred_global, damping_ad=False), from_poly_k(poly_coeff[30], k_range[30],Vred_global, damping_ad=False), from_poly_k(poly_coeff[31], k_range[31],Vred_global, damping_ad=False)
     
-    
-    
-    AD = [ from_poly_k(poly, k_range_row,Vred_global) for poly, k_range_row in zip(poly_coeff, k_range)]
-    #AD = [np.polyval(poly[::-1], Vred_global) for poly in poly_coeff]  # reversed for polyval
 
     # Initialiser 32 matriser (16 for C, 16 for K)
     AA = np.zeros((32, 4, 4))
@@ -631,7 +627,7 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
                     dominance_scores = np.array([np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])])
                     prev_lambda = eigvals_all[velocity_counter - 1, j] 
 
-                    if V < 20:
+                    if V < 60:
                         best_idx = np.argmax(dominance_scores) # Velg den største egenvektoren
                     else:
                         best_idx = np.argmin(
