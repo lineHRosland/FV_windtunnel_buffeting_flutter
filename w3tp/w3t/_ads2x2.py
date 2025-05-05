@@ -197,6 +197,13 @@ class AerodynamicDerivative2x2:
                 ax.set_xlabel(r"Reduced velocity $\hat{V}$")
                 ax.grid(True)
 
+            elif mode == "total2":
+                # Plot total measured aerodynamic derivative
+                ax.plot(self.reduced_velocities, self.ad_load_cell_a + self.ad_load_cell_b, label="Total")
+                ax.set_ylabel("$" + self.label + "$")
+                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+                ax.grid(True)
+
             elif mode == "velocity":
                 # Plot with velocity annotation
                 ax.plot(self.reduced_velocities, self.ad_load_cell_a + self.ad_load_cell_b, "o", label=f"V = {V:.1f} m/s")
