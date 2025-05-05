@@ -186,6 +186,13 @@ class AerodynamicDerivative4x4:
             ax.set_xlabel(r"Reduced velocity $\hat{V}$")
             ax.grid(True)
 
+        # Plot total measured aerodynamic derivative
+        elif mode == "total2":
+            ax.plot(self.reduced_velocities, self.ad_load_cell_a + self.ad_load_cell_b, label="Total")
+            ax.set_ylabel(f"${self.label}$")
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.grid(True)
+
         # Plot both total values and polynomial fit
         elif mode == "total+poly":
             ax.plot(self.reduced_velocities, self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Total")
