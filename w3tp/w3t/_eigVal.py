@@ -485,8 +485,6 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
     eigvals_all = eigvals_all[:velocity_counter, :]
     eigvecs_all = eigvecs_all[:velocity_counter, :]
 
-
-
     return V_list, omega_all, damping_ratios, eigvecs_all, eigvals_all, omegacritical, Vcritical 
 
 
@@ -551,22 +549,11 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, dist="Fill i
     fig.subplots_adjust(right=0.75)
 
     # Kombinér i 2 kolonner ved å bruke bbox_to_anchor og ncol
-     # Combined legend (2 columns, 4 rows)
     combined_handles = mode_handles + dof_handles
-    #ax.legend(handles=combined_handles, title="Mode & DOF",loc='upper left', bbox_to_anchor=(1.01, 1.0), ncol=2)
     ax.legend(handles=combined_handles, title="Mode & DOF", loc='upper left', ncol=2)
 
-
-    # legend1 = ax.legend(handles=mode_handles, title="Mode", loc='upper left', bbox_to_anchor=(1.02, 1.0))
-    # ax.add_artist(legend1)  # Viktig! Legg til første legend manuelt
-
-    
-    # ax.legend(handles=dof_handles, title="Dominant DOF", loc='upper left', bbox_to_anchor=(1.02, 0.6))
-
-    #ax.legend(handles=marker_legend + color_legend, fontsize=12, loc='upper left')
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
-    # plt.tight_layout(rect=[0, 0, 0.82, 1])
     plt.show()
 
 
