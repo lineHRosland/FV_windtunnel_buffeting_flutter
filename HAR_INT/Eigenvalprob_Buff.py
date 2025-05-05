@@ -12,7 +12,7 @@ from mode_shapes import mode_shape_twin
 
 
 file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae.npy"
-matrices = np.load(file_path, allow_pickle = True).item()
+
 B = 18.3 # m, section width 
 
 
@@ -48,23 +48,17 @@ Ms_twin, Cs_twin, Ks_twin = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta
 
 #%%
 #Single deck
-Cae_Single_gen = matrices["Cae_Single_gen"]
-Kae_Single_gen = matrices["Kae_Single_gen"]
+if os.path.exists(os.path.join(file_path, "poly_coeff_single.npy")):
+    poly_coeff_single = np.load(os.path.join(file_path, "poly_coeff_single.npy"))
+else:
+    raise FileNotFoundError(f"The file 'poly_coeff_single.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
+if os.path.exists(os.path.join(file_path, "k_range_single.npy")):
+    k_range_single = np.load(os.path.join(file_path, "k_range_single.npy"))
+else:
+    raise FileNotFoundError(f"The file 'k_range_single.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-Cae_1D_gen = matrices["Cae_1D_gen"]
-Kae_1D_gen = matrices["Kae_1D_gen"]
 
-Cae_2D_gen = matrices["Cae_2D_gen"]
-Kae_2D_gen = matrices["Kae_2D_gen"]
 
-Cae_3D_gen = matrices["Cae_3D_gen"]
-Kae_3D_gen = matrices["Kae_3D_gen"]
-
-Cae_4D_gen = matrices["Cae_4D_gen"]
-Kae_4D_gen = matrices["Kae_4D_gen"]
-
-Cae_5D_gen = matrices["Cae_5D_gen"]
-Kae_5D_gen = matrices["Kae_5D_gen"]
 
 #Solve for eigenvalues and eigenvectors
 V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_omega(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, verbose=False)
@@ -75,7 +69,7 @@ print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_single, V_list_single, dist="Single deck",  single = True)
+_eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
 
@@ -103,7 +97,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_1D, Vcritical_twin_1D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_1D,V_list_twin_1D, dist="Twin deck 1D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_1D,eigvecs_list_twin_1D,V_list_twin_1D, dist="Twin deck 1D",  single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_1D, omega_list_twin_1D, dist="Twin deck 1D", single = False)
 
@@ -129,7 +123,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_2D, Vcritical_twin_2D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_2D, V_list_twin_2D, dist="Twin deck 2D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_2D, eigvecs_list_twin_2D, V_list_twin_2D, dist="Twin deck 2D",  single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_2D, omega_list_twin_2D, dist="Twin deck 2D", single = False)
 
@@ -158,7 +152,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_3D, Vcritical_twin_3D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_3D,V_list_twin_3D, dist="Twin deck 3D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_3D,eigvecs_list_twin_3D, V_list_twin_3D, dist="Twin deck 3D",  single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_3D, omega_list_twin_3D, dist="Twin deck 3D", single = False)
 
@@ -185,7 +179,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_4D, Vcritical_twin_4D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_4D, V_list_twin_4D, dist="Twin deck 4D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_4D, eigvecs_list_twin_4D, V_list_twin_4D, dist="Twin deck 4D",  single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_4D, omega_list_twin_4D, dist="Twin deck 4D", single = False)
 
@@ -211,7 +205,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_5D, Vcritical_twin_5D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_5D, V_list_twin_5D, dist="Twin deck 5D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_5D, eigvecs_list_twin_5D, V_list_twin_5D, dist="Twin deck 5D",  single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_5D, omega_list_twin_5D, dist="Twin deck 5D", single = False)
 
