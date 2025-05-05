@@ -61,7 +61,7 @@ else:
 
 
 #Solve for eigenvalues and eigenvectors
-V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_omega(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, verbose=True)
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_omega(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
@@ -69,11 +69,11 @@ print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_single, V_list_single, dist="Single deck",  single = True)
+_eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
 
-_eigVal.plot_flutter_mode_shape(eigvecs_list_single, omega_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
+_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
 
 #%%
 #Double deck 1D
@@ -97,11 +97,11 @@ print("Omega_cr, V_cr: ",omegacritical_twin_1D, Vcritical_twin_1D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_1D,V_list_twin_1D, dist="Twin deck 1D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_1D,eigvecs_list_twin_1D,V_list_twin_1D, dist="Twin deck 1D",  single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_1D, omega_list_twin_1D, dist="Twin deck 1D", single = False)
 
-_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_1D, omega_list_twin_1D, V_list_twin_1D, Vcritical_twin_1D, omegacritical_twin_1D, dist="Twin deck 1D", single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_1D, damping_list_twin_1D, V_list_twin_1D, Vcritical_twin_1D, omegacritical_twin_1D, dist="Twin deck 1D", single = False)
 
 #%%
 #Double deck 2D
@@ -115,7 +115,7 @@ if os.path.exists(os.path.join(file_path, "k_range_2D.npy")):
 else:
     raise FileNotFoundError(f"The file 'k_range_2D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
-V_list_twin_2D, omega_list_twin_2D, damping_list_twin_2D, eigvecs_list_twin_2D, eigvals_list_twin_2D,omegacritical_twin_2D, Vcritical_twin_2D = _eigVal.solve_omega(poly_coeff_2D,k_range_2D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False, verbose=True)
+V_list_twin_2D, omega_list_twin_2D, damping_list_twin_2D, eigvecs_list_twin_2D, eigvals_list_twin_2D,omegacritical_twin_2D, Vcritical_twin_2D = _eigVal.solve_omega(poly_coeff_2D,k_range_2D, Ms_twin, Cs_twin, Ks_twin, f1V, f1T, B, rho, eps, phi_twin, x_twin, single = False, verbose=False)
 
 
 #Flutter
@@ -123,11 +123,11 @@ print("Omega_cr, V_cr: ",omegacritical_twin_2D, Vcritical_twin_2D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_2D, V_list_twin_2D, dist="Twin deck 2D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_2D, eigvecs_list_twin_2D, V_list_twin_2D, dist="Twin deck 2D",  single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_2D, omega_list_twin_2D, dist="Twin deck 2D", single = False)
 
-_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_2D, omega_list_twin_2D, V_list_twin_2D, Vcritical_twin_2D, omegacritical_twin_2D, dist="Twin deck 2D", single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_2D, damping_list_twin_2D, V_list_twin_2D, Vcritical_twin_2D, omegacritical_twin_2D, dist="Twin deck 2D", single = False)
 
 
 
@@ -152,11 +152,11 @@ print("Omega_cr, V_cr: ",omegacritical_twin_3D, Vcritical_twin_3D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_3D,V_list_twin_3D, dist="Twin deck 3D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_3D,eigvecs_list_twin_3D, V_list_twin_3D, dist="Twin deck 3D",  single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_3D, omega_list_twin_3D, dist="Twin deck 3D", single = False)
 
-_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_3D, omega_list_twin_3D, V_list_twin_3D, Vcritical_twin_3D, omegacritical_twin_3D, dist="Twin deck 3D", single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_3D, damping_list_twin_3D, V_list_twin_3D, Vcritical_twin_3D, omegacritical_twin_3D, dist="Twin deck 3D", single = False)
 
 
 #%%
@@ -179,11 +179,11 @@ print("Omega_cr, V_cr: ",omegacritical_twin_4D, Vcritical_twin_4D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_4D, V_list_twin_4D, dist="Twin deck 4D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_4D, eigvecs_list_twin_4D, V_list_twin_4D, dist="Twin deck 4D",  single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_4D, omega_list_twin_4D, dist="Twin deck 4D", single = False)
 
-_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_4D, omega_list_twin_4D, V_list_twin_4D, Vcritical_twin_4D, omegacritical_twin_4D, dist="Twin deck 4D", single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_4D, damping_list_twin_4D, V_list_twin_4D, Vcritical_twin_4D, omegacritical_twin_4D, dist="Twin deck 4D", single = False)
 
 #%%
 #Double deck 5D
@@ -205,10 +205,10 @@ print("Omega_cr, V_cr: ",omegacritical_twin_5D, Vcritical_twin_5D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_5D, V_list_twin_5D, dist="Twin deck 5D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_5D, eigvecs_list_twin_5D, V_list_twin_5D, dist="Twin deck 5D",  single = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_5D, omega_list_twin_5D, dist="Twin deck 5D", single = False)
 
-_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_5D, omega_list_twin_5D, V_list_twin_5D, Vcritical_twin_5D, omegacritical_twin_5D, dist="Twin deck 5D", single = False)
+_eigVal.plot_flutter_mode_shape(eigvecs_list_twin_5D, damping_list_twin_5D, V_list_twin_5D, Vcritical_twin_5D, omegacritical_twin_5D, dist="Twin deck 5D", single = False)
 
 # %%
