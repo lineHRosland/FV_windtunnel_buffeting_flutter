@@ -87,7 +87,7 @@ def generalize_C_K(C, K, Phi, x):
         K_int = 0.5 * (phi_L.T @ K @ phi_L + phi_R.T @ K @ phi_R)
         Kae_star_gen += K_int * dx
 
-        return Cae_star_gen, Kae_star_gen
+    return Cae_star_gen, Kae_star_gen
     
 
  
@@ -347,16 +347,16 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, si
                     Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) # Generaliserte aero-matriser
 
                 if buffeting:
-                    Cae_star_gen = Cae_star_gen_BUFF
-                    Kae_star_gen = Kae_star_gen_BUFF
+                    Cae_gen = -V* Cae_star_gen_BUFF
+                    Kae_gen = -V**2* Kae_star_gen_BUFF
 
                 else:      
-                    Cae_star_gen = Cae_star_gen_AD
-                    Kae_star_gen = Kae_star_gen_AD
+                    Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen_AD
+                    Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen_AD
 
-
-                Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen
-                Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen
+                if np.isclose(V, 37.6, atol=0.1):  # absolutt toleranse
+                    print("Kae_gen", Kae_gen)
+                
 
                 eigvalsV, eigvecsV = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
@@ -474,7 +474,7 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, si
 
 
 
-def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, dist="Fill in dist", single=True):
+def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, dist="Fill in dist", single=True, buffeting=False):
     """
     Plot damping ratios as a function of wind speed.
 
@@ -524,6 +524,13 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, dist="Fill i
     ax.grid(True, linestyle='--', linewidth=0.5)
     ax.set_ylim(-0.01, )
     ax.set_xlim(0, )
+    if buffeting:
+        ax.set_xlim(0, 0.01)
+    else:
+        if not single:
+            ax.set_ylim(-0.01, 0.25)
+
+
 
     from matplotlib.lines import Line2D
 
