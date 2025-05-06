@@ -47,6 +47,49 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
 
     return eigvals, eigvecs
 
+def generalize_C_K(C, K, Phi, x):
+    """
+    Generalizes the  matrices C and K to modal coordinates
+    via trapezoidal integration of Phi.T @ C @ Phi.
+
+    Parameters:
+    -----------
+    C : ndarray (n_dof x n_dof)
+        Aero damping matrix in physical DOFs.
+    K : ndarray (n_dof x n_dof)
+        Aero stiffness matrix in physical DOFs.
+    Phi : ndarray (n_points x n_dof x n_modes)
+        Modal shape matrix as a function of position.
+    x : ndarray (n_points,)
+        Position along the bridge span.
+
+    Returns:
+    --------
+    C_gen : ndarray (n_modes x n_modes)
+        Generalized damping matrix.
+    K_gen : ndarray (n_modes x n_modes)
+        Generalized stiffness matrix.
+    """
+    N = len(x)
+    n_modes = Phi.shape[2]
+
+    Cae_star_gen = np.zeros((n_modes, n_modes))
+    Kae_star_gen = np.zeros((n_modes, n_modes))
+
+    for i in range(N-1):
+        dx = x[i+1] - x[i] # discretized length
+        phi_L = Phi[i] # shape (n_dof, n_modes)
+        phi_R = Phi[i+1]
+        # Damping
+        C_int = 0.5 * (phi_L.T @ C @ phi_L + phi_R.T @ C @ phi_R)
+        Cae_star_gen += C_int * dx
+        # Stiffness
+        K_int = 0.5 * (phi_L.T @ K @ phi_L + phi_R.T @ K @ phi_R)
+        Kae_star_gen += K_int * dx
+
+        return Cae_star_gen, Kae_star_gen
+    
+
  
 def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     """
@@ -113,7 +156,7 @@ def from_poly_k(poly_k, k_range, vred, damping_ad = True):
     return float(ad_value)
  
 
-def cae_kae_single(poly_coeff, k_range, Vred_global, Phi, x, B):
+def cae_kae_single(poly_coeff, k_range, Vred_global,  B):
     """
     Evaluates generalized aerodynamic damping and stiffness matrices for a single-deck bridge.
 
@@ -137,41 +180,19 @@ def cae_kae_single(poly_coeff, k_range, Vred_global, Phi, x, B):
     H1, H2, H3, H4 = from_poly_k(poly_coeff[0], k_range[0],Vred_global, damping_ad=True), from_poly_k(poly_coeff[1], k_range[1],Vred_global, damping_ad=True), from_poly_k(poly_coeff[2], k_range[2],Vred_global, damping_ad=False), from_poly_k(poly_coeff[3], k_range[3],Vred_global, damping_ad=False)
     A1, A2, A3, A4 = from_poly_k(poly_coeff[4], k_range[4],Vred_global, damping_ad=True), from_poly_k(poly_coeff[5], k_range[5],Vred_global, damping_ad=True), from_poly_k(poly_coeff[6], k_range[6],Vred_global, damping_ad=False), from_poly_k(poly_coeff[7], k_range[7],Vred_global, damping_ad=False)
 
-    AA = np.zeros((8, 2, 2))
-    AA[0, 0, 0] = H1
-    AA[1, 0, 1] = B * H2
-    AA[2, 1, 0] = B * A1
-    AA[3, 1, 1] = B**2 * A2
-    AA[4, 0, 0] = H4
-    AA[5, 0, 1] = B * H3
-    AA[6, 1, 0] = B * A4
-    AA[7, 1, 1] = B**2 * A3
+    Cae_star = np.array([
+         [H1,       B * H2],
+         [B * A1,   B**2 * A2]
+     ])
+    Kae_star = np.array([
+         [H4,       B * H3],
+         [B * A4,   B**2 * A3]
+     ])
 
-    AA_tilde = np.zeros((8, 2, 2))  # Generalisert aero-matriser
-    phiphi_p = np.transpose(Phi, [1, 2, 0])  # (DOF, mode, x)
-
-    length = x[-1] - x[0]  # Lengde på bro
-    nlength = len(x)  # Antall punkter
-    beam = np.linspace(0, length, nlength)  # x-akse for integrasjon
-
-    for k in range(8):
-        integrand = np.zeros((len(beam),2, 2))
-        for m in range(len(beam)):
-            integrand[m] = phiphi_p[:, :, m].T @ AA[k] @ phiphi_p[:, :, m]
-        for i in range(2):
-            for j in range(2):
-                AA_tilde[k, i, j] = np.trapz(integrand[:, i, j], beam)
-    
-    A1 = np.sum(AA_tilde[4:8], axis=0)  # stiffness part
-    A2 = np.sum(AA_tilde[0:4], axis=0)  # damping part
-
-    # Generaliserte aero-matriser
-    Cae_star_gen = np.sum(AA_tilde[0:4], axis=0)
-    Kae_star_gen = np.sum(AA_tilde[4:8], axis=0)
         
-    return Cae_star_gen, Kae_star_gen
+    return Cae_star, Kae_star
 
-def cae_kae_twin(poly_coeff, k_range, Vred_global, Phi, x, B):
+def cae_kae_twin(poly_coeff, k_range, Vred_global, B):
     """
     Evaluates the generalized aerodynamic damping and stiffness matrices for a twin-deck bridge.
 
@@ -202,74 +223,24 @@ def cae_kae_twin(poly_coeff, k_range, Vred_global, Phi, x, B):
     k_z2z1, k_z2θ1, k_z2z2, k_z2θ2 = from_poly_k(poly_coeff[24], k_range[24],Vred_global, damping_ad=False), from_poly_k(poly_coeff[25], k_range[25],Vred_global, damping_ad=False), from_poly_k(poly_coeff[26], k_range[26],Vred_global, damping_ad=False), from_poly_k(poly_coeff[27], k_range[27],Vred_global, damping_ad=False)
     k_θ2z1, k_θ2θ1, k_θ2z2, k_θ2θ2 = from_poly_k(poly_coeff[28], k_range[28],Vred_global, damping_ad=False), from_poly_k(poly_coeff[29], k_range[29],Vred_global, damping_ad=False), from_poly_k(poly_coeff[30], k_range[30],Vred_global, damping_ad=False), from_poly_k(poly_coeff[31], k_range[31],Vred_global, damping_ad=False)
     
+    Cae_star = np.array([
+         [c_z1z1,       B * c_z1θ1,       c_z1z2,       B * c_z1θ2],
+         [B * c_θ1z1,   B**2 * c_θ1θ1,   B * c_θ1z2,   B**2 * c_θ1θ2],
+         [c_z2z1,       B * c_z2θ1,       c_z2z2,       B * c_z2θ2],
+         [B * c_θ2z1,   B**2 * c_θ2θ1,   B * c_θ2z2,   B**2 * c_θ2θ2]
+    ])
+ 
+    Kae_star = np.array([
+         [k_z1z1,       B * k_z1θ1,       k_z1z2,       B * k_z1θ2],
+         [B * k_θ1z1,   B**2 * k_θ1θ1,   B * k_θ1z2,   B**2 * k_θ1θ2],
+         [k_z2z1,       B * k_z2θ1,       k_z2z2,       B * k_z2θ2],
+         [B * k_θ2z1,   B**2 * k_θ2θ1,   B * k_θ2z2,   B**2 * k_θ2θ2]
+    ])
 
-    # Initialiser 32 matriser (16 for C, 16 for K)
-    AA = np.zeros((32, 4, 4))
-
-    # Demping: fyll inn de 16 første
-    AA[0, 0, 0] = c_z1z1
-    AA[1, 0, 1] = B * c_z1θ1
-    AA[2, 0, 2] = c_z1z2
-    AA[3, 0, 3] = B * c_z1θ2
-
-    AA[4, 1, 0] = B * c_θ1z1
-    AA[5, 1, 1] = B**2 *c_θ1θ1
-    AA[6, 1, 2] = B *  c_θ1z2
-    AA[7, 1, 3] = B**2 * c_θ1θ2
-
-    AA[8, 2, 0] = c_z2z1
-    AA[9, 2, 1] = B *c_z2θ1
-    AA[10, 2, 2] = c_z2z2
-    AA[11, 2, 3] = B * c_z2θ2
-
-    AA[12, 3, 0] = B *c_θ2z1
-    AA[13, 3, 1] = B**2 * c_θ2θ1
-    AA[14, 3, 2] = B * c_θ2z2
-    AA[15, 3, 3] = B**2 * c_θ2θ2
-
-    # Stivhet: fyll inn de 16 neste
-    AA[16, 0, 0] = k_z1z1
-    AA[17, 0, 1] = B * k_z1θ1
-    AA[18, 0, 2] = k_z1z2
-    AA[19, 0, 3] = B * k_z1θ2
-
-    AA[20, 1, 0] = B * k_θ1z1
-    AA[21, 1, 1] = B**2 * k_θ1θ1
-    AA[22, 1, 2] = B *k_θ1z2
-    AA[23, 1, 3] = B**2 * k_θ1θ2
-
-    AA[24, 2, 0] = k_z2z1
-    AA[25, 2, 1] = B * k_z2θ1
-    AA[26, 2, 2] =k_z2z2
-    AA[27, 2, 3] = B *  k_z2θ2
-
-    AA[28, 3, 0] = B * k_θ2z1
-    AA[29, 3, 1] = B**2 * k_θ2θ1
-    AA[30, 3, 2] = B *k_θ2z2
-    AA[31, 3, 3] = B**2 * k_θ2θ2
-
-    AA_tilde = np.zeros((32, 4, 4))  # Generalisert aero-matriser
-    phiphi_p = np.transpose(Phi, [1, 2, 0])  # (DOF, mode, x)
-
-    length = x[-1] - x[0]  # Lengde på bro
-    nlength = len(x)  # Antall punkter
-    beam = np.linspace(0, length, nlength)  # x-akse for integrasjon
-
-    for k in range(32):
-        integrand = np.zeros((len(beam),4, 4))
-        for m in range(len(beam)):
-            integrand[m] = phiphi_p[:, :, m].T @ AA[k] @ phiphi_p[:, :, m]
-        for i in range(4):
-            for j in range(4):
-                AA_tilde[k, i, j] = np.trapz(integrand[:, i, j], beam)
-
-    # Generaliserte aero-matriser
-    Cae_star_gen = np.sum(AA_tilde[0:16], axis=0)
-    Kae_star_gen = np.sum(AA_tilde[16:32], axis=0)
-    return Cae_star_gen, Kae_star_gen
+    return Cae_star, Kae_star
 
 
-def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, single = True, verbose=True):
+def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, single = True, buffeting = False, Cae_star_gen_BUFF = None, Kae_star_gen_BUFF=None, verbose=True):
     '''
     Solves flutter analysis using an iterative method for either single-deck (2DOF) or twin-deck (4DOF).
     Returns global results (and optionally local for twin-deck).
@@ -362,15 +333,27 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
 
 
 
-            while (iterFreq < maxIterFreq and not stopFreq): # iterer over frekvens-iterasjoner           
+            while (iterFreq < maxIterFreq and not stopFreq): # iterer over frekvens-iterasjoner     
 
+               
                 Vred = V/(omega_old[j]*B) # reduced velocity 
 
                 if single:
-                    Cae_star_gen, Kae_star_gen = cae_kae_single(poly_coeff, k_range, Vred, Phi, x, B)
+                    Cae_star_AD, Kae_star_AD= cae_kae_single(poly_coeff, k_range, Vred,  B)
+                    Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) # Generaliserte aero-matriser
 
                 else:
-                    Cae_star_gen, Kae_star_gen = cae_kae_twin(poly_coeff,k_range,  Vred,Phi, x, B)
+                    Cae_star_AD, Kae_star_AD = cae_kae_twin(poly_coeff,k_range,  Vred, B)
+                    Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) # Generaliserte aero-matriser
+
+                if buffeting:
+                    Cae_star_gen = Cae_star_gen_BUFF
+                    Kae_star_gen = Kae_star_gen_BUFF
+
+                else:      
+                    Cae_star_gen = Cae_star_gen_AD
+                    Kae_star_gen = Kae_star_gen_AD
+
 
                 Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen
                 Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen
@@ -486,6 +469,9 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks, f1, f2, B, rho, eps, Phi, x, sin
     eigvecs_all = eigvecs_all[:velocity_counter, :]
 
     return V_list, omega_all, damping_ratios, eigvecs_all, eigvals_all, omegacritical, Vcritical 
+
+
+
 
 
 def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, dist="Fill in dist", single=True):
