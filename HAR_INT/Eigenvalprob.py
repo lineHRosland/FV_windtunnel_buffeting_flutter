@@ -34,13 +34,13 @@ rho = 1.25 # kg/m^3, air density
 eps = 0.0001 # Konvergensterske
 
 # Single
-phi_single, x_single = mode_shape_single(full_matrix=True)
+phi_single, x_single = mode_shape_single()
 
 Ms_single, Cs_single, Ks_single = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = True)
 
 # Twin
 
-phi_twin, x_twin = mode_shape_twin(full_matrix=True)
+phi_twin, x_twin = mode_shape_twin()
 
 Ms_twin, Cs_twin, Ks_twin = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
 
@@ -146,7 +146,7 @@ print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True)
+_eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True, buffeting = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
 
@@ -162,7 +162,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_1D, Vcritical_twin_1D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_1D,eigvecs_list_twin_1D,V_list_twin_1D, dist="Twin deck 1D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_1D,eigvecs_list_twin_1D,V_list_twin_1D, dist="Twin deck 1D",  single = False, buffeting = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_1D, omega_list_twin_1D, dist="Twin deck 1D", single = False)
 
@@ -177,7 +177,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_2D, Vcritical_twin_2D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_2D, eigvecs_list_twin_2D, V_list_twin_2D, dist="Twin deck 2D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_2D, eigvecs_list_twin_2D, V_list_twin_2D, dist="Twin deck 2D",  single = False, buffeting = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_2D, omega_list_twin_2D, dist="Twin deck 2D", single = False)
 
@@ -192,7 +192,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_3D, Vcritical_twin_3D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_3D,eigvecs_list_twin_3D, V_list_twin_3D, dist="Twin deck 3D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_3D,eigvecs_list_twin_3D, V_list_twin_3D, dist="Twin deck 3D",  single = False, buffeting = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_3D, omega_list_twin_3D, dist="Twin deck 3D", single = False)
 
@@ -208,7 +208,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_4D, Vcritical_twin_4D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_4D, eigvecs_list_twin_4D, V_list_twin_4D, dist="Twin deck 4D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_4D, eigvecs_list_twin_4D, V_list_twin_4D, dist="Twin deck 4D",  single = False, buffeting = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_4D, omega_list_twin_4D, dist="Twin deck 4D", single = False)
 
@@ -222,7 +222,7 @@ V_list_twin_5D, omega_list_twin_5D, damping_list_twin_5D, eigvecs_list_twin_5D,e
 print("Omega_cr, V_cr: ",omegacritical_twin_5D, Vcritical_twin_5D)
 
 #Plotting
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_5D, eigvecs_list_twin_5D, V_list_twin_5D, dist="Twin deck 5D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_5D, eigvecs_list_twin_5D, V_list_twin_5D, dist="Twin deck 5D",  single = False, buffeting = False)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_5D, omega_list_twin_5D, dist="Twin deck 5D", single = False)
 
@@ -242,7 +242,7 @@ print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True)
+_eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True, buffeting = True)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
 
@@ -258,7 +258,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_1D, Vcritical_twin_1D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_1D,eigvecs_list_twin_1D,V_list_twin_1D, dist="Twin deck 1D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_1D,eigvecs_list_twin_1D,V_list_twin_1D, dist="Twin deck 1D",  single = False, buffeting = True)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_1D, omega_list_twin_1D, dist="Twin deck 1D", single = False)
 
@@ -273,7 +273,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_2D, Vcritical_twin_2D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_2D, eigvecs_list_twin_2D, V_list_twin_2D, dist="Twin deck 2D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_2D, eigvecs_list_twin_2D, V_list_twin_2D, dist="Twin deck 2D",  single = False, buffeting = True)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_2D, omega_list_twin_2D, dist="Twin deck 2D", single = False)
 
@@ -288,7 +288,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_3D, Vcritical_twin_3D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_3D,eigvecs_list_twin_3D, V_list_twin_3D, dist="Twin deck 3D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_3D,eigvecs_list_twin_3D, V_list_twin_3D, dist="Twin deck 3D",  single = False, buffeting = True)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_3D, omega_list_twin_3D, dist="Twin deck 3D", single = False)
 
@@ -304,7 +304,7 @@ print("Omega_cr, V_cr: ",omegacritical_twin_4D, Vcritical_twin_4D)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_4D, eigvecs_list_twin_4D, V_list_twin_4D, dist="Twin deck 4D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_4D, eigvecs_list_twin_4D, V_list_twin_4D, dist="Twin deck 4D",  single = False, buffeting = True)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_4D, omega_list_twin_4D, dist="Twin deck 4D", single = False)
 
@@ -318,7 +318,7 @@ V_list_twin_5D, omega_list_twin_5D, damping_list_twin_5D, eigvecs_list_twin_5D,e
 print("Omega_cr, V_cr: ",omegacritical_twin_5D, Vcritical_twin_5D)
 
 #Plotting
-_eigVal.plot_damping_vs_wind_speed(damping_list_twin_5D, eigvecs_list_twin_5D, V_list_twin_5D, dist="Twin deck 5D",  single = False)
+_eigVal.plot_damping_vs_wind_speed(damping_list_twin_5D, eigvecs_list_twin_5D, V_list_twin_5D, dist="Twin deck 5D",  single = False, buffeting = True)
 
 _eigVal.plot_frequency_vs_wind_speed(V_list_twin_5D, omega_list_twin_5D, dist="Twin deck 5D", single = False)
 
