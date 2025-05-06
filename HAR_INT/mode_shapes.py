@@ -16,7 +16,7 @@ mode_15 = data15['mode']
 length = x[-1] - x[0]
 
 #Single deck
-def mode_shape_single(full_matrix=True):
+def mode_shape_single():
     """
     Constructs mode shape matrices for a single-deck bridge using vertical (mode 4)
     and torsional (mode 15) modes. Mode data is loaded internally from .npz files.
@@ -52,28 +52,6 @@ def mode_shape_single(full_matrix=True):
     N = mode_4.shape[0]
     phi_single = np.zeros((N, 2, 2))
 
-    # # Extract vertical and rotational components from mode data
-    # phi_z_1V = mode_4[:, 2]      # Vertical displacement (z) from mode 4
-    # phi_theta_1V = mode_4[:, 3]  # Rotation (theta) from mode 4
-    # phi_z_1T = mode_15[:, 2]     # Vertical from torsional mode
-    # phi_theta_1T = mode_15[:, 3] # Rotation from torsional mode
-
-    # for i, (z1V, t1V, z1T, t1T) in enumerate(zip(phi_z_1V, phi_theta_1V, phi_z_1T, phi_theta_1T)):
-    #     phi_single[i, 0, 0] = z1V
-    #     phi_single[i, 1, 1] = t1T
-
-    #     if full_matrix:
-    #         phi_single[i, 1, 0] = z1T
-    #         phi_single[i, 0, 1] = t1V
-    # phi_single.shape: (n_nodes, n_DOF,n_modes)
-
-    # # mode 0: vertical mode (mode 4)
-    # phi_single[0, 0, :] = mode_4[:, 2]  # zz
-    # phi_single[0, 1, :] = mode_4[:, 3]  # θz
-
-    # # mode 1: torsional mode (mode 15)
-    # phi_single[1, 0, :] = mode_15[:, 2]  # zθ
-    # phi_single[1, 1, :] = mode_15[:, 3]  # θθ
 
     for i in range(N):
         phi_single[i, 0, 0] = mode_4[i, 2]  # zz, vertical
@@ -85,7 +63,7 @@ def mode_shape_single(full_matrix=True):
     return phi_single, x
 
 #Double deck
-def mode_shape_twin(full_matrix=True):
+def mode_shape_twin():
     """
     Constructs mode shape matrices for a twin-deck bridge using vertical (mode 4)
     and torsional (mode 15) modes. Mode data is loaded internally from .npz files.
@@ -122,43 +100,6 @@ def mode_shape_twin(full_matrix=True):
     N = mode_4.shape[0]
     phi_double = np.zeros((N, 4, 4))
 
-    # # Extract relevant DOFs from each mode
-    # phi_z_1V = mode_4[:, 2]       # vertical deck 1
-    # phi_theta_1V = mode_4[:, 3]   # torsion deck 1
-    # phi_z_1T = mode_15[:, 2]      # vertical (torsion mode) deck 1
-    # phi_theta_1T = mode_15[:, 3]  # torsion (torsion mode) deck 1
-
-    # for i, (z1V, t1V, z1T, t1T) in enumerate(zip(phi_z_1V, phi_theta_1V, phi_z_1T, phi_theta_1T)):
-    #     # Deck 1
-    #     phi_double[i, 0, 0] = z1V
-    #     phi_double[i, 1, 1] = t1T
-
-    #     # Deck 2 (mirrored)
-    #     phi_double[i, 2, 2] = z1V
-    #     phi_double[i, 3, 3] = t1T
-
-    #     if full_matrix:
-    #         phi_double[i, 1, 0] = z1T
-    #         phi_double[i, 0, 1] = t1V 
-    #         phi_double[i, 3, 2] = z1T
-    #         phi_double[i, 2, 3] = t1V
-
-    # # mode 0: vertical mode (mode 4)
-    # phi_double[0, 0, :] = mode_4[:, 2]  # zz
-    # phi_double[0, 1, :] = mode_4[:, 3]  # θz
-
-    # # mode 1: torsional mode (mode 15)
-    # phi_double[1, 0, :] = mode_15[:, 2]  # zθ
-    # phi_double[1, 1, :] = mode_15[:, 3]  # θθ
-
-    # # mode 0: vertical mode (mode 4)
-    # phi_double[2, 2, :] = mode_4[:, 2]  # zz
-    # phi_double[2, 3, :] = mode_4[:, 3]  # θz
-
-    # # mode 1: torsional mode (mode 15)
-    # phi_double[3, 2, :] = mode_15[:, 2]  # zθ
-    # phi_double[3, 3, :] = mode_15[:, 3]  # θθ
-
     for i in range(N):
         phi_double[i, 0, 0] = mode_4[i, 2]  # zz, vertical
         phi_double[i, 0, 1] = mode_4[i, 3]  # θz, rotation
@@ -169,9 +110,6 @@ def mode_shape_twin(full_matrix=True):
         phi_double[i, 3, 2] = mode_15[i, 2] # zθ
         phi_double[i, 3, 3] = mode_15[i, 3] # θθ
 
-
-
     # phi_double.shape: (n_nodes, n_DOF,n_modes)
-
 
     return phi_double, x
