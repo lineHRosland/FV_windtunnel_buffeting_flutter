@@ -359,7 +359,7 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, si
 
                 else:
                     Cae_star_AD, Kae_star_AD = cae_kae_twin(poly_coeff,k_range,  Vred, B)
-                    Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) # Generaliserte aero-matriser
+                    Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x, single=False) # Generaliserte aero-matriser
 
                 if buffeting:
                     Cae_gen = -V* Cae_star_gen_BUFF

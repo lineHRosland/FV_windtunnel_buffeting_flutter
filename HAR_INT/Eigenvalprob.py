@@ -56,24 +56,24 @@ Cae_Single_gen, Kae_Single_gen = _eigVal.generalize_C_K(Cae_Single, Kae_Single, 
 
 Kae_1D = matrices["Kae_1D"]
 Cae_1D = matrices["Cae_1D"]
-Cae_1D_gen, Kae_1D_gen = _eigVal.generalize_C_K(Cae_1D, Kae_1D, phi_twin, x_twin)
+Cae_1D_gen, Kae_1D_gen = _eigVal.generalize_C_K(Cae_1D, Kae_1D, phi_twin, x_twin, single=False)
 print("Kae_1D_gen", 37.6*37.6*Kae_1D_gen)
 
 Kae_2D = matrices["Kae_2D"]
 Cae_2D = matrices["Cae_2D"]
-Cae_2D_gen, Kae_2D_gen = _eigVal.generalize_C_K(Cae_2D, Kae_2D, phi_twin, x_twin)
+Cae_2D_gen, Kae_2D_gen = _eigVal.generalize_C_K(Cae_2D, Kae_2D, phi_twin, x_twin, single=False)
 
 Kae_3D = matrices["Kae_3D"]
 Cae_3D = matrices["Cae_3D"]
-Cae_3D_gen, Kae_3D_gen = _eigVal.generalize_C_K(Cae_3D, Kae_3D, phi_twin, x_twin)
+Cae_3D_gen, Kae_3D_gen = _eigVal.generalize_C_K(Cae_3D, Kae_3D, phi_twin, x_twin, single=False)
 
 Kae_4D = matrices["Kae_4D"]
 Cae_4D = matrices["Cae_4D"]
-Cae_4D_gen, Kae_4D_gen = _eigVal.generalize_C_K(Cae_4D, Kae_4D, phi_twin, x_twin)
+Cae_4D_gen, Kae_4D_gen = _eigVal.generalize_C_K(Cae_4D, Kae_4D, phi_twin, x_twin, single=False)
 
 Kae_5D = matrices["Kae_5D"]
 Cae_5D = matrices["Cae_5D"]
-Cae_5D_gen, Kae_5D_gen = _eigVal.generalize_C_K(Cae_5D, Kae_5D, phi_twin, x_twin)
+Cae_5D_gen, Kae_5D_gen = _eigVal.generalize_C_K(Cae_5D, Kae_5D, phi_twin, x_twin, single=False)
 
 #  AD
 file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Arrays_AD_k"
