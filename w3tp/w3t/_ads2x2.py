@@ -271,22 +271,35 @@ class AerodynamicDerivative2x2:
         if not ax:
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1)
+        
+        if mode == 'poly only':
+            # Plot total measured aerodynamic derivative
+            if valid == False:
+                ax.plot(0, 0, label='Single')
+                ax.set_ylabel("$" + ADlabel + "$")
+                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+                ax.legend()
+                ax.grid(True)
 
-        # Plot total measured aerodynamic derivative
-        if valid == False:
-            ax.plot(0, 0, label='Single')
-            ax.set_ylabel("$" + ADlabel + "$")
+            # Plot both total values and polynomial fit
+            else:
+                ax.plot(V, y, label='Single')
+                ax.set_ylabel("$" + ADlabel + "$")
+                ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+                ax.legend()
+                ax.grid(True)
+
+        elif mode == "poly only2":
+            ax.plot(self.reduced_velocities, self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Data")
+            ax.set_ylabel(f"${self.label}$")
             ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-            ax.legend()
+            ax.grid(True)
+        elif mode == "total2":
+            ax.plot(self.reduced_velocities, self.ad_load_cell_a + self.ad_load_cell_b, label="Fit")
+            ax.set_ylabel(f"${self.label}$")
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
             ax.grid(True)
 
-        # Plot both total values and polynomial fit
-        else:
-            ax.plot(V, y, label='Single')
-            ax.set_ylabel("$" + ADlabel + "$")
-            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
-            ax.legend()
-            ax.grid(True)
 
     def get_points(self):
         """
@@ -992,7 +1005,7 @@ class AerodynamicDerivatives2x2:
             writer.writerows(all_points)
 
 
-    def plot_to_compare(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly only', orders=np.ones(8, dtype=int)*2):     
+    def plot_to_compare(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly only', orders=np.ones(8, dtype=int)*2, label=''):     
         """
         Plots aerodynamic derivatives for comparison purposes using polynomial fits only.
 
@@ -1091,6 +1104,180 @@ class AerodynamicDerivatives2x2:
         for k in range(12):
             axs_damping[k].set_xlabel("")
             axs_stiffness[k].set_xlabel("")
+
+        # Resize figures
+        scal = 1.8
+        fig_damping.set_size_inches(20/scal, 15/scal)
+        fig_stiffness.set_size_inches(20/scal, 15/scal)
+
+        # Optimize subplot layout
+        fig_damping.tight_layout()
+        fig_stiffness.tight_layout()
+
+    def plot_to_compare_with_points(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly only2', orders=np.ones(8, dtype=int)*2, label=''):         
+        """
+        Plots aerodynamic derivatives for comparison purposes using polynomial fits only.
+
+        This method is useful for comparing multiple datasets or polynomial fits by plotting them
+        on the same axes. Each aerodynamic derivative is plotted using a custom label indicating 
+        what test the data corresponds to.
+
+        Parameters:
+        -----------
+        fig_damping : matplotlib.figure.Figure or list (optional)
+            Figure object for damping plots. If not provided, a new 4x4 subplot figure is created.
+
+        fig_stiffness : matplotlib.figure.Figure or list (optional)
+            Figure object for stiffness plots. If not provided, a new 4x4 subplot figure is created.
+
+        conv : str, optional
+            String that controls the type of data conversion ('normal' is default).
+
+        mode : str, optional
+            Plot mode 'poly only' for comparison of polynomial fits.
+
+        orders : np.ndarray, optional
+            Array of length 8 specifying the polynomial fit order for each derivative.
+
+        label : str, optional
+            Label for the plotted data (used in legends to distinguish different datasets).
+        """
+
+        # Create new damping figure with 16 subplots if none is provided
+        if not bool(fig_damping):
+            fig_damping = plt.figure()
+            for k in range(16):
+                fig_damping.add_subplot(4, 4, k+1)
+
+        # Create new stiffness figure with 16 subplots if none is provided
+        if not bool(fig_stiffness):
+            fig_stiffness = plt.figure()
+            for k in range(16):
+                fig_stiffness.add_subplot(4, 4, k+1)
+
+        # Define which coefficients are damping (True), and which are stiffness (False) ---
+        damping_ad = np.array([True, True, False, False,  True, True, False, False])
+
+       # Retrieve subplot axes for damping figure
+        axs_damping = fig_damping.get_axes()
+
+        # --- Damping Plots ---
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[0], damping=damping_ad[0], order=orders[0], ADlabel="c_{z_1z_1}^*")
+    
+
+        self.h2.plot2(mode=mode, conv=conv, ax=axs_damping[1], damping=damping_ad[1], order=orders[1], ADlabel="c_{z_1\\theta_1}^*")
+
+
+        self.a1.plot2(mode=mode, conv=conv, ax=axs_damping[2], damping=damping_ad[2], order=orders[2], ADlabel="c_{\\theta_1z_1}^*")
+    
+
+        self.a2.plot2(mode=mode, conv=conv, ax=axs_damping[3], damping=damping_ad[3], order=orders[3], ADlabel="c_{\\theta_1\\theta_1}^*")
+
+
+        # Retrieve subplot axes for stiffness figure
+        axs_stiffness = fig_stiffness.get_axes()
+
+       # --- Stiffness Plots ---
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[0], damping=damping_ad[4], order=orders[4], ADlabel="k_{z_1z_1}^*")
+        
+        self.h3.plot2(mode=mode, conv=conv, ax=axs_stiffness[1], damping=damping_ad[5], order=orders[5], ADlabel="k_{z_1\\theta_1}^*")
+
+        self.a4.plot2(mode=mode, conv=conv, ax=axs_stiffness[2], damping=damping_ad[6], order=orders[6], ADlabel="k_{\\theta_1z_1}^*")
+
+        self.a3.plot2(mode=mode, conv=conv, ax=axs_stiffness[3], damping=damping_ad[7], order=orders[7], ADlabel="k_{\\theta_1\\theta_1}^*")
+    
+
+        """ # Remove x-axis labels on top 12 subplots for cleaner layout
+        for k in range(12):
+            axs_damping[k].set_xlabel("")
+            axs_stiffness[k].set_xlabel("")"""
+
+        # Resize figures
+        scal = 1.8
+        fig_damping.set_size_inches(20/scal, 15/scal)
+        fig_stiffness.set_size_inches(20/scal, 15/scal)
+
+        # Optimize subplot layout
+        fig_damping.tight_layout()
+        fig_stiffness.tight_layout()
+
+    def plot_to_compare2(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly only', orders=np.ones(8, dtype=int)*2, label=''):         
+        """
+        Plots aerodynamic derivatives for comparison purposes using polynomial fits only.
+
+        This method is useful for comparing multiple datasets or polynomial fits by plotting them
+        on the same axes. Each aerodynamic derivative is plotted using a custom label indicating 
+        what test the data corresponds to.
+
+        Parameters:
+        -----------
+        fig_damping : matplotlib.figure.Figure or list (optional)
+            Figure object for damping plots. If not provided, a new 4x4 subplot figure is created.
+
+        fig_stiffness : matplotlib.figure.Figure or list (optional)
+            Figure object for stiffness plots. If not provided, a new 4x4 subplot figure is created.
+
+        conv : str, optional
+            String that controls the type of data conversion ('normal' is default).
+
+        mode : str, optional
+            Plot mode 'poly only' for comparison of polynomial fits.
+
+        orders : np.ndarray, optional
+            Array of length 8 specifying the polynomial fit order for each derivative.
+
+        label : str, optional
+            Label for the plotted data (used in legends to distinguish different datasets).
+        """
+
+        # Create new damping figure with 16 subplots if none is provided
+        if not bool(fig_damping):
+            fig_damping = plt.figure()
+            for k in range(16):
+                fig_damping.add_subplot(4, 4, k+1)
+
+        # Create new stiffness figure with 16 subplots if none is provided
+        if not bool(fig_stiffness):
+            fig_stiffness = plt.figure()
+            for k in range(16):
+                fig_stiffness.add_subplot(4, 4, k+1)
+
+        # Define which coefficients are damping (True), and which are stiffness (False) ---
+        damping_ad = np.array([True, True, False, False,  True, True, False, False])
+
+       # Retrieve subplot axes for damping figure
+        axs_damping = fig_damping.get_axes()
+
+        # --- Damping Plots ---
+        self.h1.plot2(mode=mode, conv=conv, ax=axs_damping[0], damping=damping_ad[0], order=orders[0], ADlabel="c_{z_1z_1}^*")
+    
+
+        self.h2.plot2(mode=mode, conv=conv, ax=axs_damping[1], damping=damping_ad[1], order=orders[1], ADlabel="c_{z_1\\theta_1}^*")
+
+
+        self.a1.plot2(mode=mode, conv=conv, ax=axs_damping[2], damping=damping_ad[2], order=orders[2], ADlabel="c_{\\theta_1z_1}^*")
+    
+
+        self.a2.plot2(mode=mode, conv=conv, ax=axs_damping[3], damping=damping_ad[3], order=orders[3], ADlabel="c_{\\theta_1\\theta_1}^*")
+
+
+        # Retrieve subplot axes for stiffness figure
+        axs_stiffness = fig_stiffness.get_axes()
+
+       # --- Stiffness Plots ---
+        self.h4.plot2(mode=mode, conv=conv, ax=axs_stiffness[0], damping=damping_ad[4], order=orders[4], ADlabel="k_{z_1z_1}^*")
+        
+        self.h3.plot2(mode=mode, conv=conv, ax=axs_stiffness[1], damping=damping_ad[5], order=orders[5], ADlabel="k_{z_1\\theta_1}^*")
+
+        self.a4.plot2(mode=mode, conv=conv, ax=axs_stiffness[2], damping=damping_ad[6], order=orders[6], ADlabel="k_{\\theta_1z_1}^*")
+
+        self.a3.plot2(mode=mode, conv=conv, ax=axs_stiffness[3], damping=damping_ad[7], order=orders[7], ADlabel="k_{\\theta_1\\theta_1}^*")
+    
+
+        """ # Remove x-axis labels on top 12 subplots for cleaner layout
+        for k in range(12):
+            axs_damping[k].set_xlabel("")
+            axs_stiffness[k].set_xlabel("")"""
 
         # Resize figures
         scal = 1.8
