@@ -41,7 +41,8 @@ Ms_single, Cs_single, Ks_single = _eigVal.structural_matrices(m1V, m1T, f1V, f1T
 # Twin
 
 phi_twin, x_twin = mode_shape_twin()
-
+print("phi_twin shape: ", phi_twin.shape)
+print("phi_twin[0]: ", phi_twin[0])
 Ms_twin, Cs_twin, Ks_twin = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
 
 #  BUFFETING
@@ -56,6 +57,7 @@ Cae_Single_gen, Kae_Single_gen = _eigVal.generalize_C_K(Cae_Single, Kae_Single, 
 Kae_1D = matrices["Kae_1D"]
 Cae_1D = matrices["Cae_1D"]
 Cae_1D_gen, Kae_1D_gen = _eigVal.generalize_C_K(Cae_1D, Kae_1D, phi_twin, x_twin)
+print("Kae_1D_gen", 37.6*37.6*Kae_1D_gen)
 
 Kae_2D = matrices["Kae_2D"]
 Cae_2D = matrices["Cae_2D"]
@@ -228,7 +230,7 @@ _eigVal.plot_frequency_vs_wind_speed(V_list_twin_5D, omega_list_twin_5D, dist="T
 
 _eigVal.plot_flutter_mode_shape(eigvecs_list_twin_5D, damping_list_twin_5D, V_list_twin_5D, Vcritical_twin_5D, omegacritical_twin_5D, dist="Twin deck 5D", single = False)
 
-# %%
+
 # BUFFETING
 
 #%%

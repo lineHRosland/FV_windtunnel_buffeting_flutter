@@ -55,8 +55,8 @@ def mode_shape_single():
 
     for i in range(N):
         phi_single[i, 0, 0] = mode_4[i, 2]  # zz, vertical
-        phi_single[i, 0, 1] = mode_4[i, 3]  # θz, rotation
-        phi_single[i, 1, 0] = mode_15[i, 2] # zθ
+        phi_single[i, 1, 0] = mode_4[i, 3]  # θz, rotation
+        phi_single[i, 0, 1] = mode_15[i, 2] # zθ
         phi_single[i, 1, 1] = mode_15[i, 3] # θθ
 
 
@@ -98,17 +98,20 @@ def mode_shape_twin():
 
 
     N = mode_4.shape[0]
-    phi_double = np.zeros((N, 4, 4))
+    phi_double = np.zeros((2*N, 4, 4))
 
     for i in range(N):
         phi_double[i, 0, 0] = mode_4[i, 2]  # zz, vertical
-        phi_double[i, 0, 1] = mode_4[i, 3]  # θz, rotation
-        phi_double[i, 1, 0] = mode_15[i, 2] # zθ
+        phi_double[i, 1, 0] = mode_4[i, 3]  # θz, rotation
+        phi_double[i, 0, 1] = mode_15[i, 2] # zθ
         phi_double[i, 1, 1] = mode_15[i, 3] # θθ
-        phi_double[i, 2, 2] = mode_4[i, 2]  # zz, vertical
-        phi_double[i, 2, 3] = mode_4[i, 3]  # θz, rotation
-        phi_double[i, 3, 2] = mode_15[i, 2] # zθ
-        phi_double[i, 3, 3] = mode_15[i, 3] # θθ
+        
+    for i in range(N):
+        j = i + N
+        phi_double[j, 2, 2] = mode_4[i, 2]  # zz, vertical
+        phi_double[j, 3, 2] = mode_4[i, 3]  # θz, rotation
+        phi_double[j, 2, 3] = mode_15[i, 2] # zθ
+        phi_double[j, 3, 3] = mode_15[i, 3] # θθ
 
     # phi_double.shape: (n_nodes, n_DOF,n_modes)
 

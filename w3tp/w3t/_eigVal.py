@@ -47,7 +47,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
 
     return eigvals, eigvecs
 
-def generalize_C_K(C, K, Phi, x):
+def generalize_C_K(C, K, Phi, x, single=True):
     """
     Generalizes the  matrices C and K to modal coordinates
     via trapezoidal integration of Phi.T @ C @ Phi.
@@ -71,21 +71,36 @@ def generalize_C_K(C, K, Phi, x):
         Generalized stiffness matrix.
     """
     N = len(x)
+
     n_modes = Phi.shape[2]
 
     Cae_star_gen = np.zeros((n_modes, n_modes))
     Kae_star_gen = np.zeros((n_modes, n_modes))
 
-    for i in range(N-1):
-        dx = x[i+1] - x[i] # discretized length
-        phi_L = Phi[i] # shape (n_dof, n_modes)
-        phi_R = Phi[i+1]
+    for i_down in range(N-1): #downstream deck
+        dx = x[i_down+1] - x[i_down] # discretized length
+        phi_L = Phi[i_down] # shape (n_dof, n_modes)
+        phi_R = Phi[i_down+1]
         # Damping
         C_int = 0.5 * (phi_L.T @ C @ phi_L + phi_R.T @ C @ phi_R)
         Cae_star_gen += C_int * dx
         # Stiffness
         K_int = 0.5 * (phi_L.T @ K @ phi_L + phi_R.T @ K @ phi_R)
         Kae_star_gen += K_int * dx
+    
+       # Downstream deck (next N)
+
+    if not single:
+        x_double = np.hstack([x, x])
+        for i in range(N - 1):
+            i_up = i + N
+            dx = x_double[i_up + 1] - x_double[i_up]
+            phi_L = Phi[i_up]
+            phi_R = Phi[i_up + 1]
+            C_int = 0.5 * (phi_L.T @ C @ phi_L + phi_R.T @ C @ phi_R)
+            K_int = 0.5 * (phi_L.T @ K @ phi_L + phi_R.T @ K @ phi_R)
+            Cae_star_gen += C_int * dx
+            Kae_star_gen += K_int * dx
 
     return Cae_star_gen, Kae_star_gen
     
@@ -349,6 +364,7 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, si
                 if buffeting:
                     Cae_gen = -V* Cae_star_gen_BUFF
                     Kae_gen = -V**2* Kae_star_gen_BUFF
+            
 
                 else:      
                     Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen_AD
@@ -525,7 +541,7 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, dist="Fill i
     ax.set_ylim(-0.01, )
     ax.set_xlim(0, )
     if buffeting:
-        ax.set_xlim(0, 0.01)
+        ax.set_ylim(0, 0.01)
     else:
         if not single:
             ax.set_ylim(-0.01, 0.25)
