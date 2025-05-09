@@ -20,6 +20,7 @@ from copy import deepcopy
 from ._exp import Experiment
 import pandas as pd
 import os
+import csv
 
 __all__ = ["AerodynamicDerivatives4x4","AerodynamicDerivative4x4",]
 
@@ -250,8 +251,32 @@ class AerodynamicDerivative4x4:
             ax.set_xlabel(r"Reduced velocity $\hat{V}$")
             ax.legend()
             ax.grid(True)
-                
+        elif mode == "poly only2":
+            ax.plot(self.reduced_velocities, self.ad_load_cell_a + self.ad_load_cell_b, "o", label="Data")
+            ax.set_ylabel(f"${self.label}$")
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.grid(True)
+        elif mode == "total2":
+            ax.plot(self.reduced_velocities, self.ad_load_cell_a + self.ad_load_cell_b, label="Fit")
+            ax.set_ylabel(f"${self.label}$")
+            ax.set_xlabel(r"Reduced velocity $\hat{V}$")
+            ax.grid(True)
+            
+    def get_points(self):
+        """
+        Returns the aerodynamic derivative data points as a tuple.
 
+        Returns:
+        --------
+        tuple:
+            - reduced_velocities: Reduced velocities.
+            - ad_load_cell_a: Contribution from load cell A.
+            - ad_load_cell_b: Contribution from load cell B.
+        """
+        AD = self.ad_load_cell_a + self.ad_load_cell_b
+
+        return self.reduced_velocities, AD
+    
 class AerodynamicDerivatives4x4:
     """
     A class used to represent all aerodynamic derivatives for a 4 dof motion
@@ -1019,6 +1044,42 @@ class AerodynamicDerivatives4x4:
             worksheet.cell(row=1, column=4).value = "f(V̂) = a₀ + a₁·V̂ + a₂·V̂² + ..."  # Add formula description
 
         print(f"Saved polynomial fit data to {full_path}")
+
+    def get_points(self, filename):
+        all_points = []
+
+        ad_ids = [
+            "c_z1z1*", "c_z1θ1*", "c_z1z2*", "c_z1θ2*",
+            "c_θ1z1*", "c_θ1θ1*", "c_θ1z2*", "c_θ1θ2*",
+            "c_z2z1*", "c_z2θ1*", "c_z2z2*", "c_z2θ2*",
+            "c_θ2z1*", "c_θ2θ1*", "c_θ2z2*", "c_θ2θ2*",
+            "k_z1z1*", "k_z1θ1*", "k_z1z2*", "k_z1θ2*",
+            "k_θ1z1*", "k_θ1θ1*", "k_θ1z2*", "k_θ1θ2*",
+            "k_z2z1*", "k_z2θ1*", "k_z2z2*", "k_z2θ2*",
+            "k_θ2z1*", "k_θ2θ1*", "k_θ2z2*", "k_θ2θ2*"
+        ]
+
+        ad_objects = [
+            self.c_z1z1, self.c_z1theta1, self.c_z1z2, self.c_z1theta2,
+            self.c_theta1z1, self.c_theta1theta1, self.c_theta1z2, self.c_theta1theta2,
+            self.c_z2z1, self.c_z2theta1, self.c_z2z2, self.c_z2theta2,
+            self.c_theta2z1, self.c_theta2theta1, self.c_theta2z2, self.c_theta2theta2,
+            self.k_z1z1, self.k_z1theta1, self.k_z1z2, self.k_z1theta2,
+            self.k_theta1z1, self.k_theta1theta1, self.k_theta1z2, self.k_theta1theta2,
+            self.k_z2z1, self.k_z2theta1, self.k_z2z2, self.k_z2theta2,
+            self.k_theta2z1, self.k_theta2theta1, self.k_theta2z2, self.k_theta2theta2
+        ]
+
+        for ad_id, ad in zip(ad_ids, ad_objects):
+            x_array, y_array = ad.get_points()
+            for x, y in zip(x_array, y_array):
+                all_points.append([ad_id, x, y])
+
+        with open(f'{filename}.csv', 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['ad_id', 'x_value', 'y_value'])
+            writer.writerows(all_points)
+
         
 
     def plot(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='total', orders=np.ones(32, dtype=int)*2):
@@ -1222,6 +1283,163 @@ class AerodynamicDerivatives4x4:
         # Optimize subplot layout
         fig_damping.tight_layout()
         fig_stiffness.tight_layout()
+
+    def plot_to_compare_with_points(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly only2', orders=np.ones(32, dtype=int)*2, label='i'):
+        """
+        Plots aerodynamic derivatives for comparison purposes using polynomial fits only.
+
+        This method is useful for comparing multiple datasets or polynomial fits by plotting them
+        on the same axes. Each aerodynamic derivative is plotted using a custom label indicating 
+        what test the data corresponds to.
+
+        Parameters:
+        -----------
+        fig_damping : matplotlib.figure.Figure or list (optional)
+            Figure object for damping plots. If not provided, a new 4x4 subplot figure is created.
+
+        fig_stiffness : matplotlib.figure.Figure or list (optional)
+            Figure object for stiffness plots. If not provided, a new 4x4 subplot figure is created.
+
+        conv : str, optional
+            String that controls the type of data conversion ('normal' is default).
+
+        mode : str, optional
+            Plot mode 'poly only' for comparison of polynomial fits.
+
+        orders : np.ndarray, optional
+            Array of length 32 specifying the polynomial fit order for each derivative.
+
+        label : str, optional
+            Label for the plotted data (used in legends to distinguish different datasets).
+        """
+
+        # Create new damping figure with 16 subplots if none is provided
+        if not bool(fig_damping):
+            fig_damping = plt.figure()
+            for k in range(16):
+                fig_damping.add_subplot(4, 4, k+1)
+
+        # Create new stiffness figure with 16 subplots if none is provided
+        if not bool(fig_stiffness):
+            fig_stiffness = plt.figure()
+            for k in range(16):
+                fig_stiffness.add_subplot(4, 4, k+1)
+
+        # Boolean array defining which derivatives are damping (first 16) and which are stiffness (last 16)
+        damping_ad = np.array([True]*16 + [False]*16)
+
+        # Retrieve subplot axes for both damping and stiffness figures
+        axs_damping = fig_damping.get_axes()
+        axs_stiffness = fig_stiffness.get_axes()
+
+        # --- Damping Plots ---
+        self.c_z1z1.plot2(mode=mode, conv=conv, ax=axs_damping[0], damping=damping_ad[0], order=orders[0], label=label)
+        self.c_z1theta1.plot2(mode=mode, conv=conv, ax=axs_damping[1], damping=damping_ad[1], order=orders[1], label=label)
+        self.c_z1z2.plot2(mode=mode, conv=conv, ax=axs_damping[2], damping=damping_ad[2], order=orders[2], label=label)
+        self.c_z1theta2.plot2(mode=mode, conv=conv, ax=axs_damping[3], damping=damping_ad[3], order=orders[3], label=label)
+
+        self.c_theta1z1.plot2(mode=mode, conv=conv, ax=axs_damping[4], damping=damping_ad[4], order=orders[4], label=label)
+        self.c_theta1theta1.plot2(mode=mode, conv=conv, ax=axs_damping[5], damping=damping_ad[5], order=orders[5], label=label)
+        self.c_theta1z2.plot2(mode=mode, conv=conv, ax=axs_damping[6], damping=damping_ad[6], order=orders[6], label=label)
+        self.c_theta1theta2.plot2(mode=mode, conv=conv, ax=axs_damping[7], damping=damping_ad[7], order=orders[7], label=label)
+
+        self.c_z2z1.plot2(mode=mode, conv=conv, ax=axs_damping[8], damping=damping_ad[8], order=orders[8], label=label)
+        self.c_z2theta1.plot2(mode=mode, conv=conv, ax=axs_damping[9], damping=damping_ad[9], order=orders[9], label=label)
+        self.c_z2z2.plot2(mode=mode, conv=conv, ax=axs_damping[10], damping=damping_ad[10], order=orders[10], label=label)
+        self.c_z2theta2.plot2(mode=mode, conv=conv, ax=axs_damping[11], damping=damping_ad[11], order=orders[11], label=label)
+
+        self.c_theta2z1.plot2(mode=mode, conv=conv, ax=axs_damping[12], damping=damping_ad[12], order=orders[12], label=label)
+        self.c_theta2theta1.plot2(mode=mode, conv=conv, ax=axs_damping[13], damping=damping_ad[13], order=orders[13], label=label)
+        self.c_theta2z2.plot2(mode=mode, conv=conv, ax=axs_damping[14], damping=damping_ad[14], order=orders[14], label=label)
+        self.c_theta2theta2.plot2(mode=mode, conv=conv, ax=axs_damping[15], damping=damping_ad[15], order=orders[15], label=label)
+
+        # --- Stiffness Plots ---
+        self.k_z1z1.plot2(mode=mode, conv=conv, ax=axs_stiffness[0], damping=damping_ad[16], order=orders[16], label=label)
+        self.k_z1theta1.plot2(mode=mode, conv=conv, ax=axs_stiffness[1], damping=damping_ad[17], order=orders[17], label=label)
+        self.k_z1z2.plot2(mode=mode, conv=conv, ax=axs_stiffness[2], damping=damping_ad[18], order=orders[18], label=label)
+        self.k_z1theta2.plot2(mode=mode, conv=conv, ax=axs_stiffness[3], damping=damping_ad[19], order=orders[19], label=label)
+
+        self.k_theta1z1.plot2(mode=mode, conv=conv, ax=axs_stiffness[4], damping=damping_ad[20], order=orders[20], label=label)
+        self.k_theta1theta1.plot2(mode=mode, conv=conv, ax=axs_stiffness[5], damping=damping_ad[21], order=orders[21], label=label)
+        self.k_theta1z2.plot2(mode=mode, conv=conv, ax=axs_stiffness[6], damping=damping_ad[22], order=orders[22], label=label)
+        self.k_theta1theta2.plot2(mode=mode, conv=conv, ax=axs_stiffness[7], damping=damping_ad[23], order=orders[23], label=label)
+
+        self.k_z2z1.plot2(mode=mode, conv=conv, ax=axs_stiffness[8], damping=damping_ad[24], order=orders[24], label=label)
+        self.k_z2theta1.plot2(mode=mode, conv=conv, ax=axs_stiffness[9], damping=damping_ad[25], order=orders[25], label=label)
+        self.k_z2z2.plot2(mode=mode, conv=conv, ax=axs_stiffness[10], damping=damping_ad[26], order=orders[26], label=label)
+        self.k_z2theta2.plot2(mode=mode, conv=conv, ax=axs_stiffness[11], damping=damping_ad[27], order=orders[27], label=label)
+
+        self.k_theta2z1.plot2(mode=mode, conv=conv, ax=axs_stiffness[12], damping=damping_ad[28], order=orders[28], label=label)
+        self.k_theta2theta1.plot2(mode=mode, conv=conv, ax=axs_stiffness[13], damping=damping_ad[29], order=orders[29], label=label)
+        self.k_theta2z2.plot2(mode=mode, conv=conv, ax=axs_stiffness[14], damping=damping_ad[30], order=orders[30], label=label)
+        self.k_theta2theta2.plot2(mode=mode, conv=conv, ax=axs_stiffness[15], damping=damping_ad[31], order=orders[31], label=label)
+
+        # Remove x-axis labels on top 12 subplots for cleaner layout
+        for k in range(12):
+            axs_damping[k].set_xlabel("")
+            axs_stiffness[k].set_xlabel("")
+
+        # Resize figures
+        scal = 1.8
+        fig_damping.set_size_inches(20/scal, 15/scal)
+        fig_stiffness.set_size_inches(20/scal, 15/scal)
+
+        # Optimize subplot layout
+        fig_damping.tight_layout()
+        fig_stiffness.tight_layout()
+
+def plot_with_points(AD_fit, AD_points, single=False):
+    if single:
+        # Create figure with 4x4 subplots for damping terms
+        fig_damping = plt.figure()
+        for k in range(4):
+            fig_damping.add_subplot(2, 2, k + 1)
+
+        # Create figure with 4x4 subplots for stiffness terms
+        fig_stiffness = plt.figure()
+        for k in range(4):
+            fig_stiffness.add_subplot(2, 2, k + 1)    
+
+        AD_fit.plot_to_compare2(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='Fit', mode = 'total2')
+        AD_points.plot_to_compare_with_points(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='Raw data')
+    else:
+        # Create figure with 4x4 subplots for damping terms
+        fig_damping = plt.figure()
+        for k in range(16):
+            fig_damping.add_subplot(4, 4, k + 1)
+
+        # Create figure with 4x4 subplots for stiffness terms
+        fig_stiffness = plt.figure()
+        for k in range(16):
+            fig_stiffness.add_subplot(4, 4, k + 1)
+
+        AD_fit.plot_to_compare(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='Fit', mode = 'total2')
+        AD_points.plot_to_compare_with_points(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='Raw data')
+
+
+    # Extract legend handles and labels from the first subplot in the damping figure
+    handles, labels = fig_damping.axes[0].get_legend_handles_labels()
+
+    # Remove individual legends from each subplot to avoid clutter
+    for ax in fig_damping.get_axes():
+        ax.legend().remove()
+    for ax in fig_stiffness.get_axes():
+        ax.legend().remove()
+
+    # Add a single shared legend above each figure
+    fig_damping.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, 1.05),
+                       ncol=6, frameon=False)
+    fig_stiffness.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, 1.05),
+                         ncol=6, frameon=False)
+
+    # Adjust layout to leave space for the shared legend
+    fig_damping.tight_layout(rect=[0, 0, 1, 0.97])
+    fig_stiffness.tight_layout(rect=[0, 0, 1, 0.97])
+
+    # Display the plots
+    plt.show()
+
+    return fig_damping, fig_stiffness
 
 
 def plot_compare(AD_single, AD_1D, AD_2D, AD_3D, AD_4D, AD_5D):
