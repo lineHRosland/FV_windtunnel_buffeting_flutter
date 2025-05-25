@@ -16,24 +16,29 @@ from matplotlib import pyplot as plt
 import time
 import pandas as pd
 import matplotlib as mpl
+from matplotlib import rc
 
-# Computer Modern Roman without latex
-mpl.rcParams['text.usetex'] == False  
+# # Computer Modern Roman without latex
+# mpl.rcParams['text.usetex'] == True  
 
-# Bruk fonten som ligner mest på Computer Modern
-mpl.rcParams['font.family'] == 'serif'
-mpl.rcParams['font.serif'] == ['cmr10', 'Computer Modern Roman', 'Times New Roman']
-mpl.rcParams['mathtext.fontset'] == 'cm' 
+# # # Bruk fonten som ligner mest på Computer Modern
+# # mpl.rcParams['font.family'] == 'serif'
+# # mpl.rcParams['font.serif'] == ['cmr10', 'Computer Modern Roman', 'Times New Roman']
+# # mpl.rcParams['mathtext.fontset'] == 'cm' 
 
-# Generelt større og mer lesbar tekst
-mpl.rcParams.update({
-    'font.size': 12,              # Generell tekststørrelse
-    'axes.labelsize': 12,         # Aksetitler
-    'axes.titlesize': 14,         # Plot-titler
-    'legend.fontsize': 12,        # Tekst i legend
-    'xtick.labelsize': 12,        # X-tick labels
-    'ytick.labelsize': 12         # Y-tick labels
-})
+# # Generelt større og mer lesbar tekst
+# mpl.rcParams.update({
+#     'font.size': 12,              # Generell tekststørrelse
+#     'axes.labelsize': 12,         # Aksetitler
+#     'axes.titlesize': 14,         # Plot-titler
+#     'legend.fontsize': 12,        # Tekst i legend
+#     'xtick.labelsize': 12,        # X-tick labels
+#     'ytick.labelsize': 12         # Y-tick labels
+# })
+
+
+rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
+rc('text', usetex=True)
 
 #from scipy import signal as spsp
 
@@ -51,6 +56,7 @@ def load_experiments_from_hdf5(h5_input_path, section_name, file_names,  upwind_
     return exp0, exp1
 
 
+
 def plot_static_coeff_summary(static_coeff, section_name, wind_speed, mode="decks", upwind_in_rig=True):
     if "MUS" in section_name:
         section_name = section_name.replace("MUS", "MDS")
@@ -58,28 +64,63 @@ def plot_static_coeff_summary(static_coeff, section_name, wind_speed, mode="deck
         section_name = section_name.replace("MDS", "MUS")
 
     static_coeff.plot_drag(mode=mode,upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\drag" , section_name + f"_{wind_speed}" + ".png"))
+    #plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
+    #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\drag" , section_name + f"_{wind_speed}" + ".png"))
     static_coeff.plot_lift(mode=mode, upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\lift", section_name + f"_{wind_speed}" + ".png"))
+    #plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
+    #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\lift", section_name + f"_{wind_speed}" + ".png"))
     static_coeff.plot_pitch(mode=mode, upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\pitch", section_name + f"_{wind_speed}" + ".png"))
+    #plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
+    #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\pitch", section_name + f"_{wind_speed}" + ".png"))
+
+
+    # fig, axs = plt.subplots(1, 3, figsize=(15, 5), sharex=True)
+    # fig.suptitle(f"{section_name} - {wind_speed} m/s")
+    # # Plot drag, lift, pitch i de tre aksene
+    # static_coeff.plot_drag(mode=mode, upwind_in_rig=upwind_in_rig, ax=axs[0])
+    # axs[0].set_title("Drag")
+    # static_coeff.plot_lift(mode=mode, upwind_in_rig=upwind_in_rig, ax=axs[1])
+    # axs[1].set_title("Lift")
+    # static_coeff.plot_pitch(mode=mode, upwind_in_rig=upwind_in_rig, ax=axs[2])
+    # axs[2].set_title("Pitch")
+    # axs[0].set_xticks([-8, -6, -4, -2,0, 2,4, 6, 8])
+    # axs[0].set_xlabel(r"$\alpha$")
+    # axs[0].set_ylabel(r"$C_D(\alpha)$")
+    # axs[0].set_ylim(ymin=0.4,ymax=0.8)
+    # axs[0].grid()
+    # axs[0].tick_params(labelsize=12)
+    # axs[0].legend(fontsize=18)
+    # axs[1].set_xticks([-8, -6, -4, -2,0, 2, 4, 6, 8])
+    # axs[1].set_xlabel(r"$\alpha$")
+    # axs[1].set_ylabel(r"$C_L(\alpha)$")
+    # axs[1].set_ylim(ymin=-0.7,ymax=0.7)
+    # axs[1].grid()
+    # axs[1].tick_params(labelsize=12)
+    # axs[1].legend(fontsize=18)
+    # axs[2].set_xticks([-8, -6, -4, -2,0, 2, 4, 6, 8])
+    # axs[2].set_xlabel(r"$\alpha$")
+    # axs[2].set_ylabel(r"$C_M(\alpha)$")
+    # axs[2].set_ylim(ymin=-0.15,ymax=0.2)
+    # axs[2].grid()
+    # axs[2].tick_params(labelsize=12)
+    # axs[2].legend(fontsize=18) 
+    # # Layout og lagring
+    # fig.tight_layout(rect=[0, 0.03, 1, 0.95])  # La plass til suptitle
+    # plt.show()
+    # plt.close()
 
     #mean
-    static_coeff.plot_drag_mean(mode=mode, upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\drag", section_name + f"_{wind_speed}_mean" + ".png"))
-    static_coeff.plot_lift_mean(mode=mode, upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\lift", section_name + f"_{wind_speed}_mean" + ".png"))
-    static_coeff.plot_pitch_mean(mode=mode, upwind_in_rig=upwind_in_rig)
-    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\pitch", section_name + f"_{wind_speed}_mean" + ".png"))
-
-    plt.tight_layout()
-    plt.show()
+    # static_coeff.plot_drag_mean(mode=mode, upwind_in_rig=upwind_in_rig)
+    # plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
+    # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\drag", section_name + f"_{wind_speed}_mean" + ".png"))
+    # static_coeff.plot_lift_mean(mode=mode, upwind_in_rig=upwind_in_rig)
+    # plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
+    # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\lift", section_name + f"_{wind_speed}_mean" + ".png"))
+    # static_coeff.plot_pitch_mean(mode=mode, upwind_in_rig=upwind_in_rig)
+    # plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
+    # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\pitch", section_name + f"_{wind_speed}_mean" + ".png"))
+    # plt.tight_layout()
+    # plt.show()
 
 
 
@@ -88,10 +129,10 @@ tic = time.perf_counter()
 plt.close("all")
 
 
-section_height = 0.066
-section_width =  0.365
-section_length_in_rig = 2.68
-section_length_on_wall = 2.66
+section_height = 0.066 #m
+section_width =  0.366 #m
+section_length_in_rig = 2.68 #m
+section_length_on_wall = 2.66 #m
 
 h5_input_path = r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Python\Ole_sin_kode\HAR_INT\H5F\\"
 
@@ -104,39 +145,39 @@ file_names_9 = ["HAR_INT_SINGLE_02_00_003","HAR_INT_SINGLE_02_00_004"] # 9 m/s, 
 exp0_single, exp1_single_6 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_6,  upwind_in_rig=True)
 exp0_single, exp1_single_9= load_experiments_from_hdf5(h5_input_path, section_name, file_names_9,  upwind_in_rig=True)
 
-exp0_single.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s",  y=0.95)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_0" + ".png"))
+# exp0_single.plot_experiment(mode="total") #
+# plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s",  y=0.95)
+# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_0" + ".png"))
 
-exp1_single_6.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s",  y=0.95)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_6" + ".png"))
+# exp1_single_6.plot_experiment(mode="total") #
+# plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s",  y=0.95)
+# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_6" + ".png"))
 
-exp1_single_9.plot_experiment(mode="total") #
-plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s",  y=0.95)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9" + ".png"))
+# exp1_single_9.plot_experiment(mode="total") #
+# plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s",  y=0.95)
+# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9" + ".png"))
 
 exp0_single.filt_forces(6, 2)
 exp1_single_6.filt_forces(6, 2)
 exp1_single_9.filt_forces(6, 2)
 
-exp0_single.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_0_filter" + ".png"))
-exp1_single_6.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s - With Butterworth low-pass filter",  y=0.95)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_6_filter" + ".png"))
-exp1_single_9.plot_experiment(mode="total") #With Butterworth low-pass filter
-plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s - With Butterworth low-pass filter",  y=0.95)
-plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9_filter" + ".png"))
-plt.show()
-plt.close()
+# exp0_single.plot_experiment(mode="total") #With Butterworth low-pass filter
+# plt.gcf().suptitle(f"Single deck - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
+# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_0_filter" + ".png"))
+# exp1_single_6.plot_experiment(mode="total") #With Butterworth low-pass filter
+# plt.gcf().suptitle(f"Single deck - Wind speed: 6 m/s - With Butterworth low-pass filter",  y=0.95)
+# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_6_filter" + ".png"))
+# exp1_single_9.plot_experiment(mode="total") #With Butterworth low-pass filter
+# plt.gcf().suptitle(f"Single deck - Wind speed: 9 m/s - With Butterworth low-pass filter",  y=0.95)
+# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", section_name + "_9_filter" + ".png"))
+# plt.show()
+# plt.close()
 
 static_coeff_single_6 =w3t.StaticCoeff.fromWTT(exp0_single, exp1_single_6, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
 static_coeff_single_9 = w3t.StaticCoeff.fromWTT(exp0_single, exp1_single_9, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
-plot_static_coeff_summary(static_coeff_single_6, section_name, 6, mode="single", upwind_in_rig=True)
+#plot_static_coeff_summary(static_coeff_single_6, section_name, 6, mode="single", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_single_9, section_name, 9, mode="single", upwind_in_rig=True)
 
 
@@ -503,7 +544,7 @@ w3t._scoff.plot_compare_pitch_mean(static_coeff_single_6_filtered, static_coeff_
 plt.gcf().suptitle(f"{section_name}: Single: 6 m/s, MUS: 5 m/s, MDS: 6 m/s", fontsize=16)
 plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\comparison\ALT", "1D_low_pitch_mean" + ".png"))
 
-# #Medium wind speed
+# Medium wind speed
 # w3t._scoff.plot_compare_drag(static_coeff_single_6, static_coeff_MUS_1D_8, static_coeff_MDS_1D_8)
 # plt.gcf().suptitle(f"{section_name}: Single: 9 m/s, MUS: 8 m/s, MDS: 8 m/s", fontsize=16)
 # plt.savefig()

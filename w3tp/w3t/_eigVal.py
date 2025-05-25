@@ -85,7 +85,6 @@ def generalize_C_K(C, K, Phi, x, single=True):
     Cae_star_gen = np.zeros((n_modes, n_modes))
     Kae_star_gen = np.zeros((n_modes, n_modes))
 
-    # Integrate over upstream deck (first N nodes)
     for i in range(N-1): 
         dx = x[i+1] - x[i] 
         phi_L = Phi[i] # shape (n_dof, n_modes)
@@ -331,8 +330,9 @@ def cae_kae_two(poly_coeff, k_range, Vred_global, B):
 
     return Cae_star, Kae_star
 
+#FIKSE: DELE OPP I FLERE FUNSKJONER?
 
-def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, 
+def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, 
                 Phi, x, single = True, buffeting = False, 
                 Cae_star_gen_BUFF = None, Kae_star_gen_BUFF=None, verbose=True):
     """
@@ -430,8 +430,8 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
     V_list.append(0.0) 
 
     for j_mode in range(n_modes):
-        eigvecs_all[0, j_mode] = np.nan
-        eigvals_all[0,j_mode] = np.nan
+        eigvecs_all[0, j_mode] = np.nan #FIKSE: IDENTY MATRIX (SPESIFISERT I OPPGAVE)
+        eigvals_all[0,j_mode] = np.nan  #FIKSE: VERDI HER Å KANSKJE?
 
         omega_all[0,j_mode] = omega_old[j_mode] 
         damping_ratios [0,j_mode] = zeta
@@ -507,7 +507,7 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                      )
                         
                 λj = eigvals_pos[best_idx]
-                φj = eigvecs_pos[:n_modes, best_idx]
+                φj = eigvecs_pos[:n_modes, best_idx] #Choose the first n_modes eigenvectors (exclude lambda*phi)
                 omega_new = np.imag(λj)
                 damping_new = -np.real(λj) / np.abs(λj)
 

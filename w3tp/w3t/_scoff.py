@@ -101,11 +101,12 @@ class StaticCoeff:
         filter_order = 6
         cutoff_frequency = 1.0
         sampling_frequency = 1/(experiment_in_still_air.time[1]-experiment_in_still_air.time[0])
+        print(sampling_frequency)
         
         sos = spsp.butter(filter_order,cutoff_frequency, fs=sampling_frequency, output="sos") #butterworth filtering of wind speed
         
         filtered_wind = np.nanmean(spsp.sosfiltfilt(sos,experiment_in_wind_still_air_forces_removed.wind_speed))
-        #need a representative mean wind velocity U for the calculation of the coefficients
+        #need a representatve meani wind velocity U for the calculation of the coefficients
 
         # drag_coeff = forces * 2 / (rho * U^2 * h * L)
         drag_coeff_rig = experiment_in_wind_still_air_forces_removed.forces_global_center[:,0:12:6]*2/experiment_in_wind_still_air_forces_removed.air_density/filtered_wind**2/section_height/section_length_in_rig
@@ -295,12 +296,12 @@ class StaticCoeff:
 
         upwind_in_rig: set up type
         """
-        if upwind_in_rig:
-            color1 = "#F15854"
-            color2= "#990000"
-        else: 
-            color1 = "#006400"
-            color2 ="#60BD68"
+        if upwind_in_rig: #red
+            color1 = "#d62728"
+            color2= "#2ca02c"
+        else: #green
+            color1 = "#2ca02c"
+            color2 ="#d62728"
         if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
         
@@ -317,6 +318,7 @@ class StaticCoeff:
             ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
         
         elif mode == "decks": #upwind and downwind deck + total sum
+            
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.drag_coeff,axis=1),label = "Total")
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"), color=color1)
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"), color=color2)
@@ -334,13 +336,19 @@ class StaticCoeff:
             ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
 
         elif mode == "single": #single deck
+            print("potetmos")
+            ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Single deck"), linewidth=1.1)
+            #ax.grid()
+            ax.set_xlabel(r"$\alpha$", fontsize=40)
+            ax.set_ylabel(r"$C_D(\alpha)$", fontsize=40)
+            ax.tick_params(labelsize=40)
+            #ax.legend(loc='upper left',fontsize=35)
+            #ax.set_ylim(ymin=0.4,ymax=0.8)
 
-            ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Single deck"))
-            ax.grid()
-            ax.set_xlabel(r"$\alpha$")
-            ax.set_ylabel(r"$C_D(\alpha)$")
-            ax.legend()
-            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+            #ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_yticks([0.4, 0.5, 0.6, 0.7, 0.8])
+            ax.set_xticks([-8,-4,0, 4,8])
+
 
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
@@ -356,11 +364,13 @@ class StaticCoeff:
         upwind_in_rig: set up type
         """
         if upwind_in_rig:
-            color1 = "#F15854"
-            color2= "#990000"
+            color1 = "#d62728"
+            color2= "#2ca02c"
         else: 
-            color1 = "#006400"
-            color2 ="#60BD68"
+            color1 = "#2ca02c"
+            color2 ="#d62728"
+
+
     
         if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))        
@@ -377,7 +387,6 @@ class StaticCoeff:
             ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
             ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
-        
         elif mode == "decks":
             #plt.plot(self.pitch_motion*360/2/np.pi,np.sum(self.lift_coeff,axis=1),label = "Total")
             ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Upwind deck"), color=color1)
@@ -397,13 +406,19 @@ class StaticCoeff:
 
         elif mode == "single": #single deck
 
-            ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Single deck"))
-            ax.grid()
-            ax.set_xlabel(r"$\alpha$")
-            ax.set_ylabel(r"$C_L(\alpha)$")
-            ax.legend()
-            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
-        
+            ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Single deck"), linewidth=1.1)
+            #ax.grid()
+            ax.set_xlabel(r"$\alpha$", fontsize=40)
+            ax.set_ylabel(r"$C_L(\alpha)$", fontsize=40)
+            ax.tick_params(labelsize=40)
+            #ax.legend(fontsize=35)
+            #ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            #ax.set_ylim(ymin=-0.7,ymax=0.7)
+            ax.set_yticks([-0.6,  -0.4,-0.2,0,0.2, 0.4, 0.6])
+            ax.set_xticks([-8, -4, 0, 4, 8])
+
+
+
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
         
@@ -417,12 +432,14 @@ class StaticCoeff:
 
         upwind_in_rig: set up type
         """
+
         if upwind_in_rig:
-            color1 = "#F15854"
-            color2= "#990000"
+            color1 = "#d62728"
+            color2= "#2ca02c"
         else: 
-            color1 = "#006400"
-            color2 ="#60BD68"
+            color1 = "#2ca02c"
+            color2 ="#d62728"
+
         if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))        
         if mode == "all":
@@ -456,13 +473,21 @@ class StaticCoeff:
         
         elif mode == "single": #single deck
 
-            ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Single deck"))
-            ax.grid()
-            ax.set_xlabel(r"$\alpha$")
-            ax.set_ylabel(r"$C_M(\alpha)$")
-            ax.legend()
-            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
-        
+            ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Single deck"), linewidth=1.1)
+
+            #ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            #ax.set_ylim(ymin=-0.15,ymax=0.2)
+            
+            #ax.grid()
+            ax.set_xlabel(r"$\alpha$", fontsize=40)
+            ax.set_ylabel(r"$C_M(\alpha)$", fontsize=40)
+            ax.tick_params(labelsize=40)
+            #ax.legend(fontsize=35)
+            #ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            #ax.set_ylim(ymin=-0.15,ymax=0.2)
+            ax.set_yticks([-0.1,0,0.1,0.2])
+            ax.set_xticks([-8, -4, 0, 4, 8])
+
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
     
@@ -477,14 +502,16 @@ class StaticCoeff:
         
         upwind_in_rig: set up type
         """
+
         if upwind_in_rig:
-            color = "#F15854"
+            color = "#d62728"
             linestyle1 = "-"
             linestyle2 = "--"
         else: 
-            color ="#60BD68"
+            color ="#2ca02c"
             linestyle1 = "--"
             linestyle2 = "-"
+
         if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
         alpha = np.round(self.pitch_motion*360/2/np.pi,1)
@@ -565,11 +592,11 @@ class StaticCoeff:
         upwind_in_rig: set up type
         """
         if upwind_in_rig:
-            color = "#F15854"
+            color = "#d62728"
             linestyle1 = "-"
             linestyle2 = "--"
         else: 
-            color ="#60BD68"
+            color ="#2ca02c"
             linestyle1 = "--"
             linestyle2 = "-" 
         if ax is None:
@@ -648,12 +675,13 @@ class StaticCoeff:
 
         upwind_in_rig: set up type
         """
+
         if upwind_in_rig:
-            color = "#F15854"
+            color = "#d62728"
             linestyle1 = "-"
             linestyle2 = "--"
         else: 
-            color ="#60BD68"
+            color ="#2ca02c"
             linestyle1 = "--"
             linestyle2 = "-" 
         if ax is None:
@@ -770,9 +798,9 @@ def plot_compare_drag(static_coeff_single, static_coeff_up, static_coeff_down, a
         The StaticCoeff object for downwind deck.
     """
     colors = {
-        "single": "#5DA5DA",
-        "mus": "#F15854",
-        "mds": "#60BD68"
+        "single": "#1f77b4",
+        "mus": "#d62728",
+        "mds": "#2ca02c"
 
     }
     if ax is None:
@@ -810,9 +838,9 @@ def plot_compare_lift(static_coeff_single, static_coeff_up, static_coeff_down, a
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
     colors = {
-        "single": "#5DA5DA",
-        "mus": "#F15854",
-        "mds": "#60BD68"
+        "single": "#1f77b4",
+        "mus": "#d62728",
+        "mds": "#2ca02c"
     }
 
     ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.lift_coeff[:,0] + static_coeff_single.lift_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
@@ -845,9 +873,9 @@ def plot_compare_pitch(static_coeff_single, static_coeff_up, static_coeff_down, 
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
     colors = {
-        "single": "#5DA5DA",
-        "mus": "#F15854",
-        "mds": "#60BD68"
+        "single": "#1f77b4",
+        "mus": "#d62728",
+        "mds": "#2ca02c"
     }
 
     ax.plot(static_coeff_single.pitch_motion*360/2/np.pi, static_coeff_single.pitch_coeff[:,0] + static_coeff_single.pitch_coeff[:,1], label=("Single deck"), color = colors["single"], linewidth = 2)
@@ -882,9 +910,9 @@ def plot_compare_drag_mean(static_coeff_single, static_coeff_up, static_coeff_do
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
     colors = {
-        "single": "#5DA5DA",
-        "mus": "#F15854",
-        "mds": "#60BD68"
+        "single": "#1f77b4",
+        "mus": "#d62728",
+        "mds": "#2ca02c"
     }
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
@@ -935,9 +963,9 @@ def plot_compare_lift_mean(static_coeff_single, static_coeff_up, static_coeff_do
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
     colors = {
-        "single": "#5DA5DA",
-        "mus": "#F15854",
-        "mds": "#60BD68"
+        "single": "#1f77b4",
+        "mus": "#d62728",
+        "mds": "#2ca02c"
     }
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
@@ -998,9 +1026,9 @@ def plot_compare_pitch_mean(static_coeff_single, static_coeff_up, static_coeff_d
     cm_downUp_mean = np.array([np.nanmean(static_coeff_down.pitch_coeff[:,0][alpha_down == val]) + np.nanmean(static_coeff_down.pitch_coeff[:,1][alpha_down == val]) for val in unique_alphas_down])
 
     colors = {
-        "single": "#5DA5DA",
-        "mus": "#F15854",
-        "mds": "#60BD68"
+        "single": "#1f77b4",
+        "mus": "#d62728",
+        "mds": "#2ca02c"
     }
 
     ax.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = colors["single"])
@@ -1031,14 +1059,16 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_r
 
     upwind_in_rig: set up type
         """
+
+        
     if upwind_in_rig:
         setUp_type = "MUS"
-        color1 = "#F15854"
-        color2= "#990000"
+        color1 = "#d62728"
+        color2= "#2ca02c"
     else: 
         setUp_type = "MDS"
-        color1 = "#006400"
-        color2 ="#60BD68"
+        color1 = "#2ca02c"
+        color2 ="#d62728"
        
    
     if ax is None:
@@ -1070,12 +1100,14 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_r
         """
     if upwind_in_rig:
         setUp_type = "MUS"
-        color1 = "#F15854"
-        color2= "#990000"
+        color1 = "#d62728"
+        color2= "#2ca02c"
     else: 
         setUp_type = "MDS"
-        color1 = "#006400"
-        color2 ="#60BD68"
+        color1 = "#2ca02c"
+        color2 ="#d62728"
+
+
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
 
@@ -1103,12 +1135,14 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_
         """
     if upwind_in_rig:
         setUp_type = "MUS"
-        color1 = "#F15854"
-        color2= "#990000"
+        color1 = "#d62728"
+        color2= "#2ca02c"
     else: 
         setUp_type = "MDS"
-        color1 = "#006400"
-        color2 ="#60BD68"
+        color1 = "#2ca02c"
+        color2 ="#d62728"
+
+        
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))   
 
@@ -1137,10 +1171,10 @@ def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind
         """
     if upwind_in_rig:
         setUp_type = "MUS"
-        color = "#F15854"
+        color = "#d62728"
     else: 
         setUp_type = "MDS"
-        color ="#60BD68"
+        color ="#2ca02c"
    
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
@@ -1182,10 +1216,12 @@ def plot_compare_lift_mean_only_single(static_coeff_single, static_coeff, upwind
         """
     if upwind_in_rig:
         setUp_type = "MUS"
-        color = "#F15854"
+        color = "#d62728"
     else: 
         setUp_type = "MDS"
-        color ="#60BD68"
+        color ="#2ca02c"
+
+       
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
     # Calculate unique alpha values (pitch motion in degrees)
@@ -1223,10 +1259,12 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
         """
     if upwind_in_rig:
         setUp_type = "MUS"
-        color = "#F15854"
+        color = "#d62728"
     else: 
         setUp_type = "MDS"
-        color ="#60BD68"
+        color ="#2ca02c"
+
+   
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
     # Calculate unique alpha values (pitch motion in degrees)
@@ -1284,13 +1322,13 @@ def plot_compare_wind_speeds(static_coeff_single_low,
             fig, ax = plt.subplots(figsize=(8, 6))
     
     color3HWS = "#B22222"
-    color2HWS= "#F15854"
+    color2HWS= "#d62728"
     color1HWS="#FCA5A5"
 
          
 
     color1LWS = "#A1D99B"
-    color2LWS ="#60BD68"
+    color2LWS ="#2ca02c"
     color3LWS="#238B45"
     
     if scoff == "drag":
@@ -1369,7 +1407,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low,
     """
 
     color1HWS = "#B22222"
-    color2HWS= "#F15854"
+    color2HWS= "#d62728"
     color3HWS="#FCA5A5"
 
     color1MWS = "#A6CEE3"
@@ -1377,7 +1415,7 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low,
     color3MWS="#1F4E79"    
 
     color1LWS = "#A1D99B"
-    color2LWS ="#60BD68"
+    color2LWS ="#2ca02c"
     color3LWS="#238B45"
     if ax is None:
         fig, ax = plt.subplots(figsize=(8, 6))
@@ -1827,11 +1865,13 @@ def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold
 def plot_static_coeff_filtered_out_above_threshold(alpha,coeff_up_plot,coeff_down_plot=None, upwind_in_rig=True, threshold=0.3, scoff="", ax=None):
 
     if upwind_in_rig:
-        color1 = "#F15854"
-        color2= "#990000"
+        color1 = "#d62728"
+        color2= "#2ca02c"
     else:
-        color1 = "#006400"
-        color2 ="#60BD68"
+        color1 = "#2ca02c"
+        color2 ="#d62728"
+
+              
 
     if scoff == "drag":
         ylabel = r"$C_D(\alpha)$"
