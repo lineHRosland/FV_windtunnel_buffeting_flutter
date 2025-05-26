@@ -323,7 +323,7 @@ class StaticCoeff:
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Upwind deck"), color=color1)
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,2]+self.drag_coeff[:,3],label=("Downwind deck"), color=color2)
             ax.grid()
-            ax.set_xlabel(r"$\alpha$")
+            ax.set_xlabel(r"$\alpha$ [deg]")
             ax.set_ylabel(r"$C_D(\alpha)$")
             ax.legend()
             ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
@@ -339,7 +339,7 @@ class StaticCoeff:
             print("potetmos")
             ax.plot(self.pitch_motion*360/2/np.pi,self.drag_coeff[:,0]+self.drag_coeff[:,1],label=("Single deck"), linewidth=1.1)
             #ax.grid()
-            ax.set_xlabel(r"$\alpha$", fontsize=40)
+            ax.set_xlabel(r"$\alpha$ [deg]", fontsize=40)
             ax.set_ylabel(r"$C_D(\alpha)$", fontsize=40)
             ax.tick_params(labelsize=40)
             #ax.legend(loc='upper left',fontsize=35)
@@ -392,7 +392,7 @@ class StaticCoeff:
             ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Upwind deck"), color=color1)
             ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,2]+self.lift_coeff[:,3],label=("Downwind deck"), color=color2)
             ax.grid()
-            ax.set_xlabel(r"$\alpha$")
+            ax.set_xlabel(r"$\alpha$ [deg]")
             ax.set_ylabel(r"$C_L(\alpha)$")
             ax.legend()
             ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
@@ -408,7 +408,7 @@ class StaticCoeff:
 
             ax.plot(self.pitch_motion*360/2/np.pi,self.lift_coeff[:,0]+self.lift_coeff[:,1],label=("Single deck"), linewidth=1.1)
             #ax.grid()
-            ax.set_xlabel(r"$\alpha$", fontsize=40)
+            ax.set_xlabel(r"$\alpha$ [deg]", fontsize=40)
             ax.set_ylabel(r"$C_L(\alpha)$", fontsize=40)
             ax.tick_params(labelsize=40)
             #ax.legend(fontsize=35)
@@ -459,7 +459,7 @@ class StaticCoeff:
             ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,0]+self.pitch_coeff[:,1],label=("Upwind deck"), color=color1)
             ax.plot(self.pitch_motion*360/2/np.pi,self.pitch_coeff[:,2]+self.pitch_coeff[:,3],label=("Downwind deck"), color=color2)
             ax.grid()
-            ax.set_xlabel(r"$\alpha$")
+            ax.set_xlabel(r"$\alpha$ [deg]")
             ax.set_ylabel(r"$C_M(\alpha)$")
             ax.legend()
             ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
@@ -479,7 +479,7 @@ class StaticCoeff:
             #ax.set_ylim(ymin=-0.15,ymax=0.2)
             
             #ax.grid()
-            ax.set_xlabel(r"$\alpha$", fontsize=40)
+            ax.set_xlabel(r"$\alpha$ [deg]", fontsize=40)
             ax.set_ylabel(r"$C_M(\alpha)$", fontsize=40)
             ax.tick_params(labelsize=40)
             #ax.legend(fontsize=35)
@@ -676,6 +676,7 @@ class StaticCoeff:
             #ax.set_yticks([0.4,0.55,0.7,0.85,1])
             ax.set_xticks([ -4, 0, 4])
 
+
             
             return cl_single_mean, unique_alphas
         
@@ -768,7 +769,7 @@ class StaticCoeff:
             #ax.set_yticks([0.4,0.55,0.7,0.85,1])
             ax.set_xticks([ -4, 0, 4])
             return cm_single_mean, unique_alphas
-        
+
         else:
             print(mode + " Error: Unknown argument: mode=" + mode + " Use mode=total, decks or all" )
 
@@ -1495,6 +1496,78 @@ def plot_compare_wind_speeds_mean(static_coeff_single_low,
     ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
 
  
+def plot_compare_wind_speeds_mean_seperate(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(8, 6))
+    if scoff == "drag":
+        axis = r"$C_D(\alpha)$"
+        coeff = "drag_coeff"
+        min = 0.5
+        max = 0.63
+    elif scoff == "lift":
+        axis = r"$C_L(\alpha)$"
+        coeff = "lift_coeff"
+        min = -0.4
+        max = 0.45
+    elif scoff == "pitch":
+        axis = r"$C_M(\alpha)$"
+        coeff = "pitch_coeff"
+        min = -0.05
+        max = 0.12
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    #downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    #downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    ax.plot(unique_alphas_low, upwind_mean_low,
+             label=f"6 m/s", color = "#2ca02c", alpha = 0.5)
+    # ax.plot(unique_alphas_low, downwind_mean_low,
+    #          label=f"LWS - Downstream deck", color = color2LWS, linestyle='-')
+
+
+    # Plot high wind speed
+    ax.plot(unique_alphas_high, upwind_mean_high,
+                label=f"9 m/s", color = "#d62728", alpha = 0.5)
+    # ax.plot(unique_alphas_high, downwind_mean_high,
+    #             label=f"HWS - Downstream deck", color = color2HWS, linestyle='-')
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        #downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        ax.plot(unique_alphas_med, upwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.5)
+        # ax.plot(unique_alphas_high, downwind_mean_high,
+        #             label=f"HWS - Downstream deck", color = color2HWS, linestyle='-')
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha$ [deg]", fontsize=40)
+    ax.set_ylabel(axis, fontsize=40)
+    ax.tick_params(labelsize=40)
+    ax.legend(fontsize=35) #loc='upper left',
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+
+
+ 
 def filter(static_coeff, threshold=0.3, scoff="", single=True):
     """
     Filters coefficient values at each alpha where the spread exceeds a given threshold.
@@ -1892,14 +1965,22 @@ def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold
  
 
 def poly_estimat(static_coeff, scoff="", single=True):
+    alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)  # eller np.degrees()
+    mask = alpha < 4.0
+    static_coeff.pitch_motion = static_coeff.pitch_motion[mask]
+    static_coeff.drag_coeff = static_coeff.drag_coeff[mask, :]
+    static_coeff.lift_coeff = static_coeff.lift_coeff[mask, :]
+    static_coeff.pitch_coeff = static_coeff.pitch_coeff[mask, :]
+
+
     if scoff == "drag":
-        threshold = 0.03
-        alpha, coeff_filtered = filter(static_coeff, threshold=0.05, scoff=scoff, single=True)
+        threshold = 0.025
+        alpha, coeff_filtered = filter(static_coeff, threshold=0.03, scoff=scoff, single=True)
         coeff_up_real = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
         if not single:
             coeff_down_real = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
-            alpha, coeff_up_filtered, coeff_down_filtered = filter(static_coeff, threshold=0.05, scoff=scoff, single=False)
-
+            alpha, coeff_up_filtered, coeff_down_filtered = filter(static_coeff, threshold=0.03, scoff=scoff, single=False)
+            
     elif scoff == "lift":
         threshold = 0.03
         alpha, coeff_filtered = filter(static_coeff, threshold=0.06, scoff=scoff, single=True)
@@ -1909,7 +1990,7 @@ def poly_estimat(static_coeff, scoff="", single=True):
             alpha, coeff_up_filtered, coeff_down_filtered = filter(static_coeff, threshold=0.06, scoff=scoff, single=False)
 
     elif scoff == "pitch":
-        threshold = 0.009
+        threshold = 0.005
         alpha, coeff_filtered = filter(static_coeff, threshold=0.0125, scoff=scoff, single=True)
         coeff_up_real = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
         if not single:
@@ -1924,9 +2005,14 @@ def poly_estimat(static_coeff, scoff="", single=True):
         alpha_fit = alpha[mask_valid]
         coeff_fit = coeff_filtered[mask_valid]
         if scoff == "drag":
-            mask_valid = (alpha < 2) & mask_valid
+            mask_valid = (alpha < -1) & mask_valid
             alpha_fit = alpha[mask_valid]
             coeff_fit = coeff_filtered[mask_valid]
+            # alpha_manual = np.array([0.0,2.0, 4.0])
+            # coeff_manual = np.array([0.46,0.44, 0.46])
+            # alpha_fit = np.concatenate([alpha_fit, alpha_manual])
+            # coeff_fit = np.concatenate([coeff_fit, coeff_manual])
+
             coeffs = np.polyfit(alpha_fit, coeff_fit, deg=2)
         elif scoff == "lift":
             coeffs = np.polyfit(alpha_fit, coeff_fit, deg=1)
@@ -1942,6 +2028,7 @@ def poly_estimat(static_coeff, scoff="", single=True):
         return alpha, coeff_up_real
 
     else:
+        print("halla på deg")
         mask_valid_up = ~np.isnan(coeff_up_filtered)
         alpha_fit_up = alpha[mask_valid_up]
         coeff_fit_up = coeff_up_filtered[mask_valid_up]
@@ -1949,6 +2036,16 @@ def poly_estimat(static_coeff, scoff="", single=True):
         alpha_fit_down = alpha[mask_valid_down]
         coeff_fit_down = coeff_down_filtered[mask_valid_down]
         if scoff == "drag":
+            mask_valid_up = (alpha < 2.5) & mask_valid_up
+            alpha_fit_up = alpha[mask_valid_up]
+            coeff_fit_up = coeff_up_filtered[mask_valid_up]
+            mask_valid_down = (alpha < 2.5) & mask_valid_down
+            alpha_fit_down = alpha[mask_valid_down]
+            coeff_fit_down = coeff_down_filtered[mask_valid_down]
+            alpha_manual_down = np.array([0.0,2.0, 4.0])
+            coeff_manual_down = np.array([0.46,0.44, 0.46])
+            alpha_fit_down = np.concatenate([alpha_fit_down, alpha_manual_down])
+            coeff_fit_down = np.concatenate([coeff_fit_down, coeff_manual_down])
             coeffs_up = np.polyfit(alpha_fit_up, coeff_fit_up, deg=2)
             coeffs_down = np.polyfit(alpha_fit_down, coeff_fit_down, deg=2)
         elif scoff == "lift":
@@ -1967,10 +2064,14 @@ def poly_estimat(static_coeff, scoff="", single=True):
         mask_good_up = spread_up < threshold
         coeff_up_real[~mask_good_up] = np.nan
 
+
         spread_down = np.abs(coeff_down_real - curve_down)
         mask_good_down = spread_down < threshold
         coeff_down_real[~mask_good_down] = np.nan
 
+        plt.plot(alpha,curve_down)
+        plt.plot(alpha, coeff_down_real, '.', label="Original", alpha=0.4)
+        plt.show()
         return alpha, coeff_up_real, coeff_down_real
 
 
