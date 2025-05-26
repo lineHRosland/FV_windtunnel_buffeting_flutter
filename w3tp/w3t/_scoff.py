@@ -2039,15 +2039,19 @@ def poly_estimat(static_coeff, scoff="", single=True):
             mask_valid_up = (alpha < 2.5) & mask_valid_up
             alpha_fit_up = alpha[mask_valid_up]
             coeff_fit_up = coeff_up_filtered[mask_valid_up]
-            mask_valid_down = (alpha < 2.5) & mask_valid_down
+            mask_valid_down = (alpha < -1) 
             alpha_fit_down = alpha[mask_valid_down]
             coeff_fit_down = coeff_down_filtered[mask_valid_down]
             alpha_manual_down = np.array([0.0,2.0, 4.0])
             coeff_manual_down = np.array([0.46,0.44, 0.46])
+
             alpha_fit_down = np.concatenate([alpha_fit_down, alpha_manual_down])
             coeff_fit_down = np.concatenate([coeff_fit_down, coeff_manual_down])
+            w_data = np.ones(len(alpha_fit_down))              # vanlige punkter får vekt 1
+            w_manual = np.ones(len(alpha_manual_down)) * 10     # manuelle punkter får vekt 10
+            weights = np.concatenate([w_data, w_manual])
             coeffs_up = np.polyfit(alpha_fit_up, coeff_fit_up, deg=2)
-            coeffs_down = np.polyfit(alpha_fit_down, coeff_fit_down, deg=2)
+            coeffs_down = np.polyfit(alpha_fit_down, coeff_fit_down, deg=2, w=weights)
         elif scoff == "lift":
             coeffs_up = np.polyfit(alpha_fit_up, coeff_fit_up, deg=1)
             coeffs_down = np.polyfit(alpha_fit_down, coeff_fit_down, deg=1)
