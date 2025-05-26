@@ -343,7 +343,7 @@ class StaticCoeff:
             ax.set_ylabel(r"$C_D(\alpha)$", fontsize=40)
             ax.tick_params(labelsize=40)
             #ax.legend(loc='upper left',fontsize=35)
-            #ax.set_ylim(ymin=0.4,ymax=0.8)
+            ax.set_ylim(ymin=0.4,ymax=0.8)
 
             #ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
             ax.set_yticks([0.4, 0.5, 0.6, 0.7, 0.8])
@@ -413,8 +413,8 @@ class StaticCoeff:
             ax.tick_params(labelsize=40)
             #ax.legend(fontsize=35)
             #ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
-            #ax.set_ylim(ymin=-0.7,ymax=0.7)
-            ax.set_yticks([-0.6,  -0.4,-0.2,0,0.2, 0.4, 0.6])
+            ax.set_ylim(ymin=-0.7,ymax=0.7)
+            ax.set_yticks([-0.6,  -0.3,0,0.3, 0.6, ])
             ax.set_xticks([-8, -4, 0, 4, 8])
 
 
@@ -484,8 +484,8 @@ class StaticCoeff:
             ax.tick_params(labelsize=40)
             #ax.legend(fontsize=35)
             #ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
-            #ax.set_ylim(ymin=-0.15,ymax=0.2)
-            ax.set_yticks([-0.1,0,0.1,0.2])
+            ax.set_ylim(ymin=-0.15,ymax=0.2)
+            ax.set_yticks([-0.15,-0.07,0,0.07,0.15])
             ax.set_xticks([-8, -4, 0, 4, 8])
 
         else:
@@ -569,13 +569,21 @@ class StaticCoeff:
                 for val in unique_alphas
             ])
 
+            ax.plot(unique_alphas,cd_single_mean,label=("Single deck"), linewidth = 1.2)
+
+            ax.set_xlabel(r"$\alpha$", fontsize=40)
+            ax.set_ylabel(r"$C_D(\alpha)$", fontsize=40)
+            ax.tick_params(labelsize=40)
+            ax.legend(fontsize=35)
+            #ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=0.5,ymax=0.63)
+            ax.set_xlim(xmin=-4, xmax=4)
+
+            #ax.set_yticks([0.4,0.55,0.7,0.85,1])
+            ax.set_xticks([ -4, 0, 4])
+
             
-            ax.plot(unique_alphas,cd_single_mean,label=("Single deck"))
-            ax.grid()
-            ax.set_xlabel(r"$\alpha$")
-            ax.set_ylabel(r"$C_D(\alpha)$")
-            ax.legend()
-            ax.set_ylim(ymin=self.ymin_drag,ymax=self.ymax_drag)
+          
             return cd_single_mean, unique_alphas
 
         else:
@@ -654,12 +662,21 @@ class StaticCoeff:
                 for val in unique_alphas
             ])
             
-            ax.plot(unique_alphas,cl_single_mean,label=("Single deck"))
-            ax.grid()
-            ax.set_xlabel(r"$\alpha$")
-            ax.set_ylabel(r"$C_L(\alpha)$")
-            ax.legend()
-            ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.plot(unique_alphas,cl_single_mean,label=("Single deck"), linewidth = 1.2)
+   
+    
+            ax.set_xlabel(r"$\alpha$", fontsize=40)
+            ax.set_ylabel(r"$C_L(\alpha)$", fontsize=40)
+            ax.tick_params(labelsize=40)
+            ax.legend(fontsize=35)
+            #ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=-0.4,ymax=0.45)
+            ax.set_xlim(xmin=-4, xmax=4)
+
+            #ax.set_yticks([0.4,0.55,0.7,0.85,1])
+            ax.set_xticks([ -4, 0, 4])
+
+            
             return cl_single_mean, unique_alphas
         
         else:
@@ -740,11 +757,16 @@ class StaticCoeff:
 
             
             ax.plot(unique_alphas,cm_single_mean,label=("Single deck"))
-            ax.grid()
-            ax.set_xlabel(r"$\alpha$")
-            ax.set_ylabel(r"$C_M(\alpha)$")
-            ax.legend()
-            ax.set_ylim(ymin=self.ymin_pitch,ymax=self.ymax_pitch)
+            
+            ax.set_xlabel(r"$\alpha$", fontsize=40)
+            ax.set_ylabel(r"$C_M(\alpha)$", fontsize=40)
+            ax.tick_params(labelsize=40)
+            ax.legend(fontsize=35)
+            #ax.set_ylim(ymin=self.ymin_lift,ymax=self.ymax_lift)
+            ax.set_ylim(ymin=-0.05,ymax=0.12)
+            ax.set_xlim(xmin=-4, xmax=4)
+            #ax.set_yticks([0.4,0.55,0.7,0.85,1])
+            ax.set_xticks([ -4, 0, 4])
             return cm_single_mean, unique_alphas
         
         else:
@@ -1268,15 +1290,6 @@ def plot_compare_pitch_mean_only_single(static_coeff_single, static_coeff, upwin
     if ax is None:
             fig, ax = plt.subplots(figsize=(8, 6))
     # Calculate unique alpha values (pitch motion in degrees)
-    alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
-    unique_alphas_single = np.unique(alpha_single)
-    alpha = np.round(static_coeff.pitch_motion*360/2/np.pi,1)
-    unique_alphas = np.unique(alpha)
-
-    cm_single_mean = np.array([np.nanmean(static_coeff_single.pitch_coeff[:,0][alpha_single == val]) + np.nanmean(static_coeff_single.pitch_coeff[:,1][alpha_single == val]) for val in unique_alphas_single])
-    cm_upwind_mean = np.array([np.nanmean(static_coeff.pitch_coeff[:,0][alpha == val]) + np.nanmean(static_coeff.pitch_coeff[:,1][alpha == val]) for val in unique_alphas])
-    cm_downwind_mean = np.array([np.nanmean(static_coeff.pitch_coeff[:,2][alpha == val]) + np.nanmean(static_coeff.pitch_coeff[:,3][alpha == val]) for val in unique_alphas])
-    
 
     ax.plot(unique_alphas_single, cm_single_mean, label="Single deck", color = "#5DA5DA")
     ax.plot(unique_alphas, cm_upwind_mean, label="Upwind deck", color = color)
@@ -1677,6 +1690,26 @@ def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold
 
                 has_nan_1, has_nan_2 = nan_flags
  
+                # if name == "lift" or name == "pitch":
+                #     def linearity_score(alpha_vals, coeff_vals):
+                #         if len(alpha_vals) < 3:
+                #             return 0  # ikke nok data
+                #         return np.abs(np.corrcoef(alpha_vals, coeff_vals)[0, 1])  # absolutt korrelasjon
+
+                #     alpha_window = (alpha >= val - 1) & (alpha <= val + 1)
+
+                #     alpha_vals = alpha[alpha_window]
+                #     vals_1_window = coeff_1[alpha_window, 0] + coeff_1[alpha_window, 1]
+                #     vals_2_window = coeff_2[alpha_window, 0] + coeff_2[alpha_window, 1]
+
+                #     score_1 = linearity_score(alpha_vals, vals_1_window)
+                #     score_2 = linearity_score(alpha_vals, vals_2_window)
+
+                #     if score_1 > score_2:
+                #         ref_mean = np.mean(vals_1)
+                #     else:
+                #         ref_mean = np.mean(vals_2)
+
                 if has_nan_1 and not has_nan_2:
                     ref_mean = np.mean(vals_2)
                 elif has_nan_2 and not has_nan_1:
@@ -1690,6 +1723,7 @@ def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold
                         for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
                             coeff_array[idx, 0] = np.nan
                             coeff_array[idx, 1] = np.nan
+             
                 if ref_mean != None:
                     for idx, coeff_array in zip([idx1, idx2], [coeff_1_f, coeff_2_f]):
                         summed = coeff_array[idx, 0] + coeff_array[idx, 1] #når singel, kun ett enkelt brudekke (val_1 og val_2)
@@ -1856,6 +1890,88 @@ def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold
  
     return static_coeff_1_f, static_coeff_2_f
  
+
+def poly_estimat(static_coeff, scoff="", single=True):
+    if scoff == "drag":
+        threshold = 0.03
+        alpha, coeff_filtered = filter(static_coeff, threshold=0.05, scoff=scoff, single=True)
+        coeff_up_real = static_coeff.drag_coeff[:, 0] + static_coeff.drag_coeff[:, 1]
+        if not single:
+            coeff_down_real = static_coeff.drag_coeff[:, 2] + static_coeff.drag_coeff[:, 3]
+            alpha, coeff_up_filtered, coeff_down_filtered = filter(static_coeff, threshold=0.05, scoff=scoff, single=False)
+
+    elif scoff == "lift":
+        threshold = 0.03
+        alpha, coeff_filtered = filter(static_coeff, threshold=0.06, scoff=scoff, single=True)
+        coeff_up_real = static_coeff.lift_coeff[:, 0] + static_coeff.lift_coeff[:, 1]
+        if not single:
+            coeff_down_real = static_coeff.lift_coeff[:, 2] + static_coeff.lift_coeff[:, 3]
+            alpha, coeff_up_filtered, coeff_down_filtered = filter(static_coeff, threshold=0.06, scoff=scoff, single=False)
+
+    elif scoff == "pitch":
+        threshold = 0.009
+        alpha, coeff_filtered = filter(static_coeff, threshold=0.0125, scoff=scoff, single=True)
+        coeff_up_real = static_coeff.pitch_coeff[:, 0] + static_coeff.pitch_coeff[:, 1]
+        if not single:
+            coeff_down_real = static_coeff.pitch_coeff[:, 2] + static_coeff.pitch_coeff[:, 3]
+            alpha, coeff_up_filtered, coeff_down_filtered = filter(static_coeff, threshold=0.0125, scoff=scoff, single=False)
+    else:
+        raise ValueError("Invalid 'scoff' argument. Must be 'drag', 'lift', or 'pitch'.")
+
+
+    if single:
+        mask_valid = ~np.isnan(coeff_filtered)
+        alpha_fit = alpha[mask_valid]
+        coeff_fit = coeff_filtered[mask_valid]
+        if scoff == "drag":
+            mask_valid = (alpha < 2) & mask_valid
+            alpha_fit = alpha[mask_valid]
+            coeff_fit = coeff_filtered[mask_valid]
+            coeffs = np.polyfit(alpha_fit, coeff_fit, deg=2)
+        elif scoff == "lift":
+            coeffs = np.polyfit(alpha_fit, coeff_fit, deg=1)
+        elif scoff == "pitch":
+            coeffs = np.polyfit(alpha_fit, coeff_fit, deg=1)
+        else:
+            raise ValueError("Invalid 'scoff' argument. Must be 'drag', 'lift', or 'pitch'.")
+
+        curve = np.polyval(coeffs, alpha)
+        spread = np.abs(coeff_up_real - curve)
+        mask_good = spread < threshold  
+        coeff_up_real[~mask_good] = np.nan
+        return alpha, coeff_up_real
+
+    else:
+        mask_valid_up = ~np.isnan(coeff_up_filtered)
+        alpha_fit_up = alpha[mask_valid_up]
+        coeff_fit_up = coeff_up_filtered[mask_valid_up]
+        mask_valid_down = ~np.isnan(coeff_down_filtered)
+        alpha_fit_down = alpha[mask_valid_down]
+        coeff_fit_down = coeff_down_filtered[mask_valid_down]
+        if scoff == "drag":
+            coeffs_up = np.polyfit(alpha_fit_up, coeff_fit_up, deg=2)
+            coeffs_down = np.polyfit(alpha_fit_down, coeff_fit_down, deg=2)
+        elif scoff == "lift":
+            coeffs_up = np.polyfit(alpha_fit_up, coeff_fit_up, deg=1)
+            coeffs_down = np.polyfit(alpha_fit_down, coeff_fit_down, deg=1)
+        elif scoff == "pitch":
+            coeffs_up = np.polyfit(alpha_fit_up, coeff_fit_up, deg=1)
+            coeffs_down = np.polyfit(alpha_fit_down, coeff_fit_down, deg=1)
+        else:
+            raise ValueError("Invalid 'scoff' argument. Must be 'drag', 'lift', or 'pitch'.")
+    
+        curve_up = np.polyval(coeffs_up, alpha)
+        curve_down = np.polyval(coeffs_down, alpha)  
+    
+        spread_up = np.abs(coeff_up_real - curve_up)
+        mask_good_up = spread_up < threshold
+        coeff_up_real[~mask_good_up] = np.nan
+
+        spread_down = np.abs(coeff_down_real - curve_down)
+        mask_good_down = spread_down < threshold
+        coeff_down_real[~mask_good_down] = np.nan
+
+        return alpha, coeff_up_real, coeff_down_real
 
 
 

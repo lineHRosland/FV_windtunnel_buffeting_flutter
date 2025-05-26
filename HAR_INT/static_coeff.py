@@ -17,6 +17,7 @@ import time
 import pandas as pd
 import matplotlib as mpl
 from matplotlib import rc
+import copy
 
 # # Computer Modern Roman without latex
 # mpl.rcParams['text.usetex'] == True  
@@ -63,15 +64,18 @@ def plot_static_coeff_summary(static_coeff, section_name, wind_speed, mode="deck
     elif "MDS" in section_name:
         section_name = section_name.replace("MDS", "MUS")
 
+    # fig_d.savefig("AD_5D_C.png", dpi=300, bbox_inches='tight')
+    # fig_s.savefig("AD_5D_K.png", dpi=300, bbox_inches='tight')
+
     static_coeff.plot_drag(mode=mode,upwind_in_rig=upwind_in_rig)
     #plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\drag" , section_name + f"_{wind_speed}" + ".png"))
+    plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"_{wind_speed}" + ".png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
     static_coeff.plot_lift(mode=mode, upwind_in_rig=upwind_in_rig)
     #plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\lift", section_name + f"_{wind_speed}" + ".png"))
+    plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", section_name + f"_{wind_speed}" + ".png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
     static_coeff.plot_pitch(mode=mode, upwind_in_rig=upwind_in_rig)
     #plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\pitch", section_name + f"_{wind_speed}" + ".png"))
+    plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", section_name + f"_{wind_speed}" + ".png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
     # fig, axs = plt.subplots(1, 3, figsize=(15, 5), sharex=True)
@@ -110,17 +114,17 @@ def plot_static_coeff_summary(static_coeff, section_name, wind_speed, mode="deck
     # plt.close()
 
     #mean
-    # static_coeff.plot_drag_mean(mode=mode, upwind_in_rig=upwind_in_rig)
-    # plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\drag", section_name + f"_{wind_speed}_mean" + ".png"))
-    # static_coeff.plot_lift_mean(mode=mode, upwind_in_rig=upwind_in_rig)
-    # plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\lift", section_name + f"_{wind_speed}_mean" + ".png"))
-    # static_coeff.plot_pitch_mean(mode=mode, upwind_in_rig=upwind_in_rig)
-    # plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
-    # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\pitch", section_name + f"_{wind_speed}_mean" + ".png"))
-    # plt.tight_layout()
-    # plt.show()
+    static_coeff.plot_drag_mean(mode=mode, upwind_in_rig=upwind_in_rig)
+    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
+    plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", section_name + f"_{wind_speed}_mean" + ".png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+    static_coeff.plot_lift_mean(mode=mode, upwind_in_rig=upwind_in_rig)
+    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
+    plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", section_name + f"_{wind_speed}_mean" + ".png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+    static_coeff.plot_pitch_mean(mode=mode, upwind_in_rig=upwind_in_rig)
+    plt.gcf().suptitle(f"{section_name} - {wind_speed} m/s")
+    plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", section_name + f"_{wind_speed}_mean" + ".png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+    plt.tight_layout()
+    plt.show()
 
 
 
@@ -177,8 +181,30 @@ static_coeff_single_6 =w3t.StaticCoeff.fromWTT(exp0_single, exp1_single_6, secti
 
 static_coeff_single_9 = w3t.StaticCoeff.fromWTT(exp0_single, exp1_single_9, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
-#plot_static_coeff_summary(static_coeff_single_6, section_name, 6, mode="single", upwind_in_rig=True)
+plot_static_coeff_summary(static_coeff_single_6, section_name, 6, mode="single", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_single_9, section_name, 9, mode="single", upwind_in_rig=True)
+
+# filter regression
+section_name = "Single_Static_reg"
+static_coeff_single_filtered = copy.deepcopy(static_coeff_single_9)
+
+alpha_single_reg, coeff_single_drag_reg = w3t._scoff.poly_estimat(static_coeff_single_9, scoff="drag", single=True)
+static_coeff_single_filtered.drag_coeff[:, 0] = coeff_single_drag_reg / 2
+static_coeff_single_filtered.drag_coeff[:, 1] = coeff_single_drag_reg / 2
+
+
+alpha_single_reg, coeff_single_lift_reg = w3t._scoff.poly_estimat(static_coeff_single_9, scoff="lift", single=True)
+static_coeff_single_filtered.lift_coeff[:, 0] = coeff_single_lift_reg / 2
+static_coeff_single_filtered.lift_coeff[:, 1] = coeff_single_lift_reg / 2
+
+
+alpha_single_reg, coeff_single_pitch_reg = w3t._scoff.poly_estimat(static_coeff_single_9, scoff="pitch", single=True)
+static_coeff_single_filtered.pitch_coeff[:, 0] = coeff_single_pitch_reg / 2
+static_coeff_single_filtered.pitch_coeff[:, 1] = coeff_single_pitch_reg / 2
+
+plot_static_coeff_summary(static_coeff_single_filtered, section_name, 9, mode="single", upwind_in_rig=True)
+
+
 
 
 
