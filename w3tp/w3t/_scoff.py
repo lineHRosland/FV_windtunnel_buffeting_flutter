@@ -1505,8 +1505,8 @@ def plot_compare_wind_speeds_mean_seperate(static_coeff_low,
     if scoff == "drag":
         axis = r"$C_D(\alpha)$"
         coeff = "drag_coeff"
-        min = 0.5
-        max = 0.63
+        min = 0.4
+        max = 0.55
     elif scoff == "lift":
         axis = r"$C_L(\alpha)$"
         coeff = "lift_coeff"
@@ -1528,7 +1528,7 @@ def plot_compare_wind_speeds_mean_seperate(static_coeff_low,
     upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
     #downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
     
-    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
     #downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
 
 
@@ -1539,27 +1539,27 @@ def plot_compare_wind_speeds_mean_seperate(static_coeff_low,
     #          label=f"LWS - Downstream deck", color = color2LWS, linestyle='-')
 
 
-    # Plot high wind speed
-    ax.plot(unique_alphas_high, upwind_mean_high,
-                label=f"9 m/s", color = "#d62728", alpha = 0.5)
-    # ax.plot(unique_alphas_high, downwind_mean_high,
-    #             label=f"HWS - Downstream deck", color = color2HWS, linestyle='-')
-
     if static_coeff_med is not None:
         alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
         unique_alphas_med = np.unique(alpha_med)
         upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
-        #downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
-        ax.plot(unique_alphas_med, upwind_mean_med,
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        # ax.plot(unique_alphas_med, upwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.5)
+        ax.plot(unique_alphas_high, downwind_mean_med,
                     label=f"8 m/s", color = "#ff7f0e", alpha = 0.5)
-        # ax.plot(unique_alphas_high, downwind_mean_high,
-        #             label=f"HWS - Downstream deck", color = color2HWS, linestyle='-')
+
+    # Plot high wind speed
+    ax.plot(unique_alphas_high, upwind_mean_high,
+                label=f"10 m/s", color ="#d62728", alpha = 0.5)
+    # ax.plot(unique_alphas_high, downwind_mean_high,
+    #             label=f"HWS - Downstream deck", color = color2HWS, linestyle='-')
 
     #ax.grid()
     ax.set_xlabel(r"$\alpha$ [deg]", fontsize=40)
     ax.set_ylabel(axis, fontsize=40)
     ax.tick_params(labelsize=40)
-    ax.legend(fontsize=35) #loc='upper left',
+    ax.legend(fontsize=30) #loc='upper left',
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
     ax.set_xlim(-4,4)
@@ -1962,16 +1962,75 @@ def filter_by_reference(static_coeff_1, static_coeff_2, threshold=0.1, threshold
         setattr(static_coeff_2_f, f"{name}_coeff", data)
  
     return static_coeff_1_f, static_coeff_2_f
- 
+
+def poly_estimat_spess(static_coeff, scoff="", single=True):
+    alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)  # eller np.degrees()
+    unique_alphas = np.unique(alpha)
+    unique_alphas_0 = unique_alphas[unique_alphas <= 0]
+    unique_alphas_4 = unique_alphas[unique_alphas <= 4]
+
+    grouped_drag = []
+    mean_drag_per_alpha = []
+
+    #Faktiske verdier for drag
+    for val in unique_alphas:
+        idx = np.where(alpha == val)[0]
+        if len(idx) == 0:
+            continue
+        grouped_drag.append(static_coeff.drag_coeff[idx, 2] + static_coeff.drag_coeff[idx, 3])
+
+    # For å lage kurve
+    for val in unique_alphas_0:
+        idx = np.where(alpha == val)[0]
+        if len(idx) == 0:
+            continue
+        # Ta gjennomsnitt (eller median) for hver gruppe
+        mean_drag_per_alpha.append(np.nanmean(static_coeff.drag_coeff[idx, 2] + static_coeff.drag_coeff[idx, 3]) )
+
+    unique_alphas_0 = unique_alphas_0.tolist()
+    unique_alphas_0.append(0.0)
+    mean_drag_per_alpha.append(0.46)
+    unique_alphas_0.append(2.0)
+    mean_drag_per_alpha.append(0.44)
+    unique_alphas_0.append(4.0)
+    mean_drag_per_alpha.append(0.46)
+    # Nå kan du gjøre polyfit
+    coeffs = np.polyfit(unique_alphas_0, mean_drag_per_alpha, deg=2)
+    curve = np.polyval(coeffs, unique_alphas_4)
+
+
+    # Beregn absolutt avvik
+    for idx, val in enumerate(unique_alphas_4):
+        spread = np.abs(grouped_drag[idx] - curve[idx])
+        mask = spread < 0.03
+        grouped_drag[idx][~mask] = np.nan
+
+    # # Oppdater drag_coeff med filtrerte verdier
+    # mask = alpha < 4.0
+    # static_coeff.pitch_motion = static_coeff.pitch_motion[mask]
+    # static_coeff.drag_coeff = static_coeff.drag_coeff[mask, :]
+    # static_coeff.lift_coeff = static_coeff.lift_coeff[mask, :]
+    # static_coeff.pitch_coeff = static_coeff.pitch_coeff[mask, :]
+
+    for idx, val in enumerate(unique_alphas_4):
+        alpha_mask = (np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1) == val)
+        drag_sum = grouped_drag[idx]
+        
+        # Fordel summen likt på [2] og [3]
+        static_coeff.drag_coeff[alpha_mask, 2] = drag_sum / 2
+        static_coeff.drag_coeff[alpha_mask, 3] = drag_sum / 2
+    
+    return static_coeff
+
 
 def poly_estimat(static_coeff, scoff="", single=True):
     alpha = np.round(static_coeff.pitch_motion * 360 / (2 * np.pi), 1)  # eller np.degrees()
+
     mask = alpha < 4.0
     static_coeff.pitch_motion = static_coeff.pitch_motion[mask]
     static_coeff.drag_coeff = static_coeff.drag_coeff[mask, :]
     static_coeff.lift_coeff = static_coeff.lift_coeff[mask, :]
     static_coeff.pitch_coeff = static_coeff.pitch_coeff[mask, :]
-
 
     if scoff == "drag":
         threshold = 0.025
@@ -2042,15 +2101,23 @@ def poly_estimat(static_coeff, scoff="", single=True):
             mask_valid_down = (alpha < -1) 
             alpha_fit_down = alpha[mask_valid_down]
             coeff_fit_down = coeff_down_filtered[mask_valid_down]
+            w_data = np.ones(len(alpha_fit_down))              # vanlige punkter får vekt 1
+            print("alpha_fit_down old:", np.round(alpha_fit_down, 2))
+
             alpha_manual_down = np.array([0.0,2.0, 4.0])
             coeff_manual_down = np.array([0.46,0.44, 0.46])
-
+            w_manual = np.ones(len(alpha_manual_down)) * 5    # manuelle punkter får vekt 10
             alpha_fit_down = np.concatenate([alpha_fit_down, alpha_manual_down])
             coeff_fit_down = np.concatenate([coeff_fit_down, coeff_manual_down])
-            w_data = np.ones(len(alpha_fit_down))              # vanlige punkter får vekt 1
-            w_manual = np.ones(len(alpha_manual_down)) * 10     # manuelle punkter får vekt 10
-            weights = np.concatenate([w_data, w_manual])
+            if len(np.unique(alpha_fit_down)) < 3:
+                print("⚠️ For få unike punkter, bruker grad 1 i stedet")
+                weights = np.concatenate([w_data, w_manual])
             coeffs_up = np.polyfit(alpha_fit_up, coeff_fit_up, deg=2)
+            print("alpha_fit_down:", np.round(alpha_fit_down, 2))
+            print("coeff_fit_down:", np.round(coeff_fit_down, 3))
+            print("weights:", weights)
+            print("Antall punkt:", len(alpha_fit_down))
+            print("Unike alpha:", np.unique(alpha_fit_down))
             coeffs_down = np.polyfit(alpha_fit_down, coeff_fit_down, deg=2, w=weights)
         elif scoff == "lift":
             coeffs_up = np.polyfit(alpha_fit_up, coeff_fit_up, deg=1)

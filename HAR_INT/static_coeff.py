@@ -184,6 +184,7 @@ static_coeff_single_9 = w3t.StaticCoeff.fromWTT(exp0_single, exp1_single_9, sect
 plot_static_coeff_summary(static_coeff_single_6, section_name, 6, mode="single", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_single_9, section_name, 9, mode="single", upwind_in_rig=True)
 
+
 # filter regression
 print("reg")
 section_name = "Single_Static_reg"
@@ -1542,6 +1543,8 @@ plot_static_coeff_summary(static_coeff_MDS_3D_6, section_name, 6, mode="decks", 
 plot_static_coeff_summary(static_coeff_MDS_3D_8, section_name, 8, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_3D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
+
+
 #%%
 # filter regression
 print("regRESSION")
@@ -1549,58 +1552,68 @@ section_name = "3D_MUS_Static_reg" # obs egt motsatt
 static_coeff_MDS_3D_6_reg = copy.deepcopy(static_coeff_MDS_3D_6)
 
 alpha = np.round(static_coeff_MDS_3D_6_reg.pitch_motion * 360 / (2 * np.pi), 1)  # eller np.degrees()
-mask = alpha < 4.0
+mask = alpha <= 4.0
 static_coeff_MDS_3D_6_reg.pitch_motion = static_coeff_MDS_3D_6_reg.pitch_motion[mask]
 static_coeff_MDS_3D_6_reg.drag_coeff = static_coeff_MDS_3D_6_reg.drag_coeff[mask, :]
 static_coeff_MDS_3D_6_reg.lift_coeff = static_coeff_MDS_3D_6_reg.lift_coeff[mask, :]
 static_coeff_MDS_3D_6_reg.pitch_coeff = static_coeff_MDS_3D_6_reg.pitch_coeff[mask, :]
 
-alpha_MDS_3D_6_reg, _,coeff_MDS_3D_6_drag_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_6, scoff="drag", single=False)
-static_coeff_MDS_3D_6_reg.drag_coeff[:, 0] = coeff_MDS_3D_6_drag_reg_down / 2
-static_coeff_MDS_3D_6_reg.drag_coeff[:, 1] = coeff_MDS_3D_6_drag_reg_down / 2
-alpha_MDS_3D_6_reg, _,coeff_MDS_3D_6_lift_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_6, scoff="lift", single=False)
-static_coeff_MDS_3D_6_reg.lift_coeff[:, 0] = coeff_MDS_3D_6_lift_reg_down / 2
-static_coeff_MDS_3D_6_reg.lift_coeff[:, 1] = coeff_MDS_3D_6_lift_reg_down / 2
-alpha_MDS_3D_6_reg,_, coeff_MDS_3D_6_pitch_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_6, scoff="pitch", single=False)
-static_coeff_MDS_3D_6_reg.pitch_coeff[:, 0] = coeff_MDS_3D_6_pitch_reg_down / 2
-static_coeff_MDS_3D_6_reg.pitch_coeff[:, 1] = coeff_MDS_3D_6_pitch_reg_down / 2
-plot_static_coeff_summary(static_coeff_MDS_3D_6_reg, section_name, 6, mode="decks", upwind_in_rig=False)
+
+
+# alpha_MDS_3D_6_reg, _,coeff_MDS_3D_6_drag_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_6, scoff="drag", single=False)
+# static_coeff_MDS_3D_6_reg.drag_coeff[:, 0] = coeff_MDS_3D_6_drag_reg_down / 2
+# static_coeff_MDS_3D_6_reg.drag_coeff[:, 1] = coeff_MDS_3D_6_drag_reg_down / 2
+# alpha_MDS_3D_6_reg, _,coeff_MDS_3D_6_lift_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_6, scoff="lift", single=False)
+# static_coeff_MDS_3D_6_reg.lift_coeff[:, 0] = coeff_MDS_3D_6_lift_reg_down / 2
+# static_coeff_MDS_3D_6_reg.lift_coeff[:, 1] = coeff_MDS_3D_6_lift_reg_down / 2
+# alpha_MDS_3D_6_reg,_, coeff_MDS_3D_6_pitch_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_6, scoff="pitch", single=False)
+# static_coeff_MDS_3D_6_reg.pitch_coeff[:, 0] = coeff_MDS_3D_6_pitch_reg_down / 2
+# static_coeff_MDS_3D_6_reg.pitch_coeff[:, 1] = coeff_MDS_3D_6_pitch_reg_down / 2
+# plot_static_coeff_summary(static_coeff_MDS_3D_6_reg, section_name, 6, mode="decks", upwind_in_rig=False)
 
 static_coeff_MDS_3D_8_reg = copy.deepcopy(static_coeff_MDS_3D_8)
+alpha = np.round(static_coeff_MDS_3D_8_reg.pitch_motion * 360 / (2 * np.pi), 1)  # eller np.degrees()
+mask = alpha <= 4.0
 static_coeff_MDS_3D_8_reg.pitch_motion = static_coeff_MDS_3D_8_reg.pitch_motion[mask]
 static_coeff_MDS_3D_8_reg.drag_coeff = static_coeff_MDS_3D_8_reg.drag_coeff[mask, :]
 static_coeff_MDS_3D_8_reg.lift_coeff = static_coeff_MDS_3D_8_reg.lift_coeff[mask, :]
 static_coeff_MDS_3D_8_reg.pitch_coeff = static_coeff_MDS_3D_8_reg.pitch_coeff[mask, :]
 
 
-alpha_MDS_3D_8_reg, _,coeff_MDS_3D_8_drag_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_8, scoff="drag", single=False)
-static_coeff_MDS_3D_8_reg.drag_coeff[:, 0] = coeff_MDS_3D_8_drag_reg_down / 2
-static_coeff_MDS_3D_8_reg.drag_coeff[:, 1] = coeff_MDS_3D_8_drag_reg_down / 2
-alpha_MDS_3D_8_reg, _,coeff_MDS_3D_8_lift_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_8, scoff="lift", single=False)
-static_coeff_MDS_3D_8_reg.lift_coeff[:, 0] = coeff_MDS_3D_8_lift_reg_down / 2
-static_coeff_MDS_3D_8_reg.lift_coeff[:, 1] = coeff_MDS_3D_8_lift_reg_down / 2
-alpha_MDS_3D_8_reg,_, coeff_MDS_3D_8_pitch_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_8, scoff="pitch", single=False)
-static_coeff_MDS_3D_8_reg.pitch_coeff[:, 0] = coeff_MDS_3D_8_pitch_reg_down / 2
-static_coeff_MDS_3D_8_reg.pitch_coeff[:, 1] = coeff_MDS_3D_8_pitch_reg_down / 2
-plot_static_coeff_summary(static_coeff_MDS_3D_8_reg, section_name, 8, mode="decks", upwind_in_rig=False)
-
-static_coeff_MDS_3D_10_reg = copy.deepcopy(static_coeff_MDS_3D_10)
-static_coeff_MDS_3D_10_reg.pitch_motion = static_coeff_MDS_3D_10_reg.pitch_motion[mask]
-static_coeff_MDS_3D_10_reg.drag_coeff = static_coeff_MDS_3D_10_reg.drag_coeff[mask, :]
-static_coeff_MDS_3D_10_reg.lift_coeff = static_coeff_MDS_3D_10_reg.lift_coeff[mask, :]
-static_coeff_MDS_3D_10_reg.pitch_coeff = static_coeff_MDS_3D_10_reg.pitch_coeff[mask, :]
 
 
-alpha_MDS_3D_10_reg, _, coeff_MDS_3D_10_drag_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_10, scoff="drag", single=False)
-static_coeff_MDS_3D_10_reg.drag_coeff[:, 0] = coeff_MDS_3D_10_drag_reg_down / 2
-static_coeff_MDS_3D_10_reg.drag_coeff[:, 1] = coeff_MDS_3D_10_drag_reg_down / 2
-alpha_MDS_3D_10_reg,_, coeff_MDS_3D_10_lift_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_10, scoff="lift", single=False)
-static_coeff_MDS_3D_10_reg.lift_coeff[:, 0] = coeff_MDS_3D_10_lift_reg_down / 2
-static_coeff_MDS_3D_10_reg.lift_coeff[:, 1] = coeff_MDS_3D_10_lift_reg_down / 2
-alpha_MDS_3D_10_reg, _,coeff_MDS_3D_10_pitch_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_10, scoff="pitch", single=False)
-static_coeff_MDS_3D_10_reg.pitch_coeff[:, 0] = coeff_MDS_3D_10_pitch_reg_down / 2
-static_coeff_MDS_3D_10_reg.pitch_coeff[:, 1] = coeff_MDS_3D_10_pitch_reg_down / 2
-plot_static_coeff_summary(static_coeff_MDS_3D_10_reg, section_name, 10, mode="decks", upwind_in_rig=False)
+# alpha_MDS_3D_8_reg, _,coeff_MDS_3D_8_drag_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_8, scoff="drag", single=False)
+# static_coeff_MDS_3D_8_reg.drag_coeff[:, 0] = coeff_MDS_3D_8_drag_reg_down / 2
+# static_coeff_MDS_3D_8_reg.drag_coeff[:, 1] = coeff_MDS_3D_8_drag_reg_down / 2
+# alpha_MDS_3D_8_reg, _,coeff_MDS_3D_8_lift_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_8, scoff="lift", single=False)
+# static_coeff_MDS_3D_8_reg.lift_coeff[:, 0] = coeff_MDS_3D_8_lift_reg_down / 2
+# static_coeff_MDS_3D_8_reg.lift_coeff[:, 1] = coeff_MDS_3D_8_lift_reg_down / 2
+# alpha_MDS_3D_8_reg,_, coeff_MDS_3D_8_pitch_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_8, scoff="pitch", single=False)
+# static_coeff_MDS_3D_8_reg.pitch_coeff[:, 0] = coeff_MDS_3D_8_pitch_reg_down / 2
+# static_coeff_MDS_3D_8_reg.pitch_coeff[:, 1] = coeff_MDS_3D_8_pitch_reg_down / 2
+# plot_static_coeff_summary(static_coeff_MDS_3D_8_reg, section_name, 8, mode="decks", upwind_in_rig=False)
+
+static_coeff_MDS_3D_8_reg_new=w3t._scoff.poly_estimat_spess(static_coeff_MDS_3D_8_reg, scoff="drag", single=False)
+plot_static_coeff_summary(static_coeff_MDS_3D_8_reg_new, section_name, 8, mode="decks", upwind_in_rig=False)
+
+
+# static_coeff_MDS_3D_10_reg = copy.deepcopy(static_coeff_MDS_3D_10)
+# static_coeff_MDS_3D_10_reg.pitch_motion = static_coeff_MDS_3D_10_reg.pitch_motion[mask]
+# static_coeff_MDS_3D_10_reg.drag_coeff = static_coeff_MDS_3D_10_reg.drag_coeff[mask, :]
+# static_coeff_MDS_3D_10_reg.lift_coeff = static_coeff_MDS_3D_10_reg.lift_coeff[mask, :]
+# static_coeff_MDS_3D_10_reg.pitch_coeff = static_coeff_MDS_3D_10_reg.pitch_coeff[mask, :]
+
+
+# alpha_MDS_3D_10_reg, _, coeff_MDS_3D_10_drag_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_10, scoff="drag", single=False)
+# static_coeff_MDS_3D_10_reg.drag_coeff[:, 0] = coeff_MDS_3D_10_drag_reg_down / 2
+# static_coeff_MDS_3D_10_reg.drag_coeff[:, 1] = coeff_MDS_3D_10_drag_reg_down / 2
+# alpha_MDS_3D_10_reg,_, coeff_MDS_3D_10_lift_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_10, scoff="lift", single=False)
+# static_coeff_MDS_3D_10_reg.lift_coeff[:, 0] = coeff_MDS_3D_10_lift_reg_down / 2
+# static_coeff_MDS_3D_10_reg.lift_coeff[:, 1] = coeff_MDS_3D_10_lift_reg_down / 2
+# alpha_MDS_3D_10_reg, _,coeff_MDS_3D_10_pitch_reg_down = w3t._scoff.poly_estimat(static_coeff_MDS_3D_10, scoff="pitch", single=False)
+# static_coeff_MDS_3D_10_reg.pitch_coeff[:, 0] = coeff_MDS_3D_10_pitch_reg_down / 2
+# static_coeff_MDS_3D_10_reg.pitch_coeff[:, 1] = coeff_MDS_3D_10_pitch_reg_down / 2
+# plot_static_coeff_summary(static_coeff_MDS_3D_10_reg, section_name, 10, mode="decks", upwind_in_rig=False)
 
 
 #%%
@@ -1663,29 +1676,81 @@ plot_static_coeff_summary(static_coeff_MDS_3D_8_filtered, section_name, 8, mode=
 #%% 
 # Summary
 static_coeff_MDS_3D_6_updated = copy.deepcopy(static_coeff_MDS_3D_6) #obs egt mus
-static_coeff_MDS_3D_6_updated.drag_coeff[:, 0] = static_coeff_MDS_3D_6.drag_coeff[:, 0]
-static_coeff_MDS_3D_6_updated.drag_coeff[:, 1] = static_coeff_MDS_3D_6.drag_coeff[:, 1]
-static_coeff_MDS_3D_6_updated.lift_coeff[:, 0] = static_coeff_MDS_3D_6.lift_coeff[:, 0]
-static_coeff_MDS_3D_6_updated.lift_coeff[:, 1] = static_coeff_MDS_3D_6.lift_coeff[:, 1]
-static_coeff_MDS_3D_6_updated.pitch_coeff[:, 0] = static_coeff_MDS_3D_6.pitch_coeff[:, 0]
-static_coeff_MDS_3D_6_updated.pitch_coeff[:, 1] = static_coeff_MDS_3D_6.pitch_coeff[:, 1]
-
 static_coeff_MDS_3D_8_updated = copy.deepcopy(static_coeff_MDS_3D_8)
-static_coeff_MDS_3D_8_updated.drag_coeff[:, 0] = static_coeff_single_6.drag_coeff[:, 0]  # bad #reg funka ikke ??
-static_coeff_MDS_3D_8_updated.drag_coeff[:, 1] = static_coeff_single_6.drag_coeff[:, 1]  #bad
-static_coeff_MDS_3D_8_updated.lift_coeff[:, 0] = static_coeff_MDS_3D_8.lift_coeff[:, 0]
-static_coeff_MDS_3D_8_updated.lift_coeff[:, 1] = static_coeff_MDS_3D_8.lift_coeff[:, 1]
-static_coeff_MDS_3D_8_updated.pitch_coeff[:, 0] = static_coeff_MDS_3D_8.pitch_coeff[:, 0]
-static_coeff_MDS_3D_8_updated.pitch_coeff[:, 1] = static_coeff_MDS_3D_8.pitch_coeff[:, 1]
-
-
 static_coeff_MDS_3D_10_updated = copy.deepcopy(static_coeff_MDS_3D_10)
-static_coeff_MDS_3D_10_updated.drag_coeff[:, 0] = static_coeff_MDS_3D_10.drag_coeff[:, 0] 
-static_coeff_MDS_3D_10_updated.drag_coeff[:, 1] = static_coeff_MDS_3D_10.drag_coeff[:, 1] 
-static_coeff_MDS_3D_10_updated.lift_coeff[:, 0] = static_coeff_MDS_3D_10.lift_coeff[:, 0]
-static_coeff_MDS_3D_10_updated.lift_coeff[:, 1] = static_coeff_MDS_3D_10.lift_coeff[:, 1]
-static_coeff_MDS_3D_10_updated.pitch_coeff[:, 0] = static_coeff_MDS_3D_10.pitch_coeff[:, 0]
-static_coeff_MDS_3D_10_updated.pitch_coeff[:, 1] = static_coeff_MDS_3D_10.pitch_coeff[:, 1]
+
+alpha_6_updated = np.round(static_coeff_MDS_3D_6_updated.pitch_motion * 360 / (2 * np.pi), 1)
+mask_6_updated = alpha_6_updated <= 4.00
+alpha_8_updated = np.round(static_coeff_MDS_3D_8_updated.pitch_motion * 360 / (2 * np.pi), 1)
+mask_8_updated = alpha_8_updated <= 4.00
+alpha_10_updated = np.round(static_coeff_MDS_3D_10_updated.pitch_motion * 360 / (2 * np.pi), 1)
+mask_10_updated = alpha_10_updated <= 4.00
+
+static_coeff_MDS_3D_6_updated.pitch_motion = static_coeff_MDS_3D_6_updated.pitch_motion[mask_6_updated]
+static_coeff_MDS_3D_6_updated.drag_coeff = static_coeff_MDS_3D_6_updated.drag_coeff[mask_6_updated, :]
+static_coeff_MDS_3D_6_updated.lift_coeff = static_coeff_MDS_3D_6_updated.lift_coeff[mask_6_updated, :]
+static_coeff_MDS_3D_6_updated.pitch_coeff = static_coeff_MDS_3D_6_updated.pitch_coeff[mask_6_updated, :]
+
+static_coeff_MDS_3D_8_updated.pitch_motion = static_coeff_MDS_3D_8_updated.pitch_motion[mask_8_updated]
+static_coeff_MDS_3D_8_updated.drag_coeff = static_coeff_MDS_3D_8_updated.drag_coeff[mask_8_updated, :]
+static_coeff_MDS_3D_8_updated.lift_coeff = static_coeff_MDS_3D_8_updated.lift_coeff[mask_8_updated, :]
+static_coeff_MDS_3D_8_updated.pitch_coeff = static_coeff_MDS_3D_8_updated.pitch_coeff[mask_8_updated, :]
+
+static_coeff_MDS_3D_10_updated.pitch_motion = static_coeff_MDS_3D_10_updated.pitch_motion[mask_10_updated]
+static_coeff_MDS_3D_10_updated.drag_coeff = static_coeff_MDS_3D_10_updated.drag_coeff[mask_10_updated, :]
+static_coeff_MDS_3D_10_updated.lift_coeff = static_coeff_MDS_3D_10_updated.lift_coeff[mask_10_updated, :]
+static_coeff_MDS_3D_10_updated.pitch_coeff = static_coeff_MDS_3D_10_updated.pitch_coeff[mask_10_updated, :]
+
+
+alpha_6_updated = np.round(static_coeff_MDS_3D_6.pitch_motion * 360 / (2 * np.pi), 1)
+mask_6_updated2 = alpha_6_updated <= 4.00
+alpha_8_updated = np.round(static_coeff_MDS_3D_8.pitch_motion * 360 / (2 * np.pi), 1)
+mask_8_updated2 = alpha_8_updated <= 4.00
+alpha_10_updated = np.round(static_coeff_MDS_3D_10.pitch_motion * 360 / (2 * np.pi), 1)
+mask_10_updated2 = alpha_10_updated <= 4.00
+
+static_coeff_MDS_3D_6.pitch_motion = static_coeff_MDS_3D_6.pitch_motion[mask_6_updated2]
+static_coeff_MDS_3D_6.drag_coeff = static_coeff_MDS_3D_6.drag_coeff[mask_6_updated2, :]
+static_coeff_MDS_3D_6.lift_coeff = static_coeff_MDS_3D_6.lift_coeff[mask_6_updated2, :]
+static_coeff_MDS_3D_6.pitch_coeff = static_coeff_MDS_3D_6.pitch_coeff[mask_6_updated2, :]
+
+static_coeff_MDS_3D_8.pitch_motion = static_coeff_MDS_3D_8.pitch_motion[mask_8_updated2]
+static_coeff_MDS_3D_8.drag_coeff = static_coeff_MDS_3D_8.drag_coeff[mask_8_updated2, :]
+static_coeff_MDS_3D_8.lift_coeff = static_coeff_MDS_3D_8.lift_coeff[mask_8_updated2, :]
+static_coeff_MDS_3D_8.pitch_coeff = static_coeff_MDS_3D_8.pitch_coeff[mask_8_updated2, :]
+alpha_8_new = np.round(static_coeff_MDS_3D_8_reg_new.pitch_motion * 360 / (2 * np.pi), 1)
+mask_8_new = alpha_8_new <= 4.0
+static_coeff_MDS_3D_8_reg_new.drag_coeff = static_coeff_MDS_3D_8_reg_new.drag_coeff[mask_8_new, :]
+
+static_coeff_MDS_3D_10.pitch_motion = static_coeff_MDS_3D_10.pitch_motion[mask_10_updated2]
+static_coeff_MDS_3D_10.drag_coeff = static_coeff_MDS_3D_10.drag_coeff[mask_10_updated2, :]
+static_coeff_MDS_3D_10.lift_coeff = static_coeff_MDS_3D_10.lift_coeff[mask_10_updated2, :]
+static_coeff_MDS_3D_10.pitch_coeff = static_coeff_MDS_3D_10.pitch_coeff[mask_10_updated2, :]
+
+
+
+
+static_coeff_MDS_3D_6_updated.drag_coeff[:, 2] = static_coeff_MDS_3D_6.drag_coeff[:, 2]
+static_coeff_MDS_3D_6_updated.drag_coeff[:, 3] = static_coeff_MDS_3D_6.drag_coeff[:, 3]
+static_coeff_MDS_3D_6_updated.lift_coeff[:, 2] = static_coeff_MDS_3D_6.lift_coeff[:, 2]
+static_coeff_MDS_3D_6_updated.lift_coeff[:, 3] = static_coeff_MDS_3D_6.lift_coeff[:, 3]
+static_coeff_MDS_3D_6_updated.pitch_coeff[:,2] = static_coeff_MDS_3D_6.pitch_coeff[:, 2]
+static_coeff_MDS_3D_6_updated.pitch_coeff[:, 3] = static_coeff_MDS_3D_6.pitch_coeff[:, 3]
+
+static_coeff_MDS_3D_8_updated.drag_coeff[:, 2] = static_coeff_MDS_3D_8_reg_new.drag_coeff[:, 2]  
+static_coeff_MDS_3D_8_updated.drag_coeff[:, 3] = static_coeff_MDS_3D_8_reg_new.drag_coeff[:, 3]  
+static_coeff_MDS_3D_8_updated.lift_coeff[:, 2] = static_coeff_MDS_3D_8.lift_coeff[:, 2]
+static_coeff_MDS_3D_8_updated.lift_coeff[:, 3] = static_coeff_MDS_3D_8.lift_coeff[:, 3]
+static_coeff_MDS_3D_8_updated.pitch_coeff[:, 2] = static_coeff_MDS_3D_8.pitch_coeff[:,2]
+static_coeff_MDS_3D_8_updated.pitch_coeff[:, 3] = static_coeff_MDS_3D_8.pitch_coeff[:, 3]
+
+
+static_coeff_MDS_3D_10_updated.drag_coeff[:, 2] = static_coeff_MDS_3D_10.drag_coeff[:, 2] 
+static_coeff_MDS_3D_10_updated.drag_coeff[:, 3] = static_coeff_MDS_3D_10.drag_coeff[:, 3] 
+static_coeff_MDS_3D_10_updated.lift_coeff[:, 2] = static_coeff_MDS_3D_10.lift_coeff[:, 2]
+static_coeff_MDS_3D_10_updated.lift_coeff[:, 3] = static_coeff_MDS_3D_10.lift_coeff[:, 3]
+static_coeff_MDS_3D_10_updated.pitch_coeff[:, 2] = static_coeff_MDS_3D_10.pitch_coeff[:,2]
+static_coeff_MDS_3D_10_updated.pitch_coeff[:, 3] = static_coeff_MDS_3D_10.pitch_coeff[:, 3]
 
 section_name = "3D_MUS_Static_updated"
 w3t._scoff.plot_compare_wind_speeds_mean_seperate(static_coeff_MDS_3D_6_updated, static_coeff_MDS_3D_10_updated,static_coeff_med = static_coeff_MDS_3D_8_updated,scoff = "drag", ax=None)
@@ -1754,7 +1819,7 @@ plot_static_coeff_summary(static_coeff_MUS_3D_10, section_name, 10, mode="decks"
 
 #%%
 # filter regression
-print("regRESSION MUS")
+print("regRESSION MDS")
 section_name = "3D_MDS_Static_reg"
 static_coeff_MUS_3D_5_reg = copy.deepcopy(static_coeff_MUS_3D_5)
 
@@ -1861,6 +1926,7 @@ plot_static_coeff_summary(static_coeff_MUS_3D_10_filtered, section_name, 10, mod
 
 #%%
 # Summary
+print("her det skjers")
 static_coeff_MUS_3D_5_updated = copy.deepcopy(static_coeff_MUS_3D_5)
 static_coeff_MUS_3D_5_updated.drag_coeff[:, 0] = static_coeff_MUS_3D_5.drag_coeff[:, 0]
 static_coeff_MUS_3D_5_updated.drag_coeff[:, 1] = static_coeff_MUS_3D_5.drag_coeff[:, 1]
