@@ -256,6 +256,7 @@ plot_static_coeff_summary(static_coeff_single_6_reg, section_name, 6, mode="sing
 
 
 
+section_name = "Single_Static"
 
 
 #%%
@@ -302,13 +303,13 @@ plot_static_coeff_summary(static_coeff_single_9_filtered, section_name, 9, mode=
 
 #%% !!!
 # Summary
-# static_coeff_single_6_updated = copy.deepcopy(static_coeff_single_6)
-# static_coeff_single_6_updated.drag_coeff[:, 0] = static_coeff_single_6.drag_coeff[:, 0]
-# static_coeff_single_6_updated.drag_coeff[:, 1] = static_coeff_single_6.drag_coeff[:, 1]
-# static_coeff_single_6_updated.lift_coeff[:, 0] = static_coeff_single_6.lift_coeff[:, 0]
-# static_coeff_single_6_updated.lift_coeff[:, 1] = static_coeff_single_6.lift_coeff[:, 1]
-# static_coeff_single_6_updated.pitch_coeff[:, 0] = static_coeff_single_6.pitch_coeff[:, 0]
-# static_coeff_single_6_updated.pitch_coeff[:, 1] = static_coeff_single_6.pitch_coeff[:, 1]
+static_coeff_single_6_updated = copy.deepcopy(static_coeff_single_6)
+static_coeff_single_6_updated.drag_coeff[:, 0] = static_coeff_single_6.drag_coeff[:, 0]
+static_coeff_single_6_updated.drag_coeff[:, 1] = static_coeff_single_6.drag_coeff[:, 1]
+static_coeff_single_6_updated.lift_coeff[:, 0] = static_coeff_single_6.lift_coeff[:, 0]
+static_coeff_single_6_updated.lift_coeff[:, 1] = static_coeff_single_6.lift_coeff[:, 1]
+static_coeff_single_6_updated.pitch_coeff[:, 0] = static_coeff_single_6.pitch_coeff[:, 0]
+static_coeff_single_6_updated.pitch_coeff[:, 1] = static_coeff_single_6.pitch_coeff[:, 1]
 
 static_coeff_single_9_updated = copy.deepcopy(static_coeff_single_9)
 static_coeff_single_9_updated.drag_coeff[:, 0] = static_coeff_single_9_filtered.drag_coeff[:, 0]
@@ -317,15 +318,86 @@ static_coeff_single_9_updated.lift_coeff[:, 0] = static_coeff_single_9_reg.lift_
 static_coeff_single_9_updated.lift_coeff[:, 1] = static_coeff_single_9_reg.lift_coeff[:, 1]
 static_coeff_single_9_updated.pitch_coeff[:, 0] = static_coeff_single_9_reg.pitch_coeff[:, 0]
 static_coeff_single_9_updated.pitch_coeff[:, 1] = static_coeff_single_9_reg.pitch_coeff[:, 1]
-#%%
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_D(\alpha)$"
+        coeff = "drag_coeff"
+        min = 0.5#0.4
+        max = 0.62#0.58
+    elif scoff == "lift":
+        axis = r"$C_L(\alpha)$"
+        coeff = "lift_coeff"
+        min = -0.37#-0.35
+        max = 0.42#0.5
+    elif scoff == "pitch":
+        axis = r"$C_M(\alpha)$"
+        coeff = "pitch_coeff"
+        min = -0.05#-0.05
+        max = 0.11#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    ax.plot(unique_alphas_low, upwind_mean_low,
+             label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+    # ax.plot(unique_alphas_low, downwind_mean_low,
+    #          label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        ax.plot(unique_alphas_med, upwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        # ax.plot(unique_alphas_med, downwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    ax.plot(unique_alphas_high, upwind_mean_high,
+                label=f"9 m/s", color ="#d62728", alpha = 0.8)
+    # ax.plot(unique_alphas_high, downwind_mean_high,
+    #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+#%% !?!!!
 # Compare wind speed
-section_name = "Single_Static_updated"
-w3t._scoff.plot_compare_wind_speeds_mean_seperate(static_coeff_single_6_updated, static_coeff_single_9_updated,static_coeff_med = None,scoff = "drag", ax=None)
-plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + "_drag.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
-w3t._scoff.plot_compare_wind_speeds_mean_seperate(static_coeff_single_6_updated, static_coeff_single_9_updated,static_coeff_med = None,scoff = "lift", ax=None)
-plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + "_lift.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
-w3t._scoff.plot_compare_wind_speeds_mean_seperate(static_coeff_single_6_updated, static_coeff_single_9_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
-plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + "_pitch.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+section_name = "Single_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate(static_coeff_single_6_updated, static_coeff_single_9_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_single_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate(static_coeff_single_6_updated, static_coeff_single_9_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_single_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate(static_coeff_single_6_updated, static_coeff_single_9_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_single_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
 
@@ -387,8 +459,8 @@ static_coeff_MDS_1D_8 = w3t.StaticCoeff.fromWTT(exp0_MDS_1D, exp1_MDS_1D_8, sect
 static_coeff_MDS_1D_10 = w3t.StaticCoeff.fromWTT(exp0_MDS_1D, exp1_MDS_1D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
 
 
-#plot_static_coeff_summary(static_coeff_MDS_1D_6, section_name, 6, mode="decks", upwind_in_rig=False)
-#plot_static_coeff_summary(static_coeff_MDS_1D_8, section_name, 8, mode="decks", upwind_in_rig=False)
+plot_static_coeff_summary(static_coeff_MDS_1D_6, section_name, 6, mode="decks", upwind_in_rig=False)
+plot_static_coeff_summary(static_coeff_MDS_1D_8, section_name, 8, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_1D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
 
@@ -454,15 +526,112 @@ plot_static_coeff_summary(static_coeff_MDS_1D_10_filtered, section_name, 10, mod
 #%% !!!
 #Summary
 
+static_coeff_MDS_1D_6_updated = copy.deepcopy(static_coeff_MDS_1D_6)
+static_coeff_MDS_1D_6_updated.drag_coeff[:, 2] = static_coeff_MDS_1D_6.drag_coeff[:, 2]
+static_coeff_MDS_1D_6_updated.drag_coeff[:, 3] = static_coeff_MDS_1D_6.drag_coeff[:, 3]
+static_coeff_MDS_1D_6_updated.lift_coeff[:, 2] = static_coeff_MDS_1D_6.lift_coeff[:, 2]
+static_coeff_MDS_1D_6_updated.lift_coeff[:, 3] = static_coeff_MDS_1D_6.lift_coeff[:, 3]
+static_coeff_MDS_1D_6_updated.pitch_coeff[:,2] = static_coeff_MDS_1D_6.pitch_coeff[:,2]
+static_coeff_MDS_1D_6_updated.pitch_coeff[:, 3] = static_coeff_MDS_1D_6.pitch_coeff[:,3]
+print(static_coeff_MDS_1D_6_updated.drag_coeff[:5,2])
+static_coeff_MDS_1D_8_updated = copy.deepcopy(static_coeff_MDS_1D_8)
+static_coeff_MDS_1D_8_updated.drag_coeff[:, 2] = np.nan #for mye vibrasjoner
+static_coeff_MDS_1D_8_updated.drag_coeff[:, 3] = np.nan #for mye vibrasjoner
+static_coeff_MDS_1D_8_updated.lift_coeff[:, 2] = static_coeff_MDS_1D_8.lift_coeff[:, 2]
+static_coeff_MDS_1D_8_updated.lift_coeff[:, 3] = static_coeff_MDS_1D_8.lift_coeff[:, 3]
+static_coeff_MDS_1D_8_updated.pitch_coeff[:,2] = static_coeff_MDS_1D_8.pitch_coeff[:,2]
+static_coeff_MDS_1D_8_updated.pitch_coeff[:, 3] = static_coeff_MDS_1D_8.pitch_coeff[:,3]
+
 static_coeff_MDS_1D_10_updated = copy.deepcopy(static_coeff_MDS_1D_10)
- 
 static_coeff_MDS_1D_10_updated.drag_coeff[:, 2] = static_coeff_MDS_1D_10.drag_coeff[:, 2] 
 static_coeff_MDS_1D_10_updated.drag_coeff[:, 3] = static_coeff_MDS_1D_10.drag_coeff[:, 3] 
 static_coeff_MDS_1D_10_updated.lift_coeff[:, 2] = static_coeff_MDS_1D_10.lift_coeff[:, 2]
 static_coeff_MDS_1D_10_updated.lift_coeff[:, 3] = static_coeff_MDS_1D_10.lift_coeff[:, 3]
 static_coeff_MDS_1D_10_updated.pitch_coeff[:, 2] = static_coeff_MDS_1D_10.pitch_coeff[:,2]
 static_coeff_MDS_1D_10_updated.pitch_coeff[:, 3] = static_coeff_MDS_1D_10.pitch_coeff[:, 3]
+print(static_coeff_MDS_1D_10_updated.drag_coeff[:5,2])
 
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate1dmds(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_{D,2}(\alpha_2)$"
+        coeff = "drag_coeff"
+        min = 0.34#0.4
+        max = 0.48#0.58
+    elif scoff == "lift":
+        axis = r"$C_{L,2}(\alpha_2)$"
+        coeff = "lift_coeff"
+        min = -0.25#-0.35
+        max = 0.27#0.5
+    elif scoff == "pitch":
+        axis = r"$C_{M,2}(\alpha_2)$"
+        coeff = "pitch_coeff"
+        min = -0.06#-0.05
+        max = 0.05#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    print(np.where(alpha_low == 2.0))
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    # ax.plot(unique_alphas_low, upwind_mean_low,
+    #          label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+    ax.plot(unique_alphas_low, downwind_mean_low,
+             label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        # ax.plot(unique_alphas_med, upwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        ax.plot(unique_alphas_med, downwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    # ax.plot(unique_alphas_high, upwind_mean_high,
+    #             label=f"9 m/s", color ="#d62728", alpha = 0.8)
+    ax.plot(unique_alphas_high, downwind_mean_high,
+                label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+# Compare wind speed
+section_name = "MDS1D_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate1dmds(static_coeff_MDS_1D_6_updated, static_coeff_MDS_1D_10_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_mds_1D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate1dmds(static_coeff_MDS_1D_6_updated, static_coeff_MDS_1D_10_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_mds_1D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate1dmds(static_coeff_MDS_1D_6_updated, static_coeff_MDS_1D_10_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_mds_1D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
 
@@ -510,7 +679,7 @@ static_coeff_MUS_1D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_1D, exp1_MUS_1D_5, secti
 
 static_coeff_MUS_1D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_1D, exp1_MUS_1D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
-#plot_static_coeff_summary(static_coeff_MUS_1D_5, section_name, 5, mode="decks", upwind_in_rig=True)
+plot_static_coeff_summary(static_coeff_MUS_1D_5, section_name, 5, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_1D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
 
@@ -566,6 +735,15 @@ plot_static_coeff_summary(static_coeff_MUS_1D_10_filtered, section_name, 10, mod
 #%% !!!
 #Summary
 
+static_coeff_MUS_1D_5_updated = copy.deepcopy(static_coeff_MUS_1D_5)
+static_coeff_MUS_1D_5_updated.drag_coeff[:, 0] = static_coeff_MUS_1D_5.drag_coeff[:, 0]
+static_coeff_MUS_1D_5_updated.drag_coeff[:, 1] = static_coeff_MUS_1D_5.drag_coeff[:, 1]
+static_coeff_MUS_1D_5_updated.lift_coeff[:, 0] = static_coeff_MUS_1D_5.lift_coeff[:, 0]
+static_coeff_MUS_1D_5_updated.lift_coeff[:, 1] = static_coeff_MUS_1D_5.lift_coeff[:, 1]
+static_coeff_MUS_1D_5_updated.pitch_coeff[:, 0] = static_coeff_MUS_1D_5.pitch_coeff[:,0]
+static_coeff_MUS_1D_5_updated.pitch_coeff[:, 1] = static_coeff_MUS_1D_5.pitch_coeff[:, 1]
+
+
 static_coeff_MUS_1D_10_updated = copy.deepcopy(static_coeff_MUS_1D_10)
  
 static_coeff_MUS_1D_10_updated.drag_coeff[:, 0] = static_coeff_MUS_1D_10_filtered.drag_coeff[:, 0] 
@@ -574,6 +752,87 @@ static_coeff_MUS_1D_10_updated.lift_coeff[:, 0] = static_coeff_MUS_1D_10.lift_co
 static_coeff_MUS_1D_10_updated.lift_coeff[:, 1] = static_coeff_MUS_1D_10.lift_coeff[:, 1]
 static_coeff_MUS_1D_10_updated.pitch_coeff[:, 0] = static_coeff_MUS_1D_10.pitch_coeff[:,0]
 static_coeff_MUS_1D_10_updated.pitch_coeff[:, 1] = static_coeff_MUS_1D_10.pitch_coeff[:, 1]
+
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate1dmUs(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_{D,1}(\alpha_1)$"
+        coeff = "drag_coeff"
+        min = 0.35#0.4
+        max = 0.5#0.58
+    elif scoff == "lift":
+        axis = r"$C_{L,1}(\alpha_1)$"
+        coeff = "lift_coeff"
+        min = -0.28#-0.35
+        max = 0.42#0.5
+    elif scoff == "pitch":
+        axis = r"$C_{M,1}(\alpha_1)$"
+        coeff = "pitch_coeff"
+        min = -0.03#-0.05
+        max = 0.09#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    print(np.where(alpha_low == 2.0))
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    ax.plot(unique_alphas_low, upwind_mean_low,
+             label=f"5 m/s", color = "#2ca02c", alpha = 0.8)
+    # ax.plot(unique_alphas_low, downwind_mean_low,
+    #          label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        ax.plot(unique_alphas_med, upwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        # ax.plot(unique_alphas_med, downwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    ax.plot(unique_alphas_high, upwind_mean_high,
+                label=f"10 m/s", color ="#d62728", alpha = 0.8)
+    # ax.plot(unique_alphas_high, downwind_mean_high,
+    #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+# Compare wind speed
+section_name = "MUS1D_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate1dmUs(static_coeff_MUS_1D_5_updated, static_coeff_MUS_1D_10_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_mus_1D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate1dmUs(static_coeff_MUS_1D_5_updated, static_coeff_MUS_1D_10_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_mus_1D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate1dmUs(static_coeff_MUS_1D_5_updated, static_coeff_MUS_1D_10_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_mus_1D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
 
@@ -1004,7 +1263,7 @@ static_coeff_MDS_2D_6 =w3t.StaticCoeff.fromWTT(exp0_MDS_2D, exp1_MDS_2D_6, secti
 
 static_coeff_MDS_2D_10 = w3t.StaticCoeff.fromWTT(exp0_MDS_2D, exp1_MDS_2D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
 
-#plot_static_coeff_summary(static_coeff_MDS_2D_6, section_name, 6, mode="decks", upwind_in_rig=False)
+plot_static_coeff_summary(static_coeff_MDS_2D_6, section_name, 6, mode="decks", upwind_in_rig=False)
 #plot_static_coeff_summary(static_coeff_MDS_2D_8, section_name, 8, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_2D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
@@ -1055,6 +1314,17 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 #%% !!!
 # Summary
+static_coeff_MDS_2D_6_updated = copy.deepcopy(static_coeff_MDS_2D_6)
+static_coeff_MDS_2D_6_updated.drag_coeff[:, 2] = static_coeff_MDS_2D_6.drag_coeff[:, 2]
+static_coeff_MDS_2D_6_updated.drag_coeff[:, 3] = static_coeff_MDS_2D_6.drag_coeff[:, 3]
+static_coeff_MDS_2D_6_updated.lift_coeff[:, 2] = static_coeff_MDS_2D_6.lift_coeff[:, 2]
+static_coeff_MDS_2D_6_updated.lift_coeff[:, 3] = static_coeff_MDS_2D_6.lift_coeff[:, 3]
+static_coeff_MDS_2D_6_updated.pitch_coeff[:, 2] = static_coeff_MDS_2D_6.pitch_coeff[:, 2]
+static_coeff_MDS_2D_6_updated.pitch_coeff[:, 3] = static_coeff_MDS_2D_6.pitch_coeff[:, 3]
+
+
+
+
 static_coeff_MDS_2D_10_updated = copy.deepcopy(static_coeff_MDS_2D_10)
  
 static_coeff_MDS_2D_10_updated.drag_coeff[:, 2] = static_coeff_MDS_2D_10.drag_coeff[:, 2] 
@@ -1066,6 +1336,86 @@ static_coeff_MDS_2D_10_updated.pitch_coeff[:, 3] = static_coeff_MDS_2D_10.pitch_
 
 
 
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate2dmDs(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_{D,2}(\alpha_2)$"
+        coeff = "drag_coeff"
+        min = 0.42#0.4
+        max = 0.55#0.58
+    elif scoff == "lift":
+        axis = r"$C_{L,2}(\alpha_2)$"
+        coeff = "lift_coeff"
+        min = -0.28#-0.35
+        max = 0.42#0.5
+    elif scoff == "pitch":
+        axis = r"$C_{M,2}(\alpha_2)$"
+        coeff = "pitch_coeff"
+        min = -0.05#-0.05
+        max = 0.08#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    print(np.where(alpha_low == 2.0))
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    # ax.plot(unique_alphas_low, upwind_mean_low,
+    #          label=f"5 m/s", color = "#2ca02c", alpha = 0.8)
+    ax.plot(unique_alphas_low, downwind_mean_low,
+             label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        # ax.plot(unique_alphas_med, upwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        ax.plot(unique_alphas_med, downwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    # ax.plot(unique_alphas_high, upwind_mean_high,
+    #             label=f"10 m/s", color ="#d62728", alpha = 0.8)
+    ax.plot(unique_alphas_high, downwind_mean_high,
+                label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+# Compare wind speed
+section_name = "MDS2D_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate2dmDs(static_coeff_MDS_2D_6_updated, static_coeff_MDS_2D_10_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_mds_2D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate2dmDs(static_coeff_MDS_2D_6_updated, static_coeff_MDS_2D_10_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_mds_2D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate2dmDs(static_coeff_MDS_2D_6_updated, static_coeff_MDS_2D_10_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_mds_2D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
 #%% !!!
@@ -1125,7 +1475,7 @@ static_coeff_MUS_2D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_2D, exp1_MUS_2D_5, secti
 static_coeff_MUS_2D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_2D, exp1_MUS_2D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
 
-#plot_static_coeff_summary(static_coeff_MUS_2D_5, section_name, 5, mode="decks", upwind_in_rig=True)
+plot_static_coeff_summary(static_coeff_MUS_2D_5, section_name, 5, mode="decks", upwind_in_rig=True)
 #plot_static_coeff_summary(static_coeff_MUS_2D_8, section_name, 8, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_2D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
@@ -1227,6 +1577,94 @@ static_coeff_MUS_2D_10_updated.lift_coeff[:, 0] = static_coeff_MUS_2D_10.lift_co
 static_coeff_MUS_2D_10_updated.lift_coeff[:, 1] = static_coeff_MUS_2D_10.lift_coeff[:, 1]
 static_coeff_MUS_2D_10_updated.pitch_coeff[:, 0] = static_coeff_MUS_2D_10.pitch_coeff[:,0]
 static_coeff_MUS_2D_10_updated.pitch_coeff[:, 1] = static_coeff_MUS_2D_10.pitch_coeff[:, 1]
+
+static_coeff_MUS_2D_5_updated = copy.deepcopy(static_coeff_MUS_2D_5)
+static_coeff_MUS_2D_5_updated.drag_coeff[:, 0] = static_coeff_MUS_2D_5.drag_coeff[:, 0]
+static_coeff_MUS_2D_5_updated.drag_coeff[:, 1] = static_coeff_MUS_2D_5.drag_coeff[:, 1]
+static_coeff_MUS_2D_5_updated.lift_coeff[:, 0] = static_coeff_MUS_2D_5.lift_coeff[:, 0]
+static_coeff_MUS_2D_5_updated.lift_coeff[:, 1] = static_coeff_MUS_2D_5.lift_coeff[:, 1]
+static_coeff_MUS_2D_5_updated.pitch_coeff[:, 0] = static_coeff_MUS_2D_5.pitch_coeff[:,0]
+static_coeff_MUS_2D_5_updated.pitch_coeff[:, 1] = static_coeff_MUS_2D_5.pitch_coeff[:, 1]
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate2dmUs(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_{D,1}(\alpha_1)$"
+        coeff = "drag_coeff"
+        min = 0.35#0.4
+        max = 0.5#0.58
+    elif scoff == "lift":
+        axis = r"$C_{L,1}(\alpha_1)$"
+        coeff = "lift_coeff"
+        min = -0.28#-0.35
+        max = 0.42#0.5
+    elif scoff == "pitch":
+        axis = r"$C_{M,1}(\alpha_1)$"
+        coeff = "pitch_coeff"
+        min = -0.03#-0.05
+        max = 0.11#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    print(np.where(alpha_low == 2.0))
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    ax.plot(unique_alphas_low, upwind_mean_low,
+             label=f"5 m/s", color = "#2ca02c", alpha = 0.8)
+    # ax.plot(unique_alphas_low, downwind_mean_low,
+    #          label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        ax.plot(unique_alphas_med, upwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        # ax.plot(unique_alphas_med, downwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    ax.plot(unique_alphas_high, upwind_mean_high,
+                label=f"10 m/s", color ="#d62728", alpha = 0.8)
+    # ax.plot(unique_alphas_high, downwind_mean_high,
+    #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+# Compare wind speed
+section_name = "MUS2D_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate2dmUs(static_coeff_MUS_1D_5_updated, static_coeff_MUS_1D_10_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_mus_2D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate2dmUs(static_coeff_MUS_1D_5_updated, static_coeff_MUS_1D_10_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_mus_2D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate2dmUs(static_coeff_MUS_1D_5_updated, static_coeff_MUS_1D_10_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_mus_2D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
 #%% 
@@ -1648,11 +2086,38 @@ static_coeff_MDS_3D_8 = w3t.StaticCoeff.fromWTT(exp0_MDS_3D, exp1_MDS_3D_8, sect
 static_coeff_MDS_3D_10 = w3t.StaticCoeff.fromWTT(exp0_MDS_3D, exp1_MDS_3D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
 
 
-#plot_static_coeff_summary(static_coeff_MDS_3D_6, section_name, 6, mode="decks", upwind_in_rig=False)
+plot_static_coeff_summary(static_coeff_MDS_3D_6, section_name, 6, mode="decks", upwind_in_rig=False)
 #plot_static_coeff_summary(static_coeff_MDS_3D_8, section_name, 8, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_3D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
 
+
+
+#%% !!!!!
+#fjerne hakk
+alpha = np.round(static_coeff_MDS_3D_10.pitch_motion * 360 / (2 * np.pi), 1)
+coeff_raw = static_coeff_MDS_3D_10.drag_coeff[:, 2] + static_coeff_MDS_3D_10.drag_coeff[:, 2]  # downwind
+
+# 1. Fit en glatt kurve (uten NaN eller store avvik)
+mask_fit = (alpha < 7) & (alpha > -7) & ~np.isnan(coeff_raw)
+alpha_fit = alpha[mask_fit]
+coeff_fit = coeff_raw[mask_fit]
+coeffs = np.polyfit(alpha_fit, coeff_fit, deg=2)
+curve = np.polyval(coeffs, alpha)
+
+# 2. Finn hvilke punkter som avviker "for mye"
+spread = np.abs(coeff_raw - curve)
+threshold = 0.02  # juster etter hvor streng du vil være
+mask_good = spread < threshold
+
+# 3. Lag filtrert array
+coeff_filtered = coeff_raw.copy()
+coeff_filtered[~mask_good] = np.nan
+
+# 4. Del ut tilbake til hver lastcelle
+static_coeff_MDS_3D_10.drag_coeff[:, 2] = coeff_filtered / 2
+static_coeff_MDS_3D_10.drag_coeff[:, 3] = coeff_filtered / 2
+plot_static_coeff_summary(static_coeff_MDS_3D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
 #%%
 # filter regression
@@ -1723,6 +2188,7 @@ static_coeff_MDS_3D_6_reg = copy.deepcopy(static_coeff_MDS_3D_6)
 # static_coeff_MDS_3D_10_reg.pitch_coeff[:, 0] = coeff_MDS_3D_10_pitch_reg_down / 2
 # static_coeff_MDS_3D_10_reg.pitch_coeff[:, 1] = coeff_MDS_3D_10_pitch_reg_down / 2
 # plot_static_coeff_summary(static_coeff_MDS_3D_10_reg, section_name, 10, mode="decks", upwind_in_rig=False)
+section_name = "MUS_3D_Static"
 
 
 #%%
@@ -1784,7 +2250,7 @@ plot_static_coeff_summary(static_coeff_MDS_3D_8_filtered, section_name, 8, mode=
 
 #%% !!!
 # Summary
-# static_coeff_MDS_3D_6_updated = copy.deepcopy(static_coeff_MDS_3D_6) #obs egt mus
+static_coeff_MDS_3D_6_updated = copy.deepcopy(static_coeff_MDS_3D_6)
 # static_coeff_MDS_3D_8_updated = copy.deepcopy(static_coeff_MDS_3D_8)
 static_coeff_MDS_3D_10_updated = copy.deepcopy(static_coeff_MDS_3D_10)
 
@@ -1839,12 +2305,12 @@ static_coeff_MDS_3D_10_updated = copy.deepcopy(static_coeff_MDS_3D_10)
 
 
 
-# static_coeff_MDS_3D_6_updated.drag_coeff[:, 2] = static_coeff_MDS_3D_6.drag_coeff[:, 2]
-# static_coeff_MDS_3D_6_updated.drag_coeff[:, 3] = static_coeff_MDS_3D_6.drag_coeff[:, 3]
-# static_coeff_MDS_3D_6_updated.lift_coeff[:, 2] = static_coeff_MDS_3D_6.lift_coeff[:, 2]
-# static_coeff_MDS_3D_6_updated.lift_coeff[:, 3] = static_coeff_MDS_3D_6.lift_coeff[:, 3]
-# static_coeff_MDS_3D_6_updated.pitch_coeff[:,2] = static_coeff_MDS_3D_6.pitch_coeff[:, 2]
-# static_coeff_MDS_3D_6_updated.pitch_coeff[:, 3] = static_coeff_MDS_3D_6.pitch_coeff[:, 3]
+static_coeff_MDS_3D_6_updated.drag_coeff[:, 2] = static_coeff_MDS_3D_6.drag_coeff[:, 2]
+static_coeff_MDS_3D_6_updated.drag_coeff[:, 3] = static_coeff_MDS_3D_6.drag_coeff[:, 3]
+static_coeff_MDS_3D_6_updated.lift_coeff[:, 2] = static_coeff_MDS_3D_6.lift_coeff[:, 2]
+static_coeff_MDS_3D_6_updated.lift_coeff[:, 3] = static_coeff_MDS_3D_6.lift_coeff[:, 3]
+static_coeff_MDS_3D_6_updated.pitch_coeff[:,2] = static_coeff_MDS_3D_6.pitch_coeff[:, 2]
+static_coeff_MDS_3D_6_updated.pitch_coeff[:, 3] = static_coeff_MDS_3D_6.pitch_coeff[:, 3]
 
 # static_coeff_MDS_3D_8_updated.drag_coeff[:, 2] = static_coeff_MDS_3D_8_reg_new.drag_coeff[:, 2]  
 # static_coeff_MDS_3D_8_updated.drag_coeff[:, 3] = static_coeff_MDS_3D_8_reg_new.drag_coeff[:, 3]  
@@ -1860,6 +2326,88 @@ static_coeff_MDS_3D_10_updated.lift_coeff[:, 2] = static_coeff_MDS_3D_10.lift_co
 static_coeff_MDS_3D_10_updated.lift_coeff[:, 3] = static_coeff_MDS_3D_10.lift_coeff[:, 3]
 static_coeff_MDS_3D_10_updated.pitch_coeff[:, 2] = static_coeff_MDS_3D_10.pitch_coeff[:,2]
 static_coeff_MDS_3D_10_updated.pitch_coeff[:, 3] = static_coeff_MDS_3D_10.pitch_coeff[:, 3]
+
+
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate3dmDs(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_{D,2}(\alpha_2)$"
+        coeff = "drag_coeff"
+        min = 0.42#0.4
+        max = 0.55#0.58
+    elif scoff == "lift":
+        axis = r"$C_{L,2}(\alpha_2)$"
+        coeff = "lift_coeff"
+        min = -0.3#-0.35
+        max = 0.28#0.5
+    elif scoff == "pitch":
+        axis = r"$C_{M,2}(\alpha_2)$"
+        coeff = "pitch_coeff"
+        min = -0.05#-0.05
+        max = 0.09#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    print(np.where(alpha_low == 2.0))
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    # ax.plot(unique_alphas_low, upwind_mean_low,
+    #          label=f"5 m/s", color = "#2ca02c", alpha = 0.8)
+    ax.plot(unique_alphas_low, downwind_mean_low,
+             label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        # ax.plot(unique_alphas_med, upwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        ax.plot(unique_alphas_med, downwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    # ax.plot(unique_alphas_high, upwind_mean_high,
+    #             label=f"10 m/s", color ="#d62728", alpha = 0.8)
+    ax.plot(unique_alphas_high, downwind_mean_high,
+                label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+# Compare wind speed
+section_name = "MDS3D_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate3dmDs(static_coeff_MDS_3D_6_updated, static_coeff_MDS_3D_10_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_mds_3D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate3dmDs(static_coeff_MDS_3D_6_updated, static_coeff_MDS_3D_10_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_mds_3D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate3dmDs(static_coeff_MDS_3D_6_updated, static_coeff_MDS_3D_10_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_mds_3D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 #%%
 # Compare windspeed
@@ -1923,7 +2471,7 @@ static_coeff_MUS_3D_8 = w3t.StaticCoeff.fromWTT(exp0_MUS_3D, exp1_MUS_3D_8, sect
 
 static_coeff_MUS_3D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_3D, exp1_MUS_3D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
-#plot_static_coeff_summary(static_coeff_MUS_3D_5, section_name, 5, mode="decks", upwind_in_rig=True)
+plot_static_coeff_summary(static_coeff_MUS_3D_5, section_name, 5, mode="decks", upwind_in_rig=True)
 #plot_static_coeff_summary(static_coeff_MUS_3D_8, section_name, 8, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_3D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
@@ -1971,6 +2519,7 @@ static_coeff_MUS_3D_10_reg.pitch_coeff[:, 0] = coeff_MUS_3D_10_pitch_reg_up / 2
 static_coeff_MUS_3D_10_reg.pitch_coeff[:, 1] = coeff_MUS_3D_10_pitch_reg_up / 2
 plot_static_coeff_summary(static_coeff_MUS_3D_10_reg, section_name, 10, mode="decks", upwind_in_rig=True)
 
+section_name = "MDS_3D_Static"
 
 #%% 
 print("FILTER 1")
@@ -2037,13 +2586,13 @@ plot_static_coeff_summary(static_coeff_MUS_3D_10_filtered, section_name, 10, mod
 #%% !!!
 # Summary
 print("her det skjers")
-# static_coeff_MUS_3D_5_updated = copy.deepcopy(static_coeff_MUS_3D_5)
-# static_coeff_MUS_3D_5_updated.drag_coeff[:, 0] = static_coeff_MUS_3D_5.drag_coeff[:, 0]
-# static_coeff_MUS_3D_5_updated.drag_coeff[:, 1] = static_coeff_MUS_3D_5.drag_coeff[:, 1]
-# static_coeff_MUS_3D_5_updated.lift_coeff[:, 0] = static_coeff_MUS_3D_5.lift_coeff[:, 0]
-# static_coeff_MUS_3D_5_updated.lift_coeff[:, 1] = static_coeff_MUS_3D_5.lift_coeff[:, 1]
-# static_coeff_MUS_3D_5_updated.pitch_coeff[:, 0] = static_coeff_MUS_3D_5.pitch_coeff[:, 0]
-# static_coeff_MUS_3D_5_updated.pitch_coeff[:, 1] = static_coeff_MUS_3D_5.pitch_coeff[:, 1]
+static_coeff_MUS_3D_5_updated = copy.deepcopy(static_coeff_MUS_3D_5)
+static_coeff_MUS_3D_5_updated.drag_coeff[:, 0] = static_coeff_MUS_3D_5.drag_coeff[:, 0]
+static_coeff_MUS_3D_5_updated.drag_coeff[:, 1] = static_coeff_MUS_3D_5.drag_coeff[:, 1]
+static_coeff_MUS_3D_5_updated.lift_coeff[:, 0] = static_coeff_MUS_3D_5.lift_coeff[:, 0]
+static_coeff_MUS_3D_5_updated.lift_coeff[:, 1] = static_coeff_MUS_3D_5.lift_coeff[:, 1]
+static_coeff_MUS_3D_5_updated.pitch_coeff[:, 0] = static_coeff_MUS_3D_5.pitch_coeff[:, 0]
+static_coeff_MUS_3D_5_updated.pitch_coeff[:, 1] = static_coeff_MUS_3D_5.pitch_coeff[:, 1]
 
 # static_coeff_MUS_3D_8_updated = copy.deepcopy(static_coeff_MUS_3D_8)
 # static_coeff_MUS_3D_8_updated.drag_coeff[:, 0] = static_coeff_MUS_3D_8_filtered.drag_coeff[:, 0] #filt 2
@@ -2061,6 +2610,89 @@ static_coeff_MUS_3D_10_updated.lift_coeff[:, 0] = static_coeff_MUS_3D_10.lift_co
 static_coeff_MUS_3D_10_updated.lift_coeff[:, 1] = static_coeff_MUS_3D_10.lift_coeff[:, 1]
 static_coeff_MUS_3D_10_updated.pitch_coeff[:, 0] = static_coeff_MUS_3D_10.pitch_coeff[:, 0]
 static_coeff_MUS_3D_10_updated.pitch_coeff[:, 1] = static_coeff_MUS_3D_10.pitch_coeff[:, 1]
+
+
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate3dmUs(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_{D,1}(\alpha_1)$"
+        coeff = "drag_coeff"
+        min = 0.41#0.4
+        max = 0.54#0.58
+    elif scoff == "lift":
+        axis = r"$C_{L,1}(\alpha_1)$"
+        coeff = "lift_coeff"
+        min = -0.3#-0.35
+        max = 0.42#0.5
+    elif scoff == "pitch":
+        axis = r"$C_{M,1}(\alpha_1)$"
+        coeff = "pitch_coeff"
+        min = -0.05#-0.05
+        max = 0.11#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    print(np.where(alpha_low == 2.0))
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    ax.plot(unique_alphas_low, upwind_mean_low,
+             label=f"5 m/s", color = "#2ca02c", alpha = 0.8)
+    # ax.plot(unique_alphas_low, downwind_mean_low,
+    #          label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        ax.plot(unique_alphas_med, upwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        # ax.plot(unique_alphas_med, downwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    ax.plot(unique_alphas_high, upwind_mean_high,
+                label=f"10 m/s", color ="#d62728", alpha = 0.8)
+    # ax.plot(unique_alphas_high, downwind_mean_high,
+    #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+# Compare wind speed
+section_name = "MUS3D_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate3dmUs(static_coeff_MUS_3D_5_updated, static_coeff_MUS_3D_10_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_mus_3D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate3dmUs(static_coeff_MUS_3D_5_updated, static_coeff_MUS_3D_10_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_mus_3D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate3dmUs(static_coeff_MUS_3D_5_updated, static_coeff_MUS_3D_10_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_mus_3D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+
 
 #%%
 # Compare windspeed
@@ -2493,7 +3125,7 @@ static_coeff_MDS_4D_55 =w3t.StaticCoeff.fromWTT(exp0_MDS_4D, exp1_MDS_4D_55, sec
 static_coeff_MDS_4D_10 = w3t.StaticCoeff.fromWTT(exp0_MDS_4D, exp1_MDS_4D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
 
 
-# plot_static_coeff_summary(static_coeff_MDS_4D_55, section_name, 5.5, mode="decks", upwind_in_rig=False)
+plot_static_coeff_summary(static_coeff_MDS_4D_55, section_name, 5.5, mode="decks", upwind_in_rig=False)
 #plot_static_coeff_summary(static_coeff_MDS_4D_85, section_name, 8.5, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_4D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
@@ -2546,6 +3178,15 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 #%% !!!
 # Summary
+
+static_coeff_MDS_4D_55_updated = copy.deepcopy(static_coeff_MDS_4D_55)
+static_coeff_MDS_4D_55_updated.drag_coeff[:, 2] = static_coeff_MDS_4D_55.drag_coeff[:, 2]
+static_coeff_MDS_4D_55_updated.drag_coeff[:, 3] = static_coeff_MDS_4D_55.drag_coeff[:, 3]
+static_coeff_MDS_4D_55_updated.lift_coeff[:, 2] = static_coeff_MDS_4D_55.lift_coeff[:, 2]
+static_coeff_MDS_4D_55_updated.lift_coeff[:, 3] = static_coeff_MDS_4D_55.lift_coeff[:, 3]
+static_coeff_MDS_4D_55_updated.pitch_coeff[:, 2] = static_coeff_MDS_4D_55.pitch_coeff[:,2]
+static_coeff_MDS_4D_55_updated.pitch_coeff[:, 3] = static_coeff_MDS_4D_55.pitch_coeff[:, 3]
+
 static_coeff_MDS_4D_10_updated = copy.deepcopy(static_coeff_MDS_4D_10)
  
 static_coeff_MDS_4D_10_updated.drag_coeff[:, 2] = static_coeff_MDS_4D_10.drag_coeff[:, 2] 
@@ -2555,6 +3196,87 @@ static_coeff_MDS_4D_10_updated.lift_coeff[:, 3] = static_coeff_MDS_4D_10.lift_co
 static_coeff_MDS_4D_10_updated.pitch_coeff[:, 2] = static_coeff_MDS_4D_10.pitch_coeff[:,2]
 static_coeff_MDS_4D_10_updated.pitch_coeff[:, 3] = static_coeff_MDS_4D_10.pitch_coeff[:, 3]
 
+
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate4dmDs(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_{D,2}(\alpha_2)$"
+        coeff = "drag_coeff"
+        min = 0.4#0.4
+        max = 0.505#0.58
+    elif scoff == "lift":
+        axis = r"$C_{L,2}(\alpha_2)$"
+        coeff = "lift_coeff"
+        min = -0.27#-0.35
+        max = 0.37#0.5
+    elif scoff == "pitch":
+        axis = r"$C_{M,2}(\alpha_2)$"
+        coeff = "pitch_coeff"
+        min = -0.04#-0.05
+        max = 0.09#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    print(np.where(alpha_low == 2.0))
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    # ax.plot(unique_alphas_low, upwind_mean_low,
+    #          label=f"5 m/s", color = "#2ca02c", alpha = 0.8)
+    ax.plot(unique_alphas_low, downwind_mean_low,
+             label=f"5,5 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        # ax.plot(unique_alphas_med, upwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        ax.plot(unique_alphas_med, downwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    # ax.plot(unique_alphas_high, upwind_mean_high,
+    #             label=f"10 m/s", color ="#d62728", alpha = 0.8)
+    ax.plot(unique_alphas_high, downwind_mean_high,
+                label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+# Compare wind speed
+section_name = "MDS4D_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate4dmDs(static_coeff_MDS_4D_55_updated, static_coeff_MDS_4D_10_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_mds_4D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate4dmDs(static_coeff_MDS_4D_55_updated, static_coeff_MDS_4D_10_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_mds_4D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate4dmDs(static_coeff_MDS_4D_55_updated, static_coeff_MDS_4D_10_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_mds_4D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
 
@@ -2613,7 +3335,7 @@ static_coeff_MUS_4D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_4D, exp1_MUS_4D_5, secti
 
 static_coeff_MUS_4D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_4D, exp1_MUS_4D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
-#plot_static_coeff_summary(static_coeff_MUS_4D_5, section_name, 5, mode="decks", upwind_in_rig=True)
+plot_static_coeff_summary(static_coeff_MUS_4D_5, section_name, 5, mode="decks", upwind_in_rig=True)
 #plot_static_coeff_summary(static_coeff_MUS_4D_85, section_name, 8.5, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_4D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
@@ -2680,6 +3402,14 @@ plot_static_coeff_summary(static_coeff_MUS_4D_10_filtered, section_name, 10, mod
 #%% !!!
 #Summary
 
+static_coeff_MUS_4D_5_updated = copy.deepcopy(static_coeff_MUS_4D_5)
+static_coeff_MUS_4D_5_updated.drag_coeff[:, 0] = static_coeff_MUS_4D_5.drag_coeff[:, 0]
+static_coeff_MUS_4D_5_updated.drag_coeff[:, 1] = static_coeff_MUS_4D_5.drag_coeff[:, 1]
+static_coeff_MUS_4D_5_updated.lift_coeff[:, 0] = static_coeff_MUS_4D_5.lift_coeff[:, 0]
+static_coeff_MUS_4D_5_updated.lift_coeff[:, 1] = static_coeff_MUS_4D_5.lift_coeff[:, 1]
+static_coeff_MUS_4D_5_updated.pitch_coeff[:, 0] = static_coeff_MUS_4D_5.pitch_coeff[:,0]
+static_coeff_MUS_4D_5_updated.pitch_coeff[:, 1] = static_coeff_MUS_4D_5.pitch_coeff[:, 1]
+
 static_coeff_MUS_4D_10_updated = copy.deepcopy(static_coeff_MUS_4D_10)
  
 static_coeff_MUS_4D_10_updated.drag_coeff[:, 0] = static_coeff_MUS_4D_10_filtered.drag_coeff[:, 0] 
@@ -2688,6 +3418,88 @@ static_coeff_MUS_4D_10_updated.lift_coeff[:, 0] = static_coeff_MUS_4D_10.lift_co
 static_coeff_MUS_4D_10_updated.lift_coeff[:, 1] = static_coeff_MUS_4D_10.lift_coeff[:, 1]
 static_coeff_MUS_4D_10_updated.pitch_coeff[:, 0] = static_coeff_MUS_4D_10.pitch_coeff[:,0]
 static_coeff_MUS_4D_10_updated.pitch_coeff[:, 1] = static_coeff_MUS_4D_10.pitch_coeff[:, 1]
+
+
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate4dmUs(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_{D,1}(\alpha_1)$"
+        coeff = "drag_coeff"
+        min = 0.45#0.4
+        max = 0.65#0.58
+    elif scoff == "lift":
+        axis = r"$C_{L,1}(\alpha_1)$"
+        coeff = "lift_coeff"
+        min = -0.32#-0.35
+        max = 0.48#0.5
+    elif scoff == "pitch":
+        axis = r"$C_{M,1}(\alpha_1)$"
+        coeff = "pitch_coeff"
+        min = -0.05#-0.05
+        max = 0.14#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    print(np.where(alpha_low == 2.0))
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    ax.plot(unique_alphas_low, upwind_mean_low,
+             label=f"5 m/s", color = "#2ca02c", alpha = 0.8)
+    # ax.plot(unique_alphas_low, downwind_mean_low,
+    #          label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        ax.plot(unique_alphas_med, upwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        # ax.plot(unique_alphas_med, downwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    ax.plot(unique_alphas_high, upwind_mean_high,
+                label=f"10 m/s", color ="#d62728", alpha = 0.8)
+    # ax.plot(unique_alphas_high, downwind_mean_high,
+    #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+# Compare wind speed
+section_name = "MUS4D_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate4dmUs(static_coeff_MUS_4D_5_updated, static_coeff_MUS_4D_10_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_mus_4D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate4dmUs(static_coeff_MUS_4D_5_updated, static_coeff_MUS_4D_10_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_mus_4D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate4dmUs(static_coeff_MUS_4D_5_updated, static_coeff_MUS_4D_10_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_mus_4D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
 
@@ -3113,10 +3925,63 @@ static_coeff_MDS_5D_55 =w3t.StaticCoeff.fromWTT(exp0_MDS_5D, exp1_MDS_5D_55, sec
 
 static_coeff_MDS_5D_10 = w3t.StaticCoeff.fromWTT(exp0_MDS_5D, exp1_MDS_5D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
 
-#plot_static_coeff_summary(static_coeff_MDS_5D_55, section_name, 5.5, mode="decks", upwind_in_rig=False)
+plot_static_coeff_summary(static_coeff_MDS_5D_55, section_name, 5.5, mode="decks", upwind_in_rig=False)
 #plot_static_coeff_summary(static_coeff_MDS_5D_85, section_name, 8.5, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_5D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
+
+#%% !!!!!
+#fjerne hakk
+alpha = np.round(static_coeff_MDS_5D_10.pitch_motion * 360 / (2 * np.pi), 1)
+coeff_raw = static_coeff_MDS_5D_10.drag_coeff[:, 2] + static_coeff_MDS_5D_10.drag_coeff[:, 3]  # downwind
+
+# 1. Fit en glatt kurve (uten NaN eller store avvik)
+mask_fit = (alpha < 7) & (alpha > -7) & ~np.isnan(coeff_raw)
+alpha_fit = alpha[mask_fit]
+coeff_fit = coeff_raw[mask_fit]
+coeffs = np.polyfit(alpha_fit, coeff_fit, deg=2)
+curve = np.polyval(coeffs, alpha)
+
+# 2. Finn hvilke punkter som avviker "for mye"
+spread = np.abs(coeff_raw - curve)
+threshold = 0.02  # juster etter hvor streng du vil være
+mask_good = spread < threshold
+
+# 3. Lag filtrert array
+coeff_filtered = coeff_raw.copy()
+coeff_filtered[~mask_good] = np.nan
+
+# 4. Del ut tilbake til hver lastcelle
+static_coeff_MDS_5D_10.drag_coeff[:, 2] = coeff_filtered / 2
+static_coeff_MDS_5D_10.drag_coeff[:, 3] = coeff_filtered / 2
+plot_static_coeff_summary(static_coeff_MDS_5D_10, section_name, 10, mode="decks", upwind_in_rig=False)
+
+
+#%% !!!!!
+#fjerne hakk
+alpha = np.round(static_coeff_MDS_3D_10.pitch_motion * 360 / (2 * np.pi), 1)
+coeff_raw = static_coeff_MDS_3D_10.pitch_coeff[:, 2] + static_coeff_MDS_3D_10.pitch_coeff[:, 2]  # downwind
+
+# 1. Fit en glatt kurve (uten NaN eller store avvik)
+mask_fit = (alpha < 7) & (alpha > -7) & ~np.isnan(coeff_raw)
+alpha_fit = alpha[mask_fit]
+coeff_fit = coeff_raw[mask_fit]
+coeffs = np.polyfit(alpha_fit, coeff_fit, deg=1)
+curve = np.polyval(coeffs, alpha)
+
+# 2. Finn hvilke punkter som avviker "for mye"
+spread = np.abs(coeff_raw - curve)
+threshold = 0.008  # juster etter hvor streng du vil være
+mask_good = spread < threshold
+
+# 3. Lag filtrert array
+coeff_filtered = coeff_raw.copy()
+coeff_filtered[~mask_good] = np.nan
+
+# 4. Del ut tilbake til hver lastcelle
+static_coeff_MDS_3D_10.pitch_coeff[:, 2] = coeff_filtered / 2
+static_coeff_MDS_3D_10.pitch_coeff[:, 3] = coeff_filtered / 2
+plot_static_coeff_summary(static_coeff_MDS_3D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
 #%% 
 # Filter and plot ALT 1
@@ -3166,6 +4031,14 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 #%% !!!
 # Summary
+static_coeff_MDS_5D_55_updated = copy.deepcopy(static_coeff_MDS_5D_55)
+static_coeff_MDS_5D_55_updated.drag_coeff[:, 2] = static_coeff_MDS_5D_55.drag_coeff[:, 2]  
+static_coeff_MDS_5D_55_updated.drag_coeff[:, 3] = static_coeff_MDS_5D_55.drag_coeff[:, 3]
+static_coeff_MDS_5D_55_updated.lift_coeff[:, 2] = static_coeff_MDS_5D_55.lift_coeff[:, 2]
+static_coeff_MDS_5D_55_updated.lift_coeff[:, 3] = static_coeff_MDS_5D_55.lift_coeff[:, 3]
+static_coeff_MDS_5D_55_updated.pitch_coeff[:, 2] = static_coeff_MDS_5D_55.pitch_coeff[:, 2]
+static_coeff_MDS_5D_55_updated.pitch_coeff[:, 3] = static_coeff_MDS_5D_55.pitch_coeff[:, 3]
+
 static_coeff_MDS_5D_10_updated = copy.deepcopy(static_coeff_MDS_5D_10)
  
 static_coeff_MDS_5D_10_updated.drag_coeff[:, 2] = static_coeff_MDS_5D_10.drag_coeff[:, 2] 
@@ -3175,6 +4048,87 @@ static_coeff_MDS_5D_10_updated.lift_coeff[:, 3] = static_coeff_MDS_5D_10.lift_co
 static_coeff_MDS_5D_10_updated.pitch_coeff[:, 2] = static_coeff_MDS_5D_10.pitch_coeff[:,2]
 static_coeff_MDS_5D_10_updated.pitch_coeff[:, 3] = static_coeff_MDS_5D_10.pitch_coeff[:, 3]
 
+
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate5dmDs(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_{D,2}(\alpha_2)$"
+        coeff = "drag_coeff"
+        min = 0.42#0.4
+        max = 0.49#0.58
+    elif scoff == "lift":
+        axis = r"$C_{L,2}(\alpha_2)$"
+        coeff = "lift_coeff"
+        min = -0.28#-0.35
+        max = 0.37#0.5
+    elif scoff == "pitch":
+        axis = r"$C_{M,2}(\alpha_2)$"
+        coeff = "pitch_coeff"
+        min = -0.04#-0.05
+        max = 0.13#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    print(np.where(alpha_low == 2.0))
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    # ax.plot(unique_alphas_low, upwind_mean_low,
+    #          label=f"5 m/s", color = "#2ca02c", alpha = 0.8)
+    ax.plot(unique_alphas_low, downwind_mean_low,
+             label=f"5,5 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        # ax.plot(unique_alphas_med, upwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        ax.plot(unique_alphas_med, downwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    # ax.plot(unique_alphas_high, upwind_mean_high,
+    #             label=f"10 m/s", color ="#d62728", alpha = 0.8)
+    ax.plot(unique_alphas_high, downwind_mean_high,
+                label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+# Compare wind speed
+section_name = "MDS5D_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate5dmDs(static_coeff_MDS_5D_55_updated, static_coeff_MDS_5D_10_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_mds_5D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate5dmDs(static_coeff_MDS_5D_55_updated, static_coeff_MDS_5D_10_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_mds_5D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate5dmDs(static_coeff_MDS_5D_55_updated, static_coeff_MDS_5D_10_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_mds_5D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
 
@@ -3186,7 +4140,11 @@ file_names_MUS_5D_45 = ["HAR_INT_MDS_GAP_45D_02_01_000","HAR_INT_MDS_GAP_45D_02_
 #file_names_MUS_5D_85 = ["HAR_INT_MDS_GAP_45D_02_01_000","HAR_INT_MDS_GAP_45D_02_01_003"] # 8.5 m/s, vibrations
 file_names_MUS_5D_10 = ["HAR_INT_MDS_GAP_45D_02_01_000","HAR_INT_MDS_GAP_45D_02_01_004"] # 10 m/s, vibrations
 
+import os
 
+for f in file_names_MUS_5D_45 + file_names_MUS_5D_10:
+    full_path = os.path.join(h5_input_path, section_name, f + ".h5")
+    print(f, "->", os.path.exists(full_path))
 
 exp0_MUS_5D, exp1_MUS_5D_45= load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_5D_45,  upwind_in_rig=True)
 #exp0_MUS_5D, exp1_MUS_5D_85 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_5D_85,  upwind_in_rig=True)
@@ -3232,10 +4190,35 @@ static_coeff_MUS_5D_45 =w3t.StaticCoeff.fromWTT(exp0_MUS_5D, exp1_MUS_5D_45, sec
 
 static_coeff_MUS_5D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_5D, exp1_MUS_5D_10, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
-#plot_static_coeff_summary(static_coeff_MUS_5D_45, section_name, 4.5, mode="decks", upwind_in_rig=True)
+plot_static_coeff_summary(static_coeff_MUS_5D_45, section_name, 4.5, mode="decks", upwind_in_rig=True)
 #plot_static_coeff_summary(static_coeff_MUS_5D_85, section_name, 8.5, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_5D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
+#%% !!!
+#fjerne hakk
+alpha = np.round(static_coeff_MUS_5D_45.pitch_motion * 360 / (2 * np.pi), 1)
+coeff_raw = static_coeff_MUS_5D_45.lift_coeff[:, 0] + static_coeff_MUS_5D_45.lift_coeff[:, 1]  # upwind
+
+# 1. Fit en glatt kurve (uten NaN eller store avvik)
+mask_fit = (alpha < 4.5) & (alpha > -7) & ~np.isnan(coeff_raw)
+alpha_fit = alpha[mask_fit]
+coeff_fit = coeff_raw[mask_fit]
+coeffs = np.polyfit(alpha_fit, coeff_fit, deg=1)
+curve = np.polyval(coeffs, alpha)
+
+# 2. Finn hvilke punkter som avviker "for mye"
+spread = np.abs(coeff_raw - curve)
+threshold = 0.05  # juster etter hvor streng du vil være
+mask_good = spread < threshold
+
+# 3. Lag filtrert array
+coeff_filtered = coeff_raw.copy()
+coeff_filtered[~mask_good] = np.nan
+
+# 4. Del ut tilbake til hver lastcelle
+static_coeff_MUS_5D_45.lift_coeff[:, 0] = coeff_filtered / 2
+static_coeff_MUS_5D_45.lift_coeff[:, 1] = coeff_filtered / 2
+plot_static_coeff_summary(static_coeff_MUS_5D_45, section_name, 10, mode="decks", upwind_in_rig=True)
 
 #%% !!!
 #fjerne hakk
@@ -3322,6 +4305,14 @@ plot_static_coeff_summary(static_coeff_MUS_5D_10_filtered, section_name, 10, mod
 #%% !!!
 #Summary
 
+static_coeff_MUS_5D_45_updated = copy.deepcopy(static_coeff_MUS_5D_45)
+static_coeff_MUS_5D_45_updated.drag_coeff[:, 0] = static_coeff_MUS_5D_45.drag_coeff[:, 0]
+static_coeff_MUS_5D_45_updated.drag_coeff[:, 1] = static_coeff_MUS_5D_45.drag_coeff[:, 1]
+static_coeff_MUS_5D_45_updated.lift_coeff[:, 0] = static_coeff_MUS_5D_45.lift_coeff[:, 0]
+static_coeff_MUS_5D_45_updated.lift_coeff[:, 1] = static_coeff_MUS_5D_45.lift_coeff[:, 1]
+static_coeff_MUS_5D_45_updated.pitch_coeff[:, 0] = static_coeff_MUS_5D_45.pitch_coeff[:, 0]
+static_coeff_MUS_5D_45_updated.pitch_coeff[:, 1] = static_coeff_MUS_5D_45.pitch_coeff[:, 1]
+
 static_coeff_MUS_5D_10_updated = copy.deepcopy(static_coeff_MUS_5D_10)
  
 static_coeff_MUS_5D_10_updated.drag_coeff[:, 0] = static_coeff_MUS_5D_10.drag_coeff[:, 0] 
@@ -3330,6 +4321,89 @@ static_coeff_MUS_5D_10_updated.lift_coeff[:, 0] = static_coeff_MUS_5D_10.lift_co
 static_coeff_MUS_5D_10_updated.lift_coeff[:, 1] = static_coeff_MUS_5D_10.lift_coeff[:, 1]
 static_coeff_MUS_5D_10_updated.pitch_coeff[:, 0] = static_coeff_MUS_5D_10.pitch_coeff[:,0]
 static_coeff_MUS_5D_10_updated.pitch_coeff[:, 1] = static_coeff_MUS_5D_10.pitch_coeff[:, 1]
+
+
+#%% !?!!!
+def plot_compare_wind_speeds_mean_seperate5dmUs(static_coeff_low, 
+                                   static_coeff_high, static_coeff_med = None,
+                                    scoff = "", ax=None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+    if scoff == "drag":
+        axis = r"$C_{D,1}(\alpha_1)$"
+        coeff = "drag_coeff"
+        min = 0.45#0.4
+        max = 0.72#0.58
+    elif scoff == "lift":
+        axis = r"$C_{L,1}(\alpha_1)$"
+        coeff = "lift_coeff"
+        min = -0.35#-0.35
+        max = 0.53#0.5
+    elif scoff == "pitch":
+        axis = r"$C_{M,1}(\alpha_1)$"
+        coeff = "pitch_coeff"
+        min = -0.04#-0.05
+        max = 0.12#0.15
+
+    # Calculate unique alpha values (pitch motion in degrees)
+    alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
+    unique_alphas_low = np.unique(alpha_low)
+    alpha_high = np.round(static_coeff_high.pitch_motion*360/2/np.pi,1)
+    unique_alphas_high = np.unique(alpha_high)
+
+    print(np.where(alpha_low == 2.0))
+
+    upwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,0][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,1][alpha_low == val]) for val in unique_alphas_low])
+    downwind_mean_low = np.array([np.nanmean(getattr(static_coeff_low, coeff)[:,2][alpha_low == val]) + np.nanmean(getattr(static_coeff_low, coeff)[:,3][alpha_low == val]) for val in unique_alphas_low])
+    
+    upwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,0][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,1][alpha_high == val]) for val in unique_alphas_high])
+    downwind_mean_high = np.array([np.nanmean(getattr(static_coeff_high, coeff)[:,2][alpha_high == val]) + np.nanmean(getattr(static_coeff_high, coeff)[:,3][alpha_high == val]) for val in unique_alphas_high])
+
+
+    # Plot low wind speed
+    ax.plot(unique_alphas_low, upwind_mean_low,
+             label=f"4,5 m/s", color = "#2ca02c", alpha = 0.8)
+    # ax.plot(unique_alphas_low, downwind_mean_low,
+    #          label=f"6 m/s", color = "#2ca02c", alpha = 0.8)
+
+
+    if static_coeff_med is not None:
+        alpha_med = np.round(static_coeff_med.pitch_motion*360/2/np.pi,1)
+        unique_alphas_med = np.unique(alpha_med)
+        upwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,0][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,1][alpha_med == val]) for val in unique_alphas_med])
+        downwind_mean_med = np.array([np.nanmean(getattr(static_coeff_med, coeff)[:,2][alpha_med == val]) + np.nanmean(getattr(static_coeff_med, coeff)[:,3][alpha_med == val]) for val in unique_alphas_med])
+        ax.plot(unique_alphas_med, upwind_mean_med,
+                    label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+        # ax.plot(unique_alphas_med, downwind_mean_med,
+        #             label=f"8 m/s", color = "#ff7f0e", alpha = 0.8)
+
+    # Plot high wind speed
+    ax.plot(unique_alphas_high, upwind_mean_high,
+                label=f"10 m/s", color ="#d62728", alpha = 0.8)
+    # ax.plot(unique_alphas_high, downwind_mean_high,
+    #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
+
+    #ax.grid()
+    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
+    ax.set_ylabel(axis, fontsize=15)
+    ax.tick_params(labelsize=15)
+    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.grid(True)
+    ax.set_xticks([-4,-2, 0,2,  4])
+    ax.set_ylim(min,max)
+    ax.set_xlim(-4,4)
+    
+    #ax.set_title(f"Comparison of {scoff} coefficients at different wind speeds")
+
+# Compare wind speed
+section_name = "MUS5D_Static_updated_windspeeds"
+plot_compare_wind_speeds_mean_seperate5dmUs(static_coeff_MUS_5D_45_updated, static_coeff_MUS_5D_10_updated,static_coeff_med = None,scoff = "drag", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cd_mus_5D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate5dmUs(static_coeff_MUS_5D_45_updated, static_coeff_MUS_5D_10_updated,static_coeff_med = None,scoff = "lift", ax=None)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , "cl_mus_5D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plot_compare_wind_speeds_mean_seperate5dmUs(static_coeff_MUS_5D_45_updated, static_coeff_MUS_5D_10_updated,static_coeff_med = None,scoff = "pitch", ax=None)  
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" ,  "cm_mus_5D_speed.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
 #%% 
@@ -3687,31 +4761,521 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 
 
 ##########################################################################333
+
+
 #%% !!!
-section_name = "distance_mean_comparison"
+
+def plot_compare_distance_mean1(static_coeff_single, static_coeff_1D, static_coeff_2D, static_coeff_3D, static_coeff_4D, static_coeff_5D, scoff="", upwind_in_rig=True, ax=None):
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(3.05, 2.63))
+
+    alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
+    unique_alphas_single = np.sort(np.unique(alpha_single)) 
+    alpha_1D = np.round(static_coeff_1D.pitch_motion*360/2/np.pi,1)
+    unique_alphas_1D = np.sort(np.unique(alpha_1D))
+    alpha_2D = np.round(static_coeff_2D.pitch_motion*360/2/np.pi,1)
+    unique_alphas_2D = np.sort(np.unique(alpha_2D))
+    alpha_3D = np.round(static_coeff_3D.pitch_motion*360/2/np.pi,1)
+    unique_alphas_3D = np.sort(np.unique(alpha_3D))
+    alpha_4D = np.round(static_coeff_4D.pitch_motion*360/2/np.pi,1)
+    unique_alphas_4D = np.sort(np.unique(alpha_4D))
+    alpha_5D = np.round(static_coeff_5D.pitch_motion*360/2/np.pi,1)
+    unique_alphas_5D = np.sort(np.unique(alpha_5D))
+
+    if upwind_in_rig: #MUS
+        if scoff == "drag":
+            ylabel = r"$C_{D, 1}(\alpha_1)$"
+            ymin = 0.35
+            ymax = 0.605
+            cd_upwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.drag_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.drag_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single])
+            cd_upwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.drag_coeff[:,0][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.drag_coeff[:,1][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D])
+            cd_upwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.drag_coeff[:,0][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.drag_coeff[:,1][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D])
+            
+            cd_upwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.drag_coeff[:,0][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.drag_coeff[:,1][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D])
+            cd_upwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.drag_coeff[:,0][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.drag_coeff[:,1][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D])
+            cd_upwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.drag_coeff[:,0][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.drag_coeff[:,1][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D])
+        elif scoff == "lift":
+            ylabel = r"$C_{L, 1}(\alpha_1)$"
+            ymin = -0.375
+            ymax = 0.43
+            cd_upwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.lift_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.lift_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single])
+            cd_upwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.lift_coeff[:,0][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.lift_coeff[:,1][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D])
+            cd_upwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.lift_coeff[:,0][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.lift_coeff[:,1][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D])
+            cd_upwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.lift_coeff[:,0][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.lift_coeff[:,1][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D])
+            cd_upwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.lift_coeff[:,0][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.lift_coeff[:,1][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D])
+            cd_upwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.lift_coeff[:,0][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.lift_coeff[:,1][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D])
+        elif scoff == "pitch":
+            ylabel = r"$C_{M,1}(\alpha_1)$"
+            ymin=-0.05
+            ymax=0.105
+            cd_upwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.pitch_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.pitch_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single])
+            cd_upwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.pitch_coeff[:,0][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.pitch_coeff[:,1][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D])
+            cd_upwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.pitch_coeff[:,0][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.pitch_coeff[:,1][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D])
+            cd_upwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.pitch_coeff[:,0][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.pitch_coeff[:,1][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D])
+            cd_upwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.pitch_coeff[:,0][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.pitch_coeff[:,1][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D])
+
+            cd_upwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.pitch_coeff[:,0][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.pitch_coeff[:,1][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D])
+        else:
+            print(scoff + " Error: Unknown argument: scoff=" + scoff + " Use scoff=drag, lift or pitch" )
+            return None
+
+        ax.plot(unique_alphas_1D,cd_upwind_mean_1D,label=(" 1D "), alpha = 0.8)
+        ax.plot(unique_alphas_2D,cd_upwind_mean_2D,label=(" 2D "), alpha = 0.8)
+        ax.plot(unique_alphas_3D,cd_upwind_mean_3D,label=(" 3D "), alpha = 0.8)
+        ax.plot(unique_alphas_4D,cd_upwind_mean_4D,label=(" 4D "), alpha = 0.8)
+        ax.plot(unique_alphas_5D,cd_upwind_mean_5D,label=(" 5D "), alpha = 0.8)
+        ax.plot(unique_alphas_single, cd_upwind_mean_single,label=("Single"),  alpha = 0.8)
+        ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
+        ax.set_ylabel(ylabel, fontsize=15)
+        ax.tick_params(labelsize=15)
+        ax.set_ylim(ymin,ymax)
+        ax.set_xlim(xmin=-4, xmax=4)
+        ax.grid(True)
+
+
+            
+    else: #MDS
+        if scoff == "drag":    
+            ylabel = r"$C_{D,2}(\alpha_2)$"
+            ymin = 0.34
+            ymax = 0.62
+            cd_downwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.drag_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.drag_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single
+            ])
+            cd_downwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.drag_coeff[:,2][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.drag_coeff[:,3][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D
+            ])
+            cd_downwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.drag_coeff[:,2][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.drag_coeff[:,3][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D
+            ])
+            cd_downwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.drag_coeff[:,2][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.drag_coeff[:,3][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D
+            ])
+            cd_downwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.drag_coeff[:,2][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.drag_coeff[:,3][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D
+            ])
+            cd_downwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.drag_coeff[:,2][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.drag_coeff[:,3][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D
+            ])
+        elif scoff == "lift":
+            ylabel = r"$C_{L,2}(\alpha_2)$"
+            ymin = -0.37
+            ymax = 0.37
+            cd_downwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.lift_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.lift_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single
+            ])
+            cd_downwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.lift_coeff[:,2][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.lift_coeff[:,3][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D
+            ])
+            cd_downwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.lift_coeff[:,2][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.lift_coeff[:,3][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D
+            ])
+            cd_downwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.lift_coeff[:,2][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.lift_coeff[:,3][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D
+            ])
+            cd_downwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.lift_coeff[:,2][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.lift_coeff[:,3][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D
+            ])
+            cd_downwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.lift_coeff[:,2][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.lift_coeff[:,3][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D
+            ])
+        elif scoff == "pitch":
+            ylabel = r"$C_{M,2}(\alpha_2)$"
+            ymin=-0.05
+            ymax=0.105
+            cd_downwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.pitch_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.pitch_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single
+            ])
+            cd_downwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.pitch_coeff[:,2][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.pitch_coeff[:,3][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D
+            ])
+            cd_downwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.pitch_coeff[:,2][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.pitch_coeff[:,3][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D
+            ])
+            cd_downwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.pitch_coeff[:,2][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.pitch_coeff[:,3][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D
+            ])
+            cd_downwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.pitch_coeff[:,2][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.pitch_coeff[:,3][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D
+            ])
+
+            cd_downwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.pitch_coeff[:,2][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.pitch_coeff[:,3][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D
+            ])
+
+
+        ax.plot(unique_alphas_1D,cd_downwind_mean_1D,label=(" 1D "), alpha = 0.8)
+        ax.plot(unique_alphas_2D,cd_downwind_mean_2D,label=(" 2D "), alpha = 0.8)
+        ax.plot(unique_alphas_3D,cd_downwind_mean_3D,label=(" 3D "), alpha = 0.8)
+        ax.plot(unique_alphas_4D,cd_downwind_mean_4D,label=(" 4D "), alpha = 0.8)
+        ax.plot(unique_alphas_5D,cd_downwind_mean_5D,label=(" 5D "), alpha = 0.8)
+        ax.plot(unique_alphas_single, cd_downwind_mean_single,label=("Single"),  alpha = 0.8)
+        ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
+        ax.set_ylabel(ylabel, fontsize=15)
+        ax.tick_params(labelsize=15)
+        ax.set_ylim(ymin,ymax)
+        ax.set_xlim(xmin=-4, xmax=4)
+        ax.grid(True)
+  
+
+    ax.set_xticks([-4,-2,0,2 ,4])
+    plt.show()
+    return fig, ax
+
+
+#%% !!!
+def plot_compare_distance_mean_oposite(static_coeff_single, static_coeff_1D, static_coeff_2D, static_coeff_3D, static_coeff_4D, static_coeff_5D, scoff="", upwind_in_rig=True, ax=None):
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(3.05, 2.63))
+
+
+    alpha_single = np.round(static_coeff_single.pitch_motion*360/2/np.pi,1)
+    unique_alphas_single = np.sort(np.unique(alpha_single)) 
+    alpha_1D = np.round(static_coeff_1D.pitch_motion*360/2/np.pi,1)
+    unique_alphas_1D = np.sort(np.unique(alpha_1D))
+    alpha_2D = np.round(static_coeff_2D.pitch_motion*360/2/np.pi,1)
+    unique_alphas_2D = np.sort(np.unique(alpha_2D))
+    alpha_3D = np.round(static_coeff_3D.pitch_motion*360/2/np.pi,1)
+    unique_alphas_3D = np.sort(np.unique(alpha_3D))
+    alpha_4D = np.round(static_coeff_4D.pitch_motion*360/2/np.pi,1)
+    unique_alphas_4D = np.sort(np.unique(alpha_4D))
+    alpha_5D = np.round(static_coeff_5D.pitch_motion*360/2/np.pi,1)
+    unique_alphas_5D = np.sort(np.unique(alpha_5D))
+
+    if upwind_in_rig: #MUS
+        if scoff == "drag":
+            ylabel = r"$C_{D,2}(\alpha_1)$"
+            ymin = 0.3
+            ymax = 0.41
+            cd_upwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.drag_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.drag_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single])
+            cd_upwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.drag_coeff[:,2][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.drag_coeff[:,3][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D])
+            cd_upwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.drag_coeff[:,2][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.drag_coeff[:,3][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D])
+            
+            cd_upwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.drag_coeff[:,2][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.drag_coeff[:,3][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D])
+            cd_upwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.drag_coeff[:,2][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.drag_coeff[:,3][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D])
+            cd_upwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.drag_coeff[:,2][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.drag_coeff[:,3][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D])
+        elif scoff == "lift":
+            ylabel = r"$C_{L,2}(\alpha_1)$"
+            ymin = -0.2
+            ymax = 0.11
+            cd_upwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.lift_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.lift_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single])
+            cd_upwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.lift_coeff[:,2][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.lift_coeff[:,3][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D])
+            cd_upwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.lift_coeff[:,2][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.lift_coeff[:,3][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D])
+            cd_upwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.lift_coeff[:,2][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.lift_coeff[:,3][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D])
+            cd_upwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.lift_coeff[:,2][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.lift_coeff[:,3][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D])
+            cd_upwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.lift_coeff[:,2][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.lift_coeff[:,3][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D])
+        elif scoff == "pitch":
+            ylabel = r"$C_{M,2}(\alpha_1)$"
+            ymin=-0.03
+            ymax=0.0501
+            cd_upwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.pitch_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.pitch_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single])
+            cd_upwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.pitch_coeff[:,2][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.pitch_coeff[:,3][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D])
+            cd_upwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.pitch_coeff[:,2][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.pitch_coeff[:,3][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D])
+            cd_upwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.pitch_coeff[:,2][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.pitch_coeff[:,3][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D])
+            cd_upwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.pitch_coeff[:,2][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.pitch_coeff[:,3][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D])
+
+            cd_upwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.pitch_coeff[:,2][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.pitch_coeff[:,3][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D])
+        else:
+            print(scoff + " Error: Unknown argument: scoff=" + scoff + " Use scoff=drag, lift or pitch" )
+            return None
+
+        ax.plot(unique_alphas_1D,cd_upwind_mean_1D,label=(" 1D "), alpha = 0.8)
+        ax.plot(unique_alphas_2D,cd_upwind_mean_2D,label=(" 2D "), alpha = 0.8)
+        ax.plot(unique_alphas_3D,cd_upwind_mean_3D,label=(" 3D "), alpha = 0.8)
+        ax.plot(unique_alphas_4D,cd_upwind_mean_4D,label=(" 4D "), alpha = 0.8)
+        ax.plot(unique_alphas_5D,cd_upwind_mean_5D,label=(" 5D "), alpha = 0.8)
+        #ax.plot(unique_alphas_single, cd_upwind_mean_single,label=("Single"),  alpha = 0.8)
+        ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
+        ax.set_ylabel(ylabel, fontsize=15)
+        ax.tick_params(labelsize=15)
+        ax.set_ylim(ymin,ymax)
+        ax.set_xlim(xmin=-4, xmax=4)
+        ax.grid(True)
+
+            
+    else: #MDS
+        if scoff == "drag":    
+            ylabel = r"$C_{D,1}(\alpha_2)$"
+            ymin = 0.35
+            ymax = 0.5
+            cd_downwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.drag_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.drag_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single
+            ])
+            cd_downwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.drag_coeff[:,0][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.drag_coeff[:,1][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D
+            ])
+            cd_downwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.drag_coeff[:,0][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.drag_coeff[:,1][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D
+            ])
+            cd_downwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.drag_coeff[:,0][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.drag_coeff[:,1][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D
+            ])
+            cd_downwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.drag_coeff[:,0][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.drag_coeff[:,1][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D
+            ])
+            cd_downwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.drag_coeff[:,0][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.drag_coeff[:,1][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D
+            ])
+        elif scoff == "lift":
+            ylabel = r"$C_{L,1}(\alpha_2)$"
+            ymin = -0.02
+            ymax = 0.18
+            cd_downwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.lift_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.lift_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single
+            ])
+            cd_downwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.lift_coeff[:,0][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.lift_coeff[:,1][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D
+            ])
+            cd_downwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.lift_coeff[:,0][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.lift_coeff[:,1][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D
+            ])
+            cd_downwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.lift_coeff[:,0][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.lift_coeff[:, 1][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D
+            ])
+            cd_downwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.lift_coeff[:,0][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.lift_coeff[:,1][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D
+            ])
+            cd_downwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.lift_coeff[:,0][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.lift_coeff[:,1][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D
+            ])
+        elif scoff == "pitch":
+            ylabel = r"$C_{M,1}(\alpha_2)$"
+            ymin=0.02
+            ymax=0.055
+            cd_downwind_mean_single = np.array([
+                np.nanmean(static_coeff_single.pitch_coeff[:,0][np.isclose(alpha_single, val, atol=1e-6)]) + np.nanmean(static_coeff_single.pitch_coeff[:,1][np.isclose(alpha_single, val, atol=1e-6)])
+                for val in unique_alphas_single
+            ])
+            cd_downwind_mean_1D = np.array([
+                np.nanmean(static_coeff_1D.pitch_coeff[:,0][np.isclose(alpha_1D, val, atol=1e-6)]) + np.nanmean(static_coeff_1D.pitch_coeff[:,1][np.isclose(alpha_1D, val, atol=1e-6)])
+                for val in unique_alphas_1D
+            ])
+            cd_downwind_mean_2D = np.array([
+                np.nanmean(static_coeff_2D.pitch_coeff[:,0][np.isclose(alpha_2D, val, atol=1e-6)]) + np.nanmean(static_coeff_2D.pitch_coeff[:,1][np.isclose(alpha_2D, val, atol=1e-6)])
+                for val in unique_alphas_2D
+            ])
+            cd_downwind_mean_3D = np.array([
+                np.nanmean(static_coeff_3D.pitch_coeff[:,0][np.isclose(alpha_3D, val, atol=1e-6)]) + np.nanmean(static_coeff_3D.pitch_coeff[:,1][np.isclose(alpha_3D, val, atol=1e-6)])
+                for val in unique_alphas_3D
+            ])
+            cd_downwind_mean_4D = np.array([
+                np.nanmean(static_coeff_4D.pitch_coeff[:,0][np.isclose(alpha_4D, val, atol=1e-6)]) + np.nanmean(static_coeff_4D.pitch_coeff[:,1][np.isclose(alpha_4D, val, atol=1e-6)])
+                for val in unique_alphas_4D
+            ])
+
+            cd_downwind_mean_5D = np.array([
+                np.nanmean(static_coeff_5D.pitch_coeff[:,0][np.isclose(alpha_5D, val, atol=1e-6)]) + np.nanmean(static_coeff_5D.pitch_coeff[:,1][np.isclose(alpha_5D, val, atol=1e-6)])
+                for val in unique_alphas_5D
+            ])
+
+
+        ax.plot(unique_alphas_1D,cd_downwind_mean_1D,label=(" 1D "), alpha = 0.8)
+        ax.plot(unique_alphas_2D,cd_downwind_mean_2D,label=(" 2D "), alpha = 0.8)
+        ax.plot(unique_alphas_3D,cd_downwind_mean_3D,label=(" 3D "), alpha = 0.8)
+        ax.plot(unique_alphas_4D,cd_downwind_mean_4D,label=(" 4D "), alpha = 0.8)
+        ax.plot(unique_alphas_5D,cd_downwind_mean_5D,label=(" 5D "), alpha = 0.8)
+        #ax.plot(unique_alphas_single, cd_downwind_mean_single,label=("Single"),  alpha = 0.8)
+        ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
+        ax.set_ylabel(ylabel, fontsize=15)
+        ax.tick_params(labelsize=15)
+        ax.set_ylim(ymin,ymax)
+        ax.set_xlim(xmin=-4, xmax=4)
+
+        ax.grid(True)
+
+    ax.set_xticks([-4,-2,0,2 ,4])
+    plt.show()
+    return fig, ax
+
+
+
+#%% !!!
+plt.close()
+section_name = ""
+# sammenlinge hastigheter
+fig, ax = plot_compare_distance_mean1(static_coeff_single_9_updated, static_coeff_MDS_1D_10_updated, static_coeff_MDS_2D_10_updated, static_coeff_MDS_3D_10_updated, static_coeff_MDS_4D_10_updated, static_coeff_MDS_5D_10_updated, scoff="drag", upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cd_mds" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+fig, ax  = plot_compare_distance_mean1(static_coeff_single_9_updated, static_coeff_MDS_1D_10_updated, static_coeff_MDS_2D_10_updated, static_coeff_MDS_3D_10_updated, static_coeff_MDS_4D_10_updated, static_coeff_MDS_5D_10_updated, scoff="lift", upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cl_mds" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+fig, ax  = plot_compare_distance_mean1(static_coeff_single_9_updated, static_coeff_MDS_1D_10_updated, static_coeff_MDS_2D_10_updated, static_coeff_MDS_3D_10_updated, static_coeff_MDS_4D_10_updated, static_coeff_MDS_5D_10_updated, scoff="pitch", upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cm_mds" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+fig, ax = plot_compare_distance_mean1(static_coeff_single_9_updated, static_coeff_MUS_1D_10_updated, static_coeff_MUS_2D_10_updated, static_coeff_MUS_3D_10_updated, static_coeff_MUS_4D_10_updated, static_coeff_MUS_5D_10_updated, scoff="drag", upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cd_mus" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+fig, ax  = plot_compare_distance_mean1(static_coeff_single_9_updated, static_coeff_MUS_1D_10_updated, static_coeff_MUS_2D_10_updated, static_coeff_MUS_3D_10_updated, static_coeff_MUS_4D_10_updated, static_coeff_MUS_5D_10_updated, scoff="lift", upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cl_mus" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+fig, ax  = plot_compare_distance_mean1(static_coeff_single_9_updated, static_coeff_MUS_1D_10_updated, static_coeff_MUS_2D_10_updated, static_coeff_MUS_3D_10_updated, static_coeff_MUS_4D_10_updated, static_coeff_MUS_5D_10_updated, scoff="pitch", upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cm_mus" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+
+
+#%% !!!
+plt.close()
+section_name = ""
+# sammenlinge hastigheter
+fig, ax = plot_compare_distance_mean_oposite(static_coeff_single_9_updated, static_coeff_MDS_1D_10_updated, static_coeff_MDS_2D_10_updated, static_coeff_MDS_3D_10_updated, static_coeff_MDS_4D_10_updated, static_coeff_MDS_5D_10_updated, scoff="drag", upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cd_mds" + "_dist2.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+fig, ax  = plot_compare_distance_mean_oposite(static_coeff_single_9_updated, static_coeff_MDS_1D_10_updated, static_coeff_MDS_2D_10_updated, static_coeff_MDS_3D_10_updated, static_coeff_MDS_4D_10_updated, static_coeff_MDS_5D_10_updated, scoff="lift", upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cl_mds" + "_dist2.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+fig, ax  = plot_compare_distance_mean_oposite(static_coeff_single_9_updated, static_coeff_MDS_1D_10_updated, static_coeff_MDS_2D_10_updated, static_coeff_MDS_3D_10_updated, static_coeff_MDS_4D_10_updated, static_coeff_MDS_5D_10_updated, scoff="pitch", upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cm_mds" + "_dist2.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+fig, ax = plot_compare_distance_mean_oposite(static_coeff_single_9_updated, static_coeff_MUS_1D_10_updated, static_coeff_MUS_2D_10_updated, static_coeff_MUS_3D_10_updated, static_coeff_MUS_4D_10_updated, static_coeff_MUS_5D_10_updated, scoff="drag", upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cd_mus" + "_dist2.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+fig, ax  = plot_compare_distance_mean_oposite(static_coeff_single_9_updated, static_coeff_MUS_1D_10_updated, static_coeff_MUS_2D_10_updated, static_coeff_MUS_3D_10_updated, static_coeff_MUS_4D_10_updated, static_coeff_MUS_5D_10_updated, scoff="lift", upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cl_mus" + "_dist2.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+fig, ax  = plot_compare_distance_mean_oposite(static_coeff_single_9_updated, static_coeff_MUS_1D_10_updated, static_coeff_MUS_2D_10_updated, static_coeff_MUS_3D_10_updated, static_coeff_MUS_4D_10_updated, static_coeff_MUS_5D_10_updated, scoff="pitch", upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cm_mus" + "_dist2.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.close()
+
+#%% !!!
+section_name = ""
 # sammenlinge hastigheter
 w3t._scoff.plot_compare_distance_mean(static_coeff_single_9_updated, static_coeff_MDS_1D_10_updated, static_coeff_MDS_2D_10_updated, static_coeff_MDS_3D_10_updated, static_coeff_MDS_4D_10_updated, static_coeff_MDS_5D_10_updated, scoff="drag", upwind_in_rig=False, ax=None)
-plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"mds" + "_drag.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cd_mds" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 
 w3t._scoff.plot_compare_distance_mean(static_coeff_single_9_updated, static_coeff_MDS_1D_10_updated, static_coeff_MDS_2D_10_updated, static_coeff_MDS_3D_10_updated, static_coeff_MDS_4D_10_updated, static_coeff_MDS_5D_10_updated, scoff="lift", upwind_in_rig=False, ax=None)
-plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"mds" + "_lift.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cl_mds" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 w3t._scoff.plot_compare_distance_mean(static_coeff_single_9_updated, static_coeff_MDS_1D_10_updated, static_coeff_MDS_2D_10_updated, static_coeff_MDS_3D_10_updated, static_coeff_MDS_4D_10_updated, static_coeff_MDS_5D_10_updated, scoff="pitch", upwind_in_rig=False, ax=None)
-plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"mds" + "_pitch.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cm_mds" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 w3t._scoff.plot_compare_distance_mean(static_coeff_single_9_updated, static_coeff_MUS_1D_10_updated, static_coeff_MUS_2D_10_updated, static_coeff_MUS_3D_10_updated, static_coeff_MUS_4D_10_updated, static_coeff_MUS_5D_10_updated, scoff="drag", upwind_in_rig=True, ax=None)
-plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"mus" + "_drag.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cd_mus" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 w3t._scoff.plot_compare_distance_mean(static_coeff_single_9_updated, static_coeff_MUS_1D_10_updated, static_coeff_MUS_2D_10_updated, static_coeff_MUS_3D_10_updated, static_coeff_MUS_4D_10_updated, static_coeff_MUS_5D_10_updated, scoff="lift", upwind_in_rig=True, ax=None)
-plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"mus" + "_lift.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cl_mus" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 w3t._scoff.plot_compare_distance_mean(static_coeff_single_9_updated, static_coeff_MUS_1D_10_updated, static_coeff_MUS_2D_10_updated, static_coeff_MUS_3D_10_updated, static_coeff_MUS_4D_10_updated, static_coeff_MUS_5D_10_updated, scoff="pitch", upwind_in_rig=True, ax=None)
-plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"mus" + "_pitch.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name + f"cm_mus" + "_dist.png"), bbox_inches='tight', pad_inches=0.02, dpi=300)
 
 #%% !!!
-
+section_name = "VIKTIG"
 w3t._scoff.plot_compare_distance_mean_collect(static_coeff_single_9_updated, static_coeff_MDS_1D_10_updated, static_coeff_MDS_2D_10_updated, static_coeff_MDS_3D_10_updated, static_coeff_MDS_4D_10_updated, static_coeff_MDS_5D_10_updated, static_coeff_MUS_1D_10_updated, static_coeff_MUS_2D_10_updated, static_coeff_MUS_3D_10_updated, static_coeff_MUS_4D_10_updated, static_coeff_MUS_5D_10_updated)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave" , section_name ), bbox_inches='tight', pad_inches=0.02, dpi=300)
+
 ##########################################################################
 #%% 
 # Save arrays to .npy files
