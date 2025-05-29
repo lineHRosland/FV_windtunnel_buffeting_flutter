@@ -9,7 +9,7 @@ sys.path.append(PARENT_DIR)
 from w3tp.w3t import _eigVal 
 from mode_shapes import mode_shape_single
 from mode_shapes import mode_shape_two
-
+import matplotlib.pyplot as plt
 
 
 B = 18.3 # m, section width 
@@ -50,30 +50,25 @@ file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Ca
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
-Kae_Single = matrices["Kae_Single"]
-Cae_Single = matrices["Cae_Single"]
-Cae_Single_gen, Kae_Single_gen = _eigVal.generalize_C_K(Cae_Single, Kae_Single, phi_single, x_single)
+Kae_Single_gen = matrices["Kae_Single"]
+Cae_Single_gen = matrices["Cae_Single"]
 
-Kae_1D = matrices["Kae_1D"]
-Cae_1D = matrices["Cae_1D"]
-Cae_1D_gen, Kae_1D_gen = _eigVal.generalize_C_K(Cae_1D, Kae_1D, phi_two, x_two, single=False)
+Kae_1D_gen = matrices["Kae_1D"]
+Cae_1D_gen = matrices["Cae_1D"]
 print("Kae_1D_gen", 37.6*37.6*Kae_1D_gen)
 
-Kae_2D = matrices["Kae_2D"]
-Cae_2D = matrices["Cae_2D"]
-Cae_2D_gen, Kae_2D_gen = _eigVal.generalize_C_K(Cae_2D, Kae_2D, phi_two, x_two, single=False)
+Kae_2D_gen = matrices["Kae_2D"]
+Cae_2D_gen = matrices["Cae_2D"]
 
-Kae_3D = matrices["Kae_3D"]
-Cae_3D = matrices["Cae_3D"]
-Cae_3D_gen, Kae_3D_gen = _eigVal.generalize_C_K(Cae_3D, Kae_3D, phi_two, x_two, single=False)
+Kae_3D_gen = matrices["Kae_3D"]
+Cae_3D_gen = matrices["Cae_3D"]
 
-Kae_4D = matrices["Kae_4D"]
-Cae_4D = matrices["Cae_4D"]
-Cae_4D_gen, Kae_4D_gen = _eigVal.generalize_C_K(Cae_4D, Kae_4D, phi_two, x_two, single=False)
+Kae_4D_gen = matrices["Kae_4D"]
+Cae_4D_gen = matrices["Cae_4D"]
 
-Kae_5D = matrices["Kae_5D"]
-Cae_5D = matrices["Cae_5D"]
-Cae_5D_gen, Kae_5D_gen = _eigVal.generalize_C_K(Cae_5D, Kae_5D, phi_two, x_two, single=False)
+Kae_5D_gen = matrices["Kae_5D"]
+Cae_5D_gen = matrices["Cae_5D"]
+#Cae_5D_gen, Kae_5D_gen = _eigVal.generalize_C_K(Cae_5D, Kae_5D, phi_two, x_two, single=False)
 
 #  AD
 file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Arrays_AD_k"
@@ -134,6 +129,25 @@ if os.path.exists(os.path.join(file_path, "k_range_5D.npy")):
 else:
     raise FileNotFoundError(f"The file 'k_range_5D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
+plt.figure(figsize=(10, 6))
+plt.title("Cae single deck")
+plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Cae_Single_gen[0,0], label="Cae_Single_gen, z1")
+plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[1,1], label="Cae_Single_gen, \theta1")
+plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Cae_Single_gen[2,2], label="Cae_Single_gen, z2")
+plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[3,3], label="Cae_Single_gen, \theta2")
+plt.xlabel("k")
+plt.ylabel("Cae")
+plt.show()
+plt.figure(figsize=(10, 6))
+plt.title("Kae single deck")
+plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[0,0], label="Kae_Single_gen, z1")
+plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[1,1], label="Kae_Single_gen, \theta1")
+plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[2,2], label="Kae_Single_gen, z2")
+plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[3,3], label="Kae_Single_gen, \theta2")
+plt.xlabel("k")
+plt.ylabel("Kae")
+plt.legend()
+plt.show()
 
 
 
