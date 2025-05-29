@@ -1,8 +1,3 @@
-"""
-Created in April 2025
-
-@author: linehro & alicjaas
-"""
 
 import numpy as np
 
@@ -18,30 +13,26 @@ length = x[-1] - x[0]
 #Single deck
 def mode_shape_single():
     """
-    Constructs mode shape matrices for a single-deck bridge using vertical (mode 4)
-    and torsional (mode 15) modes. Mode data is loaded internally from .npz files.
+    Constructs the generalized mode shape matrix for a single-deck bridge section,
+    using the dominant vertical (mode 4) and torsional (mode 15) modes.
+
+    Mode shape data is loaded from NumPy .npz files containing arrays of nodal information.
 
     Files:
-        mode_4.npz  : Contains mode shape data for vertical mode (key = 'mode')
-        mode_15.npz : Contains mode shape data for torsional mode (key = 'mode')
+        mode4_data.npz  : Contains vertical mode shape (key = 'mode', shape = (N, 6))
+        mode15_data.npz : Contains torsional mode shape (key = 'mode', shape = (N, 6))
 
-    Notes:
-        - Each mode array has shape (N, 6), where N is the number of nodes.
-        - Each row contains [x, y, z, dx, dy, dz] for a single node.
-        - The x array contains the corresponding physical positions along the bridge.
-        - x ranges from -654 to 654.
-
-    Parameters:
-        full_matrix (bool): 
-            If True, populate full 2x2 matrix with mode coupling terms.
-            If False, populate only the diagonal (pure modes).
+    Format:
+        Each mode shape array has shape (N, 6), where N is the number of bridge nodes.
+        Each row corresponds to a node and contains:
+        [x, y, z, dx, dy, dz] — i.e., position and displacement vectors.
+        Only the vertical displacement (z) and torsional rotation (θ ≈ dy) are used.
 
     Returns:
-        phi_single (np.ndarray): Array of shape (N, 2, 2), the generalized mode shape matrices
-                                 at each node, with degrees of freedom [z, θ].
-        N (int): Number of nodes along the bridge span.
-        x (np.ndarray): 1D array of length N containing the physical x-coordinates.
-
+        phi_single (np.ndarray): Generalized mode shape array of shape (N, 2, 2), where
+                                 phi_single[i] contains the 2x2 mode shape matrix at node i.
+                                 DOFs are ordered as [z, θ].
+        x (np.ndarray): 1D array of nodal x-coordinates (length N).
     """
     data4 = np.load('mode4_data.npz')
     data15 = np.load('mode15_data.npz')
@@ -54,41 +45,39 @@ def mode_shape_single():
 
 
     for i in range(N):
-        phi_single[i, 0, 0] = mode_4[i, 2]  # zz, vertical
-        phi_single[i, 0, 1] = mode_4[i, 3]  # θz, rotation
-        phi_single[i, 1, 0] = mode_15[i, 2] # zθ
+        phi_single[i, 0, 0] = mode_4[i, 2]  # zz
         phi_single[i, 1, 1] = mode_15[i, 3] # θθ
 
+        # Cross-coupling terms are neglected (set to zero)
+        #phi_single[i, 1, 0] = mode_4[i, 3] 
+        #phi_single[i, 0, 1] = mode_15[i, 2]
 
     return phi_single, x
-
+ 
 #Double deck
-def mode_shape_twin():
+def mode_shape_two():
     """
-    Constructs mode shape matrices for a twin-deck bridge using vertical (mode 4)
-    and torsional (mode 15) modes. Mode data is loaded internally from .npz files.
+    Constructs the generalized mode shape matrix for a two-deck bridge configuration,
+    using the dominant vertical (mode 4) and torsional (mode 15) modes. The same mode
+    shapes are applied to both decks.
+
+    Mode shape data is loaded from NumPy .npz files containing arrays of nodal information.
 
     Files:
-        mode4_data.npz   : Contains mode shape data for vertical mode (key = 'mode')
-        mode_15_data.npz : Contains mode shape data for torsional mode (key = 'mode')
+        mode4_data.npz  : Contains vertical mode shape (key = 'mode', shape = (N, 6))
+        mode15_data.npz : Contains torsional mode shape (key = 'mode', shape = (N, 6))
 
-    Notes:
-        - Each mode array has shape (N, 6), where N is the number of nodes along the bridge.
-        - Each row contains [x, y, z, dx, dy, dz] for a single node.
-        - The x array contains the corresponding physical positions along the bridge.
-        - x ranges from -654 to 654.
-
-    Parameters:
-        full_matrix (bool): 
-            If True, populates full 4x4 matrices with coupling terms between modes.
-            If False, only diagonal terms are populated.
+    Format:
+        Each mode shape array has shape (N, 6), where N is the number of nodes.
+        Each row corresponds to a node and contains:
+        [x, y, z, dx, dy, dz] — i.e., position and displacement vectors.
+        Only the vertical displacement (z) and torsional rotation (θ ≈ dy) are used.
 
     Returns:
-        phi_double (np.ndarray): Array of shape (N, 4, 4), containing the mode shape matrices
-                                 at each node. DOFs are ordered as [z1, θ1, z2, θ2].
-        N (int): Number of nodes.
-        x (np.ndarray): 1D array of length N containing the physical x-coordinates.
-
+        phi_double (np.ndarray): Generalized mode shape array of shape (N, 4, 4), where
+                                 phi_double[i] contains the 4x4 mode shape matrix at node i.
+                                 DOFs are ordered as [z₁, θ₁, z₂, θ₂].
+        x (np.ndarray): 1D array of nodal x-coordinates (length N).
     """
     data4 = np.load('mode4_data.npz')
     data15 = np.load('mode15_data.npz')
@@ -101,14 +90,18 @@ def mode_shape_twin():
     phi_double = np.zeros((N, 4, 4))
 
     for i in range(N):
-        phi_double[i, 0, 0] = mode_4[i, 2]  # zz, vertical
-        phi_double[i, 0, 1] = mode_4[i, 3]  # θz, rotation
-        phi_double[i, 1, 0] = mode_15[i, 2] # zθ
+        phi_double[i, 0, 0] = mode_4[i, 2]  # zz
         phi_double[i, 1, 1] = mode_15[i, 3] # θθ
-        phi_double[i, 2, 2] = mode_4[i, 2]  # zz, vertical
-        phi_double[i, 2, 3] = mode_4[i, 3]  # θz, rotation
-        phi_double[i, 3, 2] = mode_15[i, 2] # zθ
+
+        phi_double[i, 2, 2] = mode_4[i, 2]  # zz
         phi_double[i, 3, 3] = mode_15[i, 3] # θθ
+
+        # All off-diagonal terms are set to zero
+        #phi_double[i, 1, 0] = mode_4[i, 3] 
+        #phi_double[i, 0, 1] = mode_15[i, 2]
+            
+        #phi_double[i, 3, 2] = mode_4[i, 3]  
+        #phi_double[i, 2, 3] = mode_15[i, 2]
 
     # phi_double.shape: (n_nodes, n_DOF,n_modes)
 

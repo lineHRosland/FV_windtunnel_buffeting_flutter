@@ -5,38 +5,43 @@ from scipy import linalg as spla
 import matplotlib.pyplot as plt
 import time
 from mode_shapes import mode_shape_single
-from mode_shapes import mode_shape_twin
+from mode_shapes import mode_shape_two
 
 def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
-    Løser generalisert eigenverdiproblem for gitt system.
-    
-    [ -λ² M + λ(C - Cae) + (K - Kae) ] φ = 0
+    Solves the generalized complex eigenvalue problem for an aeroelastic system.
+
+    The system is formulated as a second-order differential equation:
+        [ -λ² M + λ(C - C_aero) + (K - K_aero) ] φ = 0
+
+    This equation is recast into first-order state-space form and solved numerically
+    to obtain the eigenvalues of the coupled structural-aerodynamic system.
 
     Parameters:
     -----------
-    M : ndarray
-        Mass matrix
-    C_struc : ndarray
+    M_struc : np.ndarray
+        Structural mass matrix
+    C_struc : np.ndarray
         Structural damping matrix
-    K_struc : ndarray
+    K_struc : np.ndarray
         Structural stiffness matrix
-    C_aero : ndarray
+    C_aero : np.ndarray
         Aerodynamic damping matrix (dimensional)
-    K_aero : ndarray
+    K_aero : np.ndarray
         Aerodynamic stiffness matrix (dimensional)
 
     Returns:
     --------
-    eigvals : ndarray
-        Eigenvalues λ (complex), shape (n_dof*2,)
-    """   
+    eigvals : np.ndarray
+        Complex eigenvalues λ, shape (2 * n_dof,)
+    eigvecs : np.ndarray
+        Corresponding right eigenvectors, shape (2 * n_dof, 2 * n_dof)
+    """
+    # Effective system matrices
     C = C_struc - C_aero
     K = K_struc - K_aero
 
-
-
-    # State-space A-matrix
+    # Construct state-space system matrix A
     A = np.block([
         [np.zeros_like(M_struc), np.eye(M_struc.shape[0])],
         [-np.linalg.inv(M_struc) @ K, -np.linalg.inv(M_struc) @ C]
@@ -47,37 +52,41 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
 
     return eigvals, eigvecs
 
-def generalize_C_K(C, K, Phi, x):
+def generalize_C_K(C, K, Phi, x, single=True):
     """
-    Generalizes the  matrices C and K to modal coordinates
-    via trapezoidal integration of Phi.T @ C @ Phi.
+    Generalizes the aerodynamic damping and stiffness matrices to modal coordinates
+    by performing numerical integration over the spanwise distribution of mode shapes.
 
     Parameters:
     -----------
-    C : ndarray (n_dof x n_dof)
-        Aero damping matrix in physical DOFs.
-    K : ndarray (n_dof x n_dof)
-        Aero stiffness matrix in physical DOFs.
-    Phi : ndarray (n_points x n_dof x n_modes)
-        Modal shape matrix as a function of position.
-    x : ndarray (n_points,)
-        Position along the bridge span.
+    C : np.ndarray (n_dof x n_dof)
+        Aerodynamic damping matrix in physical degrees of freedom (DOFs).
+    K : np.ndarray (n_dof x n_dof)
+        Aerodynamic stiffness matrix in physical DOFs.
+    Phi : np.ndarray (n_points x n_dof x n_modes)
+        Mode shape matrix, evaluated at discrete points along the bridge span.
+    x : np.ndarray (n_points,)
+        Physical x-coordinates corresponding to the spanwise locations.
+    single : bool, optional (default=True)
+        If True, only the first N nodes are used (single-deck configuration).
+        If False, both upstream and downstream decks are processed (two-deck).
 
     Returns:
     --------
-    C_gen : ndarray (n_modes x n_modes)
-        Generalized damping matrix.
-    K_gen : ndarray (n_modes x n_modes)
-        Generalized stiffness matrix.
+    C_gen : np.ndarray (n_modes x n_modes)
+        Generalized aerodynamic damping matrix in modal coordinates.
+    K_gen : np.ndarray (n_modes x n_modes)
+        Generalized aerodynamic stiffness matrix in modal coordinates.
     """
     N = len(x)
+
     n_modes = Phi.shape[2]
 
     Cae_star_gen = np.zeros((n_modes, n_modes))
     Kae_star_gen = np.zeros((n_modes, n_modes))
 
-    for i in range(N-1):
-        dx = x[i+1] - x[i] # discretized length
+    for i in range(N-1): 
+        dx = x[i+1] - x[i] 
         phi_L = Phi[i] # shape (n_dof, n_modes)
         phi_R = Phi[i+1]
         # Damping
@@ -86,39 +95,40 @@ def generalize_C_K(C, K, Phi, x):
         # Stiffness
         K_int = 0.5 * (phi_L.T @ K @ phi_L + phi_R.T @ K @ phi_R)
         Kae_star_gen += K_int * dx
-
+    
     return Cae_star_gen, Kae_star_gen
     
 
  
 def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     """
-    Construct structural mass, damping, and stiffness matrices for single or twin-deck systems.
+    Constructs structural mass, damping, and stiffness matrices for either single-deck 
+    (2-DOF) or two-deck (4-DOF) bridge systems in modal coordinates.
 
     Parameters:
     -----------
     m1 : float
-        Modal mass for vertical motion (kg).
+        Modal mass for the vertical mode [kg].
     m2 : float
-        Modal mass for torsional motion (kg).
+        Modal mass for the torsional mode [kg].
     f1 : float
-        Natural frequency for vertical mode (Hz).
+        Natural frequency of the vertical mode [Hz].
     f2 : float
-        Natural frequency for torsional mode (Hz).
+        Natural frequency of the torsional mode [Hz].
     zeta : float
-        Damping ratio (assumed equal for both modes).
-    single : bool, optional
-        If True, returns 2x2 matrices (single-deck).
-        If False, returns 4x4 block-diagonal matrices (twin-deck).
+        Structural damping ratio (assumed equal for both modes).
+    single : bool, optional (default=True)
+        If True, returns 2x2 matrices corresponding to a single-deck system.
+        If False, returns 4x4 block-diagonal matrices representing two identical decks.
 
     Returns:
     --------
-    Ms : ndarray
-        Mass matrix (2x2 or 4x4).
-    Cs : ndarray
-        Damping matrix (2x2 or 4x4).
-    Ks : ndarray
-        Stiffness matrix (2x2 or 4x4).
+    Ms : np.ndarray
+        Structural mass matrix (2x2 or 4x4).
+    Cs : np.ndarray
+        Structural damping matrix (2x2 or 4x4).
+    Ks : np.ndarray
+        Structural stiffness matrix (2x2 or 4x4).
     """
     # Stiffness
     k1 = (2 * np.pi * f1) ** 2 * m1  #  (Vertical)
@@ -128,11 +138,12 @@ def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     c1 = 2 * zeta * m1 * np.sqrt(k1 / m1)  # (Vertical)
     c2 = 2 * zeta * m2 * np.sqrt(k2 / m2)  # (Torsion)
 
-    # Structural matrices, diagonal matrices in modal coordinates
+    # 2x2 structural matrices (single deck)
     Ms = np.array([[m1,0],[0,m2]])  # Mass matrix
     Cs = np.array([[c1,0],[0,c2]])  # Damping matrix
     Ks = np.array([[k1,0],[0,k2]])  # Stiffness matrix
 
+    # Expand to 4x4 block-diagonal matrices for two-deck system
     if not single:
         Ms = np.array([[m1,0,0,0],[0,m2,0,0],[0,0,m1,0],[0,0,0,m2]])  # Mass matrix
         Cs = np.array([[c1,0,0,0],[0,c2,0,0],[0,0,c1,0],[0,0,0,c2]])  # Damping matrix
@@ -141,8 +152,29 @@ def structural_matrices(m1, m2, f1, f2, zeta, single = True):
     return Ms, Cs, Ks
 
 def from_poly_k(poly_k, k_range, vred, damping_ad = True):
+    """
+    Evaluates an aerodynamic derivative based on reduced velocity using a smoothed polynomial approximation.
+
+    Parameters:
+    -----------
+    poly_k : np.ndarray
+        Polynomial coefficients (e.g., degree 2) for the aerodynamic derivative.
+    k_range : tuple (float, float)
+        Valid reduced frequency range (k_min, k_max) over which the polynomial was fitted.
+    vred : float
+        Reduced velocity V / (ω B). Will be internally converted to reduced frequency via k = 1 / vred.
+    damping_ad : bool, optional (default=True)
+        If True, multiplies the polynomial result by |v_red| (linear scaling for damping terms).
+        If False, multiplies by |v_red|² (quadratic scaling for stiffness terms).
+
+    Returns:
+    --------
+    ad_value : float
+        Evaluated aerodynamic derivative value at the given reduced velocity.
+    """
     if vred == 0:
-        vred = 1e-10
+        vred = 1e-10 # Prevent division by zero
+        
     uit_step = lambda k,kc: 1./(1 + np.exp(-2*20*(k-kc)))
     fit = lambda p,k,k1c,k2c : np.polyval(p,k)*uit_step(k,k1c)*(1-uit_step(k,k2c)) + np.polyval(p,k1c)*(1-uit_step(k,k1c)) + np.polyval(p,k2c)*(uit_step(k,k2c))
 
@@ -158,27 +190,47 @@ def from_poly_k(poly_k, k_range, vred, damping_ad = True):
 
 def cae_kae_single(poly_coeff, k_range, Vred_global,  B):
     """
-    Evaluates generalized aerodynamic damping and stiffness matrices for a single-deck bridge.
+    Computes the generalized aerodynamic damping and stiffness matrices for a 
+    single-deck bridge cross-section based on fitted polynomial aerodynamic derivatives.
 
     Parameters:
     -----------
-    poly_coeff : ndarray, shape (8, 3)
-        Polynomial coefficients for H1-H4 and A1-A4 (aerodynamic derivatives).
-    V : float
-        Reduced velocity (non-dimensional).
+    poly_coeff : np.ndarray, shape (8, 3)
+        Polynomial coefficients for the aerodynamic derivatives:
+        [H1, H2, H3, H4, A1, A2, A3, A4], where:
+            - H1, H2: damping terms related to vertical DOF
+            - A1, A2: damping terms related to torsional DOF
+            - H3, H4: stiffness terms related to vertical DOF
+            - A3, A4: stiffness terms related to torsional DOF
+    k_range : list of tuples, length 8
+        Valid reduced frequency ranges for each polynomial, used in smoothing.
+    Vred_global : float
+        Reduced velocity \( V / (B \omega) \) for the system.
     B : float
-        Section width (m).
+        Section width (m), used for non-dimensional scaling of derivatives.
 
     Returns:
     --------
-    C_ae_star: ndarray, shape (2, 2)
-    K_ae_star: ndarray, shape (2, 2)
+    C_ae_star : np.ndarray, shape (2, 2)
+        Generalized aerodynamic damping matrix (modal form).
+    K_ae_star : np.ndarray, shape (2, 2)
+        Generalized aerodynamic stiffness matrix (modal form).
     """
     Vred_global = float(Vred_global) 
 
     # AD
-    H1, H2, H3, H4 = from_poly_k(poly_coeff[0], k_range[0],Vred_global, damping_ad=True), from_poly_k(poly_coeff[1], k_range[1],Vred_global, damping_ad=True), from_poly_k(poly_coeff[2], k_range[2],Vred_global, damping_ad=False), from_poly_k(poly_coeff[3], k_range[3],Vred_global, damping_ad=False)
-    A1, A2, A3, A4 = from_poly_k(poly_coeff[4], k_range[4],Vred_global, damping_ad=True), from_poly_k(poly_coeff[5], k_range[5],Vred_global, damping_ad=True), from_poly_k(poly_coeff[6], k_range[6],Vred_global, damping_ad=False), from_poly_k(poly_coeff[7], k_range[7],Vred_global, damping_ad=False)
+    # Evaluate aerodynamic damping derivatives
+    H1 = from_poly_k(poly_coeff[0], k_range[0],Vred_global, damping_ad=True)
+    H2 = from_poly_k(poly_coeff[1], k_range[1],Vred_global, damping_ad=True)
+    A1 = from_poly_k(poly_coeff[4], k_range[4],Vred_global, damping_ad=True)
+    A2 = from_poly_k(poly_coeff[5], k_range[5],Vred_global, damping_ad=True)
+
+        
+    # Evaluate aerodynamic stiffness derivatives
+    H3 = from_poly_k(poly_coeff[2], k_range[2],Vred_global, damping_ad=False)
+    H4 = from_poly_k(poly_coeff[3], k_range[3],Vred_global, damping_ad=False)
+    A3 = from_poly_k(poly_coeff[6], k_range[6],Vred_global, damping_ad=False)
+    A4 = from_poly_k(poly_coeff[7], k_range[7],Vred_global, damping_ad=False)
 
     Cae_star = np.array([
          [H1,       B * H2],
@@ -187,41 +239,80 @@ def cae_kae_single(poly_coeff, k_range, Vred_global,  B):
     Kae_star = np.array([
          [H4,       B * H3],
          [B * A4,   B**2 * A3]
-     ])
-
-        
+     ])        
     return Cae_star, Kae_star
 
-def cae_kae_twin(poly_coeff, k_range, Vred_global, B):
+def cae_kae_two(poly_coeff, k_range, Vred_global, B):
     """
-    Evaluates the generalized aerodynamic damping and stiffness matrices for a twin-deck bridge.
+    Computes the generalized aerodynamic damping and stiffness matrices for a 
+    two-deck bridge configuration using fitted polynomial representations of 
+    aerodynamic derivatives.
 
     Parameters:
     -----------
-    poly_coeff : ndarray, shape (32, 3)
-        Polynomial coefficients for each aerodynamic derivative (2nd order).
-    V : ndarray, shape (32,)
-        Reduced velocity for each derivative.
+    poly_coeff : np.ndarray, shape (32, 3)
+        Polynomial coefficients for 32 aerodynamic derivatives:
+        - Indices 0 - 15: damping-related (multiplied by V_red)
+        - Indices 16 - 31: stiffness-related (multiplied by V_red²)
+    k_range : list of tuples
+        Valid reduced frequency ranges (min, max) for each derivative.
+    Vred_global : float
+        Global reduced velocity \( V / (B \omega) \).
     B : float
         Section width (m).
 
     Returns:
     --------
-    C_ae_star: ndarray, shape (4, 4)
-    K_ae_star: ndarray, shape (4, 4)
+    Cae_star : np.ndarray, shape (4, 4)
+        Generalized aerodynamic damping matrix.
+    Kae_star : np.ndarray, shape (4, 4)
+        Generalized aerodynamic stiffness matrix.
+
+    DOFs are ordered as: [z₁, θ₁, z₂, θ₂]
+    where:
+        - z₁, θ₁: vertical and torsional DOFs for the upstream deck
+        - z₂, θ₂: vertical and torsional DOFs for the downstream deck
     """
 
     Vred_global = float(Vred_global) 
 
     # AD
-    c_z1z1, c_z1θ1, c_z1z2, c_z1θ2 = from_poly_k(poly_coeff[0], k_range[0],Vred_global, damping_ad=True), from_poly_k(poly_coeff[1], k_range[1],Vred_global, damping_ad=True), from_poly_k(poly_coeff[2], k_range[2],Vred_global, damping_ad=True), from_poly_k(poly_coeff[3], k_range[3],Vred_global, damping_ad=True)
-    c_θ1z1, c_θ1θ1, c_θ1z2, c_θ1θ2 = from_poly_k(poly_coeff[4], k_range[4],Vred_global, damping_ad=True), from_poly_k(poly_coeff[5], k_range[5],Vred_global, damping_ad=True), from_poly_k(poly_coeff[6], k_range[6],Vred_global, damping_ad=True), from_poly_k(poly_coeff[7], k_range[7],Vred_global, damping_ad=True)
-    c_z2z1, c_z2θ1, c_z2z2, c_z2θ2 = from_poly_k(poly_coeff[8], k_range[8],Vred_global, damping_ad=True), from_poly_k(poly_coeff[9], k_range[9],Vred_global, damping_ad=True), from_poly_k(poly_coeff[10], k_range[10],Vred_global, damping_ad=True), from_poly_k(poly_coeff[11], k_range[11],Vred_global, damping_ad=True)
-    c_θ2z1, c_θ2θ1, c_θ2z2, c_θ2θ2 = from_poly_k(poly_coeff[12], k_range[12],Vred_global, damping_ad=True), from_poly_k(poly_coeff[13], k_range[13],Vred_global, damping_ad=True), from_poly_k(poly_coeff[14], k_range[14],Vred_global, damping_ad=True), from_poly_k(poly_coeff[15], k_range[15],Vred_global, damping_ad=True)
-    k_z1z1, k_z1θ1, k_z1z2, k_z1θ2 = from_poly_k(poly_coeff[16], k_range[16],Vred_global, damping_ad=False), from_poly_k(poly_coeff[17], k_range[17],Vred_global, damping_ad=False), from_poly_k(poly_coeff[18], k_range[18],Vred_global, damping_ad=False), from_poly_k(poly_coeff[19], k_range[19],Vred_global, damping_ad=False)
-    k_θ1z1, k_θ1θ1, k_θ1z2, k_θ1θ2 = from_poly_k(poly_coeff[20], k_range[20],Vred_global, damping_ad=False), from_poly_k(poly_coeff[21], k_range[21],Vred_global, damping_ad=False), from_poly_k(poly_coeff[22], k_range[22],Vred_global, damping_ad=False), from_poly_k(poly_coeff[23], k_range[23],Vred_global, damping_ad=False)
-    k_z2z1, k_z2θ1, k_z2z2, k_z2θ2 = from_poly_k(poly_coeff[24], k_range[24],Vred_global, damping_ad=False), from_poly_k(poly_coeff[25], k_range[25],Vred_global, damping_ad=False), from_poly_k(poly_coeff[26], k_range[26],Vred_global, damping_ad=False), from_poly_k(poly_coeff[27], k_range[27],Vred_global, damping_ad=False)
-    k_θ2z1, k_θ2θ1, k_θ2z2, k_θ2θ2 = from_poly_k(poly_coeff[28], k_range[28],Vred_global, damping_ad=False), from_poly_k(poly_coeff[29], k_range[29],Vred_global, damping_ad=False), from_poly_k(poly_coeff[30], k_range[30],Vred_global, damping_ad=False), from_poly_k(poly_coeff[31], k_range[31],Vred_global, damping_ad=False)
+    # Damping derivatives (indices 0–15)
+
+    c_z1z1 = from_poly_k(poly_coeff[0], k_range[0],Vred_global, damping_ad=True)
+    c_z1θ1 = from_poly_k(poly_coeff[1], k_range[1],Vred_global, damping_ad=True)
+    c_z1z2 = from_poly_k(poly_coeff[2], k_range[2],Vred_global, damping_ad=True)
+    c_z1θ2 = from_poly_k(poly_coeff[3], k_range[3],Vred_global, damping_ad=True)
+    c_θ1z1 = from_poly_k(poly_coeff[4], k_range[4],Vred_global, damping_ad=True)
+    c_θ1θ1 = from_poly_k(poly_coeff[5], k_range[5],Vred_global, damping_ad=True)
+    c_θ1z2 = from_poly_k(poly_coeff[6], k_range[6],Vred_global, damping_ad=True)
+    c_θ1θ2 = from_poly_k(poly_coeff[7], k_range[7],Vred_global, damping_ad=True)
+    c_z2z1 = from_poly_k(poly_coeff[8], k_range[8],Vred_global, damping_ad=True)
+    c_z2θ1 = from_poly_k(poly_coeff[9], k_range[9],Vred_global, damping_ad=True)
+    c_z2z2 = from_poly_k(poly_coeff[10], k_range[10],Vred_global, damping_ad=True)
+    c_z2θ2 = from_poly_k(poly_coeff[11], k_range[11],Vred_global, damping_ad=True)
+    c_θ2z1 = from_poly_k(poly_coeff[12], k_range[12],Vred_global, damping_ad=True)
+    c_θ2θ1 = from_poly_k(poly_coeff[13], k_range[13],Vred_global, damping_ad=True)
+    c_θ2z2 = from_poly_k(poly_coeff[14], k_range[14],Vred_global, damping_ad=True)
+    c_θ2θ2 = from_poly_k(poly_coeff[15], k_range[15],Vred_global, damping_ad=True)
+
+    # Stiffness derivatives (indices 16–31)
+    k_z1z1 = from_poly_k(poly_coeff[16], k_range[16],Vred_global, damping_ad=False)
+    k_z1θ1 = from_poly_k(poly_coeff[17], k_range[17],Vred_global, damping_ad=False)
+    k_z1z2 = from_poly_k(poly_coeff[18], k_range[18],Vred_global, damping_ad=False)
+    k_z1θ2 = from_poly_k(poly_coeff[19], k_range[19],Vred_global, damping_ad=False)
+    k_θ1z1 = from_poly_k(poly_coeff[20], k_range[20],Vred_global, damping_ad=False)
+    k_θ1θ1 = from_poly_k(poly_coeff[21], k_range[21],Vred_global, damping_ad=False)
+    k_θ1z2 = from_poly_k(poly_coeff[22], k_range[22],Vred_global, damping_ad=False)
+    k_θ1θ2 = from_poly_k(poly_coeff[23], k_range[23],Vred_global, damping_ad=False)
+    k_z2z1 = from_poly_k(poly_coeff[24], k_range[24],Vred_global, damping_ad=False)
+    k_z2θ1 = from_poly_k(poly_coeff[25], k_range[25],Vred_global, damping_ad=False)
+    k_z2z2 = from_poly_k(poly_coeff[26], k_range[26],Vred_global, damping_ad=False)
+    k_z2θ2 = from_poly_k(poly_coeff[27], k_range[27],Vred_global, damping_ad=False)
+    k_θ2z1 = from_poly_k(poly_coeff[28], k_range[28],Vred_global, damping_ad=False)
+    k_θ2θ1 = from_poly_k(poly_coeff[29], k_range[29],Vred_global, damping_ad=False)
+    k_θ2z2 = from_poly_k(poly_coeff[30], k_range[30],Vred_global, damping_ad=False)
+    k_θ2θ2 = from_poly_k(poly_coeff[31], k_range[31],Vred_global, damping_ad=False)
     
     Cae_star = np.array([
          [c_z1z1,       B * c_z1θ1,       c_z1z2,       B * c_z1θ2],
@@ -239,57 +330,90 @@ def cae_kae_twin(poly_coeff, k_range, Vred_global, B):
 
     return Cae_star, Kae_star
 
+#FIKSE: DELE OPP I FLERE FUNSKJONER?
 
-def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, single = True, buffeting = False, Cae_star_gen_BUFF = None, Kae_star_gen_BUFF=None, verbose=True):
-    '''
-    Solves flutter analysis using an iterative method for either single-deck (2DOF) or twin-deck (4DOF).
-    Returns global results (and optionally local for twin-deck).
+def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, 
+                Phi, x, single = True, buffeting = False, 
+                Cae_star_gen_BUFF = None, Kae_star_gen_BUFF=None, verbose=True):
+    """
+    Solves the aeroelastic eigenvalue problem to determine flutter onset by iterating
+    over wind speed and frequency for either a single-deck (2 DOF) or two-deck (4 DOF) bridge.
 
     Parameters
     ----------
-    poly_coeff : ndarray
-        Aerodynamic derivatives as polynomial coefficients (32, 3).
-
-    m1, m2, f1, f2 : float
-        Masses and natural frequencies for the two modes.
+    poly_coeff : np.ndarray, shape (8, 3) or (32, 3)
+        Polynomial coefficients for aerodynamic derivatives (single or two-deck).
+    k_range : list of tuple(float, float)
+        Valid reduced frequency range for each aerodynamic derivative.
+    Ms : np.ndarray
+        Structural mass matrix.
+    Cs : np.ndarray
+        Structural damping matrix.
+    Ks : np.ndarray
+        Structural stiffness matrix.
+    f1, f2 : float
+        Natural frequencies of vertical and torsional modes [Hz].
     B : float
-        Bridge deck width.
+        Deck width [m].
     rho : float
-        Air density.
-    zeta : float
-        Structural damping ratio.
+        Air density [kg/m³].
     eps : float
-        Convergence tolerance.
-    N : int, optional
-        Number of points in wind velocity range.
+        Frequency convergence tolerance (rad/s).
+    Phi : np.ndarray
+        Mode shape matrix (N x DOF x modes).
+    x : np.ndarray
+        Array of physical node coordinates along the span.
     single : bool, optional
-        True for single-deck (2DOF), False for twin-deck (4DOF).
+        True for single-deck analysis (2 DOF). False for two-deck (4 DOF). Default is True.
+    buffeting : bool, optional
+        If True, uses precomputed buffeting matrices instead of aerodynamic derivatives.
+    Cae_star_gen_BUFF : np.ndarray
+        Precomputed generalized aerodynamic damping matrix for buffeting.
+    Kae_star_gen_BUFF : np.ndarray
+        Precomputed generalized aerodynamic stiffness matrix for buffeting.
+    verbose : bool, optional
+        If True, prints convergence info and dominant DOF tracking.
 
     Returns
     -------
-    damping_ratios, omega_all, eigvals_all, eigvecs_all : list
-        Global results for all modes.
+    V_list : list of float
+        Wind speeds [m/s] at each evaluation point.
+    omega_all : np.ndarray
+        Damped natural frequencies at each wind speed (shape: N_wind x n_modes).
+    damping_ratios : np.ndarray
+        Damping ratios at each wind speed (same shape as omega_all).
+    eigvecs_all : np.ndarray
+        Normalized eigenvectors at each wind speed (N_wind x n_modes).
+    eigvals_all : np.ndarray
+        Eigenvalues (complex λ = sigma + iω) for each mode and wind speed.
+    omegacritical : float
+        Critical flutter frequency (rad/s).
+    Vcritical : float
+        Critical flutter wind speed (m/s).
 
-    '''
+    Notes
+    -----
+    - Flutter is detected when the real part of an eigenvalue becomes negative.
+    - The procedure stops once flutter is detected and refined below a damping threshold.
+    - Frequency iteration is performed per mode and wind speed.
+    - Dominant DOF tracking is used to match eigenvalues across iterations.
+    """
     if single:
         n_modes = 2 # 2 modes for single deck
         omega_old = np.array([2*np.pi*f1, 2*np.pi*f2])
-        dominant_dofs = [0, 1]  # z, θ
     else:   
-        n_modes = 4 # 4 modes for twin deck
-        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) #Først brudekke 1, deretter brudekke 2
-        dominant_dofs = [0, 1, 2, 3]  # z1, θ1, z2, θ2
+        n_modes = 4 # 4 modes for two deck
+        omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) 
    
     # Flutter detection
     Vcritical = None # Critical wind speed
     omegacritical = None # Critical frequency
 
-
     stopWind = False
     iterWind = 0
     maxIterWind = 400
     V = 1.0 # Initial wind speed, m/s
-    dV = 0.5 # Hvor mye vi øker vindhastighet per iterasjon. 
+    dV = 0.5 
 
     # # Global results
     V_list = [] # Wind speed, m/s
@@ -298,29 +422,28 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, si
     
     zeta = 0.005 # Damping ratio for the structure (assumed equal for both modes)
 
-    # empty() creates an array of the given shape and type, EVERY ELEMENT MUST BE INITIALIZED LATER
     omega_all = np.zeros((maxIterWind, n_modes))
     damping_ratios = np.zeros((maxIterWind, n_modes))
     eigvals_all = np.zeros((maxIterWind, n_modes), dtype=complex)
     eigvecs_all = np.empty((maxIterWind, n_modes), dtype=object)
 
-    V_list.append(0.0) # V = 0.0 m/s
+    V_list.append(0.0) 
 
     for j_mode in range(n_modes):
-        eigvecs_all[0, j_mode] = np.nan
-        eigvals_all[0,j_mode] = np.nan
+        eigvecs_all[0, j_mode] = np.nan #FIKSE: IDENTY MATRIX (SPESIFISERT I OPPGAVE)
+        eigvals_all[0,j_mode] = np.nan  #FIKSE: VERDI HER Å KANSKJE?
 
-        omega_all[0,j_mode] = omega_old[j_mode] # Startverdi for omega er den naturlige frekvensen til modusen
+        omega_all[0,j_mode] = omega_old[j_mode] 
         damping_ratios [0,j_mode] = zeta
   
     velocity_counter = 1
 
-    while (iterWind < maxIterWind and not stopWind): # iterer over vindhastigheter
+    while (iterWind < maxIterWind and not stopWind): 
         
         if verbose:
             print(f"Wind speed iteration {iterWind+1}: V = {V} m/s")
 
-        for j in range(n_modes): # 4 modes for twin deck, 2 modes for single deck
+        for j in range(n_modes): # 4 modes for two deck, 2 modes for single deck
             if skip_mode[j]:
                 continue
             
@@ -328,62 +451,55 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, si
                 print("Mode:", j+1)
           
             stopFreq = False
-            iterFreq = 0 # Teller hvor mange frekvens-iterasjoner
-            maxIterFreq = 1000 # Maks antall iterasjoner for frekvens
+            iterFreq = 0 
+            maxIterFreq = 1000 
 
-
-
-            while (iterFreq < maxIterFreq and not stopFreq): # iterer over frekvens-iterasjoner     
-
-               
+            while (iterFreq < maxIterFreq and not stopFreq):
                 Vred = V/(omega_old[j]*B) # reduced velocity 
 
                 if single:
                     Cae_star_AD, Kae_star_AD= cae_kae_single(poly_coeff, k_range, Vred,  B)
-                    Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) # Generaliserte aero-matriser
-
+                    Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) 
                 else:
-                    Cae_star_AD, Kae_star_AD = cae_kae_twin(poly_coeff,k_range,  Vred, B)
-                    Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) # Generaliserte aero-matriser
+                    Cae_star_AD, Kae_star_AD = cae_kae_two(poly_coeff,k_range,  Vred, B)
+                    Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x, single=False) 
 
                 if buffeting:
+                    print("Buffeting")
                     Cae_gen = -V* Cae_star_gen_BUFF
                     Kae_gen = -V**2* Kae_star_gen_BUFF
-
                 else:      
                     Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen_AD
                     Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen_AD
 
-                if np.isclose(V, 37.6, atol=0.1):  # absolutt toleranse
+                if np.isclose(V, 37.6, atol=0.1):  
                     print("Kae_gen", Kae_gen)
-                
 
                 eigvalsV, eigvecsV = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
+                # print("eigvecsV", eigvecsV)
 
                 eigvals_pos = eigvalsV[np.imag(eigvalsV) > 0]
                 eigvecs_pos = eigvecsV[:, np.imag(eigvalsV) > 0]  
 
-                
                 if eigvals_pos.size == 0:
                     if verbose:
                         print(f"Ingen komplekse egenverdier ved V = {V:.2f} m/s, mode {j+1}. Skipper mode.")
+
                     omega_all[velocity_counter, j] = np.nan
                     damping_ratios[velocity_counter, j] = np.nan
                     eigvals_all[velocity_counter, j] = np.nan
                     eigvecs_all[velocity_counter, j] = None
                     break
 
-
                 if single:
                     best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]))
-      
                 else:
                     dominance_scores = np.array([np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])])
                     prev_lambda = eigvals_all[velocity_counter - 1, j] 
 
                     if V < 10:
-                        best_idx = np.argmax(dominance_scores) # Velg den største egenvektoren
+                        best_idx = np.argmax(dominance_scores) 
                     else:
                         best_idx = np.argmin(
                                 np.abs(np.imag(eigvals_pos) - omega_old[j])
@@ -391,16 +507,20 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, si
                      )
                         
                 λj = eigvals_pos[best_idx]
-                φj = eigvecs_pos[:n_modes, best_idx]
+                φj = eigvecs_pos[:n_modes, best_idx] #Choose the first n_modes eigenvectors (exclude lambda*phi)
                 omega_new = np.imag(λj)
                 damping_new = -np.real(λj) / np.abs(λj)
-                                            
-                if np.abs(omega_old[j] - omega_new) < eps or omega_old[j] <= 0.0: # omega har konvergert, jippi
+
+                dominant_dof_idx = np.argmax(np.abs(φj))
+                dof_labels = ['z₁', 'θ₁', 'z₂', 'θ₂']
+                print(f"→ Dominant DOF at V = {V:.2f} m/s, mode {j}: {dof_labels[dominant_dof_idx]}")
+      
+                if np.abs(omega_old[j] - omega_new) < eps or omega_old[j] <= 0.0:
                     omega_all[velocity_counter, j] = omega_new
                     damping_ratios[velocity_counter, j] = damping_new
                     eigvals_all[velocity_counter, j] = λj
                     eigvecs_all[velocity_counter, j] = φj
-                    stopFreq = True # Stopper frekvens-iterasjonen hvis vi har funnet flutter
+                    stopFreq = True 
 
                 iterFreq += 1
                 omega_old[j] = omega_new
@@ -414,34 +534,27 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, si
                     eigvecs_all[velocity_counter, j] = None
                     break
 
-         
-
-
-            if damping_new < 0: # flutter finnes, må finne nøyaktig flutterhastighe
-                for other_j in range(n_modes): #Flutter funnet på en mode, fokuser kunn på denne moden, og stopper til slutt hastighetiterasjonen.
+            if damping_new < 0:
+                for other_j in range(n_modes):
                     if other_j != j:
                         skip_mode[other_j] = True
-
                 if verbose:
                     print(f"Flutter detected at V = {V:.2f} m/s, iterWind = {iterWind}, j = {j}")
-
-                if np.abs(damping_new) < 0.0000001: #Akkurat ved flutter
+                if np.abs(damping_new) < 0.0000001:
                     if verbose:
                         print(f"Flutter converged at V ≈ {V:.5f} m/s")
                     omegacritical = omega_new
                     Vcritical = V
                     skip_mode[j] = True  
-
-                
-            else: #system stabilt
+            else: 
                 omega_all[velocity_counter, j] = omega_new
                 damping_ratios[velocity_counter, j] = damping_new
                 eigvals_all[velocity_counter, j] = λj   
                 eigvecs_all[velocity_counter, j] = φj
-
             if dV < 1e-8:
                 if verbose:
                     print(f"Stopping refinement: dV too small ({dV:.2e}). Flutter converged at V ≈ {V:.5f} m/s")
+
                 Vcritical = V
                 omegacritical = omega_new
                 skip_mode = [True] * n_modes
@@ -452,15 +565,13 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, si
 
         if all(not s for s in skip_mode):  
             V_list.append(V)
-
             V += dV
             velocity_counter += 1
-        elif not all(skip_mode):  # flutter har startet, men ikke funnet nøyaktig
+        elif not all(skip_mode): 
             V -= 0.5 * dV
             dV *= 0.5
 
         iterWind +=1
-
 
     # Truncate arrays to actual size
     omega_all = omega_all[:velocity_counter, :]
@@ -471,36 +582,37 @@ def solve_omega(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, Phi, x, si
     return V_list, omega_all, damping_ratios, eigvecs_all, eigvals_all, omegacritical, Vcritical 
 
 
-
-
-
-def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, dist="Fill in dist", single=True, buffeting=False):
+def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list,
+             dist="Fill in dist", single=True, buffeting=False):
     """
-    Plot damping ratios as a function of wind speed.
+    Plots the modal damping ratios as a function of wind speed and identifies
+    the dominant degree of freedom (DOF) per mode through color encoding.
 
     Parameters:
     -----------
-    damping_ratios : ndarray, shape (Nvind, n_modes)
-        Damping ratios for each mode and wind speed.
-    V_list : list or ndarray
-        Wind speed values.
+    damping_ratios : np.ndarray, shape (N_wind, n_modes)
+        Modal damping ratios for each mode as a function of wind speed.
+    eigvecs_all : np.ndarray, shape (N_wind, n_modes)
+        Eigenvectors associated with each mode and wind speed (used to identify dominant DOF).
+    V_list : list or np.ndarray, shape (N_wind,)
+        List of wind speeds [m/s].
     dist : str
-        Description of deck distance or test case.
+        Descriptor of the test case (e.g., "3D separation", "two-deck 2.5B").
     single : bool
-        True if single-deck (2 modes), False if twin-deck (4 modes).
+        True for single-deck (2 DOFs), False for two-deck (4 DOFs).
+    buffeting : bool
+        If True, the y-axis is constrained for quasi-static buffeting (very low damping).
     """
     markers = ['o', 's', '^', 'x']
     markersizes = [2.6, 2.4, 3, 3]
     colors = ['blue', 'green', 'red', 'orange']
     dof_labels = ['z₁', 'θ₁', 'z₂', 'θ₂']
-
-    mode_markers = ['o', 's', '^', 'x']
-
     n_modes = 2 if single else 4
     mode_labels = [f"Mode {i+1}" for i in range(n_modes)]
 
     fig, ax = plt.subplots(figsize=(10, 6))
 
+    # Plot each mode's damping ratio at each wind speed
     for j in range(n_modes):
         for i in range(len(V_list)):
             φj = eigvecs_all[i, j]
@@ -510,38 +622,30 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, dist="Fill i
             ax.plot(
                 V_list[i],
                 damping_ratios[i, j],
-                color=colors[dominant_dof_idx], #farge etter DOF
-                marker=markers[j], #symbol etter modenummer
+                color=colors[dominant_dof_idx],
+                marker=markers[j], 
                 markersize=markersizes[j],
                 linestyle='None',
             )
 
+    # Visuals and annotation
     ax.axhline(0, linestyle="--", color="grey", linewidth=1.1, label="Critical damping")
     ax.set_xlabel("Wind speed [m/s]", fontsize=16)
     ax.set_ylabel("Damping ratio [-]", fontsize=16)
     ax.set_title(f"Damping ratio vs wind speed — {dist}", fontsize=18)
-
     ax.grid(True, linestyle='--', linewidth=0.5)
-    ax.set_ylim(-0.01, )
+    ax.set_ylim(-0.01,)
+    if not single and not buffeting:
+        ax.set_ylim(-0.01, 0.25)
     ax.set_xlim(0, )
-    if buffeting:
-        ax.set_xlim(0, 0.01)
-    else:
-        if not single:
-            ax.set_ylim(-0.01, 0.25)
 
-
-
+    # Legend setup
     from matplotlib.lines import Line2D
-
-    # Lag egendefinerte legend-elementer for modene (markører)
     mode_handles = [Line2D([0], [0], color='black', marker=markers[i], linestyle='None', label=mode_labels[i]) for i in range(n_modes)]
-    # Lag egendefinerte legend-elementer for DOFs (farger)
     dof_handles = [Line2D([0], [0], color=colors[i], marker='o', linestyle='None', label=dof_labels[i]) for i in range(n_modes)]
 
     fig.subplots_adjust(right=0.75)
 
-    # Kombinér i 2 kolonner ved å bruke bbox_to_anchor og ncol
     combined_handles = mode_handles + dof_handles
     ax.legend(handles=combined_handles, title="Mode & DOF", loc='upper left', ncol=2)
 
@@ -552,30 +656,29 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, dist="Fill i
 
 def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single=True):
     """
-    Plots natural frequencies as a function of wind speed.
+    Plots the damped natural frequencies as a function of wind speed.
 
-    Parameters:
-    -----------
-    V_list : list
-        Wind speeds.
-    omega_list : ndarray
-        Angular frequencies (shape: N x n_modes).
+    Parameters
+    ----------
+    V_list : list or np.ndarray
+        Wind speed values [m/s].
+    omega_list : np.ndarray
+        Angular frequencies (shape: N_wind x n_modes), given in rad/s.
     dist : str
-        Description for plot title.
-    single : bool
-        True for 2DOF (single-deck), False for 4DOF (twin-deck).
+        Description of the bridge configuration or test case (e.g. "3D separation").
+    single : bool, optional
+        If True, assumes 2 DOF system (single-deck); if False, assumes 4 DOF (two-deck).
     """
 
     markers = ['o', 's', '^', 'x']
     markersizes = [2.6, 2.4, 3, 3]
     colors = ['blue', 'green', 'red', 'orange']
     labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
-
     n_modes = 2 if single else 4
     title = f"Natural frequencies vs wind speed - {dist}"
 
     omega_array = np.array(omega_list)
-    frequencies = omega_array / (2 * np.pi)  # Convert from rad/s to Hz
+    frequencies = omega_array / (2 * np.pi)  
 
     plt.figure(figsize=(10, 6))
     for j in range(n_modes):
@@ -612,18 +715,14 @@ def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegac
         n_modes = 4
         dofs = ["V1", "T1", "V2", "T2"]
     
-
     idx_flutter = np.argmin(np.abs(np.array(V_list) - Vcritical))
-
  
-    damping_array = np.array(damping_list)  # shape (Nvind, n_modes)
-    last_damping = damping_array[idx_flutter]  # siste vindhastighet synlig
-    idx_mode_flutter = np.argmin(last_damping)  # den moden som først får negativ demping
+    damping_array = np.array(damping_list)  
+    last_damping = damping_array[idx_flutter]  
+    idx_mode_flutter = np.argmin(last_damping) 
 
-    # Hent ut tilhørende egenvektor
     flutter_vec = eigvecs_all[idx_flutter][idx_mode_flutter]
 
-    # 2 subplot: magnituder og faser
     fig, ax = plt.subplots(2, 1, figsize=(6, 6), sharex=True)
 
     abs_vec = np.abs(flutter_vec)

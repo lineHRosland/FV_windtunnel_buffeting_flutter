@@ -14,6 +14,8 @@ Created on Thu Dec 16 22:09:00 2021
 import numpy as np
 from scipy import signal as spsp
 from matplotlib import pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
+from matplotlib.ticker import ScalarFormatter
 
 
 
@@ -604,38 +606,41 @@ class Experiment:
             
             axs[1].plot( self.time,self.motion[:,0])
             axs[1].set_title("Horizontal motion")
-            axs[1].set_ylabel(r"$u_x $ [mm]")
+            axs[1].set_ylabel(r"$u_x $ [mm/s]")
+            axs[1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+            # axs[1].yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+            # axs[1].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))  # alltid vitenskapelig
             axs[1].grid(True)
             
             axs[2].plot( self.time,self.motion[:,1])
             axs[2].set_title("Vertical motion")
-            axs[2].set_ylabel(r"$u_z $ [mm]")
+            axs[2].set_ylabel(r"$u_z $ [mm/s]")
             axs[2].grid(True)
             
             axs[3].plot( self.time,self.motion[:,2])
             axs[3].set_title("Pitching motion")
-            axs[3].set_ylabel(r"$u_\theta$ [radianer]")
+            axs[3].set_ylabel(r"$u_\theta$ [rad/s]")
             axs[3].set_xlabel(r"$Time$ [s]")
             axs[3].grid(True)
             
             axs[4].plot( self.time,np.sum(self.forces_global_center[:,0:24:6], axis=1),label = "Total")
             axs[4].set_title("Horizontal force")
             axs[4].grid(True)
-            axs[4].set_ylabel(r"$F_x$ [N]")
+            axs[4].set_ylabel(r"$F_x$ [N/s]")
             #axs[4].legend()
            
             
             axs[5].plot( self.time,np.sum(self.forces_global_center[:,2:24:6], axis=1),label = "Total")
             axs[5].set_title("Vertical force")
             axs[5].grid(True)
-            axs[5].set_ylabel(r"$F_z$ [N]")
+            axs[5].set_ylabel(r"$F_z$ [N/s]")
             #axs[5].legend()
            
             
             axs[6].plot( self.time,np.sum(self.forces_global_center[:,4:24:6], axis=1),label = "Total")
             axs[6].set_title("Pitching moment")
             axs[6].grid(True)
-            axs[6].set_ylabel(r"$F_\theta$ [Nm]")
+            axs[6].set_ylabel(r"$F_\theta$ [Nm/s]")
             axs[6].set_xlabel(r"$Time$ [s]")
             #axs[6].legend()
             
