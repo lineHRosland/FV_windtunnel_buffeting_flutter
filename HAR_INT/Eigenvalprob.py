@@ -29,7 +29,7 @@ w1V = 2*np.pi*f1V # rad/s, vertical FØRSTE ITERASJON
 w2V = 2*np.pi*f2V # rad/s, vertical FØRSTE ITERASJON
 w1T = 2*np.pi*f1T # rad/s, torsion FØRSTE ITERASJON
 
-
+print("w1V, w2V, w1T: ", w1V, w2V, w1T)
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
 eps = 0.0001 # Konvergensterske
 
@@ -46,7 +46,7 @@ print("phi_two[0]: ", phi_two[0])
 Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
 
 #  BUFFETING
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_ny.npy"
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
@@ -129,21 +129,151 @@ if os.path.exists(os.path.join(file_path, "k_range_5D.npy")):
 else:
     raise FileNotFoundError(f"The file 'k_range_5D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
+
+####################################3
+#%%
+# Plotte Kae og Cae
+def from_poly_k(poly_k, k_range, vred, damping_ad = True):
+    if vred == 0:
+        vred = 1e-10 # Prevent division by zero
+        
+    uit_step = lambda k,kc: 1./(1 + np.exp(-2*20*(k-kc)))
+    fit = lambda p,k,k1c,k2c : np.polyval(p,k)*uit_step(k,k1c)*(1-uit_step(k,k2c)) + np.polyval(p,k1c)*(1-uit_step(k,k1c)) + np.polyval(p,k2c)*(uit_step(k,k2c))
+
+    if damping_ad == True:
+        ad_value = np.abs(vred)*fit(poly_k,np.abs(1/vred),k_range[0],k_range[1])
+    else:
+        ad_value = np.abs(vred)**2*fit(poly_k,np.abs(1/vred),k_range[0],k_range[1])
+   
+    #ad_value = fit(poly_k,np.abs(1/vred),k_range[0],k_range[1])
+ 
+    return float(ad_value)
+def cae_kae_two(poly_coeff, k_range, Vred_global, B):
+
+    Vred_global = float(Vred_global) 
+
+    # AD
+    # Damping derivatives (indices 0–15)
+
+    c_z1z1 = from_poly_k(poly_coeff[0], k_range[0],Vred_global, damping_ad=True)
+    c_z1θ1 = from_poly_k(poly_coeff[1], k_range[1],Vred_global, damping_ad=True)
+    c_z1z2 = from_poly_k(poly_coeff[2], k_range[2],Vred_global, damping_ad=True)
+    c_z1θ2 = from_poly_k(poly_coeff[3], k_range[3],Vred_global, damping_ad=True)
+    c_θ1z1 = from_poly_k(poly_coeff[4], k_range[4],Vred_global, damping_ad=True)
+    c_θ1θ1 = from_poly_k(poly_coeff[5], k_range[5],Vred_global, damping_ad=True)
+    c_θ1z2 = from_poly_k(poly_coeff[6], k_range[6],Vred_global, damping_ad=True)
+    c_θ1θ2 = from_poly_k(poly_coeff[7], k_range[7],Vred_global, damping_ad=True)
+    c_z2z1 = from_poly_k(poly_coeff[8], k_range[8],Vred_global, damping_ad=True)
+    c_z2θ1 = from_poly_k(poly_coeff[9], k_range[9],Vred_global, damping_ad=True)
+    c_z2z2 = from_poly_k(poly_coeff[10], k_range[10],Vred_global, damping_ad=True)
+    c_z2θ2 = from_poly_k(poly_coeff[11], k_range[11],Vred_global, damping_ad=True)
+    c_θ2z1 = from_poly_k(poly_coeff[12], k_range[12],Vred_global, damping_ad=True)
+    c_θ2θ1 = from_poly_k(poly_coeff[13], k_range[13],Vred_global, damping_ad=True)
+    c_θ2z2 = from_poly_k(poly_coeff[14], k_range[14],Vred_global, damping_ad=True)
+    c_θ2θ2 = from_poly_k(poly_coeff[15], k_range[15],Vred_global, damping_ad=True)
+
+    # Stiffness derivatives (indices 16–31)
+    k_z1z1 = from_poly_k(poly_coeff[16], k_range[16],Vred_global, damping_ad=False)
+    k_z1θ1 = from_poly_k(poly_coeff[17], k_range[17],Vred_global, damping_ad=False)
+    k_z1z2 = from_poly_k(poly_coeff[18], k_range[18],Vred_global, damping_ad=False)
+    k_z1θ2 = from_poly_k(poly_coeff[19], k_range[19],Vred_global, damping_ad=False)
+    k_θ1z1 = from_poly_k(poly_coeff[20], k_range[20],Vred_global, damping_ad=False)
+    k_θ1θ1 = from_poly_k(poly_coeff[21], k_range[21],Vred_global, damping_ad=False)
+    k_θ1z2 = from_poly_k(poly_coeff[22], k_range[22],Vred_global, damping_ad=False)
+    k_θ1θ2 = from_poly_k(poly_coeff[23], k_range[23],Vred_global, damping_ad=False)
+    k_z2z1 = from_poly_k(poly_coeff[24], k_range[24],Vred_global, damping_ad=False)
+    k_z2θ1 = from_poly_k(poly_coeff[25], k_range[25],Vred_global, damping_ad=False)
+    k_z2z2 = from_poly_k(poly_coeff[26], k_range[26],Vred_global, damping_ad=False)
+    k_z2θ2 = from_poly_k(poly_coeff[27], k_range[27],Vred_global, damping_ad=False)
+    k_θ2z1 = from_poly_k(poly_coeff[28], k_range[28],Vred_global, damping_ad=False)
+    k_θ2θ1 = from_poly_k(poly_coeff[29], k_range[29],Vred_global, damping_ad=False)
+    k_θ2z2 = from_poly_k(poly_coeff[30], k_range[30],Vred_global, damping_ad=False)
+    k_θ2θ2 = from_poly_k(poly_coeff[31], k_range[31],Vred_global, damping_ad=False)
+    
+    Cae_star = np.array([
+         [c_z1z1,       B * c_z1θ1,       c_z1z2,       B * c_z1θ2],
+         [B * c_θ1z1,   B**2 * c_θ1θ1,   B * c_θ1z2,   B**2 * c_θ1θ2],
+         [c_z2z1,       B * c_z2θ1,       c_z2z2,       B * c_z2θ2],
+         [B * c_θ2z1,   B**2 * c_θ2θ1,   B * c_θ2z2,   B**2 * c_θ2θ2]
+    ])
+    Kae_star = np.array([
+         [k_z1z1,       B * k_z1θ1,       k_z1z2,       B * k_z1θ2],
+         [B * k_θ1z1,   B**2 * k_θ1θ1,   B * k_θ1z2,   B**2 * k_θ1θ2],
+         [k_z2z1,       B * k_z2θ1,       k_z2z2,       B * k_z2θ2],
+         [B * k_θ2z1,   B**2 * k_θ2θ1,   B * k_θ2z2,   B**2 * k_θ2θ2]
+    ])
+
+    return Cae_star, Kae_star
+
+def generalize_C_K(C, K, Phi, x, single=True):
+    N = len(x)
+    n_modes = Phi.shape[2]
+    Cae_star_gen = np.zeros((n_modes, n_modes))
+    Kae_star_gen = np.zeros((n_modes, n_modes))
+
+    for i in range(N-1): 
+        dx = x[i+1] - x[i] 
+        phi_L = Phi[i] # shape (n_dof, n_modes)
+        phi_R = Phi[i+1]
+        # Damping
+        C_int = 0.5 * (phi_L.T @ C @ phi_L + phi_R.T @ C @ phi_R)
+        Cae_star_gen += C_int * dx
+        # Stiffness
+        K_int = 0.5 * (phi_L.T @ K @ phi_L + phi_R.T @ K @ phi_R)
+        Kae_star_gen += K_int * dx
+    
+    return Cae_star_gen, Kae_star_gen
+
+data4 = np.load('mode4_data.npz')
+data15 = np.load('mode15_data.npz')
+mode_4 = data4['mode']
+mode_15 = data15['mode']
+x = data4['x']
+N = mode_4.shape[0]
+Phi = np.zeros((N, 4, 4))
+for i in range(N):
+    Phi[i, 0, 0] = mode_4[i, 2]  # zz
+    Phi[i, 1, 1] = mode_15[i, 3] # θθ
+
+    Phi[i, 2, 2] = mode_4[i, 2]  # zz
+    Phi[i, 3, 3] = mode_15[i, 3] # θθ
+    
+k = np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10)
+i = 0
+Cae_3D_gen_AD = np.zeros((10, 4, 4))
+Kae_3D_gen_AD = np.zeros((10, 4, 4))
+for ki in k:
+    Cae_3D_AD, Kae_3D_AD = cae_kae_two(poly_coeff_3D,k_range_3D,  ki, B)
+    Cae_3D_gen_AD[i], Kae_3D_gen_AD[i] = generalize_C_K(Cae_3D_AD, Kae_3D_AD, Phi, x, single=False)
+    i += 1
+
 plt.figure(figsize=(10, 6))
-plt.title("Cae single deck")
-plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Cae_Single_gen[0,0], label="Cae_Single_gen, z1")
-plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[1,1], label="Cae_Single_gen, \theta1")
-plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Cae_Single_gen[2,2], label="Cae_Single_gen, z2")
-plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[3,3], label="Cae_Single_gen, \theta2")
+plt.title("Cae 3D deck")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Cae_3D_gen[0,0], label="Cae_3D_gen, z1")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[1,1], label="Cae_3D_gen, \theta1")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Cae_3D_gen[2,2], label="Cae_3D_gen, z2")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[3,3], label="Cae_3D_gen, \theta2")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Cae_3D_gen_AD[:,0,0],linestyle = "--",  label="Cae_AD, z1")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Cae_3D_gen_AD[:,1,1], linestyle = "--", label="Cae_AD, \theta1")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Cae_3D_gen_AD[:,2,2], linestyle = "--", label="Cae_AD, z2")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Cae_3D_gen_AD[:,3,3], linestyle = "--", label="Cae_AD, \theta2")
+
 plt.xlabel("k")
 plt.ylabel("Cae")
+plt.legend()
 plt.show()
 plt.figure(figsize=(10, 6))
-plt.title("Kae single deck")
-plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[0,0], label="Kae_Single_gen, z1")
-plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[1,1], label="Kae_Single_gen, \theta1")
-plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[2,2], label="Kae_Single_gen, z2")
-plt.plot(np.linspace(k_range_single[0,0], k_range_single[0,1], 10), (np.linspace(k_range_single[0,0], k_range_single[0,1], 10))**2*Kae_Single_gen[3,3], label="Kae_Single_gen, \theta2")
+plt.title("Kae 3D deck")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[0,0], label="Kae_3D_gen, z1")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[1,1], label="Kae_3D_gen, \theta1")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[2,2], label="Kae_3D_gen, z2")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[3,3], label="Kae_3D_gen, \theta2")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen_AD[:,3,3], linestyle = "--", label="Kae_AD, z1")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen_AD[:,1,1], linestyle = "--", label="Kae_AD, \theta1")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen_AD[:,2,2], linestyle = "--", label="Kae_AD, z2")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen_AD[:,3,3], linestyle = "--", label="Kae_AD, \theta2")
+
+
 plt.xlabel("k")
 plt.ylabel("Kae")
 plt.legend()
