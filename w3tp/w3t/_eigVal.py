@@ -330,7 +330,7 @@ def cae_kae_two(poly_coeff, k_range, Vred_global, B):
 
     return Cae_star, Kae_star
 
-#FIKSE: DELE OPP I FLERE FUNSKJONER?
+#FIKSE: DELE OPP I FLERE FUNSKJONER??
 
 def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, 
                 Phi, x, single = True, buffeting = False, 
@@ -411,7 +411,7 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
 
     stopWind = False
     iterWind = 0
-    maxIterWind = 400
+    maxIterWind = 1500
     V = 1.0 # Initial wind speed, m/s
     dV = 0.5 
 
