@@ -283,8 +283,8 @@ class Experiment:
 
 
 
-        filter_order =6
-        cutoff_frequency = 5
+        filter_order = 6
+        cutoff_frequency = 7
         sampling_frequency = 1/(self.time[1]- self.time[0])
        
         sos = spsp.butter(filter_order,cutoff_frequency, fs=sampling_frequency, output="sos")
