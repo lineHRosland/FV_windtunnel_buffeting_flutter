@@ -5366,7 +5366,7 @@ arrays_to_save={
     
 }
 # %%
-
+print("hei")
 for name,array in arrays_to_save.items():
     np.save(os.path.join(file_path, f"{name}.npy"), array)
 
