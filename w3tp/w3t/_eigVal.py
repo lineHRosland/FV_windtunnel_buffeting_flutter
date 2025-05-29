@@ -466,8 +466,8 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
 
                 if buffeting:
                     print("Buffeting")
-                    Cae_gen = -V* Cae_star_gen_BUFF
-                    Kae_gen = -V**2* Kae_star_gen_BUFF
+                    Cae_gen = V* Cae_star_gen_BUFF
+                    Kae_gen = V**2* Kae_star_gen_BUFF
                 else:      
                     Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen_AD
                     Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen_AD
