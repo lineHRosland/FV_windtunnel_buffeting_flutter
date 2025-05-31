@@ -46,7 +46,7 @@ print("phi_two[0]: ", phi_two[0])
 Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
 
 #  BUFFETING
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_ny.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_updated_stat_coeff.npy"
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
@@ -247,35 +247,45 @@ for ki in k:
     Cae_3D_gen_AD[i], Kae_3D_gen_AD[i] = generalize_C_K(Cae_3D_AD, Kae_3D_AD, Phi, x, single=False)
     i += 1
 
+
+
+# 3D
+Vcr = 53.5 # m/s, critical wind speed
+V#cr_k = ??
 plt.figure(figsize=(10, 6))
 plt.title("Cae 3D deck")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Cae_3D_gen[0,0], label="Cae_3D_gen, z1")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[1,1], label="Cae_3D_gen, \theta1")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Cae_3D_gen[2,2], label="Cae_3D_gen, z2")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[3,3], label="Cae_3D_gen, \theta2")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Cae_3D_gen_AD[:,0,0],linestyle = "--",  label="Cae_AD, z1")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Cae_3D_gen_AD[:,1,1], linestyle = "--", label="Cae_AD, \theta1")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Cae_3D_gen_AD[:,2,2], linestyle = "--", label="Cae_AD, z2")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Cae_3D_gen_AD[:,3,3], linestyle = "--", label="Cae_AD, \theta2")
+#cae, kae skal være konstante bortover??
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10),Cae_3D_gen[0,0], label="Cae_3D_gen[0,0]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10),Cae_3D_gen[1,1], label="Cae_3D_gen[1,1]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10),Cae_3D_gen[2,2], label="Cae_3D_gen[2,2]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10),Cae_3D_gen[3,3], label="Cae_3D_gen[3,3]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))*Cae_3D_gen_AD[:,0,0],linestyle = "--",  label="Cae_AD_gen[0,0]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))*Cae_3D_gen_AD[:,1,1], linestyle = "--", label="Cae_AD_gen[1,1]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))*Cae_3D_gen_AD[:,2,2], linestyle = "--", label="Cae_AD_gen[2,2]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))*Cae_3D_gen_AD[:,3,3], linestyle = "--", label="Cae_AD_gen[3,3]")
+plt.axvline(x=Vcr_k, color='black', linestyle='--', linewidth=1, label="Vcr")
+
+##Vred = V/(omega_old[j]*B) ?? FIX, HØRT MED ALA
 
 plt.xlabel("k")
-plt.ylabel("Cae")
+plt.ylabel("k Cae")
 plt.legend()
 plt.show()
 plt.figure(figsize=(10, 6))
 plt.title("Kae 3D deck")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[0,0], label="Kae_3D_gen, z1")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[1,1], label="Kae_3D_gen, \theta1")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[2,2], label="Kae_3D_gen, z2")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen[3,3], label="Kae_3D_gen, \theta2")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen_AD[:,3,3], linestyle = "--", label="Kae_AD, z1")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen_AD[:,1,1], linestyle = "--", label="Kae_AD, \theta1")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen_AD[:,2,2], linestyle = "--", label="Kae_AD, z2")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen_AD[:,3,3], linestyle = "--", label="Kae_AD, \theta2")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen[0,0], label="Kae_3D_gen[0,0]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen[1,1], label="Kae_3D_gen[1,1]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen[2,2], label="Kae_3D_gen[2,2]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen[3,3], label="Kae_3D_gen[3,3]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen_AD[:,3,3], linestyle = "--", label="Kae_AD_gen[0,0]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen_AD[:,1,1], linestyle = "--", label="Kae_AD_gen[1,1]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen_AD[:,2,2], linestyle = "--", label="Kae_AD_gen[2,2]")
+plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen_AD[:,3,3], linestyle = "--", label="Kae_AD_gen[3,3]")
+plt.axvline(x=Vcr_k, color='black', linestyle='--', linewidth=1, label="Vcr")
 
 
 plt.xlabel("k")
-plt.ylabel("Kae")
+plt.ylabel("k^2 Kae")
 plt.legend()
 plt.show()
 
@@ -292,11 +302,14 @@ print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #Plotting
 
-_eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True, buffeting = False)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_damp" + ".png"), dpi=300)
 
-_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
+fig, ax =_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single__flutter_frek" + ".png"), dpi=300)
 
-_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
+fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single__flutter_modes" + ".png"), dpi=300)
 
 #%%
 #Double deck 1D

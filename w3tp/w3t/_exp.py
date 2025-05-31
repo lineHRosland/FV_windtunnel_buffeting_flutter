@@ -552,31 +552,31 @@ class Experiment:
             
             axs[0].plot( self.time,self.wind_speed)
             axs[0].set_title("Wind speed")
-            axs[0].set_ylabel(r"$U(t)$ [m/s]")
+            axs[0].set_ylabel(r"$U(t)$ [m/s]", fontsize=12)
             axs[0].grid(True)
             
             axs[1].plot( self.time,self.motion[:,0])
             axs[1].set_title("Horizontal motion")
-            axs[1].set_ylabel(r"$u_x $ [mm]")
+            axs[1].set_ylabel(r"$u_x $ [mm]", fontsize=12)
             axs[1].grid(True)
             
             axs[2].plot( self.time,self.motion[:,1])
             axs[2].set_title("Vertical motion")
-            axs[2].set_ylabel(r"$u_z $ [mm]")
+            axs[2].set_ylabel(r"$u_z $ [mm]", fontsize=12)
             axs[2].grid(True)
             
             axs[3].plot( self.time,self.motion[:,2])
             axs[3].set_title("Pitching motion")
-            axs[3].set_ylabel(r"$u_\theta [radianer]$")
-            axs[3].set_xlabel(r"$Time$ [s]")
+            axs[3].set_ylabel(r"$u_\theta [radianer]$", fontsize=12)
+            axs[3].set_xlabel(r"$Time$ [s]", fontsize=12)
             axs[3].grid(True)
             
             axs[4].plot( self.time,np.sum(self.forces_global_center[:,0:12:6],axis=1),label = "Upwind deck") # lastcelle 1 og 2 f.eks
             axs[4].plot( self.time,np.sum(self.forces_global_center[:,12:24:6],axis=1),label = "Downwind deck") # lastcelle 3 og 4 f.eks
             axs[4].set_title("Horizontal force")
             axs[4].grid(True)
-            axs[4].set_ylabel(r"$F_x [N]$")
-            axs[4].legend()
+            axs[4].set_ylabel(r"$F_x [N]$", fontsize=12)
+            # axs[4].legend()
            
             
             #axs[2,1].plot( self.time,self.forces_global_center[:,2:24:6])
@@ -584,8 +584,8 @@ class Experiment:
             axs[5].plot( self.time,np.sum(self.forces_global_center[:,14:24:6],axis=1),label = "Downwind deck")
             axs[5].set_title("Vertical force")
             axs[5].grid(True)
-            axs[5].set_ylabel(r"$F_z [N]$")
-            axs[5].legend()
+            axs[5].set_ylabel(r"$F_z [N]$", fontsize=12)
+            # axs[5].legend()
            
             
             #axs[3,1].plot( self.time,self.forces_global_center[:,4:24:6])
@@ -593,58 +593,65 @@ class Experiment:
             axs[6].plot( self.time,np.sum(self.forces_global_center[:,16:24:6],axis=1),label = "Downwind deck")
             axs[6].set_title("Pitching moment")
             axs[6].grid(True)
-            axs[6].set_ylabel(r"$F_\theta$ [Nm]")
-            axs[6].set_xlabel(r"$Time$ [s]")
-            axs[6].legend()
+            axs[6].set_ylabel(r"$F_\theta$ [Nm]", fontsize=12)
+            axs[6].set_xlabel(r"$Time$ [s]", fontsize=12)
+            # axs[6].legend()
+
+            for ax in axs:
+                ax.tick_params(labelsize=12)
+            fig.tight_layout(rect=[0.05, 0, 1, 0.90])
+
             
         elif mode == "total":
             
             axs[0].plot( self.time,self.wind_speed)
             axs[0].set_title("Wind speed")            
-            axs[0].set_ylabel(r"$U(t)$ [m/s]")
+            axs[0].set_ylabel(r"$U(t)$ [m/s]", fontsize=12)
             axs[0].grid(True)
             
             axs[1].plot( self.time,self.motion[:,0])
             axs[1].set_title("Horizontal motion")
-            axs[1].set_ylabel(r"$u_x $ [mm/s]")
-            axs[1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-            # axs[1].yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
-            # axs[1].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))  # alltid vitenskapelig
+            axs[1].set_ylabel(r"$u_x $ [mm/s]", fontsize=12)
+            # axs[1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+            axs[1].yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+            axs[1].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))  # alltid vitenskapelig
             axs[1].grid(True)
             
             axs[2].plot( self.time,self.motion[:,1])
             axs[2].set_title("Vertical motion")
-            axs[2].set_ylabel(r"$u_z $ [mm/s]")
+            axs[2].set_ylabel(r"$u_z $ [mm/s]", fontsize=12)
             axs[2].grid(True)
             
             axs[3].plot( self.time,self.motion[:,2])
             axs[3].set_title("Pitching motion")
-            axs[3].set_ylabel(r"$u_\theta$ [rad/s]")
-            axs[3].set_xlabel(r"$Time$ [s]")
+            axs[3].set_ylabel(r"$u_\theta$ [rad/s]", fontsize=12)
+            axs[3].set_xlabel(r"$Time$ [s]", fontsize=12)
             axs[3].grid(True)
             
             axs[4].plot( self.time,np.sum(self.forces_global_center[:,0:24:6], axis=1),label = "Total")
             axs[4].set_title("Horizontal force")
             axs[4].grid(True)
-            axs[4].set_ylabel(r"$F_x$ [N/s]")
+            axs[4].set_ylabel(r"$F_x$ [N/s]", fontsize=12)
             #axs[4].legend()
            
             
             axs[5].plot( self.time,np.sum(self.forces_global_center[:,2:24:6], axis=1),label = "Total")
             axs[5].set_title("Vertical force")
             axs[5].grid(True)
-            axs[5].set_ylabel(r"$F_z$ [N/s]")
+            axs[5].set_ylabel(r"$F_z$ [N/s]", fontsize=12)
             #axs[5].legend()
            
             
             axs[6].plot( self.time,np.sum(self.forces_global_center[:,4:24:6], axis=1),label = "Total")
             axs[6].set_title("Pitching moment")
             axs[6].grid(True)
-            axs[6].set_ylabel(r"$F_\theta$ [Nm/s]")
-            axs[6].set_xlabel(r"$Time$ [s]")
+            axs[6].set_ylabel(r"$F_\theta$ [Nm/s]", fontsize=12)
+            axs[6].set_xlabel(r"$Time$ [s]", fontsize=12)
             #axs[6].legend()
             
-            fig.tight_layout(rect=[0, 0, 1, 0.90])
+            for ax in axs:
+                ax.tick_params(labelsize=12)
+            fig.tight_layout(rect=[0.05, 0, 1, 0.90])
 
         
 
