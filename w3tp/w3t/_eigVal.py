@@ -6,6 +6,12 @@ import matplotlib.pyplot as plt
 import time
 from mode_shapes import mode_shape_single
 from mode_shapes import mode_shape_two
+from matplotlib import rcParams
+
+rcParams['font.family'] = 'sans-serif'
+rcParams['font.sans-serif'] = ['Verdana']
+
+
 
 def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     """
@@ -52,7 +58,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
 
     return eigvals, eigvecs
 
-def generalize_C_K(C, K, Phi, x, single=True):
+def generalize_C_K(C, K, Phi, x):
     """
     Generalizes the aerodynamic damping and stiffness matrices to modal coordinates
     by performing numerical integration over the spanwise distribution of mode shapes.
@@ -330,7 +336,6 @@ def cae_kae_two(poly_coeff, k_range, Vred_global, B):
 
     return Cae_star, Kae_star
 
-#FIKSE: DELE OPP I FLERE FUNSKJONER??
 
 def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, 
                 Phi, x, single = True, buffeting = False, 
@@ -430,8 +435,8 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
     V_list.append(0.0) 
 
     for j_mode in range(n_modes):
-        eigvecs_all[0, j_mode] = np.nan #FIKSE: IDENTY MATRIX (SPESIFISERT I OPPGAVE)
-        eigvals_all[0,j_mode] = np.nan  #FIKSE: VERDI HER Å KANSKJE?
+        eigvecs_all[0, j_mode] = np.eye(n_modes)
+        eigvals_all[0,j_mode] = np.nan  
 
         omega_all[0,j_mode] = omega_old[j_mode] 
         damping_ratios [0,j_mode] = zeta
@@ -462,29 +467,25 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                     Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) 
                 else:
                     Cae_star_AD, Kae_star_AD = cae_kae_two(poly_coeff,k_range,  Vred, B)
-                    Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x, single=False) 
+                    Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) 
 
                 if buffeting:
-                    print("Buffeting")
                     Cae_gen = V* Cae_star_gen_BUFF
                     Kae_gen = V**2* Kae_star_gen_BUFF
                 else:      
                     Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen_AD
                     Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen_AD
 
-                if np.isclose(V, 37.6, atol=0.1):  
-                    print("Kae_gen", Kae_gen)
 
                 eigvalsV, eigvecsV = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
-                # print("eigvecsV", eigvecsV)
 
                 eigvals_pos = eigvalsV[np.imag(eigvalsV) > 0]
                 eigvecs_pos = eigvecsV[:, np.imag(eigvalsV) > 0]  
 
                 if eigvals_pos.size == 0:
                     if verbose:
-                        print(f"Ingen komplekse egenverdier ved V = {V:.2f} m/s, mode {j+1}. Skipper mode.")
+                        print(f"No complex eigenvalues at V = {V:.2f} m/s, mode {j+1}. Skipping mode.")
 
                     omega_all[velocity_counter, j] = np.nan
                     damping_ratios[velocity_counter, j] = np.nan
@@ -512,7 +513,7 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                 damping_new = -np.real(λj) / np.abs(λj)
 
                 dominant_dof_idx = np.argmax(np.abs(φj))
-                dof_labels = ['z₁', 'θ₁', 'z₂', 'θ₂']
+                dof_labels = [r'$\phi_{z1}$', r'$\phi_{\theta1}$', r'$\phi_{z2}$', r'$\phi_{\theta2}$']
                 print(f"→ Dominant DOF at V = {V:.2f} m/s, mode {j}: {dof_labels[dominant_dof_idx]}")
       
                 if np.abs(omega_old[j] - omega_new) < eps or omega_old[j] <= 0.0:
@@ -606,52 +607,43 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list,
     markers = ['o', 's', '^', 'x']
     markersizes = [2.6, 2.4, 3, 3]
     colors = ['blue', 'green', 'red', 'orange']
-    dof_labels = ['z₁', 'θ₁', 'z₂', 'θ₂']
+    mode_labels = [r"$\Phi_1$", r"$\Phi_2$", r"$\Phi_3$", r"$\Phi_4$"]
     n_modes = 2 if single else 4
-    mode_labels = [f"Mode {i+1}" for i in range(n_modes)]
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(5, 3))
 
     # Plot each mode's damping ratio at each wind speed
     for j in range(n_modes):
+        V_mode = []
+        ζ_mode = []
         for i in range(len(V_list)):
             φj = eigvecs_all[i, j]
             if φj is None or np.isnan(φj).any():
                 continue
             dominant_dof_idx = np.argmax(np.abs(φj))
-            ax.plot(
-                V_list[i],
-                damping_ratios[i, j],
-                color=colors[dominant_dof_idx],
-                marker=markers[j], 
-                markersize=markersizes[j],
-                linestyle='None',
+            V_mode.append(V_list[i])
+            ζ_mode.append(damping_ratios[i, j])
+        ax.plot(
+                V_mode,
+                ζ_mode, label = mode_labels[j],
             )
 
     # Visuals and annotation
-    ax.axhline(0, linestyle="--", color="grey", linewidth=1.1, label="Critical damping")
-    ax.set_xlabel("Wind speed [m/s]", fontsize=16)
-    ax.set_ylabel("Damping ratio [-]", fontsize=16)
-    ax.set_title(f"Damping ratio vs wind speed — {dist}", fontsize=18)
+    ax.axhline(0, linestyle="--", color="black", linewidth=1.1, label="Critical damping")
+    ax.set_xlabel(r"$V$ [m/s]", fontsize=16)
+    ax.set_ylabel(r"$\zeta [-]", fontsize=16)
+    #ax.set_title(f"Damping ratio vs wind speed — {dist}", fontsize=18)
     ax.grid(True, linestyle='--', linewidth=0.5)
     ax.set_ylim(-0.01,)
+    ax.legend(fontsize=14, loc='upper left')
     if not single and not buffeting:
         ax.set_ylim(-0.01, 0.25)
     ax.set_xlim(0, )
 
-    # Legend setup
-    from matplotlib.lines import Line2D
-    mode_handles = [Line2D([0], [0], color='black', marker=markers[i], linestyle='None', label=mode_labels[i]) for i in range(n_modes)]
-    dof_handles = [Line2D([0], [0], color=colors[i], marker='o', linestyle='None', label=dof_labels[i]) for i in range(n_modes)]
-
-    fig.subplots_adjust(right=0.75)
-
-    combined_handles = mode_handles + dof_handles
-    ax.legend(handles=combined_handles, title="Mode & DOF", loc='upper left', ncol=2)
-
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     plt.show()
+    return fig, ax
 
 
 def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single=True):
@@ -670,50 +662,45 @@ def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single
         If True, assumes 2 DOF system (single-deck); if False, assumes 4 DOF (two-deck).
     """
 
-    markers = ['o', 's', '^', 'x']
-    markersizes = [2.6, 2.4, 3, 3]
-    colors = ['blue', 'green', 'red', 'orange']
-    labels = [r'$\lambda_1$', r'$\lambda_2$', r'$\lambda_3$', r'$\lambda_4$']
+   
+    labels = [r"$\Phi_1$", r"$\Phi_2$", r"$\Phi_3$", r"$\Phi_4$"]
     n_modes = 2 if single else 4
     title = f"Natural frequencies vs wind speed - {dist}"
 
     omega_array = np.array(omega_list)
     frequencies = omega_array / (2 * np.pi)  
 
-    plt.figure(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(5, 3))
     for j in range(n_modes):
         plt.plot(
             V_list,
             frequencies[:, j],
-            color=colors[j],
-            marker=markers[j],
-            markersize=markersizes[j],
-            linestyle='None',
             label=labels[j]
         )
 
-    plt.xlabel("Wind speed [m/s]", fontsize=16)
-    plt.ylabel("Natural frequency [Hz]", fontsize=16)
-    plt.title(title, fontsize=18)
+    plt.xlabel(r"$V$ [m/s]", fontsize=16)
+    plt.ylabel(r"$f [Hz]", fontsize=16)
+    #plt.title(title, fontsize=18)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     plt.legend(fontsize=14)
     plt.grid(True, which='both', linestyle='--', linewidth=0.5)
-    plt.tight_layout()
+    #plt.tight_layout()
     plt.xlim(0, V_list[-1])
     plt.show()
+    return fig, ax
 
 def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single=True):
     if Vcritical is None or omegacritical is None:
-        print("Ingen flutter observert!")
+        print("No flutter found!")
         return
 
     if single:
         n_modes = 2
-        dofs = ["V1", "T1"]
+        dofs = [r"$z1$", r"$\theta1$"]
     else:
         n_modes = 4
-        dofs = ["V1", "T1", "V2", "T2"]
+        dofs = [r"$z1$", r"$\theta1$", r"$z2$", r"$\theta2$"]
     
     idx_flutter = np.argmin(np.abs(np.array(V_list) - Vcritical))
  
@@ -723,7 +710,7 @@ def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegac
 
     flutter_vec = eigvecs_all[idx_flutter][idx_mode_flutter]
 
-    fig, ax = plt.subplots(2, 1, figsize=(6, 6), sharex=True)
+    fig, ax = plt.subplots(2, 1, figsize=(3, 3), sharex=True)
 
     abs_vec = np.abs(flutter_vec)
     max_idx = np.argmax(abs_vec)
@@ -732,26 +719,32 @@ def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegac
     magnitudes = np.abs(normalized_vec)
     phases = np.angle(normalized_vec, deg=True)
 
-    ax[0].bar(dofs, magnitudes, color='blue', width=0.5)
-    ax[1].bar(dofs, phases, color='orange', width=0.5)
+    colors = ['#9467bd', '#17becf', '#e377c2', '#bcbd22'][:n_modes]
+
+
+    ax[0].bar(dofs, magnitudes, width=0.5, color =colors)
+    ax[1].bar(dofs, phases, width=0.5, color = colors)
 
     ax[0].set_ylabel(r"|$\Phi$| [-]")
     ax[0].set_ylim(0, 1.1)
-    ax[1].set_ylabel(r"∠$\Phi$ [deg]")
+    ax[1].set_ylabel(r"$\angle \Phi$ [deg]")
     ax[1].set_ylim(-230, 230)
     ax[1].axhline(0, color='k', linestyle='--', linewidth=0.5)
     ax[0].grid(True, linestyle='--', linewidth=0.5)
     ax[1].grid(True, linestyle='--', linewidth=0.5)
 
-    ax[0].set_title(f"Magnitude and phase of normalized eigenvector at flutter wind speed - {dist}", fontsize=14)
+    #ax[0].set_title(f"Magnitude and phase of normalized eigenvector at flutter wind speed - {dist}", fontsize=14)
     ax[1].set_xlabel("DOFs")
 
     for i in range(n_modes):
+
         if abs(magnitudes[i]) > 1e-3:
             ax[0].text(i, magnitudes[i] + 0.02, f"{magnitudes[i]:.2f}", ha='center', fontsize=9)
         if abs(phases[i]) > 1:
-            ax[1].text(i, phases[i] + 10*np.sign(phases[i]), f"{phases[i]:.1f}°", ha='center', fontsize=9)
+            va = 'bottom' if phases[i] > 0 else 'top'
+            offset = 10 if phases[i] > 0 else -10
+            ax[1].text(i, phases[i] + offset, f"{phases[i]:.1f}°", ha='center', va=va, fontsize=9)
 
-    plt.tight_layout()
     plt.show()
 
+    return fig, ax
