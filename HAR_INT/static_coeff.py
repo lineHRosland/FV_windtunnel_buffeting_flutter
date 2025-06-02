@@ -38,8 +38,10 @@ import copy
 # })
 
 
-rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
-rc('text', usetex=True)
+from matplotlib import rcParams
+
+rcParams['font.family'] = 'sans-serif'
+rcParams['font.sans-serif'] = ['Verdana']
 
 #from scipy import signal as spsp
 
@@ -318,13 +320,22 @@ static_coeff_single_9_updated.lift_coeff[:, 0] = static_coeff_single_9_reg.lift_
 static_coeff_single_9_updated.lift_coeff[:, 1] = static_coeff_single_9_reg.lift_coeff[:, 1]
 static_coeff_single_9_updated.pitch_coeff[:, 0] = static_coeff_single_9_reg.pitch_coeff[:, 0]
 static_coeff_single_9_updated.pitch_coeff[:, 1] = static_coeff_single_9_reg.pitch_coeff[:, 1]
+
+cd_6_mean = static_coeff_single_6_updated.plot_drag_mean( mode ="single", upwind_in_rig=True, ax = None)[0]
+cd_9_mean = static_coeff_single_9_updated.plot_drag_mean( mode ="single", upwind_in_rig=True,ax  = None)[0]
+alpha= static_coeff_single_9_updated.plot_drag_mean( mode ="single", upwind_in_rig=True,ax  = None)[1]
+
+for i, vinkel in enumerate(alpha):
+    if np.isclose(vinkel, 0):
+        print(cd_6_mean[i])
+        print(cd_9_mean[i])
 #%% !?!!!
 def plot_compare_wind_speeds_mean_seperate(static_coeff_low, 
                                    static_coeff_high, static_coeff_med = None,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_D(\alpha)$"
         coeff = "drag_coeff"
@@ -379,10 +390,10 @@ def plot_compare_wind_speeds_mean_seperate(static_coeff_low,
     #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
@@ -421,15 +432,15 @@ exp0_MDS_1D, exp1_MDS_1D_10 = load_experiments_from_hdf5(h5_input_path, section_
 # exp0_MDS_1D.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MDS 1D - Wind speed: 0 m/s",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_0" + ".png"))
-# exp1_MDS_1D_6.plot_experiment(mode="total") #
+exp1_MDS_1D_6.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MDS 1D - Wind speed: 6 m/s",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_6" + ".png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_1D_6_tidserie" + ".png"), dpi=300)
 # exp1_MDS_1D_8.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MDS 1D - Wind speed: 8 m/s",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_8" + ".png"))
-# exp1_MDS_1D_10.plot_experiment(mode="total") #
+exp1_MDS_1D_10.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MDS 1D - Wind speed: 10 m/s",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_10" + ".png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_1D_10_tidserie" + ".png"), dpi=300)
 
 exp0_MDS_1D.filt_forces(6, 2)
 exp1_MDS_1D_6.filt_forces(6, 2)
@@ -439,17 +450,17 @@ exp1_MDS_1D_10.filt_forces(6, 2)
 # exp0_MDS_1D.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 1D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_0_filter" + ".png"))
-# exp1_MDS_1D_6.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MDS_1D_6.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 1D - Wind speed:) 6 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_6_filter" + ".png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_1D_6_filter_tidserie" + ".png"), dpi=300)
 # exp1_MDS_1D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 1D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_8_filter" + ".png"))
-# exp1_MDS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
-# plt.gcf().suptitle(f"MDS 1D - Wind speed:) 10 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_1D_10_filter" + ".png"))
-# plt.show()
-# plt.close()
+exp1_MDS_1D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
+#plt.gcf().suptitle(f"MDS 1D - Wind speed:) 10 m/s - With Butterworth low-pass filter",  y=0.95)
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_1D_10_filter_tidserie" + ".png"), dpi=300)
+plt.show()
+plt.close()
 
 
 static_coeff_MDS_1D_6 =w3t.StaticCoeff.fromWTT(exp0_MDS_1D, exp1_MDS_1D_6, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
@@ -463,7 +474,59 @@ plot_static_coeff_summary(static_coeff_MDS_1D_6, section_name, 6, mode="decks", 
 plot_static_coeff_summary(static_coeff_MDS_1D_8, section_name, 8, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_1D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
+#%%
 
+def plot_three_subplots_with_shared_legend(save_path="three_plots.pdf"):
+    # Dummy data
+    x = np.linspace(-4, 4, 100)
+    y1 = np.sin(x)
+    y2 = np.cos(x)
+    y3 = np.tanh(x)
+
+    # Create figure and axes for 3 subplots horizontally
+    fig, axes = plt.subplots(1, 3, figsize=(6, 3), sharey=False)
+
+    # Labels and colors
+    labels = ["Single deck", "Upstream deck", "Downstream deck"]
+    colors = ["#1f77b4", "#ff7f0e", "#2ca02c"]
+
+    for ax in axes:
+        ax.plot(x, y1, label=labels[0], color=colors[0])
+        ax.plot(x, y2, label=labels[1], color=colors[1])
+        ax.plot(x, y3, label=labels[2], color=colors[2])
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+    # Shared legend
+    fig.legend(labels, loc="lower center", ncol=3, fontsize=10, frameon=False,
+               bbox_to_anchor=(0.5, 0))
+
+    # Adjust layout
+    fig.tight_layout(pad=0.8)
+    fig.subplots_adjust(bottom=0.25)
+
+    # Save figure
+    return fig, ax
+
+fig, ax = plot_three_subplots_with_shared_legend("three_plots_with_legend.pdf")
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "label_stat_coeff" + ".png"), dpi=300)
+
+#%%NILS
+
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_1D_6, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_low_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_1D_6, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_low_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_1D_6, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_low_cm" + ".png"), dpi=300)
+
+fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_1D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_high_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_1D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_high_cl" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_1D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_high_cm" + ".png"), dpi=300)
 
 
 #%%
@@ -549,7 +612,15 @@ static_coeff_MDS_1D_10_updated.lift_coeff[:, 2] = static_coeff_MDS_1D_10.lift_co
 static_coeff_MDS_1D_10_updated.lift_coeff[:, 3] = static_coeff_MDS_1D_10.lift_coeff[:, 3]
 static_coeff_MDS_1D_10_updated.pitch_coeff[:, 2] = static_coeff_MDS_1D_10.pitch_coeff[:,2]
 static_coeff_MDS_1D_10_updated.pitch_coeff[:, 3] = static_coeff_MDS_1D_10.pitch_coeff[:, 3]
-print(static_coeff_MDS_1D_10_updated.drag_coeff[:5,2])
+
+cd_6_mean = static_coeff_MDS_1D_6_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True, ax = None)[1]
+cd_10_mean = static_coeff_MDS_1D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[1]
+alpha= static_coeff_MDS_1D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[2]
+
+for i, vinkel in enumerate(alpha):
+    if np.isclose(vinkel, 0):
+        print(cd_6_mean[i])
+        print(cd_10_mean[i])
 
 #%% !?!!!
 def plot_compare_wind_speeds_mean_seperate1dmds(static_coeff_low, 
@@ -557,21 +628,21 @@ def plot_compare_wind_speeds_mean_seperate1dmds(static_coeff_low,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_{D,2}(\alpha_2)$"
         coeff = "drag_coeff"
         min = 0.34#0.4
-        max = 0.48#0.58
+        max = 0.45#0.58
     elif scoff == "lift":
         axis = r"$C_{L,2}(\alpha_2)$"
         coeff = "lift_coeff"
-        min = -0.25#-0.35
-        max = 0.27#0.5
+        min = -0.3#-0.35
+        max = 0.22#0.5
     elif scoff == "pitch":
         axis = r"$C_{M,2}(\alpha_2)$"
         coeff = "pitch_coeff"
-        min = -0.06#-0.05
+        min = -0.04#-0.05
         max = 0.05#0.15
 
     # Calculate unique alpha values (pitch motion in degrees)
@@ -613,10 +684,10 @@ def plot_compare_wind_speeds_mean_seperate1dmds(static_coeff_low,
                 label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
 
     ax.set_xticks([-4,-2, 0,2,  4])
@@ -650,12 +721,12 @@ exp0_MUS_1D, exp1_MUS_1D_10 = load_experiments_from_hdf5(h5_input_path, section_
 # exp0_MUS_1D.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MUS 1D - Wind speed: 0 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_0" + ".png"))
-# exp1_MUS_1D_5.plot_experiment(mode="total") #
+exp1_MUS_1D_5.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MUS 1D - Wind speed: 5 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_5" + ".png"))
-# exp1_MUS_1D_10.plot_experiment(mode="total") #
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_1D_5_tidserie" + ".png"),  dpi=300)
+exp1_MUS_1D_10.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_10" + ".png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_1D_10_tidserie" + ".png"), dpi=300)
 
 exp0_MUS_1D.filt_forces(6, 2)
 exp1_MUS_1D_5.filt_forces(6, 2)
@@ -664,14 +735,14 @@ exp1_MUS_1D_10.filt_forces(6, 2)
 # exp0_MUS_1D.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 1D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_0_filter" + ".png"))
-# exp1_MUS_1D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MUS_1D_5.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 1D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_5_filter" + ".png"))
-# exp1_MUS_1D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_1D_5_filter_tidserie" + ".png"), dpi=300)
+exp1_MUS_1D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 1D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_1D_10_filter" + ".png"))
-# plt.show()
-# plt.close()
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_1D_10_filter_tidserie" + ".png"), dpi=300)
+plt.show()
+plt.close()
 
 
 
@@ -681,6 +752,24 @@ static_coeff_MUS_1D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_1D, exp1_MUS_1D_10, se
 
 plot_static_coeff_summary(static_coeff_MUS_1D_5, section_name, 5, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_1D_10, section_name, 10, mode="decks", upwind_in_rig=True)
+
+
+#%%NILS
+
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_low_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_low_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_low_cm" + ".png"), dpi=300)
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_1D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_high_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_1D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_high_cl" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_1D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_high_cm" + ".png"), dpi=300)
 
 
 
@@ -753,13 +842,22 @@ static_coeff_MUS_1D_10_updated.lift_coeff[:, 1] = static_coeff_MUS_1D_10.lift_co
 static_coeff_MUS_1D_10_updated.pitch_coeff[:, 0] = static_coeff_MUS_1D_10.pitch_coeff[:,0]
 static_coeff_MUS_1D_10_updated.pitch_coeff[:, 1] = static_coeff_MUS_1D_10.pitch_coeff[:, 1]
 
+
+cd_5_mean = static_coeff_MUS_1D_5_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True, ax = None)[0]
+cd_10_mean = static_coeff_MUS_1D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[0]
+alpha = static_coeff_MUS_1D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[2]
+
+for i, vinkel in enumerate(alpha):
+    if np.isclose(vinkel, 0):
+        print(cd_5_mean[i])
+        print(cd_10_mean[i])
 #%% !?!!!
 def plot_compare_wind_speeds_mean_seperate1dmUs(static_coeff_low, 
                                    static_coeff_high, static_coeff_med = None,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_{D,1}(\alpha_1)$"
         coeff = "drag_coeff"
@@ -773,7 +871,7 @@ def plot_compare_wind_speeds_mean_seperate1dmUs(static_coeff_low,
     elif scoff == "pitch":
         axis = r"$C_{M,1}(\alpha_1)$"
         coeff = "pitch_coeff"
-        min = -0.03#-0.05
+        min = -0.034#-0.05
         max = 0.09#0.15
 
     # Calculate unique alpha values (pitch motion in degrees)
@@ -815,10 +913,10 @@ def plot_compare_wind_speeds_mean_seperate1dmUs(static_coeff_low,
     #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
@@ -1267,6 +1365,23 @@ plot_static_coeff_summary(static_coeff_MDS_2D_6, section_name, 6, mode="decks", 
 #plot_static_coeff_summary(static_coeff_MDS_2D_8, section_name, 8, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_2D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
+#%%NILS
+
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_2D_6, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_low_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_2D_6, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_low_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_2D_6, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_low_cm" + ".png"), dpi=300)
+
+fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_2D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_high_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_2D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_high_cl" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_2D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_high_cm" + ".png"), dpi=300)
+
 
 #%%
 #  Filter and plot ALT 1
@@ -1342,7 +1457,7 @@ def plot_compare_wind_speeds_mean_seperate2dmDs(static_coeff_low,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_{D,2}(\alpha_2)$"
         coeff = "drag_coeff"
@@ -1352,13 +1467,12 @@ def plot_compare_wind_speeds_mean_seperate2dmDs(static_coeff_low,
         axis = r"$C_{L,2}(\alpha_2)$"
         coeff = "lift_coeff"
         min = -0.28#-0.35
-        max = 0.42#0.5
+        max = 0.2#0.5
     elif scoff == "pitch":
         axis = r"$C_{M,2}(\alpha_2)$"
         coeff = "pitch_coeff"
-        min = -0.05#-0.05
-        max = 0.08#0.15
-
+        min = -0.035#-0.05
+        max = 0.075
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
     unique_alphas_low = np.unique(alpha_low)
@@ -1398,10 +1512,10 @@ def plot_compare_wind_speeds_mean_seperate2dmDs(static_coeff_low,
                 label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
@@ -1478,6 +1592,23 @@ static_coeff_MUS_2D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_2D, exp1_MUS_2D_10, se
 plot_static_coeff_summary(static_coeff_MUS_2D_5, section_name, 5, mode="decks", upwind_in_rig=True)
 #plot_static_coeff_summary(static_coeff_MUS_2D_8, section_name, 8, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_2D_10, section_name, 10, mode="decks", upwind_in_rig=True)
+
+#%%NILS
+
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_2D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_low_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_2D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_low_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_2D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_low_cm" + ".png"), dpi=300)
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_2D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_high_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_2D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_high_cl" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_2D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_high_cm" + ".png"), dpi=300)
 
 
 
@@ -1591,7 +1722,7 @@ def plot_compare_wind_speeds_mean_seperate2dmUs(static_coeff_low,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_{D,1}(\alpha_1)$"
         coeff = "drag_coeff"
@@ -1605,8 +1736,8 @@ def plot_compare_wind_speeds_mean_seperate2dmUs(static_coeff_low,
     elif scoff == "pitch":
         axis = r"$C_{M,1}(\alpha_1)$"
         coeff = "pitch_coeff"
-        min = -0.03#-0.05
-        max = 0.11#0.15
+        min = -0.035#-0.05
+        max = 0.090#0.15
 
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
@@ -1647,10 +1778,10 @@ def plot_compare_wind_speeds_mean_seperate2dmUs(static_coeff_low,
     #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
@@ -2090,6 +2221,23 @@ plot_static_coeff_summary(static_coeff_MDS_3D_6, section_name, 6, mode="decks", 
 #plot_static_coeff_summary(static_coeff_MDS_3D_8, section_name, 8, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_3D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
+#%%NILS
+
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_3D_6, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_low_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_3D_6, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_low_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_3D_6, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_low_cm" + ".png"), dpi=300)
+
+fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_3D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_high_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_3D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_high_cl" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_3D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_high_cm" + ".png"), dpi=300)
+
 
 
 
@@ -2327,14 +2475,21 @@ static_coeff_MDS_3D_10_updated.lift_coeff[:, 3] = static_coeff_MDS_3D_10.lift_co
 static_coeff_MDS_3D_10_updated.pitch_coeff[:, 2] = static_coeff_MDS_3D_10.pitch_coeff[:,2]
 static_coeff_MDS_3D_10_updated.pitch_coeff[:, 3] = static_coeff_MDS_3D_10.pitch_coeff[:, 3]
 
+cd_6_mean = static_coeff_MDS_3D_6_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True, ax = None)[1]
+cd_10_mean = static_coeff_MDS_3D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[1]
+alpha = static_coeff_MDS_3D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[2]
 
+for i, vinkel in enumerate(alpha):
+    if np.isclose(vinkel, 0):
+        print(cd_6_mean[i])
+        print(cd_10_mean[i])
 #%% !?!!!
 def plot_compare_wind_speeds_mean_seperate3dmDs(static_coeff_low, 
                                    static_coeff_high, static_coeff_med = None,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_{D,2}(\alpha_2)$"
         coeff = "drag_coeff"
@@ -2348,7 +2503,7 @@ def plot_compare_wind_speeds_mean_seperate3dmDs(static_coeff_low,
     elif scoff == "pitch":
         axis = r"$C_{M,2}(\alpha_2)$"
         coeff = "pitch_coeff"
-        min = -0.05#-0.05
+        min = -0.035#-0.05
         max = 0.09#0.15
 
     # Calculate unique alpha values (pitch motion in degrees)
@@ -2390,10 +2545,10 @@ def plot_compare_wind_speeds_mean_seperate3dmDs(static_coeff_low,
                 label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
@@ -2474,6 +2629,25 @@ static_coeff_MUS_3D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_3D, exp1_MUS_3D_10, se
 plot_static_coeff_summary(static_coeff_MUS_3D_5, section_name, 5, mode="decks", upwind_in_rig=True)
 #plot_static_coeff_summary(static_coeff_MUS_3D_8, section_name, 8, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_3D_10, section_name, 10, mode="decks", upwind_in_rig=True)
+
+
+#%%NILS
+
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_low_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_low_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_low_cm" + ".png"), dpi=300)
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_3D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_high_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_3D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_high_cl" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_3D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_high_cm" + ".png"), dpi=300)
+
 
 #%%
 # filter regression
@@ -2611,6 +2785,14 @@ static_coeff_MUS_3D_10_updated.lift_coeff[:, 1] = static_coeff_MUS_3D_10.lift_co
 static_coeff_MUS_3D_10_updated.pitch_coeff[:, 0] = static_coeff_MUS_3D_10.pitch_coeff[:, 0]
 static_coeff_MUS_3D_10_updated.pitch_coeff[:, 1] = static_coeff_MUS_3D_10.pitch_coeff[:, 1]
 
+cd_5_mean = static_coeff_MUS_3D_5_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True, ax = None)[0]
+cd_10_mean = static_coeff_MUS_3D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[0]
+alpha = static_coeff_MUS_3D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[2]
+
+for i, vinkel in enumerate(alpha):
+    if np.isclose(vinkel, 0):
+        print(cd_5_mean[i])
+        print(cd_10_mean[i])
 
 #%% !?!!!
 def plot_compare_wind_speeds_mean_seperate3dmUs(static_coeff_low, 
@@ -2618,7 +2800,7 @@ def plot_compare_wind_speeds_mean_seperate3dmUs(static_coeff_low,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_{D,1}(\alpha_1)$"
         coeff = "drag_coeff"
@@ -2674,10 +2856,10 @@ def plot_compare_wind_speeds_mean_seperate3dmUs(static_coeff_low,
     #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
@@ -3129,6 +3311,24 @@ plot_static_coeff_summary(static_coeff_MDS_4D_55, section_name, 5.5, mode="decks
 #plot_static_coeff_summary(static_coeff_MDS_4D_85, section_name, 8.5, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_4D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
+
+#%%NILS
+
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_4D_55, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_low_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_4D_55, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_low_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_4D_55, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_low_cm" + ".png"), dpi=300)
+
+fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_4D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_high_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_4D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_high_cl" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_4D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_high_cm" + ".png"), dpi=300)
+
 #%% 
 # Filter and plot ALT 1
 #drag
@@ -3196,14 +3396,22 @@ static_coeff_MDS_4D_10_updated.lift_coeff[:, 3] = static_coeff_MDS_4D_10.lift_co
 static_coeff_MDS_4D_10_updated.pitch_coeff[:, 2] = static_coeff_MDS_4D_10.pitch_coeff[:,2]
 static_coeff_MDS_4D_10_updated.pitch_coeff[:, 3] = static_coeff_MDS_4D_10.pitch_coeff[:, 3]
 
+cd_55_mean = static_coeff_MDS_4D_55_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True, ax = None)[1]
+cd_10_mean = static_coeff_MDS_4D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[1]
+alpha = static_coeff_MDS_4D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[2]
 
+
+for i, vinkel in enumerate(alpha):
+    if np.isclose(vinkel, 0):
+        print(cd_55_mean[i])
+        print(cd_10_mean[i])
 #%% !?!!!
 def plot_compare_wind_speeds_mean_seperate4dmDs(static_coeff_low, 
                                    static_coeff_high, static_coeff_med = None,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_{D,2}(\alpha_2)$"
         coeff = "drag_coeff"
@@ -3259,10 +3467,10 @@ def plot_compare_wind_speeds_mean_seperate4dmDs(static_coeff_low,
                 label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
@@ -3338,6 +3546,23 @@ static_coeff_MUS_4D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_4D, exp1_MUS_4D_10, se
 plot_static_coeff_summary(static_coeff_MUS_4D_5, section_name, 5, mode="decks", upwind_in_rig=True)
 #plot_static_coeff_summary(static_coeff_MUS_4D_85, section_name, 8.5, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_4D_10, section_name, 10, mode="decks", upwind_in_rig=True)
+
+#%%NILS
+
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_low_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_low_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_low_cm" + ".png"), dpi=300)
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_high_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_high_cl" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_high_cm" + ".png"), dpi=300)
 
 
 
@@ -3419,14 +3644,22 @@ static_coeff_MUS_4D_10_updated.lift_coeff[:, 1] = static_coeff_MUS_4D_10.lift_co
 static_coeff_MUS_4D_10_updated.pitch_coeff[:, 0] = static_coeff_MUS_4D_10.pitch_coeff[:,0]
 static_coeff_MUS_4D_10_updated.pitch_coeff[:, 1] = static_coeff_MUS_4D_10.pitch_coeff[:, 1]
 
+cd_5_mean = static_coeff_MUS_4D_5_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True, ax = None)[0]
+cd_10_mean = static_coeff_MUS_4D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[0]
+alpha = static_coeff_MUS_4D_10_updated.plot_drag_mean( mode ="decks", upwind_in_rig=True,ax  = None)[2]
 
+
+for i, vinkel in enumerate(alpha):
+    if np.isclose(vinkel, 0):
+        print(cd_5_mean[i])
+        print(cd_10_mean[i])
 #%% !?!!!
 def plot_compare_wind_speeds_mean_seperate4dmUs(static_coeff_low, 
                                    static_coeff_high, static_coeff_med = None,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_{D,1}(\alpha_1)$"
         coeff = "drag_coeff"
@@ -3482,10 +3715,10 @@ def plot_compare_wind_speeds_mean_seperate4dmUs(static_coeff_low,
     #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
@@ -3887,15 +4120,15 @@ exp0_MDS_5D, exp1_MDS_5D_10 = load_experiments_from_hdf5(h5_input_path, section_
 # exp0_MDS_5D.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MDS 5D - Wind speed: 0 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_0.png"))
-# exp1_MDS_5D_55.plot_experiment(mode="total") #
+exp1_MDS_5D_55.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MDS 5D - Wind speed: 5.5 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_55.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_5D_55_tidserie" + ".png"), dpi=300)
 # #exp1_MDS_5D_85.plot_experiment(mode="total") #
 # #plt.gcf().suptitle(f"MDS 5D - Wind speed: 8.5 m/s ",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_85.png"))
-# exp1_MDS_5D_10.plot_experiment(mode="total") #
+exp1_MDS_5D_10.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MDS 5D - Wind speed: 10 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_10.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_5D_10_tidserie" + ".png"), dpi=300)
 # plt.show()
 # plt.close()
 
@@ -3907,15 +4140,15 @@ exp1_MDS_5D_10.filt_forces(6, 2)
 # exp0_MDS_5D.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 5D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_0_filter.png"))
-# exp1_MDS_5D_55.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MDS_5D_55.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 5D - Wind speed: 5.5 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_55_filter.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_5D_55_filter_tidserie" + ".png"), dpi=300)
 # #exp1_MDS_5D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
 # #plt.gcf().suptitle(f"MDS 5D - Wind speed: 8.5 m/s - With Butterworth low-pass filter",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_85_filter.png"))
-# exp1_MDS_5D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MDS_5D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 5D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_5D_10_filter.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_5D_10_filter_tidserie" + ".png"), dpi=300)
 # plt.show()
 # plt.close()
 
@@ -3929,6 +4162,23 @@ plot_static_coeff_summary(static_coeff_MDS_5D_55, section_name, 5.5, mode="decks
 #plot_static_coeff_summary(static_coeff_MDS_5D_85, section_name, 8.5, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_5D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
+
+#%%NILS
+
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_5D_55, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_low_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_5D_55, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_low_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_5D_55, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_low_cm" + ".png"), dpi=300)
+
+fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_5D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_high_cd" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_5D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_high_cl" + ".png"), dpi=300)
+fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_5D_10, upwind_in_rig=False, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_high_cm" + ".png"), dpi=300)
 
 #%% !!!!!
 #fjerne hakk
@@ -4055,22 +4305,22 @@ def plot_compare_wind_speeds_mean_seperate5dmDs(static_coeff_low,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_{D,2}(\alpha_2)$"
         coeff = "drag_coeff"
         min = 0.42#0.4
-        max = 0.52#0.58
+        max = 0.5#0.58
     elif scoff == "lift":
         axis = r"$C_{L,2}(\alpha_2)$"
         coeff = "lift_coeff"
         min = -0.28#-0.35
-        max = 0.37#0.5
+        max = 0.33#0.5
     elif scoff == "pitch":
         axis = r"$C_{M,2}(\alpha_2)$"
         coeff = "pitch_coeff"
         min = -0.04#-0.05
-        max = 0.13#0.15
+        max = 0.1#0.15
 
     # Calculate unique alpha values (pitch motion in degrees)
     alpha_low = np.round(static_coeff_low.pitch_motion*360/2/np.pi,1)
@@ -4111,10 +4361,10 @@ def plot_compare_wind_speeds_mean_seperate5dmDs(static_coeff_low,
                 label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
@@ -4154,15 +4404,15 @@ exp0_MUS_5D, exp1_MUS_5D_10 = load_experiments_from_hdf5(h5_input_path, section_
 # exp0_MUS_5D.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MUS 5D - Wind speed: 0 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_0.png"))
-# exp1_MUS_5D_45.plot_experiment(mode="total") #
+exp1_MUS_5D_45.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MUS 5D - Wind speed: 4.5 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_45.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_5D_45_tidserie" + ".png"), dpi=300)
 # #exp1_MUS_5D_85.plot_experiment(mode="total") #
 # #plt.gcf().suptitle(f"MUS 5D - Wind speed: 8.5 m/s ",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_85.png"))
-# exp1_MUS_5D_10.plot_experiment(mode="total") #
+exp1_MUS_5D_10.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MUS 5D - Wind speed: 10 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_10.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_5D_10_tidserie" + ".png"), dpi=300)
 
 exp0_MUS_5D.filt_forces(6, 2)
 exp1_MUS_5D_45.filt_forces(6, 2)
@@ -4172,15 +4422,15 @@ exp1_MUS_5D_10.filt_forces(6, 2)
 # exp0_MUS_5D.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 5D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_0_filter.png"))
-# exp1_MUS_5D_45.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MUS_5D_45.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 5D - Wind speed: 4.5 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_45_filter.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_5D_45_filter_tidserie" + ".png"), dpi=300)
 # #exp1_MUS_5D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
 # #plt.gcf().suptitle(f"MUS 5D - Wind speed: 8.5 m/s - With Butterworth low-pass filter",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_85_filter.png"))
-# exp1_MUS_5D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MUS_5D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 5D - Wind speed:) 10 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_5D_10_filter.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_5D_10_filter_tidserie" + ".png"), dpi=300)
 # plt.show()
 # plt.close()
 
@@ -4193,6 +4443,25 @@ static_coeff_MUS_5D_10 = w3t.StaticCoeff.fromWTT(exp0_MUS_5D, exp1_MUS_5D_10, se
 plot_static_coeff_summary(static_coeff_MUS_5D_45, section_name, 4.5, mode="decks", upwind_in_rig=True)
 #plot_static_coeff_summary(static_coeff_MUS_5D_85, section_name, 8.5, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_5D_10, section_name, 10, mode="decks", upwind_in_rig=True)
+
+
+#%%NILS
+
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_low_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_low_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_low_cm" + ".png"), dpi=300)
+
+fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_high_cd" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_high_cl" + ".png"), dpi=300)
+fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True, ax=None)
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_high_cm" + ".png"), dpi=300)
+
 
 #%% !!!
 #fjerne hakk
@@ -4329,7 +4598,7 @@ def plot_compare_wind_speeds_mean_seperate5dmUs(static_coeff_low,
                                     scoff = "", ax=None):
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(2.2, 2.63))
+        fig, ax = plt.subplots(figsize=(2.4, 2.63))
     if scoff == "drag":
         axis = r"$C_{D,1}(\alpha_1)$"
         coeff = "drag_coeff"
@@ -4385,10 +4654,10 @@ def plot_compare_wind_speeds_mean_seperate5dmUs(static_coeff_low,
     #             label=f"10 m/s", color = "#d62728", alpha = 0.8)
 
     #ax.grid()
-    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
-    ax.set_ylabel(axis, fontsize=15)
-    ax.tick_params(labelsize=15)
-    ax.legend(fontsize=13,labelspacing=0.3) #loc='upper left',
+    ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=11)
+    ax.set_ylabel(axis, fontsize=11)
+    ax.tick_params(labelsize=11)
+    ax.legend(fontsize=11,labelspacing=0.3) #loc='upper left',
     ax.grid(True)
     ax.set_xticks([-4,-2, 0,2,  4])
     ax.set_ylim(min,max)
@@ -4861,9 +5130,9 @@ def plot_compare_distance_mean1(static_coeff_single, static_coeff_1D, static_coe
         ax.plot(unique_alphas_4D,cd_upwind_mean_4D,label=(" 4D "), alpha = 0.8)
         ax.plot(unique_alphas_5D,cd_upwind_mean_5D,label=(" 5D "), alpha = 0.8)
         ax.plot(unique_alphas_single, cd_upwind_mean_single,label=("Single"),  alpha = 0.8)
-        ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
-        ax.set_ylabel(ylabel, fontsize=15)
-        ax.tick_params(labelsize=15)
+        ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=11)
+        ax.set_ylabel(ylabel, fontsize=11)
+        ax.tick_params(labelsize=11)
         ax.set_ylim(ymin,ymax)
         ax.set_xlim(xmin=-4, xmax=4)
         ax.grid(True)
@@ -4964,9 +5233,9 @@ def plot_compare_distance_mean1(static_coeff_single, static_coeff_1D, static_coe
         ax.plot(unique_alphas_4D,cd_downwind_mean_4D,label=(" 4D "), alpha = 0.8)
         ax.plot(unique_alphas_5D,cd_downwind_mean_5D,label=(" 5D "), alpha = 0.8)
         ax.plot(unique_alphas_single, cd_downwind_mean_single,label=("Single"),  alpha = 0.8)
-        ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
-        ax.set_ylabel(ylabel, fontsize=15)
-        ax.tick_params(labelsize=15)
+        ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=11)
+        ax.set_ylabel(ylabel, fontsize=11)
+        ax.tick_params(labelsize=11)
         ax.set_ylim(ymin,ymax)
         ax.set_xlim(xmin=-4, xmax=4)
         ax.grid(True)
@@ -5075,9 +5344,9 @@ def plot_compare_distance_mean_oposite(static_coeff_single, static_coeff_1D, sta
         ax.plot(unique_alphas_4D,cd_upwind_mean_4D,label=(" 4D "), alpha = 0.8)
         ax.plot(unique_alphas_5D,cd_upwind_mean_5D,label=(" 5D "), alpha = 0.8)
         #ax.plot(unique_alphas_single, cd_upwind_mean_single,label=("Single"),  alpha = 0.8)
-        ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=15)
-        ax.set_ylabel(ylabel, fontsize=15)
-        ax.tick_params(labelsize=15)
+        ax.set_xlabel(r"$\alpha_1$ [deg]", fontsize=11)
+        ax.set_ylabel(ylabel, fontsize=11)
+        ax.tick_params(labelsize=11)
         ax.set_ylim(ymin,ymax)
         ax.set_xlim(xmin=-4, xmax=4)
         ax.grid(True)
@@ -5177,9 +5446,9 @@ def plot_compare_distance_mean_oposite(static_coeff_single, static_coeff_1D, sta
         ax.plot(unique_alphas_4D,cd_downwind_mean_4D,label=(" 4D "), alpha = 0.8)
         ax.plot(unique_alphas_5D,cd_downwind_mean_5D,label=(" 5D "), alpha = 0.8)
         #ax.plot(unique_alphas_single, cd_downwind_mean_single,label=("Single"),  alpha = 0.8)
-        ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=15)
-        ax.set_ylabel(ylabel, fontsize=15)
-        ax.tick_params(labelsize=15)
+        ax.set_xlabel(r"$\alpha_2$ [deg]", fontsize=11)
+        ax.set_ylabel(ylabel, fontsize=11)
+        ax.tick_params(labelsize=11)
         ax.set_ylim(ymin,ymax)
         ax.set_xlim(xmin=-4, xmax=4)
 
@@ -5371,4 +5640,4 @@ for name,array in arrays_to_save.items():
     np.save(os.path.join(file_path, f"{name}.npy"), array)
 
 
-#%%
+#%%#
