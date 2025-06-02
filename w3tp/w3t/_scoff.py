@@ -1119,8 +1119,12 @@ def plot_compare_drag_only_single(static_coeff_single, static_coeff, upwind_in_r
     #ax.legend(fontsize=11)
     ax.tick_params(labelsize=11)
     #ax.set_title(f"{setUp_type}: Comparison of drag coefficients")
-    ax.set_ylim(ymin=static_coeff_single.ymin_drag,ymax=static_coeff_single.ymax_drag)
+    ax.set_ylim(ymin=0.18,ymax=0.9)
     ax.set_xlim(-8,8)
+                
+                
+    ax.set_xticks([-8, -4, 0, 4, 8])
+
     return fig, ax
 
 def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
@@ -1139,13 +1143,13 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_r
         color1 = "#d62728"
         color2= "#2ca02c"
         xname = r"$\alpha_1$"
-        yname = r"$C_D(\alpha_1)$"
+        yname = r"$C_L(\alpha_1)$"
     else: 
         setUp_type = "MDS"
         color1 = "#2ca02c"
         color2 ="#d62728"
         xname = r"$\alpha_2$"
-        yname = r"$C_D(\alpha_2)$"
+        yname = r"$C_L(\alpha_2)$"
 
     if ax is None:
             fig, ax = plt.subplots(figsize=(2.4, 1.8))
@@ -1161,8 +1165,10 @@ def plot_compare_lift_only_single(static_coeff_single, static_coeff, upwind_in_r
     ax.grid()
     #ax.legend(fontsize=11)
     #ax.set_title(f"{setUp_type}: Comparison of lift coefficients ")
-    ax.set_ylim(ymin=-0.62,ymax=0.7)
+    ax.set_ylim(ymin=-0.7,ymax=0.7)
     ax.set_xlim(-8,8)
+    ax.set_xticks([-8, -4, 0, 4, 8])
+
     return fig, ax
 def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
     """
@@ -1180,13 +1186,13 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_
         color1 = "#d62728"
         color2= "#2ca02c"
         xname = r"$\alpha_1$"
-        yname = r"$C_D(\alpha_1)$"
+        yname = r"$C_M(\alpha_1)$"
     else: 
         setUp_type = "MDS"
         color1 = "#2ca02c"
         color2 ="#d62728"
         xname = r"$\alpha_2$"
-        yname = r"$C_D(\alpha_2)$"
+        yname = r"$C_M(\alpha_2)$"
 
     if ax is None:
             fig, ax = plt.subplots(figsize=(2.4, 1.8))   
@@ -1202,8 +1208,10 @@ def plot_compare_pitch_only_single(static_coeff_single, static_coeff, upwind_in_
     ax.tick_params(labelsize=11)
 
     #ax.set_title(f"{setUp_type}: Comparison of pitch coefficients ")
-    ax.set_ylim(ymin=-0.15,ymax=0.15)
+    ax.set_ylim(ymin=-0.2,ymax=0.22)
     ax.set_xlim(-8,8)
+    ax.set_xticks([-8, -4, 0, 4, 8])
+
     return fig, ax
 
 def plot_compare_drag_mean_only_single(static_coeff_single, static_coeff, upwind_in_rig=True, ax=None):
