@@ -371,10 +371,33 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D,
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 
 # %%
-
-####################################3
+############################################################################################################
 #%%
 # Plotte AD mot tilsvarende buffeting
+
+#  BUFFETING
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_as_AD.npy"
+# Load the saved dictionary
+matrices = np.load(file_path, allow_pickle=True).item()
+
+Single_k = matrices["Kae_Single"]
+Single_c = matrices["Cae_Single"]
+
+Buff_1D_k = matrices["Kae_1D"]
+Buff_1D_c = matrices["Cae_1D"]
+
+Buff_2D_k = matrices["Kae_2D"]
+Buff_2D_c = matrices["Cae_2D"]
+
+Buff_3D_k = matrices["Kae_3D"]
+Buff_3D_c = matrices["Cae_3D"]
+
+Buff_4D_k = matrices["Kae_4D"]
+Buff_4D_c = matrices["Cae_4D"]
+
+Buff_5D_k = matrices["Kae_5D"]
+Buff_5D_c = matrices["Cae_5D"]
+#Cae_5D_gen, Kae_5D_gen = _eigVal.generalize_C_K(Cae_5D, Kae_5D, phi_two, x_two, single=False)
 
 def from_poly_k(poly_k, k_range, vred, damping_ad = True):
    
@@ -435,96 +458,169 @@ def AD_two(poly_coeff, k_range, Vred_global, B):
     k_θ2θ2 = from_poly_k(poly_coeff[31], k_range[31],Vred_global, damping_ad=False)
     
     Cae_star = np.array([
-         [c_z1z1/B,        c_z1θ1,       c_z1z2/B,        c_z1θ2],
-         [ c_θ1z1,   B * c_θ1θ1,   c_θ1z2,   B * c_θ1θ2],
-         [c_z2z1/B,       c_z2θ1,       c_z2z2/B,       c_z2θ2],
-         [c_θ2z1,   B* c_θ2θ1,    c_θ2z2,   B* c_θ2θ2]
+         [c_z1z1,    c_z1θ1,   c_z1z2,   c_z1θ2],
+         [ c_θ1z1,   c_θ1θ1,   c_θ1z2,   c_θ1θ2],
+         [c_z2z1,    c_z2θ1,   c_z2z2,   c_z2θ2],
+         [c_θ2z1,    c_θ2θ1,    c_θ2z2,  c_θ2θ2]
     ])
     Kae_star = np.array([
-         [k_z1z1/B,       k_z1θ1,       k_z1z2/B,       k_z1θ2],
-         [ k_θ1z1,   B * k_θ1θ1,    k_θ1z2,   B* k_θ1θ2],
-         [k_z2z1/B,        k_z2θ1,       k_z2z2/B,        k_z2θ2],
-         [ k_θ2z1,   B * k_θ2θ1,   k_θ2z2,   B * k_θ2θ2]
+         [k_z1z1,     k_z1θ1,  k_z1z2,  k_z1θ2],
+         [ k_θ1z1,    k_θ1θ1,  k_θ1z2,  k_θ1θ2],
+         [k_z2z1,     k_z2θ1,  k_z2z2,  k_z2θ2],
+         [ k_θ2z1,    k_θ2θ1,  k_θ2z2,  k_θ2θ2]
     ])
 
     return Cae_star, Kae_star
-
-
-data4 = np.load('mode4_data.npz')
-data15 = np.load('mode15_data.npz')
-mode_4 = data4['mode']
-mode_15 = data15['mode']
-x = data4['x']
-N = mode_4.shape[0]
-Phi = np.zeros((N, 4, 4))
-for i in range(N):
-    Phi[i, 0, 0] = mode_4[i, 2]  # zz
-    Phi[i, 1, 1] = mode_15[i, 3] # θθ
-
-    Phi[i, 2, 2] = mode_4[i, 2]  # zz
-    Phi[i, 3, 3] = mode_15[i, 3] # θθ
+def AD_single(poly_coeff, k_range, Vred_global,  B):
     
-k = np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10)
-i = 0
-Cae_3D_gen_AD = np.zeros((10, 4, 4))
-Kae_3D_gen_AD = np.zeros((10, 4, 4))
-for ki in k:
-    AD_3D_damping, AD_3D_stiffness = AD_two(poly_coeff_3D,k_range_3D,  1/ki, B)
-    i += 1
+    Vred_global = float(Vred_global) 
+
+    # AD
+    # Evaluate aerodynamic damping derivatives
+    H1 = from_poly_k(poly_coeff[0], k_range[0],Vred_global, damping_ad=True)
+    H2 = from_poly_k(poly_coeff[1], k_range[1],Vred_global, damping_ad=True)
+    A1 = from_poly_k(poly_coeff[4], k_range[4],Vred_global, damping_ad=True)
+    A2 = from_poly_k(poly_coeff[5], k_range[5],Vred_global, damping_ad=True)
+
+        
+    # Evaluate aerodynamic stiffness derivatives
+    H3 = from_poly_k(poly_coeff[2], k_range[2],Vred_global, damping_ad=False)
+    H4 = from_poly_k(poly_coeff[3], k_range[3],Vred_global, damping_ad=False)
+    A3 = from_poly_k(poly_coeff[6], k_range[6],Vred_global, damping_ad=False)
+    A4 = from_poly_k(poly_coeff[7], k_range[7],Vred_global, damping_ad=False)
+
+    Cae_star = np.array([
+         [H1,       H2],
+         [ A1,    A2]
+     ])
+    Kae_star = np.array([
+         [H4,       H3],
+         [ A4,   A3]
+     ])        
+    return Cae_star, Kae_star
+
+
 
 from scipy.interpolate import interp1d
+#%%
+# Single 
 
+k = np.linspace(k_range_single[0,0], k_range_single[0,1], 10)
 
-# 3D
-Vcr = 53.50000000745058# m/s, critical wind speed
-omega_cr = 1.9649638980089759 # rad/s, critical frequency
+i = 0
+AD_single_damping = np.zeros((10, 2, 2))
+AD_single_stiffness = np.zeros((10, 2, 2))
+for ki in k:
+    AD_single_damping[i], AD_single_stiffness[i] = AD_single(poly_coeff_single,k_range_single,  1/ki, B)
+    i += 1
+
+Vcr = 84.50000000745058 # m/s, critical wind speed
+omega_cr = 1.4569030259030422 # rad/s, critical frequency
 K = omega_cr * B / Vcr
-k = np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10)
 
 # y-verdier for kurven du har plottet
-y_vals_c = k * AD_3D_damping[3,3]
+y_vals_c = k * AD_single_damping[:,1,1]
 f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
 y_K_c = f_interp(K)
 
-y_vals_k = k * AD_3D_stiffness[3,3]
+y_vals_k = k**2 * AD_single_stiffness[:,0,0]
 f_interp = interp1d(k, y_vals_k, kind='linear', fill_value="extrapolate")
 y_K_k = f_interp(K)
 
 plt.figure(figsize=(10, 6))
-plt.title(" 3D ")
-plt.plot(k, k*AD_3D_damping[0,0],  label="[0,0] with AD")
-plt.plot(k, k*AD_3D_damping[1,1],  label="[1,1] with AD")
-plt.plot(k, k*AD_3D_damping[2,2],  label="[2,2] with AD")
-plt.plot(k, k*AD_3D_damping[3,3],  label="[3,3] with AD")
-# plt.plot(k, np.full_like(k, Cae_3D_gen[0,0]), linestyle = "-.",label="[0,0]", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Cae_3D_gen[1,1]), linestyle = "-.",label="[1,1]", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Cae_3D_gen[2,2]), linestyle = "--",label="[2,2]", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Cae_3D_gen[3,3]),linestyle = "--", label="[3,3]", alpha = 0.8)
+plt.title(" Single Damping")
+# plt.plot(k, k*AD_single_damping[:,0,0],  label=r"$H_1*$ Unsteady")
+plt.plot(k, k*AD_single_damping[:,1,1],  label=r"$A_2^*$ Unsteady")
+# plt.plot(k, np.full_like(k, Single_c[0,0]), linestyle = "-.",label=r"$H_1*$ Quasi-static", alpha = 0.8)
+plt.plot(k,np.full_like(k,Single_c[1,1]), linestyle = "-.",label=r"$A_2^*$ Quasi-static", alpha = 0.8)
 plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
 plt.plot(K, y_K_c, 'ro', color='black')
-plt.plot(K,Cae_3D_gen[3,3], 'ro', color='black')
+plt.plot(K,Single_c[1,1], 'ro', color='black')
 plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$AD: K*[] / Buffeting: []$", fontsize=16)
+plt.ylabel(r"$ K*AD$", fontsize=16)
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 plt.legend(fontsize=14)
 plt.show()
 
 plt.figure(figsize=(10, 6))
-plt.title(" 3D ")
-plt.plot(k, k**2*AD_3D_stiffness[0,0],label="[0,0] with AD")
-plt.plot(k, k**2*AD_3D_stiffness[1,1],  label="[1,1] with AD")
-plt.plot(k, k**2*AD_3D_stiffness[2,2], label="[2,2] with AD")
-plt.plot(k, k**2*AD_3D_stiffness[3,3], label="[3,3] with AD")
-# plt.plot(k, np.full_like(k,Kae_3D_gen[0,0]),linestyle = "-.", label="[0,0]", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Kae_3D_gen[1,1]), linestyle = "-.",label="[1,1]", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Kae_3D_gen[2,2]), linestyle = "--",label="[2,2]", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Kae_3D_gen[3,3]),linestyle = "--", label="[3,3]", alpha = 0.8)
+plt.title(" Single Stiffness")
+plt.plot(k, k**2*AD_single_stiffness[:,0,0],label=r"$H_4^*$ Unsteady")
+# plt.plot(k, k**2*AD_single_stiffness[:,1,1], label=r"$A_3*$ Unsteady")
+plt.plot(k, np.full_like(k,Single_k[0,0]),linestyle = "-.", label=r"$H_4^*$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Single_k[1,1]), linestyle = "-.",label=r"$A_3*$ Quasi-static", alpha = 0.8)
 plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
 plt.plot(K,y_K_k, 'ro', color='black')
-plt.plot(K,Kae_3D_gen[3,3], 'ro', color='black')
+plt.plot(K,Single_k[0,0], 'ro', color='black')
 plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$AD: K^2*[] / Buffeting: []$", fontsize=16)
+plt.ylabel(r"$K^2 * AD", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
+
+
+#%%
+# 1D
+
+k = np.linspace(k_range_1D[0,0], k_range_1D[0,1], 10)
+
+i = 0
+AD_1D_damping = np.zeros((10, 4, 4))
+AD_1D_stiffness = np.zeros((10, 4, 4))
+for ki in k:
+    AD_1D_damping[i], AD_1D_stiffness[i] = AD_two(poly_coeff_1D,k_range_1D,  1/ki, B)
+    i += 1
+
+Vcr = 53.50000000745058# m/s, critical wind speed
+omega_cr = 1.9649638980089759 # rad/s, critical frequency
+K = omega_cr * B / Vcr
+
+# y-verdier for kurven du har plottet
+y_vals_c = k * AD_1D_damping[:,3,3]
+f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
+y_K_c = f_interp(K)
+
+y_vals_k = k**2 * AD_1D_stiffness[:,2,2]
+f_interp = interp1d(k, y_vals_k, kind='cubic', fill_value="extrapolate")
+y_K_k = f_interp(K)
+
+plt.figure(figsize=(10, 6))
+plt.title(" 1D Damping")
+# plt.plot(k, k*AD_1D_damping[:,0,0],  label=r"$c_{z1z1}$ Unsteady")
+# plt.plot(k, k*AD_1D_damping[:,1,1],  label=r"r"$c_{z1z1}$ Unsteady")
+# plt.plot(k, k*AD_1D_damping[:,2,2],  label=r"$c_{z2z2}$ Unsteady")
+plt.plot(k, k*AD_1D_damping[:,3,3],  label=r"$c_{θ2θ2}$ Unsteady")
+# plt.plot(k, np.full_like(k, Buff_1D_c[0,0]), linestyle = "-.",label=r"$c_{z1z1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Buff_1D_c[1,1]), linestyle = "-.",label=r"$c_{θ1θ1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Buff_1D_c[2,2]), linestyle = "--",label=r"$c_{z2z2}$ Quasi-static", alpha = 0.8)
+plt.plot(k,np.full_like(k,Buff_1D_c[3,3]),linestyle = "--", label=r"$c_{θ2θ2}$ Quasi-static", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K, y_K_c, 'ro', color='black')
+plt.plot(K,Buff_1D_c[3,3], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$ K*AD$", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
+
+plt.figure(figsize=(10, 6))
+plt.title(" 1D Stiffness")
+# plt.plot(k, k**2*AD_1D_stiffness[:,0,0],label=r"$k_{z1z1}$ Unsteady")
+
+# plt.plot(k, k**2*AD_1D_stiffness[:,1,1],  label=r"$k_{z1z1}$ Unsteady")
+plt.plot(k, k**2*AD_1D_stiffness[:,2,2], label=r"$k_{z2z2}$ Unsteady")
+# plt.plot(k, k**2*AD_1D_stiffness[:,3,3], label=r"$k_{θ2θ2}$ Unsteady")
+# plt.plot(k, np.full_like(k,Buff_1D_k[0,0]),linestyle = "-.", label=r"$k_{z1z1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Buff_1D_k[1,1]), linestyle = "-.",label=r"$k_{θ1θ1}$ Quasi-static", alpha = 0.8)
+plt.plot(k, np.full_like(k,Buff_1D_k[2,2]), linestyle = "--",label=r"$k_{z2z2}$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Buff_1D_k[3,3]),linestyle = "--", label=r"$k_{θ2θ2}$ Quasi-static", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K,y_K_k, 'ro', color='black')
+plt.plot(K,Buff_1D_k[2,2], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$K^2 * AD", fontsize=16)
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 plt.legend(fontsize=14)
@@ -532,4 +628,265 @@ plt.show()
 
 
 
-# %%
+#%%
+# 2D
+
+k = np.linspace(k_range_2D[0,0], k_range_2D[0,1], 10)
+
+i = 0
+AD_2D_damping = np.zeros((10, 4, 4))
+AD_2D_stiffness = np.zeros((10, 4, 4))
+for ki in k:
+    AD_2D_damping[i], AD_2D_stiffness[i] = AD_two(poly_coeff_2D,k_range_2D,  1/ki, B)
+    i += 1
+
+Vcr = 53.50000000745058# m/s, critical wind speed
+omega_cr = 1.9649638980089759 # rad/s, critical frequency
+K = omega_cr * B / Vcr
+
+# y-verdier for kurven du har plottet
+y_vals_c = k * AD_2D_damping[:,3,3]
+f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
+y_K_c = f_interp(K)
+
+y_vals_k = k**2 * AD_2D_stiffness[:,2,2]
+f_interp = interp1d(k, y_vals_k, kind='cubic', fill_value="extrapolate")
+y_K_k = f_interp(K)
+
+plt.figure(figsize=(10, 6))
+plt.title(" 2D Damping")
+# plt.plot(k, k*AD_2D_damping[:,0,0],  label=r"$c_{z1z1}$ Unsteady")
+# plt.plot(k, k*AD_2D_damping[:,1,1],  label=r"r"$c_{z1z1}$ Unsteady")
+# plt.plot(k, k*AD_2D_damping[:,2,2],  label=r"$c_{z2z2}$ Unsteady")
+plt.plot(k, k*AD_2D_damping[:,3,3],  label=r"$c_{θ2θ2}$ Unsteady")
+# plt.plot(k, np.full_like(k, Buff_2D_c[0,0]), linestyle = "-.",label=r"$c_{z1z1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Buff_2D_c[1,1]), linestyle = "-.",label=r"$c_{θ1θ1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Buff_2D_c[2,2]), linestyle = "--",label=r"$c_{z2z2}$ Quasi-static", alpha = 0.8)
+plt.plot(k,np.full_like(k,Buff_2D_c[3,3]),linestyle = "--", label=r"$c_{θ2θ2}$ Quasi-static", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K, y_K_c, 'ro', color='black')
+plt.plot(K,Buff_2D_c[3,3], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$ K*AD$", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
+
+plt.figure(figsize=(10, 6))
+plt.title(" 2D Stiffness")
+# plt.plot(k, k**2*AD_2D_stiffness[:,0,0],label=r"$k_{z1z1}$ Unsteady")
+# plt.plot(k, k**2*AD_2D_stiffness[:,1,1],  label=r"$k_{z1z1}$ Unsteady")
+plt.plot(k, k**2*AD_2D_stiffness[:,2,2], label=r"$k_{z2z2}$ Unsteady")
+# plt.plot(k, k**2*AD_2D_stiffness[:,3,3], label=r"$k_{θ2θ2}$ Unsteady")
+# plt.plot(k, np.full_like(k,Buff_2D_k[0,0]),linestyle = "-.", label=r"$k_{z1z1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Buff_2D_k[1,1]), linestyle = "-.",label=r"$k_{θ1θ1}$ Quasi-static", alpha = 0.8)
+plt.plot(k, np.full_like(k,Buff_2D_k[2,2]), linestyle = "--",label=r"$k_{z2z2}$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Buff_2D_k[3,3]),linestyle = "--", label=r"$k_{θ2θ2}$ Quasi-static", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K,y_K_k, 'ro', color='black')
+plt.plot(K,Buff_2D_k[2,2], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$K^2 * AD", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
+#%%
+# 3D
+
+k = np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10)
+i = 0
+AD_3D_damping = np.zeros((10, 4, 4))
+AD_3D_stiffness = np.zeros((10, 4, 4))
+for ki in k:
+    AD_3D_damping[i], AD_3D_stiffness[i] = AD_two(poly_coeff_3D,k_range_3D,  1/ki, B)
+    i += 1
+
+
+Vcr = 53.50000000745058# m/s, critical wind speed
+omega_cr = 1.9649638980089759 # rad/s, critical frequency
+K = omega_cr * B / Vcr
+
+# y-verdier for kurven du har plottet
+y_vals_c = k * AD_3D_damping[:,3,3]
+f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
+y_K_c = f_interp(K)
+
+y_vals_k = k**2 * AD_3D_stiffness[:,2,2]
+f_interp = interp1d(k, y_vals_k, kind='cubic', fill_value="extrapolate")
+y_K_k = f_interp(K)
+
+plt.figure(figsize=(10, 6))
+plt.title(" 3D Damping")
+# plt.plot(k, k*AD_3D_damping[:,0,0],  label=r"$c_{z1z1}$ Unsteady")
+# plt.plot(k, k*AD_3D_damping[:,1,1],  label=r"r"$c_{z1z1}$ Unsteady")
+# plt.plot(k, k*AD_3D_damping[:,2,2],  label=r"$c_{z2z2}$ Unsteady")
+plt.plot(k, k*AD_3D_damping[:,3,3],  label=r"$c_{θ2θ2}$ Unsteady")
+# plt.plot(k, np.full_like(k, Buff_3D_c[0,0]), linestyle = "-.",label=r"$c_{z1z1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Buff_3D_c[1,1]), linestyle = "-.",label=r"$c_{θ1θ1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Buff_3D_c[2,2]), linestyle = "--",label=r"$c_{z2z2}$ Quasi-static", alpha = 0.8)
+plt.plot(k,np.full_like(k,Buff_3D_c[3,3]),linestyle = "--", label=r"$c_{θ2θ2}$ Quasi-static", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K, y_K_c, 'ro', color='black')
+plt.plot(K,Buff_3D_c[3,3], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$ K*AD$", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
+
+plt.figure(figsize=(10, 6))
+plt.title(" 3D Stiffness")
+# plt.plot(k, k**2*AD_3D_stiffness[:,0,0],label=r"$k_{z1z1}$ Unsteady")
+# plt.plot(k, k**2*AD_3D_stiffness[:,1,1],  label=r"$k_{z1z1}$ Unsteady")
+plt.plot(k, k**2*AD_3D_stiffness[:,2,2], label=r"$k_{z2z2}$ Unsteady")
+# plt.plot(k, k**2*AD_3D_stiffness[:,3,3], label=r"$k_{θ2θ2}$ Unsteady")
+# plt.plot(k, np.full_like(k,Buff_3D_k[0,0]),linestyle = "-.", label=r"$k_{z1z1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Buff_3D_k[1,1]), linestyle = "-.",label=r"$k_{θ1θ1}$ Quasi-static", alpha = 0.8)
+plt.plot(k, np.full_like(k,Buff_3D_k[2,2]), linestyle = "--",label=r"$k_{z2z2}$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Buff_3D_k[3,3]),linestyle = "--", label=r"$k_{θ2θ2}$ Quasi-static", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K,y_K_k, 'ro', color='black')
+plt.plot(K,Buff_3D_k[2,2], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$K^2 * AD", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
+
+
+#%%
+# 4D
+
+k = np.linspace(k_range_4D[0,0], k_range_4D[0,1], 10)
+i = 0
+AD_4D_damping = np.zeros((10, 4, 4))
+AD_4D_stiffness = np.zeros((10, 4, 4))
+for ki in k:
+    AD_4D_damping[i], AD_4D_stiffness[i] = AD_two(poly_coeff_4D,k_range_4D,  1/ki, B)
+    i += 1
+
+
+Vcr = 53.50000000745058# m/s, critical wind speed
+omega_cr = 1.9649638980089759 # rad/s, critical frequency
+K = omega_cr * B / Vcr
+
+# y-verdier for kurven du har plottet
+y_vals_c = k * AD_4D_damping[:,3,3]
+f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
+y_K_c = f_interp(K)
+
+y_vals_k = k**2 * AD_4D_stiffness[:,2,2]
+f_interp = interp1d(k, y_vals_k, kind='cubic', fill_value="extrapolate")
+y_K_k = f_interp(K)
+
+plt.figure(figsize=(10, 6))
+plt.title(" 4D Damping")
+# plt.plot(k, k*AD_4D_damping[:,0,0],  label=r"$c_{z1z1}$ Unsteady")
+# plt.plot(k, k*AD_4D_damping[:,1,1],  label=r"r"$c_{z1z1}$ Unsteady")
+# plt.plot(k, k*AD_4D_damping[:,2,2],  label=r"$c_{z2z2}$ Unsteady")
+plt.plot(k, k*AD_4D_damping[:,3,3],  label=r"$c_{θ2θ2}$ Unsteady")
+# plt.plot(k, np.full_like(k, Buff_4D_c[0,0]), linestyle = "-.",label=r"$c_{z1z1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Buff_4D_c[1,1]), linestyle = "-.",label=r"$c_{θ1θ1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Buff_4D_c[2,2]), linestyle = "--",label=r"$c_{z2z2}$ Quasi-static", alpha = 0.8)
+plt.plot(k,np.full_like(k,Buff_4D_c[3,3]),linestyle = "--", label=r"$c_{θ2θ2}$ Quasi-static", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K, y_K_c, 'ro', color='black')
+plt.plot(K,Buff_4D_c[3,3], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$ K*AD$", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
+
+plt.figure(figsize=(10, 6))
+plt.title(" 4D Stiffness")
+# plt.plot(k, k**2*AD_4D_stiffness[:,0,0],label=r"$k_{z1z1}$ Unsteady")
+# plt.plot(k, k**2*AD_4D_stiffness[:,1,1],  label=r"$k_{z1z1}$ Unsteady")
+plt.plot(k, k**2*AD_4D_stiffness[:,2,2], label=r"$k_{z2z2}$ Unsteady")
+# plt.plot(k, k**2*AD_4D_stiffness[:,3,3], label=r"$k_{θ2θ2}$ Unsteady")
+# plt.plot(k, np.full_like(k,Buff_4D_k[0,0]),linestyle = "-.", label=r"$k_{z1z1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Buff_4D_k[1,1]), linestyle = "-.",label=r"$k_{θ1θ1}$ Quasi-static", alpha = 0.8)
+plt.plot(k, np.full_like(k,Buff_4D_k[2,2]), linestyle = "--",label=r"$k_{z2z2}$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Buff_4D_k[3,3]),linestyle = "--", label=r"$k_{θ2θ2}$ Quasi-static", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K,y_K_k, 'ro', color='black')
+plt.plot(K,Buff_4D_k[2,2], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$K^2 * AD", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
+
+
+#%%
+# 5D
+
+k = np.linspace(k_range_5D[0,0], k_range_5D[0,1], 10)
+i = 0
+AD_5D_damping = np.zeros((10, 4, 4))
+AD_5D_stiffness = np.zeros((10, 4, 4))
+for ki in k:
+    AD_5D_damping[i], AD_5D_stiffness[i] = AD_two(poly_coeff_5D,k_range_5D,  1/ki, B)
+    i += 1
+
+
+Vcr = 53.50000000745058# m/s, critical wind speed
+omega_cr = 1.9649638980089759 # rad/s, critical frequency
+K = omega_cr * B / Vcr
+
+# y-verdier for kurven du har plottet
+y_vals_c = k * AD_5D_damping[:,3,3]
+f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
+y_K_c = f_interp(K)
+
+y_vals_k = k**2 * AD_5D_stiffness[:,2,2]
+f_interp = interp1d(k, y_vals_k, kind='cubic', fill_value="extrapolate")
+y_K_k = f_interp(K)
+
+plt.figure(figsize=(10, 6))
+plt.title(" 5D Damping")
+# plt.plot(k, k*AD_5D_damping[:,0,0],  label=r"$c_{z1z1}$ Unsteady")
+# plt.plot(k, k*AD_5D_damping[:,1,1],  label=r"r"$c_{z1z1}$ Unsteady")
+# plt.plot(k, k*AD_5D_damping[:,2,2],  label=r"$c_{z2z2}$ Unsteady")
+plt.plot(k, k*AD_5D_damping[:,3,3],  label=r"$c_{θ2θ2}$ Unsteady")
+# plt.plot(k, np.full_like(k, Buff_5D_c[0,0]), linestyle = "-.",label=r"$c_{z1z1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Buff_5D_c[1,1]), linestyle = "-.",label=r"$c_{θ1θ1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Buff_5D_c[2,2]), linestyle = "--",label=r"$c_{z2z2}$ Quasi-static", alpha = 0.8)
+plt.plot(k,np.full_like(k,Buff_5D_c[3,3]),linestyle = "--", label=r"$c_{θ2θ2}$ Quasi-static", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K, y_K_c, 'ro', color='black')
+plt.plot(K,Buff_5D_c[3,3], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$: K*AD$", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
+
+plt.figure(figsize=(10, 6))
+plt.title(" 5D Stiffness")
+# plt.plot(k, k**2*AD_5D_stiffness[:,0,0],label=r"$k_{z1z1}$ Unsteady")
+# plt.plot(k, k**2*AD_5D_stiffness[:,1,1],  label=r"$k_{z1z1}$ Unsteady")
+plt.plot(k, k**2*AD_5D_stiffness[:,2,2], label=r"$k_{z2z2}$ Unsteady")
+# plt.plot(k, k**2*AD_5D_stiffness[:,3,3], label=r"$k_{θ2θ2}$ Unsteady")
+# plt.plot(k, np.full_like(k,Buff_5D_k[0,0]),linestyle = "-.", label=r"$k_{z1z1}$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Buff_5D_k[1,1]), linestyle = "-.",label=r"$k_{θ1θ1}$ Quasi-static", alpha = 0.8)
+plt.plot(k, np.full_like(k,Buff_5D_k[2,2]), linestyle = "--",label=r"$k_{z2z2}$ Quasi-static", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Buff_5D_k[3,3]),linestyle = "--", label=r"$k_{θ2θ2}$ Quasi-static", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K,y_K_k, 'ro', color='black')
+plt.plot(K,Buff_5D_k[2,2], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$K^2 * AD", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
+
+
