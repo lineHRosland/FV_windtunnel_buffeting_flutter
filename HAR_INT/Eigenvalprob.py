@@ -130,10 +130,254 @@ else:
     raise FileNotFoundError(f"The file 'k_range_5D.npy' does not exist in the specified path: {os.path.abspath(file_path)}")
 
 
+
+#%%
+#Single deck
+
+#Solve for eigenvalues and eigenvectors
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
+
+#Plotting
+
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True, buffeting = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax =_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+
+
+fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
+
+
+fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+
+
+# fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
+# fig.tight_layout()
+# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+
+
+
+#%%
+#Double deck 1D
+
+V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=True)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
+
+#Plotting
+
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D, dist="two deck 1D",  single = False, buffeting = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_1D, omega_list_two_1D, dist="two deck 1D", single = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+
+
+#%%
+#Double deck 2D
+V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,   verbose=False)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
+
+#Plotting
+
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D, eigvecs_list_two_2D, V_list_two_2D, dist="two deck 2D",  single = False, buffeting = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D, dist="two deck 2D", single = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+
+#%%
+#Double deck 3D
+V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
+
+#Plotting
+
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D, V_list_two_3D, dist="two deck 3D",  single = False, buffeting = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D, dist="two deck 3D", single = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+
+
+#%%
+#Double deck 4D
+V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
+
+#Plotting
+
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D, eigvecs_list_two_4D, V_list_two_4D, dist="two deck 4D",  single = False, buffeting = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D, dist="two deck 4D", single = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+
+#%%
+#Double deck 5D
+V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
+
+#Plotting
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D, eigvecs_list_two_5D, V_list_two_5D, dist="two deck 5D",  single = False, buffeting = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_damp" + ".png"), dpi=300)
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D, dist="two deck 5D", single = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_frek" + ".png"), dpi=300)
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_dof" + ".png"), dpi=300)
+
+
+# BUFFETING
+
+#%%
+#Single deck
+
+#Solve for eigenvalues and eigenvectors
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, buffeting = True, Cae_star_gen_BUFF=Cae_Single_gen, Kae_star_gen_BUFF=Kae_Single_gen,  verbose=False)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
+
+#Plotting
+
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True, buffeting = True)
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
+
+#%%
+#Double deck 1D
+
+V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_1D_gen, Kae_star_gen_BUFF=Kae_1D_gen,  verbose=True)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
+
+#Plotting
+
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D, dist="two deck 1D",  single = False, buffeting = True)
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_1D, omega_list_two_1D, dist="two deck 1D", single = False)
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
+
+#%%
+#Double deck 2D
+V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,buffeting = True,  Cae_star_gen_BUFF=Cae_2D_gen, Kae_star_gen_BUFF=Kae_2D_gen,   verbose=False)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
+
+#Plotting
+
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D, eigvecs_list_two_2D, V_list_two_2D, dist="two deck 2D",  single = False, buffeting = True)
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D, dist="two deck 2D", single = False)
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
+
+#%%
+#Double deck 3D
+V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_3D_gen, Kae_star_gen_BUFF=Kae_3D_gen,  verbose=False)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
+
+#Plotting
+
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D, V_list_two_3D, dist="two deck 3D",  single = False, buffeting = True)
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D, dist="two deck 3D", single = False)
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
+
+
+#%%
+#Double deck 4D
+V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_4D_gen, Kae_star_gen_BUFF=Kae_4D_gen,  verbose=False)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
+
+#Plotting
+
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D, eigvecs_list_two_4D, V_list_two_4D, dist="two deck 4D",  single = False, buffeting = True)
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D, dist="two deck 4D", single = False)
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
+
+#%%
+#Double deck 5D
+V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_5D_gen, Kae_star_gen_BUFF=Kae_5D_gen,  verbose=False)
+
+#Flutter
+print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
+
+#Plotting
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D, eigvecs_list_two_5D, V_list_two_5D, dist="two deck 5D",  single = False, buffeting = True)
+
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D, dist="two deck 5D", single = False)
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
+
+# %%
+
 ####################################3
 #%%
-# Plotte Kae og Cae
+# Plotte AD mot tilsvarende buffeting
+
 def from_poly_k(poly_k, k_range, vred, damping_ad = True):
+   
     if vred == 0:
         vred = 1e-10 # Prevent division by zero
         
@@ -148,14 +392,14 @@ def from_poly_k(poly_k, k_range, vred, damping_ad = True):
     #ad_value = fit(poly_k,np.abs(1/vred),k_range[0],k_range[1])
  
     return float(ad_value)
-def cae_kae_two(poly_coeff, k_range, Vred_global, B):
+def AD_two(poly_coeff, k_range, Vred_global, B):
 
     Vred_global = float(Vred_global) 
 
     # AD
     # Damping derivatives (indices 0–15)
 
-    c_z1z1 = from_poly_k(poly_coeff[0], k_range[0],Vred_global, damping_ad=True)
+    c_z1z1 = from_poly_k(poly_coeff[0], k_range[0], Vred_global, damping_ad=True)
     c_z1θ1 = from_poly_k(poly_coeff[1], k_range[1],Vred_global, damping_ad=True)
     c_z1z2 = from_poly_k(poly_coeff[2], k_range[2],Vred_global, damping_ad=True)
     c_z1θ2 = from_poly_k(poly_coeff[3], k_range[3],Vred_global, damping_ad=True)
@@ -191,38 +435,20 @@ def cae_kae_two(poly_coeff, k_range, Vred_global, B):
     k_θ2θ2 = from_poly_k(poly_coeff[31], k_range[31],Vred_global, damping_ad=False)
     
     Cae_star = np.array([
-         [c_z1z1,       B * c_z1θ1,       c_z1z2,       B * c_z1θ2],
-         [B * c_θ1z1,   B**2 * c_θ1θ1,   B * c_θ1z2,   B**2 * c_θ1θ2],
-         [c_z2z1,       B * c_z2θ1,       c_z2z2,       B * c_z2θ2],
-         [B * c_θ2z1,   B**2 * c_θ2θ1,   B * c_θ2z2,   B**2 * c_θ2θ2]
+         [c_z1z1/B,        c_z1θ1,       c_z1z2/B,        c_z1θ2],
+         [ c_θ1z1,   B * c_θ1θ1,   c_θ1z2,   B * c_θ1θ2],
+         [c_z2z1/B,       c_z2θ1,       c_z2z2/B,       c_z2θ2],
+         [c_θ2z1,   B* c_θ2θ1,    c_θ2z2,   B* c_θ2θ2]
     ])
     Kae_star = np.array([
-         [k_z1z1,       B * k_z1θ1,       k_z1z2,       B * k_z1θ2],
-         [B * k_θ1z1,   B**2 * k_θ1θ1,   B * k_θ1z2,   B**2 * k_θ1θ2],
-         [k_z2z1,       B * k_z2θ1,       k_z2z2,       B * k_z2θ2],
-         [B * k_θ2z1,   B**2 * k_θ2θ1,   B * k_θ2z2,   B**2 * k_θ2θ2]
+         [k_z1z1/B,       k_z1θ1,       k_z1z2/B,       k_z1θ2],
+         [ k_θ1z1,   B * k_θ1θ1,    k_θ1z2,   B* k_θ1θ2],
+         [k_z2z1/B,        k_z2θ1,       k_z2z2/B,        k_z2θ2],
+         [ k_θ2z1,   B * k_θ2θ1,   k_θ2z2,   B * k_θ2θ2]
     ])
 
     return Cae_star, Kae_star
 
-def generalize_C_K(C, K, Phi, x, single=True):
-    N = len(x)
-    n_modes = Phi.shape[2]
-    Cae_star_gen = np.zeros((n_modes, n_modes))
-    Kae_star_gen = np.zeros((n_modes, n_modes))
-
-    for i in range(N-1): 
-        dx = x[i+1] - x[i] 
-        phi_L = Phi[i] # shape (n_dof, n_modes)
-        phi_R = Phi[i+1]
-        # Damping
-        C_int = 0.5 * (phi_L.T @ C @ phi_L + phi_R.T @ C @ phi_R)
-        Cae_star_gen += C_int * dx
-        # Stiffness
-        K_int = 0.5 * (phi_L.T @ K @ phi_L + phi_R.T @ K @ phi_R)
-        Kae_star_gen += K_int * dx
-    
-    return Cae_star_gen, Kae_star_gen
 
 data4 = np.load('mode4_data.npz')
 data15 = np.load('mode15_data.npz')
@@ -243,244 +469,67 @@ i = 0
 Cae_3D_gen_AD = np.zeros((10, 4, 4))
 Kae_3D_gen_AD = np.zeros((10, 4, 4))
 for ki in k:
-    Cae_3D_AD, Kae_3D_AD = cae_kae_two(poly_coeff_3D,k_range_3D,  ki, B)
-    Cae_3D_gen_AD[i], Kae_3D_gen_AD[i] = generalize_C_K(Cae_3D_AD, Kae_3D_AD, Phi, x, single=False)
+    AD_3D_damping, AD_3D_stiffness = AD_two(poly_coeff_3D,k_range_3D,  1/ki, B)
     i += 1
 
+from scipy.interpolate import interp1d
 
 
 # 3D
-Vcr = 53.5 # m/s, critical wind speed
-V#cr_k = ??
+Vcr = 53.50000000745058# m/s, critical wind speed
+omega_cr = 1.9649638980089759 # rad/s, critical frequency
+K = omega_cr * B / Vcr
+k = np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10)
+
+# y-verdier for kurven du har plottet
+y_vals_c = k * AD_3D_damping[3,3]
+f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
+y_K_c = f_interp(K)
+
+y_vals_k = k * AD_3D_stiffness[3,3]
+f_interp = interp1d(k, y_vals_k, kind='linear', fill_value="extrapolate")
+y_K_k = f_interp(K)
+
 plt.figure(figsize=(10, 6))
-plt.title("Cae 3D deck")
-#cae, kae skal være konstante bortover??
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10),Cae_3D_gen[0,0], label="Cae_3D_gen[0,0]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10),Cae_3D_gen[1,1], label="Cae_3D_gen[1,1]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10),Cae_3D_gen[2,2], label="Cae_3D_gen[2,2]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10),Cae_3D_gen[3,3], label="Cae_3D_gen[3,3]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))*Cae_3D_gen_AD[:,0,0],linestyle = "--",  label="Cae_AD_gen[0,0]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))*Cae_3D_gen_AD[:,1,1], linestyle = "--", label="Cae_AD_gen[1,1]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))*Cae_3D_gen_AD[:,2,2], linestyle = "--", label="Cae_AD_gen[2,2]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))*Cae_3D_gen_AD[:,3,3], linestyle = "--", label="Cae_AD_gen[3,3]")
-plt.axvline(x=Vcr_k, color='black', linestyle='--', linewidth=1, label="Vcr")
-
-##Vred = V/(omega_old[j]*B) ?? FIX, HØRT MED ALA
-
-plt.xlabel("k")
-plt.ylabel("k Cae")
-plt.legend()
-plt.show()
-plt.figure(figsize=(10, 6))
-plt.title("Kae 3D deck")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen[0,0], label="Kae_3D_gen[0,0]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen[1,1], label="Kae_3D_gen[1,1]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen[2,2], label="Kae_3D_gen[2,2]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), Kae_3D_gen[3,3], label="Kae_3D_gen[3,3]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen_AD[:,3,3], linestyle = "--", label="Kae_AD_gen[0,0]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen_AD[:,1,1], linestyle = "--", label="Kae_AD_gen[1,1]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen_AD[:,2,2], linestyle = "--", label="Kae_AD_gen[2,2]")
-plt.plot(np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10), (np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10))**2*Kae_3D_gen_AD[:,3,3], linestyle = "--", label="Kae_AD_gen[3,3]")
-plt.axvline(x=Vcr_k, color='black', linestyle='--', linewidth=1, label="Vcr")
-
-
-plt.xlabel("k")
-plt.ylabel("k^2 Kae")
-plt.legend()
+plt.title(" 3D ")
+plt.plot(k, k*AD_3D_damping[0,0],  label="[0,0] with AD")
+plt.plot(k, k*AD_3D_damping[1,1],  label="[1,1] with AD")
+plt.plot(k, k*AD_3D_damping[2,2],  label="[2,2] with AD")
+plt.plot(k, k*AD_3D_damping[3,3],  label="[3,3] with AD")
+# plt.plot(k, np.full_like(k, Cae_3D_gen[0,0]), linestyle = "-.",label="[0,0]", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Cae_3D_gen[1,1]), linestyle = "-.",label="[1,1]", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Cae_3D_gen[2,2]), linestyle = "--",label="[2,2]", alpha = 0.8)
+# plt.plot(k,np.full_like(k,Cae_3D_gen[3,3]),linestyle = "--", label="[3,3]", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K, y_K_c, 'ro', color='black')
+plt.plot(K,Cae_3D_gen[3,3], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$AD: K*[] / Buffeting: []$", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
 plt.show()
 
+plt.figure(figsize=(10, 6))
+plt.title(" 3D ")
+plt.plot(k, k**2*AD_3D_stiffness[0,0],label="[0,0] with AD")
+plt.plot(k, k**2*AD_3D_stiffness[1,1],  label="[1,1] with AD")
+plt.plot(k, k**2*AD_3D_stiffness[2,2], label="[2,2] with AD")
+plt.plot(k, k**2*AD_3D_stiffness[3,3], label="[3,3] with AD")
+# plt.plot(k, np.full_like(k,Kae_3D_gen[0,0]),linestyle = "-.", label="[0,0]", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Kae_3D_gen[1,1]), linestyle = "-.",label="[1,1]", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Kae_3D_gen[2,2]), linestyle = "--",label="[2,2]", alpha = 0.8)
+# plt.plot(k, np.full_like(k,Kae_3D_gen[3,3]),linestyle = "--", label="[3,3]", alpha = 0.8)
+plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
+plt.plot(K,y_K_k, 'ro', color='black')
+plt.plot(K,Kae_3D_gen[3,3], 'ro', color='black')
+plt.xlabel(r"$K$", fontsize=16)
+plt.ylabel(r"$AD: K^2*[] / Buffeting: []$", fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
+plt.show()
 
 
-#%%
-#Single deck
-
-#Solve for eigenvalues and eigenvectors
-V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
-
-#Plotting
-
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True, buffeting = False)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_damp" + ".png"), dpi=300)
-
-fig, ax =_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single__flutter_frek" + ".png"), dpi=300)
-
-fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single__flutter_modes" + ".png"), dpi=300)
-
-#%%
-#Double deck 1D
-
-V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=True)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
-
-#Plotting
-
-_eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D, dist="two deck 1D",  single = False, buffeting = False)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_two_1D, omega_list_two_1D, dist="two deck 1D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
-
-#%%
-#Double deck 2D
-V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,   verbose=False)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
-
-#Plotting
-
-_eigVal.plot_damping_vs_wind_speed(damping_list_two_2D, eigvecs_list_two_2D, V_list_two_2D, dist="two deck 2D",  single = False, buffeting = False)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D, dist="two deck 2D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
-
-#%%
-#Double deck 3D
-V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
-
-#Plotting
-
-_eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D, V_list_two_3D, dist="two deck 3D",  single = False, buffeting = False)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D, dist="two deck 3D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
-
-
-#%%
-#Double deck 4D
-V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
-
-#Plotting
-
-_eigVal.plot_damping_vs_wind_speed(damping_list_two_4D, eigvecs_list_two_4D, V_list_two_4D, dist="two deck 4D",  single = False, buffeting = False)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D, dist="two deck 4D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
-
-#%%
-#Double deck 5D
-V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
-
-#Plotting
-_eigVal.plot_damping_vs_wind_speed(damping_list_two_5D, eigvecs_list_two_5D, V_list_two_5D, dist="two deck 5D",  single = False, buffeting = False)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D, dist="two deck 5D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
-
-
-# BUFFETING
-
-#%%
-#Single deck
-
-#Solve for eigenvalues and eigenvectors
-V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, buffeting = True, Cae_star_gen_BUFF=Cae_Single_gen, Kae_star_gen_BUFF=Kae_Single_gen,  verbose=False)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
-
-#Plotting
-
-_eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True, buffeting = True)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
-
-#%%
-#Double deck 1D
-
-V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_1D_gen, Kae_star_gen_BUFF=Kae_1D_gen,  verbose=True)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
-
-#Plotting
-
-_eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D, dist="two deck 1D",  single = False, buffeting = True)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_two_1D, omega_list_two_1D, dist="two deck 1D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
-
-#%%
-#Double deck 2D
-V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,buffeting = True,  Cae_star_gen_BUFF=Cae_2D_gen, Kae_star_gen_BUFF=Kae_2D_gen,   verbose=False)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
-
-#Plotting
-
-_eigVal.plot_damping_vs_wind_speed(damping_list_two_2D, eigvecs_list_two_2D, V_list_two_2D, dist="two deck 2D",  single = False, buffeting = True)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D, dist="two deck 2D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
-
-#%%
-#Double deck 3D
-V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_3D_gen, Kae_star_gen_BUFF=Kae_3D_gen,  verbose=False)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
-
-#Plotting
-
-_eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D, V_list_two_3D, dist="two deck 3D",  single = False, buffeting = True)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D, dist="two deck 3D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
-
-
-#%%
-#Double deck 4D
-V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_4D_gen, Kae_star_gen_BUFF=Kae_4D_gen,  verbose=False)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
-
-#Plotting
-
-_eigVal.plot_damping_vs_wind_speed(damping_list_two_4D, eigvecs_list_two_4D, V_list_two_4D, dist="two deck 4D",  single = False, buffeting = True)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D, dist="two deck 4D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
-
-#%%
-#Double deck 5D
-V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_5D_gen, Kae_star_gen_BUFF=Kae_5D_gen,  verbose=False)
-
-#Flutter
-print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
-
-#Plotting
-_eigVal.plot_damping_vs_wind_speed(damping_list_two_5D, eigvecs_list_two_5D, V_list_two_5D, dist="two deck 5D",  single = False, buffeting = True)
-
-_eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D, dist="two deck 5D", single = False)
-
-_eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 
 # %%
