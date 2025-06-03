@@ -640,8 +640,8 @@ for ki in k:
     AD_single_damping[i], AD_single_stiffness[i] = AD_single(poly_coeff_single,k_range_single,  1/ki, B)
     i += 1
 
-Vcr = 84.50000000745058 # m/s, critical wind speed
-omega_cr = 1.4569030259030422 # rad/s, critical frequency
+Vcr = 84.724853515625 # m/s, critical wind speed
+omega_cr = 1.452509128159339 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
 # y-verdier for kurven du har plottet
@@ -698,8 +698,8 @@ for ki in k:
     AD_1D_damping[i], AD_1D_stiffness[i] = AD_two(poly_coeff_1D,k_range_1D,  1/ki, B)
     i += 1
 
-Vcr = 53.50000000745058# m/s, critical wind speed
-omega_cr = 1.9649638980089759 # rad/s, critical frequency
+Vcr = 31.890869140625# m/s, critical wind speed
+omega_cr = 2.154673716266362 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
 # y-verdier for kurven du har plottet
@@ -766,8 +766,8 @@ for ki in k:
     AD_2D_damping[i], AD_2D_stiffness[i] = AD_two(poly_coeff_2D,k_range_2D,  1/ki, B)
     i += 1
 
-Vcr = 53.50000000745058# m/s, critical wind speed
-omega_cr = 1.9649638980089759 # rad/s, critical frequency
+Vcr = 40.43505859375# m/s, critical wind speed
+omega_cr = 2.0946407671740137  # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
 # y-verdier for kurven du har plottet
@@ -830,8 +830,8 @@ for ki in k:
     i += 1
 
 
-Vcr = 53.50000000745058# m/s, critical wind speed
-omega_cr = 1.9649638980089759 # rad/s, critical frequency
+Vcr = 53.93597412109375# m/s, critical wind speed
+omega_cr = 1.9602677552302152 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
 # y-verdier for kurven du har plottet
@@ -896,8 +896,8 @@ for ki in k:
     i += 1
 
 
-Vcr = 53.50000000745058# m/s, critical wind speed
-omega_cr = 1.9649638980089759 # rad/s, critical frequency
+Vcr = 55.8602294921875# m/s, critical wind speed
+omega_cr = 1.9493400472910092 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
 # y-verdier for kurven du har plottet
@@ -962,8 +962,8 @@ for ki in k:
     i += 1
 
 
-Vcr = 53.50000000745058# m/s, critical wind speed
-omega_cr = 1.9649638980089759 # rad/s, critical frequency
+Vcr = 62.259796142578125# m/s, critical wind speed
+omega_cr = 1.7808098966420758 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
 # y-verdier for kurven du har plottet

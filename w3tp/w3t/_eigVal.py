@@ -495,16 +495,14 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                         eigvecs_all[velocity_counter, j] = None
                     break
                 
-                print("mode", j+1,"wind speed", V, "omega:")
-                print(np.imag(eigvals_pos))
-
+          
                 if single:
                     best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]))
                 else:
                     dominance_scores = np.array([np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])])
                     prev_lambda = eigvals_all[velocity_counter - 1, j] 
 
-                    if V < 40:
+                    if V < 10:
                         best_idx = np.argmax(dominance_scores) 
                     else:
                         best_idx = np.argmin(
@@ -526,7 +524,6 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                         damping_ratios[velocity_counter, j] = damping_new
                         eigvals_all[velocity_counter, j] = λj
                         eigvecs_all[velocity_counter, j] = φj
-                    print("chose this omega:", omega_new)
 
                     stopFreq = True 
 
@@ -663,7 +660,7 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list,
     #ax.set_title(f"Damping ratio vs wind speed — {dist}", fontsize=18)
     ax.grid(True, linestyle='--', linewidth=0.5)
     ax.set_ylim(-0.01,)
-    #ax.legend(fontsize=14, loc='upper left')
+    ax.legend(fontsize=14, loc='upper left')
     if not single and not buffeting:
         ax.set_ylim(-0.01, 0.25)
     ax.set_xlim(0, )
@@ -711,7 +708,7 @@ def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single
     #plt.title(title, fontsize=18)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
-    #plt.legend(fontsize=14)
+    plt.legend(fontsize=14)
     plt.grid(True, which='both', linestyle='--', linewidth=0.5)
     #plt.tight_layout()
     plt.xlim(0, V_list[-1])
