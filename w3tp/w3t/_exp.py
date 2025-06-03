@@ -472,7 +472,7 @@ class Experiment:
         
         return fig
     
-    def plot_experiment(self, mode="total", fig=None):
+    def plot_experiment(self, mode="decks", fig=None):
         """plots the wind velocity, motions and forces
         
         """
@@ -550,29 +550,29 @@ class Experiment:
         
         elif mode == "decks": # krefter og momenter summeres per brodekke
             
-            axs[0].plot( self.time,self.wind_speed)
+            axs[0].plot( self.time,self.wind_speed, alpha = 0.6)
             axs[0].set_title("Wind speed")
             axs[0].set_ylabel(r"$U(t)$ [m/s]", fontsize=12)
             axs[0].grid(True)
             
-            axs[1].plot( self.time,self.motion[:,0])
+            axs[1].plot( self.time,self.motion[:,0], alpha = 0.6)
             axs[1].set_title("Horizontal motion")
             axs[1].set_ylabel(r"$u_x $ [mm]", fontsize=12)
             axs[1].grid(True)
             
-            axs[2].plot( self.time,self.motion[:,1])
+            axs[2].plot( self.time,self.motion[:,1], alpha = 0.6)
             axs[2].set_title("Vertical motion")
             axs[2].set_ylabel(r"$u_z $ [mm]", fontsize=12)
             axs[2].grid(True)
             
-            axs[3].plot( self.time,self.motion[:,2])
+            axs[3].plot( self.time,self.motion[:,2], alpha = 0.6)
             axs[3].set_title("Pitching motion")
             axs[3].set_ylabel(r"$u_\theta [radianer]$", fontsize=12)
             axs[3].set_xlabel(r"$Time$ [s]", fontsize=12)
             axs[3].grid(True)
             
-            axs[4].plot( self.time,np.sum(self.forces_global_center[:,0:12:6],axis=1),label = "Upwind deck") # lastcelle 1 og 2 f.eks
-            axs[4].plot( self.time,np.sum(self.forces_global_center[:,12:24:6],axis=1),label = "Downwind deck") # lastcelle 3 og 4 f.eks
+            axs[4].plot( self.time,np.sum(self.forces_global_center[:,0:12:6],axis=1),label = "Upwind deck", alpha = 0.6) # lastcelle 1 og 2 f.eks
+            axs[4].plot( self.time,np.sum(self.forces_global_center[:,12:24:6],axis=1),label = "Downwind deck", alpha= 0.6) # lastcelle 3 og 4 f.eks
             axs[4].set_title("Horizontal force")
             axs[4].grid(True)
             axs[4].set_ylabel(r"$F_x [N]$", fontsize=12)
@@ -580,8 +580,8 @@ class Experiment:
            
             
             #axs[2,1].plot( self.time,self.forces_global_center[:,2:24:6])
-            axs[5].plot( self.time,np.sum(self.forces_global_center[:,2:12:6],axis=1),label = "Upwind deck")
-            axs[5].plot( self.time,np.sum(self.forces_global_center[:,14:24:6],axis=1),label = "Downwind deck")
+            axs[5].plot( self.time,np.sum(self.forces_global_center[:,2:12:6],axis=1),label = "Upwind deck", alpha = 0.6)
+            axs[5].plot( self.time,np.sum(self.forces_global_center[:,14:24:6],axis=1),label = "Downwind deck", alpha = 0.6)
             axs[5].set_title("Vertical force")
             axs[5].grid(True)
             axs[5].set_ylabel(r"$F_z [N]$", fontsize=12)
@@ -589,8 +589,8 @@ class Experiment:
            
             
             #axs[3,1].plot( self.time,self.forces_global_center[:,4:24:6])
-            axs[6].plot( self.time,np.sum(self.forces_global_center[:,4:12:6],axis=1),label = "Upwind deck")
-            axs[6].plot( self.time,np.sum(self.forces_global_center[:,16:24:6],axis=1),label = "Downwind deck")
+            axs[6].plot( self.time,np.sum(self.forces_global_center[:,4:12:6],axis=1),label = "Upwind deck", alpha = 0.6)
+            axs[6].plot( self.time,np.sum(self.forces_global_center[:,16:24:6],axis=1),label = "Downwind deck", alpha = 0.6)
             axs[6].set_title("Pitching moment")
             axs[6].grid(True)
             axs[6].set_ylabel(r"$F_\theta$ [Nm]", fontsize=12)

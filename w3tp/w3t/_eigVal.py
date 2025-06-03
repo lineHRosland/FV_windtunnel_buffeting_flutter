@@ -234,8 +234,8 @@ def cae_kae_single(poly_coeff, k_range, Vred_global,  B):
     # Evaluate aerodynamic stiffness derivatives
     H3 = from_poly_k(poly_coeff[2], k_range[2],Vred_global, damping_ad=False)
     H4 = from_poly_k(poly_coeff[3], k_range[3],Vred_global, damping_ad=False)
-    A3 = from_poly_k(poly_coeff[6], k_range[6],Vred_global, damping_ad=False)
-    A4 = from_poly_k(poly_coeff[7], k_range[7],Vred_global, damping_ad=False)
+    A3 = from_poly_k(poly_coeff[6], k_range[6],Vred_global, damping_ad=False) 
+    A4 = from_poly_k(poly_coeff[7], k_range[7],Vred_global, damping_ad=False) 
 
     Cae_star = np.array([
          [H1,       B * H2],
@@ -245,6 +245,8 @@ def cae_kae_single(poly_coeff, k_range, Vred_global,  B):
          [H4,       B * H3],
          [B * A4,   B**2 * A3]
      ])        
+
+     
     return Cae_star, Kae_star
 
 def cae_kae_two(poly_coeff, k_range, Vred_global, B):
@@ -418,7 +420,7 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
     maxIterWind = 1500
     V = 1.0 # Initial wind speed, m/s
     dV = 0.5 
-
+    flutter_detected = False
     # # Global results
     V_list = [] # Wind speed, m/s
 
@@ -426,10 +428,11 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
     
     zeta = 0.005 # Damping ratio for the structure (assumed equal for both modes)
 
-    omega_all = np.zeros((maxIterWind, n_modes))
-    damping_ratios = np.zeros((maxIterWind, n_modes))
-    eigvals_all = np.zeros((maxIterWind, n_modes), dtype=complex)
-    eigvecs_all = np.empty((maxIterWind, n_modes), dtype=object)
+    omega_all = np.full((maxIterWind, n_modes), np.nan)
+    damping_ratios = np.full((maxIterWind, n_modes), np.nan)
+    eigvals_all = np.full((maxIterWind, n_modes), np.nan + 1j*np.nan, dtype=complex)
+    eigvecs_all = np.full((maxIterWind, n_modes), None, dtype=object)
+
 
     V_list.append(0.0) 
 
@@ -485,12 +488,15 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                 if eigvals_pos.size == 0:
                     if verbose:
                         print(f"No complex eigenvalues at V = {V:.2f} m/s, mode {j+1}. Skipping mode.")
-
-                    omega_all[velocity_counter, j] = np.nan
-                    damping_ratios[velocity_counter, j] = np.nan
-                    eigvals_all[velocity_counter, j] = np.nan
-                    eigvecs_all[velocity_counter, j] = None
+                    if not flutter_detected:
+                        omega_all[velocity_counter, j] = np.nan
+                        damping_ratios[velocity_counter, j] = np.nan
+                        eigvals_all[velocity_counter, j] = np.nan
+                        eigvecs_all[velocity_counter, j] = None
                     break
+                
+                print("mode", j+1,"wind speed", V, "omega:")
+                print(np.imag(eigvals_pos))
 
                 if single:
                     best_idx = np.argmin(np.abs(np.imag(eigvals_pos) - omega_old[j]))
@@ -498,14 +504,14 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                     dominance_scores = np.array([np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])])
                     prev_lambda = eigvals_all[velocity_counter - 1, j] 
 
-                    if V < 10:
+                    if V < 40:
                         best_idx = np.argmax(dominance_scores) 
                     else:
                         best_idx = np.argmin(
                                 np.abs(np.imag(eigvals_pos) - omega_old[j])
                                 + 10 * np.abs(np.real(eigvals_pos) - np.real(prev_lambda))
                      )
-                        
+                
                 λj = eigvals_pos[best_idx]
                 φj = eigvecs_pos[:n_modes, best_idx] #Choose the first n_modes eigenvectors (exclude lambda*phi)
                 omega_new = np.imag(λj)
@@ -515,10 +521,13 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                 dof_labels = [r'$\phi_{z1}$', r'$\phi_{\theta1}$', r'$\phi_{z2}$', r'$\phi_{\theta2}$']
       
                 if np.abs(omega_old[j] - omega_new) < eps or omega_old[j] <= 0.0:
-                    omega_all[velocity_counter, j] = omega_new
-                    damping_ratios[velocity_counter, j] = damping_new
-                    eigvals_all[velocity_counter, j] = λj
-                    eigvecs_all[velocity_counter, j] = φj
+                    if not flutter_detected:
+                        omega_all[velocity_counter, j] = omega_new
+                        damping_ratios[velocity_counter, j] = damping_new
+                        eigvals_all[velocity_counter, j] = λj
+                        eigvecs_all[velocity_counter, j] = φj
+                    print("chose this omega:", omega_new)
+
                     stopFreq = True 
 
                 iterFreq += 1
@@ -527,13 +536,15 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                 if iterFreq == 1000:
                     if verbose:
                         print(f"WARNING: Frequancy iteration has not converged for V = {V:.2f} m/s, mode {j+1}. Setting results to NaN.")
-                    omega_all[velocity_counter, j] = np.nan
-                    damping_ratios[velocity_counter, j] = np.nan
-                    eigvals_all[velocity_counter, j] = np.nan
-                    eigvecs_all[velocity_counter, j] = None
+                    if not flutter_detected:
+                        omega_all[velocity_counter, j] = np.nan
+                        damping_ratios[velocity_counter, j] = np.nan
+                        eigvals_all[velocity_counter, j] = np.nan
+                        eigvecs_all[velocity_counter, j] = None
                     break
 
             if damping_new < 0:
+                flutter_detected = True
                 for other_j in range(n_modes):
                     if other_j != j:
                         skip_mode[other_j] = True
@@ -544,12 +555,30 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                         print(f"Flutter converged at V ≈ {V:.5f} m/s")
                     omegacritical = omega_new
                     Vcritical = V
+                    V_list.append(V)
+                    velocity_counter += 1
+
+                    omega_all[velocity_counter, j] = omega_new
+                    damping_ratios[velocity_counter, j] = damping_new
+                    eigvals_all[velocity_counter, j] = λj   
+                    eigvecs_all[velocity_counter, j] = φj
+                    for other_j in range(n_modes):
+                        if other_j != j:
+                            omega_all[velocity_counter, other_j] = np.nan
+                            damping_ratios[velocity_counter, other_j] =np.nan
+                            eigvals_all[velocity_counter, other_j] = np.nan 
+                            eigvecs_all[velocity_counter, other_j] =np.nan
+
                     skip_mode[j] = True  
+                    stopWind = True
+
             else: 
-                omega_all[velocity_counter, j] = omega_new
-                damping_ratios[velocity_counter, j] = damping_new
-                eigvals_all[velocity_counter, j] = λj   
-                eigvecs_all[velocity_counter, j] = φj
+                skip_mode = [False]*n_modes # Reset skip_mode for all modes
+                if not flutter_detected:
+                    omega_all[velocity_counter, j] = omega_new
+                    damping_ratios[velocity_counter, j] = damping_new
+                    eigvals_all[velocity_counter, j] = λj   
+                    eigvecs_all[velocity_counter, j] = φj
             if dV < 1e-8:
                 if verbose:
                     print(f"Stopping refinement: dV too small ({dV:.2e}). Flutter converged at V ≈ {V:.5f} m/s")
@@ -558,14 +587,14 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                 omegacritical = omega_new
                 skip_mode = [True] * n_modes
                 stopWind = True
-        
-        if all(skip_mode):
-            stopWind = True
+
 
         if all(not s for s in skip_mode):  
-            V_list.append(V)
+            if not flutter_detected:
+                V_list.append(V)
+                velocity_counter += 1
             V += dV
-            velocity_counter += 1
+
         elif not all(skip_mode): 
             V -= 0.5 * dV
             dV *= 0.5
@@ -577,6 +606,7 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
     damping_ratios = damping_ratios[:velocity_counter, :]
     eigvals_all = eigvals_all[:velocity_counter, :]
     eigvecs_all = eigvecs_all[:velocity_counter, :]
+
 
     return V_list, omega_all, damping_ratios, eigvecs_all, eigvals_all, omegacritical, Vcritical 
 
@@ -623,7 +653,7 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list,
             ζ_mode.append(damping_ratios[i, j])
         ax.plot(
                 V_mode,
-                ζ_mode, label = mode_labels[j],
+                ζ_mode, label = mode_labels[j],alpha=0.7
             )
 
     # Visuals and annotation
@@ -642,7 +672,6 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list,
     plt.yticks(fontsize=14)
     plt.show()
     return fig, ax
-
 
 
 def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single=True):
@@ -674,7 +703,7 @@ def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single
         plt.plot(
             V_list,
             frequencies[:, j],
-            label=labels[j]
+            label=labels[j], alpha = 0.7
         )
 
     plt.xlabel(r"$V$ [m/s]", fontsize=16)
@@ -701,14 +730,22 @@ def plot_flutter_mode_shape_top(eigvecs_all, damping_list, V_list, Vcritical, om
     else:
         n_modes = 4
         dofs = [r"$z1$", r"$\theta1$", r"$z2$", r"$\theta2$"]
-    
-    idx_flutter = np.argmin(np.abs(np.array(V_list) - Vcritical))
- 
-    damping_array = np.array(damping_list)  
-    last_damping = damping_array[idx_flutter]  
-    idx_mode_flutter = np.argmin(last_damping) 
 
-    flutter_vec = eigvecs_all[idx_flutter][idx_mode_flutter]
+
+    idx_flutter = None
+    for i, V in enumerate(V_list):
+        if np.isclose(V, Vcritical, rtol=1e-5, atol=1e-8):
+            idx_flutter = i
+            break
+    
+    
+    # Siste rad i damping_ratios (vi vet flutter ble lagt til sist)
+    last_damping = np.array(damping_list[-1])  
+
+    # Finn index til gyldig (ikke-NaN) og laveste verdi
+    idx_mode_flutter = np.nanargmin(last_damping)
+
+    flutter_vec = eigvecs_all[-1][idx_mode_flutter]
 
     fig, ax = plt.subplots(figsize=(5, 3))
 
@@ -754,13 +791,14 @@ def plot_flutter_mode_shape_bunn(eigvecs_all, damping_list, V_list, Vcritical, o
         n_modes = 4
         dofs = [r"$z1$", r"$\theta1$", r"$z2$", r"$\theta2$"]
     
-    idx_flutter = np.argmin(np.abs(np.array(V_list) - Vcritical))
- 
-    damping_array = np.array(damping_list)  
-    last_damping = damping_array[idx_flutter]  
-    idx_mode_flutter = np.argmin(last_damping) 
+  
+    # Siste rad i damping_ratios (vi vet flutter ble lagt til sist)
+    last_damping = np.array(damping_list[-1])  
 
-    flutter_vec = eigvecs_all[idx_flutter][idx_mode_flutter]
+    # Finn index til gyldig (ikke-NaN) og laveste verdi
+    idx_mode_flutter = np.nanargmin(last_damping)
+
+    flutter_vec = eigvecs_all[-1][idx_mode_flutter]
 
     fig, ax = plt.subplots(figsize=(5, 3))
 
@@ -808,13 +846,15 @@ def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegac
         n_modes = 4
         dofs = [r"$z1$", r"$\theta1$", r"$z2$", r"$\theta2$"]
     
-    idx_flutter = np.argmin(np.abs(np.array(V_list) - Vcritical))
- 
-    damping_array = np.array(damping_list)  
-    last_damping = damping_array[idx_flutter]  
-    idx_mode_flutter = np.argmin(last_damping) 
 
-    flutter_vec = eigvecs_all[idx_flutter][idx_mode_flutter]
+
+    # Siste rad i damping_ratios (vi vet flutter ble lagt til sist)
+    last_damping = np.array(damping_list[-1])  
+
+    # Finn index til gyldig (ikke-NaN) og laveste verdi
+    idx_mode_flutter = np.nanargmin(last_damping)
+
+    flutter_vec = eigvecs_all[-1][idx_mode_flutter]
 
     fig, ax = plt.subplots(2, 1, figsize=(4,4), sharex=True)
 
