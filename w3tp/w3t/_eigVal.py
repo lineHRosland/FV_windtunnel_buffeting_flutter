@@ -485,6 +485,7 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                 eigvals_pos = eigvalsV[np.imag(eigvalsV) > 0]
                 eigvecs_pos = eigvecsV[:, np.imag(eigvalsV) > 0]  
 
+
                 if eigvals_pos.size == 0:
                     if verbose:
                         print(f"No complex eigenvalues at V = {V:.2f} m/s, mode {j+1}. Skipping mode.")
@@ -502,7 +503,7 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                     dominance_scores = np.array([np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])])
                     prev_lambda = eigvals_all[velocity_counter - 1, j] 
 
-                    if V < 10:
+                    if V < 40:
                         best_idx = np.argmax(dominance_scores) 
                     else:
                         best_idx = np.argmin(
@@ -608,7 +609,7 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
     return V_list, omega_all, damping_ratios, eigvecs_all, eigvals_all, omegacritical, Vcritical 
 
 
-def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list,
+def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, alphas,
              dist="Fill in dist", single=True, buffeting=False):
     """
     Plots the modal damping ratios as a function of wind speed and identifies
@@ -629,9 +630,8 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list,
     buffeting : bool
         If True, the y-axis is constrained for quasi-static buffeting (very low damping).
     """
-    markers = ['o', 's', '^', 'x']
-    markersizes = [2.6, 2.4, 3, 3]
-    colors = ['blue', 'green', 'red', 'orange']
+
+    colors = ['#1f77b4', '#2ca02c', '#ff7f0e', '#d62728']
     mode_labels = [r"$\Phi_1$", r"$\Phi_2$", r"$\Phi_3$", r"$\Phi_4$"]
     n_modes = 2 if single else 4
 
@@ -650,7 +650,7 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list,
             ζ_mode.append(damping_ratios[i, j])
         ax.plot(
                 V_mode,
-                ζ_mode, label = mode_labels[j],alpha=0.7
+                ζ_mode, label = mode_labels[j],color = colors[j], alpha=alphas
             )
 
     # Visuals and annotation
@@ -661,9 +661,10 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list,
     ax.grid(True, linestyle='--', linewidth=0.5)
     ax.set_ylim(-0.01,)
     ax.legend(fontsize=14, loc='upper left')
-    if not single and not buffeting:
-        ax.set_ylim(-0.01, 0.25)
+    # if not single and not buffeting:
+    #     ax.set_ylim(-0.01, 0.25)
     ax.set_xlim(0, )
+    ax.set_ylim(-0.001, )
 
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
@@ -671,7 +672,7 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list,
     return fig, ax
 
 
-def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single=True):
+def plot_frequency_vs_wind_speed(V_list, omega_list, alphas, dist="Fill in dist", single=True):
     """
     Plots the damped natural frequencies as a function of wind speed.
 
@@ -687,7 +688,8 @@ def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single
         If True, assumes 2 DOF system (single-deck); if False, assumes 4 DOF (two-deck).
     """
 
-   
+    colors = ['#1f77b4', '#2ca02c', '#ff7f0e', '#d62728']
+
     labels = [r"$\Phi_1$", r"$\Phi_2$", r"$\Phi_3$", r"$\Phi_4$"]
     n_modes = 2 if single else 4
     title = f"Natural frequencies vs wind speed - {dist}"
@@ -700,7 +702,7 @@ def plot_frequency_vs_wind_speed(V_list, omega_list, dist="Fill in dist", single
         plt.plot(
             V_list,
             frequencies[:, j],
-            label=labels[j], alpha = 0.7
+            label=labels[j], alpha = alphas, color = colors[j]
         )
 
     plt.xlabel(r"$V$ [m/s]", fontsize=16)
@@ -727,34 +729,20 @@ def plot_flutter_mode_shape_top(eigvecs_all, damping_list, V_list, Vcritical, om
     else:
         n_modes = 4
         dofs = [r"$z1$", r"$\theta1$", r"$z2$", r"$\theta2$"]
+ 
+    colors = ['#9467bd', '#17becf', '#e377c2', '#bcbd22'][:n_modes]
 
-
-    idx_flutter = None
-    for i, V in enumerate(V_list):
-        if np.isclose(V, Vcritical, rtol=1e-5, atol=1e-8):
-            idx_flutter = i
-            break
-    
-    
-    # Siste rad i damping_ratios (vi vet flutter ble lagt til sist)
     last_damping = np.array(damping_list[-1])  
-
-    # Finn index til gyldig (ikke-NaN) og laveste verdi
     idx_mode_flutter = np.nanargmin(last_damping)
-
     flutter_vec = eigvecs_all[-1][idx_mode_flutter]
-
-    fig, ax = plt.subplots(figsize=(5, 3))
 
     abs_vec = np.abs(flutter_vec)
     max_idx = np.argmax(abs_vec)
     normalized_vec = flutter_vec / flutter_vec[max_idx]
 
     magnitudes = np.abs(normalized_vec)
-    phases = np.angle(normalized_vec, deg=True)
 
-    colors = ['#9467bd', '#17becf', '#e377c2', '#bcbd22'][:n_modes]
-
+    fig, ax = plt.subplots(figsize=(5, 3))
 
     ax.bar(dofs, magnitudes, width=0.5, color =colors)
 
@@ -762,18 +750,14 @@ def plot_flutter_mode_shape_top(eigvecs_all, damping_list, V_list, Vcritical, om
     ax.set_ylim(0, 1.1)
     ax.grid(True, linestyle='--', linewidth=0.5)
 
-    #ax[0].set_title(f"Magnitude and phase of normalized eigenvector at flutter wind speed - {dist}", fontsize=14)
     ax.set_xlabel("DOFs",fontsize=16)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
 
     for i in range(n_modes):
-
         if abs(magnitudes[i]) > 1e-3:
             ax.text(i, magnitudes[i] + 0.02, f"{magnitudes[i]:.2f}", ha='center', fontsize=9)
-   
     plt.show()
-
     return fig, ax
 
 def plot_flutter_mode_shape_bunn(eigvecs_all, damping_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single=True):
@@ -788,36 +772,27 @@ def plot_flutter_mode_shape_bunn(eigvecs_all, damping_list, V_list, Vcritical, o
         n_modes = 4
         dofs = [r"$z1$", r"$\theta1$", r"$z2$", r"$\theta2$"]
     
-  
-    # Siste rad i damping_ratios (vi vet flutter ble lagt til sist)
+    colors = ['#9467bd', '#17becf', '#e377c2', '#bcbd22'][:n_modes]
+
     last_damping = np.array(damping_list[-1])  
-
-    # Finn index til gyldig (ikke-NaN) og laveste verdi
     idx_mode_flutter = np.nanargmin(last_damping)
-
     flutter_vec = eigvecs_all[-1][idx_mode_flutter]
-
-    fig, ax = plt.subplots(figsize=(5, 3))
 
     abs_vec = np.abs(flutter_vec)
     max_idx = np.argmax(abs_vec)
     normalized_vec = flutter_vec / flutter_vec[max_idx]
 
-    magnitudes = np.abs(normalized_vec)
     phases = np.angle(normalized_vec, deg=True)
 
-    colors = ['#9467bd', '#17becf', '#e377c2', '#bcbd22'][:n_modes]
-
+    fig, ax = plt.subplots(figsize=(5, 3))
 
     ax.bar(dofs, phases, width=0.5, color = colors)
-
     ax.set_ylabel(r"$\angle \Phi$ [deg]", fontsize=16)
     ax.set_xlabel("DOFs", fontsize=16)
     ax.set_ylim(-230, 230)
     ax.axhline(0, color='k', linestyle='--', linewidth=0.5)
     ax.grid(True, linestyle='--', linewidth=0.5)
 
-    #ax[0].set_title(f"Magnitude and phase of normalized eigenvector at flutter wind speed - {dist}", fontsize=14)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
 
@@ -826,7 +801,6 @@ def plot_flutter_mode_shape_bunn(eigvecs_all, damping_list, V_list, Vcritical, o
             va = 'bottom' if phases[i] > 0 else 'top'
             offset = 10 if phases[i] > 0 else -10
             ax.text(i, phases[i] + offset, f"{phases[i]:.1f}°", ha='center', va=va, fontsize=9)
-
     plt.show()
 
     return fig, ax
