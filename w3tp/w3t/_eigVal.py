@@ -510,7 +510,7 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                     dominance_scores = np.array([np.abs(eigvecs_pos[j, idx]) for idx in range(eigvecs_pos.shape[1])])
                     prev_lambda = eigvals_all[velocity_counter - 1, j] 
 
-                    if V < 40:
+                    if V < 10:
                         best_idx = np.argmax(dominance_scores) 
                     else:
                         best_idx = np.argmin(
@@ -845,16 +845,9 @@ def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegac
         dofs = [r"$z1$", r"$\theta1$", r"$z2$", r"$\theta2$"]
     
 
-
-    # Siste rad i damping_ratios (vi vet flutter ble lagt til sist)
     last_damping = np.array(damping_list[-1])  
-
-    # Finn index til gyldig (ikke-NaN) og laveste verdi
     idx_mode_flutter = np.nanargmin(last_damping)
-
     flutter_vec = eigvecs_all[-1][idx_mode_flutter]
-
-    fig, ax = plt.subplots(2, 1, figsize=(5,6), sharex=True)
 
     abs_vec = np.abs(flutter_vec)
     max_idx = np.argmax(abs_vec)
@@ -865,6 +858,10 @@ def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegac
 
     colors = ['#9467bd', '#17becf', '#e377c2', '#bcbd22'][:n_modes]
 
+    fig, ax = plt.subplots(2, 1, figsize=(5,6), sharex=True)
+
+
+ 
 
     ax[0].bar(dofs, magnitudes, width=0.4, color =colors)
     ax[1].bar(dofs, phases, width=0.4, color = colors)
