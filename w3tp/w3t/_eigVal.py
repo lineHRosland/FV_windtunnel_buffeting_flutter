@@ -414,6 +414,10 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
     else:   
         n_modes = 4 # 4 modes for two deck
         omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) 
+    
+    if static and (Cae_star_gen_BUFF is None or Kae_star_gen_BUFF is None):
+        raise ValueError("Static analysis selected but aerodynamic matrices are not provided.")
+
    
     # Flutter detection
     Vcritical = None # Critical wind speed
@@ -441,7 +445,7 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
     V_list.append(0.0) 
 
     for j_mode in range(n_modes):
-        eigvecs_all[0, j_mode] = np.eye(n_modes)
+        eigvecs_all[0, j_mode] = np.eye(n_modes)[:, j_mode]
         eigvals_all[0,j_mode] = np.nan  
 
         omega_all[0,j_mode] = omega_old[j_mode] 
@@ -658,7 +662,6 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, alphas,
                 ζ_mode, alpha=alphas, label=mode_labels[j]
             )
 
-    #ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
 
 
@@ -669,18 +672,13 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, alphas,
     ax.grid(True, linestyle='--', linewidth=0.5)
     ax.set_ylim(-0.01,)
     ax.legend(fontsize=14, loc='upper left')
-    # if not single and not static:
-    #     ax.set_ylim(-0.01, 0.25)
+
     ax.set_xlim(0, )
     ax.set_ylim(-0.001, )
 
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
 
-
-    #ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.3),
-          #ncol=4, fontsize=12, frameon=False)
-    #plt.tight_layout()
     plt.show()
     return fig, ax
 
@@ -731,106 +729,7 @@ def plot_frequency_vs_wind_speed(V_list, omega_list, alphas, dist="Fill in dist"
     plt.show()
     return fig, ax
 
-#plot_flutter_mode_shape
-def plot_flutter_mode_shape_top(eigvecs_all, damping_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single=True):
-    if Vcritical is None or omegacritical is None:
-        print("No flutter found!")
-        return
 
-    if single:
-        n_modes = 2
-        dofs = [r"$z1$", r"$\theta1$"]
-    else:
-        n_modes = 4
-        dofs = [r"$z1$", r"$\theta1$", r"$z2$", r"$\theta2$"]
- 
-    colors = ['#9467bd', '#17becf', '#e377c2', '#bcbd22'][:n_modes]
-
-    last_damping = np.array(damping_list[-1])  
-    idx_mode_flutter = np.nanargmin(last_damping)
-    flutter_vec = eigvecs_all[-1][idx_mode_flutter]
-
-    abs_vec = np.abs(flutter_vec)
-    max_idx = np.argmax(abs_vec)
-    normalized_vec = flutter_vec / flutter_vec[max_idx]
-
-    magnitudes = np.abs(normalized_vec)
-
-    fig, ax = plt.subplots(figsize=(2.3, 3))  
-
-    ax.bar(dofs, magnitudes, width=0.5, color =colors)
-
-    ax.set_ylabel(r"|$\Phi$| [-]",fontsize=16)
-    ax.set_ylim(0, 1.1)
-    ax.grid(True, linestyle='--', linewidth=0.5)
-    
-    #ax.set_xlabel("DOFs",fontsize=16)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
-
-    for i in range(n_modes):
-        if abs(magnitudes[i]) > 1e-2:
-            ax.text(i, magnitudes[i] + 0.02, f"{magnitudes[i]:.2f}", ha='center', fontsize=14)
-    ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    plt.show()
-    return fig, ax
-
-def plot_flutter_mode_shape_bunn(eigvecs_all, damping_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single=True):
-    if Vcritical is None or omegacritical is None:
-        print("No flutter found!")
-        return
-
-    if single:
-        n_modes = 2
-        dofs = [r"$z1$", r"$\theta1$"]
-    else:
-        n_modes = 4
-        dofs = [r"$z1$", r"$\theta1$", r"$z2$", r"$\theta2$"]
-    
-    colors = ['#9467bd', '#17becf', '#e377c2', '#bcbd22'][:n_modes]
-
-    last_damping = np.array(damping_list[-1])  
-    idx_mode_flutter = np.nanargmin(last_damping)
-    flutter_vec = eigvecs_all[-1][idx_mode_flutter]
-
-    abs_vec = np.abs(flutter_vec)
-    max_idx = np.argmax(abs_vec)
-    normalized_vec = flutter_vec / flutter_vec[max_idx]
-
-    phases = np.angle(normalized_vec, deg=True)
-
-    fig, ax = plt.subplots(figsize=(2.3, 3))
-
-    ax.bar(dofs, phases, width=0.5, color = colors)
-    ax.set_ylabel(r"$\angle \Phi$ [deg]", fontsize=16)
-    ax.set_xlabel("DOFs", fontsize=16)
-    ax.set_ylim(-230, 230)
-    ax.axhline(0, color='k', linestyle='--', linewidth=0.5)
-    ax.grid(True, linestyle='--', linewidth=0.5)
-
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
-
-    
-
-    #def formatter_with_invisible_dot(x, _):
-        # Vanlig tall med et punktum etterpå, farget hvitt
-        #return rf"${x:.0f}\,\textcolor{{white}}{{.}}$"  # punktum lagt til
-        #return f"{x:.0f}" + "."
-# ... i koden din før plt.show():
-    #ax.yaxis.set_major_formatter(FuncFormatter(formatter_with_invisible_dot))
-    
-    
-    for i in range(n_modes):
-        if abs(phases[i]) > 1:
-            va = 'bottom' if phases[i] > 0 else 'top'
-            offset = 10 if phases[i] > 0 else -10
-            ax.text(i, phases[i] + offset, f"{phases[i]:.0f}", ha='center', va=va, fontsize=14)
-
-    
-    plt.show()
-
-    return fig, ax
 
 def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegacritical, dist="Fill in dist", single=True):
     if Vcritical is None or omegacritical is None:
@@ -855,6 +754,10 @@ def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegac
 
     magnitudes = np.abs(normalized_vec)
     phases = np.angle(normalized_vec, deg=True)
+
+    for i in range(n_modes):
+        if magnitudes[i] < 1e-2:
+            phases[i] = np.nan  # eller sett til 0 hvis du vil være eksplisitt
 
     colors = ['#9467bd', '#17becf', '#e377c2', '#bcbd22'][:n_modes]
 

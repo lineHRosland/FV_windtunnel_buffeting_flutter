@@ -382,7 +382,7 @@ w3t._scoff.plot_static_coeff_filtered_out_above_threshold(alpha_single,coeff_sin
 plt.suptitle(f"Single deck - Wind speed: 9 m/s",  y=0.95)
 plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\without_vibration\pitch", "Single_9_pitch_clean.png"))
 
-#%%  !!!
+#%%  
 # Filter and plot ALT 2
 section_name = "Single_Static_filtered"
 
@@ -563,131 +563,9 @@ plot_static_coeff_summary(static_coeff_MDS_1D_6, section_name, 6, mode="decks", 
 plot_static_coeff_summary(static_coeff_MDS_1D_8, section_name, 8, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_1D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
-#%%
-
-# def plot_three_subplots_with_shared_legend(save_path="three_plots.pdf"):
-#     # Dummy data
-#     x = np.linspace(-4, 4, 100)
-#     y1 = np.sin(x)
-#     y2 = np.cos(x)
-#     y3 = np.tanh(x)
-
-#     # Create figure and axes for 3 subplots horizontally
-#     fig, axes = plt.subplots(1, 3, figsize=(6, 3), sharey=False)
-
-#     # Labels and colors
-#     labels = ["Single deck", "Upstream deck", "Downstream deck"]
-#     colors = ["#1f77b4", "#ff7f0e", "#2ca02c"]
-
-#     for ax in axes:
-#         ax.plot(x, y1, label=labels[0], color=colors[0])
-#         ax.plot(x, y2, label=labels[1], color=colors[1])
-#         ax.plot(x, y3, label=labels[2], color=colors[2])
-#         ax.set_xticks([])
-#         ax.set_yticks([])
-
-#     # Shared legend
-#     fig.legend(labels, loc="lower center", ncol=3, fontsize=10, frameon=False,
-#                bbox_to_anchor=(0.5, 0))
-
-#     # Adjust layout
-#     fig.tight_layout(pad=0.8)
-#     fig.subplots_adjust(bottom=0.25)
-
-#     # Save figure
-#     return fig, ax
-
-# fig, ax = plot_three_subplots_with_shared_legend("three_plots_with_legend.pdf")
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "label_stat_coeff" + ".png"), dpi=300)
-
 
 #%%
-#WELCH: # welchs method: calculating auto, and cross-spectral density, with one recording of the respons.
-u = exp1_MDS_1D_6.wind_speed  # Vindhastighet [m/s]
-t = exp1_MDS_1D_6.time        # Tid [s]
-dt = np.mean(np.diff(t))   # Samplingintervall
-fs = 1 / dt                # Samplingfrekvens
-
-
-# Fjern middel, isoler fluktuasjoner
-u_fluct = u - np.mean(u)
-
-# Del inn i passende segmenter
-ndivisions = 10
-nwindow = int(np.ceil(len(t)/ndivisions))
-noverlap = int(np.ceil(nwindow/2))
-nfft_pow2 = 2**int(np.ceil(np.log2(nwindow)))  # Effektiv FFT-lengde
-
-# Beregn PSD
-f, Pxx_low = welch(
-    u_fluct, fs=fs, window='hann', 
-    nperseg=nwindow, noverlap=noverlap, 
-    nfft=nfft_pow2, detrend='constant', 
-    return_onesided=True, scaling='density'
-)
-
-# Plot
-plt.figure(figsize=(7, 4))
-plt.semilogy(f, Pxx_low)
-plt.xlabel("Frekvens [Hz]")
-plt.ylabel("PSD [(m/s)^2/Hz]")
-plt.title("Welch-spektrum av vindhastighet")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
-
-
-#%%
-#WELCH: # welchs method: calculating auto, and cross-spectral density, with one recording of the respons.
-u = exp1_MDS_1D_10.wind_speed  # Vindhastighet [m/s]
-t = exp1_MDS_1D_10.time        # Tid [s]
-dt = np.mean(np.diff(t))   # Samplingintervall
-fs = 1 / dt                # Samplingfrekvens
-
-
-# Fjern middel, isoler fluktuasjoner
-u_fluct = u - np.mean(u)
-
-# Del inn i passende segmenter
-ndivisions = 10
-nwindow = int(np.ceil(len(t)/ndivisions))
-noverlap = int(np.ceil(nwindow/2))
-nfft_pow2 = 2**int(np.ceil(np.log2(nwindow)))  # Effektiv FFT-lengde
-
-# Beregn PSD
-f, Pxx_high = welch(
-    u_fluct, fs=fs, window='hann', 
-    nperseg=nwindow, noverlap=noverlap, 
-    nfft=nfft_pow2, detrend='constant', 
-    return_onesided=True, scaling='density'
-)
-
-# Plot
-plt.figure(figsize=(7, 4))
-plt.semilogy(f, Pxx_high)
-plt.xlabel("Frekvens [Hz]")
-plt.ylabel("PSD [(m/s)^2/Hz]")
-plt.title("Welch-spektrum av vindhastighet")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
-
-#%%
-#Sammenligne
-
-# Plot
-plt.figure(figsize=(7, 4))
-plt.semilogy(f, Pxx_low, label='6 m/s')
-plt.semilogy(f, Pxx_high, label='9 m/s')
-plt.xlabel("Frekvens [Hz]")
-plt.ylabel("PSD [(m/s)^2/Hz]")
-plt.title("Welch-spektrum av vindhastighet")
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
-plt.show()
-
-#%%NILS
+# 
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_1D_6, upwind_in_rig=False, ax=None)
@@ -699,7 +577,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_1D_6, upwind_in_rig=False, ax=None)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
-
+# NOT FINIAH:
 fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_1D_10, upwind_in_rig=False, ax=None)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
@@ -778,7 +656,7 @@ static_coeff_MDS_1D_6_updated.lift_coeff[:, 2] = static_coeff_MDS_1D_6.lift_coef
 static_coeff_MDS_1D_6_updated.lift_coeff[:, 3] = static_coeff_MDS_1D_6.lift_coeff[:, 3]
 static_coeff_MDS_1D_6_updated.pitch_coeff[:,2] = static_coeff_MDS_1D_6.pitch_coeff[:,2]
 static_coeff_MDS_1D_6_updated.pitch_coeff[:, 3] = static_coeff_MDS_1D_6.pitch_coeff[:,3]
-print(static_coeff_MDS_1D_6_updated.drag_coeff[:5,2])
+
 static_coeff_MDS_1D_8_updated = copy.deepcopy(static_coeff_MDS_1D_8)
 static_coeff_MDS_1D_8_updated.drag_coeff[:, 2] = np.nan #for mye vibrasjoner
 static_coeff_MDS_1D_8_updated.drag_coeff[:, 3] = np.nan #for mye vibrasjoner
@@ -936,7 +814,7 @@ plot_static_coeff_summary(static_coeff_MUS_1D_5, section_name, 5, mode="decks", 
 plot_static_coeff_summary(static_coeff_MUS_1D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
 
-#%%NILS
+#%%
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True, ax=None)
@@ -1499,12 +1377,12 @@ plt.savefig(    os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR
 # Load all downwind experiments (downwind in rig)
 section_name = "MUS_2D_Static"
 file_names_MDS_2D_6 = ["HAR_INT_MUS_GAP_213D_02_00_001","HAR_INT_MUS_GAP_213D_02_00_002"] #6 m/s
-#file_names_MDS_2D_8 = ["HAR_INT_MUS_GAP_213D_02_00_001","HAR_INT_MUS_GAP_213D_02_00_003"] # 8 m/s, vibrations
+file_names_MDS_2D_8 = ["HAR_INT_MUS_GAP_213D_02_00_001","HAR_INT_MUS_GAP_213D_02_00_003"] # 8 m/s, vibrations
 file_names_MDS_2D_10 = ["HAR_INT_MUS_GAP_213D_02_00_001","HAR_INT_MUS_GAP_213D_02_00_004"] # 10 m/s
 
 
 exp0_MDS_2D, exp1_MDS_2D_6 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_2D_6,  upwind_in_rig=False)
-#exp0_MDS_2D, exp1_MDS_2D_8= load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_2D_8,  upwind_in_rig=False)
+exp0_MDS_2D, exp1_MDS_2D_8= load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_2D_8,  upwind_in_rig=False)
 exp0_MDS_2D, exp1_MDS_2D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_2D_10,  upwind_in_rig=False)
 
 
@@ -1512,35 +1390,35 @@ exp0_MDS_2D, exp1_MDS_2D_10 = load_experiments_from_hdf5(h5_input_path, section_
 # exp0_MDS_2D.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MDS 2D - Wind speed: 0 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_0.png"))
-# exp1_MDS_2D_6.plot_experiment(mode="total") #
+exp1_MDS_2D_6.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MDS 2D - Wind speed: 6 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_6.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_2D_6_tidserie" + ".png"))
 # #exp1_MDS_2D_8.plot_experiment(mode="total") #
 # #plt.gcf().suptitle(f"MDS 2D - Wind speed: 8 m/s ",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_8.png"))
-# exp1_MDS_2D_10.plot_experiment(mode="total") #
+exp1_MDS_2D_10.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MDS 2D - Wind speed: 10 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_10.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_2D_10_tidserie" + ".png"))
 
 exp0_MDS_2D.filt_forces(6, 2)
 exp1_MDS_2D_6.filt_forces(6, 2)
-#exp1_MDS_2D_8.filt_forces(6, 2)
+exp1_MDS_2D_8.filt_forces(6, 2)
 exp1_MDS_2D_10.filt_forces(6, 2)
 
 # exp0_MDS_2D.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 2D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_0_filter.png"))
-# exp1_MDS_2D_6.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MDS_2D_6.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 2D - Wind speed: 6 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_6_filter.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_2D_6_filter_tidserie"+".png"))
 # #exp1_MDS_2D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 # #plt.gcf().suptitle(f"MDS 2D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_8_filter.png"))
-# exp1_MDS_2D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MDS_2D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 2D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_2D_10_filter.png"))
-# plt.show()
-# plt.close()
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_2D_10_filter_tidserie"+".png"))
+plt.show()
+plt.close()
 
 
 static_coeff_MDS_2D_6 =w3t.StaticCoeff.fromWTT(exp0_MDS_2D, exp1_MDS_2D_6, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
@@ -1553,7 +1431,7 @@ plot_static_coeff_summary(static_coeff_MDS_2D_6, section_name, 6, mode="decks", 
 #plot_static_coeff_summary(static_coeff_MDS_2D_8, section_name, 8, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_2D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
-#%%NILS
+#%%
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_2D_6, upwind_in_rig=False, ax=None)
@@ -1731,13 +1609,13 @@ plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 section_name = "MDS_2D_Static"
 file_names_MUS_2D_5 = ["HAR_INT_MDS_GAP_213D_02_00_000","HAR_INT_MDS_GAP_213D_02_00_001"] # 5 m/s, vibrations
-#file_names_MUS_2D_8 = ["HAR_INT_MDS_GAP_213D_02_00_000","HAR_INT_MDS_GAP_213D_02_00_002"] # 8 m/s, vibrations
+file_names_MUS_2D_8 = ["HAR_INT_MDS_GAP_213D_02_00_000","HAR_INT_MDS_GAP_213D_02_00_002"] # 8 m/s, vibrations
 file_names_MUS_2D_10 = ["HAR_INT_MDS_GAP_213D_02_00_000","HAR_INT_MDS_GAP_213D_02_00_003"] # 10 m/s, vibrations
 
 
 
 exp0_MUS_2D, exp1_MUS_2D_5 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_2D_5,  upwind_in_rig=True)
-#exp0_MUS_2D, exp1_MUS_2D_8 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_2D_8,  upwind_in_rig=True)
+exp0_MUS_2D, exp1_MUS_2D_8 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_2D_8,  upwind_in_rig=True)
 exp0_MUS_2D, exp1_MUS_2D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_2D_10,  upwind_in_rig=True)
 
 
@@ -1746,35 +1624,35 @@ exp0_MUS_2D, exp1_MUS_2D_10 = load_experiments_from_hdf5(h5_input_path, section_
 # exp0_MUS_2D.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MUS 2D - Wind speed: 0 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_0.png"))
-# exp1_MUS_2D_5.plot_experiment(mode="total") #
+exp1_MUS_2D_5.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MUS 2D - Wind speed: 5 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_5.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_2D_5_tidserie" + ".png"))
 # #exp1_MUS_2D_8.plot_experiment(mode="total") #
 # #plt.gcf().suptitle(f"MUS 2D - Wind speed: 8 m/s ",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_8.png"))
-# exp1_MUS_2D_10.plot_experiment(mode="total") #
+exp1_MUS_2D_10.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MUS 2D - Wind speed: 10 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_10.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_2D_10_tidserie" + ".png"))
 
 exp0_MUS_2D.filt_forces(6, 2)
 exp1_MUS_2D_5.filt_forces(6, 2)
-#exp1_MUS_2D_8.filt_forces(6, 2)
+exp1_MUS_2D_8.filt_forces(6, 2)
 exp1_MUS_2D_10.filt_forces(6, 2)
 
 # exp0_MUS_2D.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 2D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_0_filter.png"))
-# exp1_MUS_2D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MUS_2D_5.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 2D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_5_filter.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_2D_5_filter_tidserie"+".png"))
 # #exp1_MUS_2D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 # #plt.gcf().suptitle(f"MUS 2D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_8_filter.png"))
-# exp1_MUS_2D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MUS_2D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 2D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_2D_10_filter.png"))
-# plt.show()
-# plt.close()
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_2D_10_filter_tidserie"+".png"))
+plt.show()
+plt.close()
 
 static_coeff_MUS_2D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_2D, exp1_MUS_2D_5, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
@@ -1787,7 +1665,7 @@ plot_static_coeff_summary(static_coeff_MUS_2D_5, section_name, 5, mode="decks", 
 #plot_static_coeff_summary(static_coeff_MUS_2D_8, section_name, 8, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_2D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
-#%%NILS
+#%%
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_2D_5, upwind_in_rig=True, ax=None)
@@ -2379,15 +2257,15 @@ exp0_MDS_3D, exp1_MDS_3D_10 = load_experiments_from_hdf5(h5_input_path, section_
 # exp0_MDS_3D.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MDS 3D - Wind speed: 0 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_0.png"))
-# exp1_MDS_3D_6.plot_experiment(mode="total") #
+exp1_MDS_3D_6.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MDS 3D - Wind speed: 6 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_6.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_3D_6_tidserie"+".png"))
 # exp1_MDS_3D_8.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MDS 3D - Wind speed: 8 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_8.png"))
-# exp1_MDS_3D_10.plot_experiment(mode="total") #
+exp1_MDS_3D_10.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MDS 3D - Wind speed: 10 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_10.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_3D_10_tidserie"+".png"))
 
 exp0_MDS_3D.filt_forces(6, 2)
 exp1_MDS_3D_6.filt_forces(6, 2)
@@ -2397,17 +2275,17 @@ exp1_MDS_3D_10.filt_forces(6, 2)
 # exp0_MDS_3D.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 3D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_0_filter.png"))
-# exp1_MDS_3D_6.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MDS_3D_6.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 3D - Wind speed: 6 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_6_filter.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_3D_6_filter_tidserie"+".png"))
 # exp1_MDS_3D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 3D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_8_filter.png"))
-# exp1_MDS_3D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MDS_3D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 3D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_3D_10_filter.png"))
-# plt.show()
-# plt.close()
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_3D_10_filter_tidserie"+".png"))
+plt.show()
+plt.close()
 
 
 static_coeff_MDS_3D_6 =w3t.StaticCoeff.fromWTT(exp0_MDS_3D, exp1_MDS_3D_6, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
@@ -2421,7 +2299,7 @@ plot_static_coeff_summary(static_coeff_MDS_3D_6, section_name, 6, mode="decks", 
 #plot_static_coeff_summary(static_coeff_MDS_3D_8, section_name, 8, mode="decks", upwind_in_rig=False)
 plot_static_coeff_summary(static_coeff_MDS_3D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
-#%%NILS
+#%%
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_3D_6, upwind_in_rig=False, ax=None)
@@ -2796,15 +2674,15 @@ exp0_MUS_3D, exp1_MUS_3D_10 = load_experiments_from_hdf5(h5_input_path, section_
 # exp0_MUS_3D.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MUS 3D - Wind speed: 0 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_0.png"))
-# exp1_MUS_3D_5.plot_experiment(mode="total") #
+exp1_MUS_3D_5.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MUS 3D - Wind speed: 5 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_5.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_3D_5_tidserie" + ".png"))
 # exp1_MUS_3D_8.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MUS 3D - Wind speed: 8 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_8.png"))
-# exp1_MUS_3D_10.plot_experiment(mode="total") #
+exp1_MUS_3D_10.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MUS 3D - Wind speed: 10 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_10.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_3D_10_tidserie" + ".png"))
 
 exp0_MUS_3D.filt_forces(6, 2)
 exp1_MUS_3D_5.filt_forces(6, 2)
@@ -2814,17 +2692,17 @@ exp1_MUS_3D_10.filt_forces(6, 2)
 # exp0_MUS_3D.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 3D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_0_filter.png"))
-# exp1_MUS_3D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MUS_3D_5.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 3D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_5_filter.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_3D_5_filter_tidserie"+".png"))
 # exp1_MUS_3D_8.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 3D - Wind speed: 8 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_8_filter.png"))
-# exp1_MUS_3D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MUS_3D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 3D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_3D_10_filter.png"))
-# plt.show()
-# plt.close()
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_3D_10_filter_tidserie"+".png"))
+plt.show()
+plt.close()
 
 static_coeff_MUS_3D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_3D, exp1_MUS_3D_5, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
@@ -2837,7 +2715,7 @@ plot_static_coeff_summary(static_coeff_MUS_3D_5, section_name, 5, mode="decks", 
 plot_static_coeff_summary(static_coeff_MUS_3D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
 
-#%%NILS
+#%%
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True, ax=None)
@@ -3467,11 +3345,11 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 # Load all downwind experiments (downwind in rig)
 section_name = "MUS_4D_Static"
 file_names_MDS_4D_55 = ["HAR_INT_MUS_GAP_45D_02_00_000","HAR_INT_MUS_GAP_45D_02_00_002"] #5.5 m/s
-#file_names_MDS_4D_85 = ["HAR_INT_MUS_GAP_45D_02_00_000","HAR_INT_MUS_GAP_45D_02_00_003"] # 8.5 m/s, vibrations
+file_names_MDS_4D_85 = ["HAR_INT_MUS_GAP_45D_02_00_000","HAR_INT_MUS_GAP_45D_02_00_003"] # 8.5 m/s, vibrations
 file_names_MDS_4D_10 = ["HAR_INT_MUS_GAP_45D_02_00_000","HAR_INT_MUS_GAP_45D_02_00_004"] # 10 m/s
 
 exp0_MDS_4D, exp1_MDS_4D_55 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_4D_55,  upwind_in_rig=False)
-#exp0_MDS_4D, exp1_MDS_4D_85= load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_4D_85,  upwind_in_rig=False)
+exp0_MDS_4D, exp1_MDS_4D_85= load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_4D_85,  upwind_in_rig=False)
 exp0_MDS_4D, exp1_MDS_4D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_4D_10,  upwind_in_rig=False)
 
 
@@ -3479,37 +3357,37 @@ exp0_MDS_4D, exp1_MDS_4D_10 = load_experiments_from_hdf5(h5_input_path, section_
 # exp0_MDS_4D.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MDS 4D - Wind speed: 0 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_0.png"))
-# exp1_MDS_4D_55.plot_experiment(mode="total") #
+exp1_MDS_4D_55.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MDS 4D - Wind speed: 5.5 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_55.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_4D_55_tidserie"+".png"))
 # #exp1_MDS_4D_85.plot_experiment(mode="total") #
 # #plt.gcf().suptitle(f"MDS 4D - Wind speed: 8.5 m/s ",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_85.png"))
-# exp1_MDS_4D_10.plot_experiment(mode="total") #
+exp1_MDS_4D_10.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MDS 4D - Wind speed: 10 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_10.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_4D_10_tidserie"+".png"))
 # plt.show()
 # plt.close()
 
 exp0_MDS_4D.filt_forces(6, 2)
 exp1_MDS_4D_55.filt_forces(6, 2)
-#exp1_MDS_4D_85.filt_forces(6, 2)
+exp1_MDS_4D_85.filt_forces(6, 2)
 exp1_MDS_4D_10.filt_forces(6, 2)
 
 # exp0_MDS_4D.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 4D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_0_filter.png"))
-# exp1_MDS_4D_55.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MDS_4D_55.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 4D - Wind speed: 5.5 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_55_filter.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_4D_55_filter_tidserie"+".png"))
 # #exp1_MDS_4D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
 # #plt.gcf().suptitle(f"MDS 4D - Wind speed: 8.5 m/s - With Butterworth low-pass filter",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_85_filter.png"))
-# exp1_MDS_4D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MDS_4D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 4D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MDS_4D_10_filter.png"))
-# plt.show()
-# plt.close()
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_4D_10_filter_tidserie"+".png"))
+plt.show()
+plt.close()
 
 
 static_coeff_MDS_4D_55 =w3t.StaticCoeff.fromWTT(exp0_MDS_4D, exp1_MDS_4D_55, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
@@ -3524,7 +3402,7 @@ plot_static_coeff_summary(static_coeff_MDS_4D_55, section_name, 5.5, mode="decks
 plot_static_coeff_summary(static_coeff_MDS_4D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
 
-#%%NILS
+#%%
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_4D_55, upwind_in_rig=False, ax=None)
@@ -3711,49 +3589,49 @@ plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 section_name = "MDS_4D_Static"
 file_names_MUS_4D_5 = ["HAR_INT_MDS_GAP_45D_02_00_001","HAR_INT_MDS_GAP_45D_02_00_003"] # 5 m/s, vibrations 
-#file_names_MUS_4D_85= ["HAR_INT_MDS_GAP_45D_02_00_001","HAR_INT_MDS_GAP_45D_02_00_004"] # 8.5 m/s, vibrations
+file_names_MUS_4D_85= ["HAR_INT_MDS_GAP_45D_02_00_001","HAR_INT_MDS_GAP_45D_02_00_004"] # 8.5 m/s, vibrations
 file_names_MUS_4D_10 = ["HAR_INT_MDS_GAP_45D_02_00_001","HAR_INT_MDS_GAP_45D_02_00_005"] # 10 m/s, vibrations
 
 
 exp0_MUS_4D, exp1_MUS_4D_5= load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_4D_5,  upwind_in_rig=True)
-#exp0_MUS_4D, exp1_MUS_4D_85 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_4D_85,  upwind_in_rig=True)
+exp0_MUS_4D, exp1_MUS_4D_85 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_4D_85,  upwind_in_rig=True)
 exp0_MUS_4D, exp1_MUS_4D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_4D_10,  upwind_in_rig=True)
 
 
 # exp0_MUS_4D.plot_experiment(mode="total") #
 # plt.gcf().suptitle(f"MUS 4D - Wind speed: 0 m/s ",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_0.png"))
-# exp1_MUS_4D_5.plot_experiment(mode="total") #
+exp1_MUS_4D_5.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MUS 4D - Wind speed: 5 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_5.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_4D_5_tidserie"+".png"))
 # #exp1_MUS_4D_85.plot_experiment(mode="total") #
 # #plt.gcf().suptitle(f"MUS 4D - Wind speed: 8.5 m/s ",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_85.png"))
-# exp1_MUS_4D_10.plot_experiment(mode="total") #
+exp1_MUS_4D_10.plot_experiment(mode="decks") #
 # plt.gcf().suptitle(f"MUS 4D - Wind speed: 10 m/s ",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_10.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_4D_10_tidserie"+".png"))
 # plt.show()
 # plt.close()
 
 exp0_MUS_4D.filt_forces(6, 2)
 exp1_MUS_4D_5.filt_forces(6, 2)
-#exp1_MUS_4D_85.filt_forces(6, 2)
+exp1_MUS_4D_85.filt_forces(6, 2)
 exp1_MUS_4D_10.filt_forces(6, 2)
 
 # exp0_MUS_4D.plot_experiment(mode="total") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 4D - Wind speed: 0 m/s - With Butterworth low-pass filter",  y=0.95)
 # plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_0_filter.png"))
-# exp1_MUS_4D_5.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MUS_4D_5.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 4D - Wind speed: 5 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_5_filter.png"))
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_4D_5_filter_tidserie"+".png"))
 # #exp1_MUS_4D_85.plot_experiment(mode="total") #With Butterworth low-pass filter
 # #plt.gcf().suptitle(f"MUS 4D - Wind speed: 8.5 m/s - With Butterworth low-pass filter",  y=0.95)
 # #plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_85_filter.png"))
-# exp1_MUS_4D_10.plot_experiment(mode="total") #With Butterworth low-pass filter
+exp1_MUS_4D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 4D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
-# plt.savefig(os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Plots\static\tidsserier", "MUS_4D_10_filter.png"))
-# plt.show()
-# plt.close()
+plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_4D_10_filter_tidserie"+".png"))
+plt.show()
+plt.close()
 
 static_coeff_MUS_4D_5 =w3t.StaticCoeff.fromWTT(exp0_MUS_4D, exp1_MUS_4D_5, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
@@ -3765,7 +3643,7 @@ plot_static_coeff_summary(static_coeff_MUS_4D_5, section_name, 5, mode="decks", 
 #plot_static_coeff_summary(static_coeff_MUS_4D_85, section_name, 8.5, mode="decks", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_MUS_4D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
-#%%NILS
+#%%
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True, ax=None)
@@ -4331,11 +4209,11 @@ plt.savefig( os.path.join(r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_IN
 # Load all downwind experiments (downwind in rig)
 section_name = "MUS_5D_Static"
 file_names_MDS_5D_55 = ["HAR_INT_MUS_GAP_45D_02_01_000","HAR_INT_MUS_GAP_45D_02_01_001"] # 5.5 m/s
-#file_names_MDS_5D_85 = ["HAR_INT_MUS_GAP_45D_02_01_000","HAR_INT_MUS_GAP_45D_02_01_002"] # 8.5 m/s, vibrations
+file_names_MDS_5D_85 = ["HAR_INT_MUS_GAP_45D_02_01_000","HAR_INT_MUS_GAP_45D_02_01_002"] # 8.5 m/s, vibrations
 file_names_MDS_5D_10 = ["HAR_INT_MUS_GAP_45D_02_01_000","HAR_INT_MUS_GAP_45D_02_01_003"] # 10 m/s
 
 exp0_MDS_5D, exp1_MDS_5D_55 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_5D_55,  upwind_in_rig=False)
-#exp0_MDS_5D, exp1_MDS_5D_85= load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_5D_85,  upwind_in_rig=False)
+exp0_MDS_5D, exp1_MDS_5D_85= load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_5D_85,  upwind_in_rig=False)
 exp0_MDS_5D, exp1_MDS_5D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MDS_5D_10,  upwind_in_rig=False)
 
 
@@ -4358,7 +4236,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 exp0_MDS_5D.filt_forces(6, 2)
 exp1_MDS_5D_55.filt_forces(6, 2)
-#exp1_MDS_5D_85.filt_forces(6, 2)
+exp1_MDS_5D_85.filt_forces(6, 2)
 exp1_MDS_5D_10.filt_forces(6, 2)
 
 # exp0_MDS_5D.plot_experiment(mode="total") #With Butterworth low-pass filter
@@ -4373,8 +4251,8 @@ plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 exp1_MDS_5D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MDS 5D - Wind speed: 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MDS_5D_10_filter_tidserie" + ".png"), dpi=300)
-# plt.show()
-# plt.close()
+plt.show()
+plt.close()
 
 static_coeff_MDS_5D_55 =w3t.StaticCoeff.fromWTT(exp0_MDS_5D, exp1_MDS_5D_55, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=False)
 
@@ -4387,7 +4265,7 @@ plot_static_coeff_summary(static_coeff_MDS_5D_55, section_name, 5.5, mode="decks
 plot_static_coeff_summary(static_coeff_MDS_5D_10, section_name, 10, mode="decks", upwind_in_rig=False)
 
 
-#%%NILS
+#%%
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_5D_55, upwind_in_rig=False, ax=None)
@@ -4617,7 +4495,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 section_name = "MDS_5D_Static"
 file_names_MUS_5D_45 = ["HAR_INT_MDS_GAP_45D_02_01_000","HAR_INT_MDS_GAP_45D_02_01_002"] # 4.5 m/s, vibrations 
-#file_names_MUS_5D_85 = ["HAR_INT_MDS_GAP_45D_02_01_000","HAR_INT_MDS_GAP_45D_02_01_003"] # 8.5 m/s, vibrations
+file_names_MUS_5D_85 = ["HAR_INT_MDS_GAP_45D_02_01_000","HAR_INT_MDS_GAP_45D_02_01_003"] # 8.5 m/s, vibrations
 file_names_MUS_5D_10 = ["HAR_INT_MDS_GAP_45D_02_01_000","HAR_INT_MDS_GAP_45D_02_01_004"] # 10 m/s, vibrations
 
 import os
@@ -4627,7 +4505,7 @@ for f in file_names_MUS_5D_45 + file_names_MUS_5D_10:
     print(f, "->", os.path.exists(full_path))
 
 exp0_MUS_5D, exp1_MUS_5D_45= load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_5D_45,  upwind_in_rig=True)
-#exp0_MUS_5D, exp1_MUS_5D_85 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_5D_85,  upwind_in_rig=True)
+exp0_MUS_5D, exp1_MUS_5D_85 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_5D_85,  upwind_in_rig=True)
 exp0_MUS_5D, exp1_MUS_5D_10 = load_experiments_from_hdf5(h5_input_path, section_name, file_names_MUS_5D_10,  upwind_in_rig=True)
 
 
@@ -4646,7 +4524,7 @@ plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 exp0_MUS_5D.filt_forces(6, 2)
 exp1_MUS_5D_45.filt_forces(6, 2)
-#exp1_MUS_5D_85.filt_forces(6, 2)
+exp1_MUS_5D_85.filt_forces(6, 2)
 exp1_MUS_5D_10.filt_forces(6, 2)
 
 # exp0_MUS_5D.plot_experiment(mode="total") #With Butterworth low-pass filter
@@ -4661,8 +4539,8 @@ plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 exp1_MUS_5D_10.plot_experiment(mode="decks") #With Butterworth low-pass filter
 # plt.gcf().suptitle(f"MUS 5D - Wind speed:) 10 m/s - With Butterworth low-pass filter",  y=0.95)
 plt.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "MUS_5D_10_filter_tidserie" + ".png"), dpi=300)
-# plt.show()
-# plt.close()
+plt.show()
+plt.close()
 
 static_coeff_MUS_5D_45 =w3t.StaticCoeff.fromWTT(exp0_MUS_5D, exp1_MUS_5D_45, section_width, section_height, section_length_in_rig, section_length_on_wall,  upwind_in_rig=True)
 
@@ -4675,7 +4553,7 @@ plot_static_coeff_summary(static_coeff_MUS_5D_45, section_name, 4.5, mode="decks
 plot_static_coeff_summary(static_coeff_MUS_5D_10, section_name, 10, mode="decks", upwind_in_rig=True)
 
 
-#%%NILS
+#%%
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True, ax=None)

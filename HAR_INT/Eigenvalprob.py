@@ -197,7 +197,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 # fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
 # fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
 fig.tight_layout()
@@ -256,7 +256,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 # fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
 # fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
 fig.tight_layout()
@@ -286,7 +286,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 # fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
 # fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
 fig.tight_layout()
@@ -314,7 +314,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 # fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 # fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 fig.tight_layout()
@@ -337,7 +337,7 @@ print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, alphas, dist="Single deck",  single = True, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, alphas, dist="Single deck",  single = True, static = True)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_single_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -370,7 +370,7 @@ print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D,  alphas,dist="two deck 1D",  single = False, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D,  alphas,dist="two deck 1D",  single = False, static = True)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_1D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -385,7 +385,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 # fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
 # fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_1D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
 fig.tight_layout()
@@ -402,7 +402,7 @@ print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
 #Plotting
 
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D,eigvecs_list_two_2D,V_list_two_2D,  alphas,dist="two deck 2D",  single = False, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D,eigvecs_list_two_2D,V_list_two_2D,  alphas,dist="two deck 2D",  single = False, static = True)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -433,7 +433,7 @@ print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
 #Plotting
 
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D,V_list_two_3D,  alphas,dist="two deck 3D",  single = False, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D,V_list_two_3D,  alphas,dist="two deck 3D",  single = False, static = True)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_3D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -448,7 +448,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 # fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
 # fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_3D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
 fig.tight_layout()
@@ -465,7 +465,7 @@ print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
 #Plotting
 
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D,eigvecs_list_two_4D,V_list_two_4D, alphas, dist="two deck 4D",  single = False, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D,eigvecs_list_two_4D,V_list_two_4D, alphas, dist="two deck 4D",  single = False, static = True)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_4D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -480,7 +480,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 # fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
 # fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_4D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
 fig.tight_layout()
@@ -495,7 +495,7 @@ print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D,eigvecs_list_two_5D,V_list_two_5D,  alphas,dist="two deck 5D",  single = False, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D,eigvecs_list_two_5D,V_list_two_5D,  alphas,dist="two deck 5D",  single = False, static = True)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_5D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -510,7 +510,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 # fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 # fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_5D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 fig.tight_layout()
