@@ -1,4 +1,9 @@
-
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Feb 3 08:15:00 2025
+Editited spring 2025
+@author: Smetoch, Rosland
+"""
 import numpy as np
 from scipy import linalg as spla
 import matplotlib.pyplot as plt
