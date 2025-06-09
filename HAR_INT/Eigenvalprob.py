@@ -12,6 +12,7 @@ from mode_shapes import mode_shape_two
 import matplotlib.pyplot as plt
 
 
+
 B = 18.3 # m, section width 
 zeta = 0.005 # 5 %, critical damping
 rho = 1.25 # kg/m^3, air density 
@@ -29,7 +30,6 @@ w1V = 2*np.pi*f1V # rad/s, vertical FØRSTE ITERASJON
 w2V = 2*np.pi*f2V # rad/s, vertical FØRSTE ITERASJON
 w1T = 2*np.pi*f1T # rad/s, torsion FØRSTE ITERASJON
 
-print("w1V, w2V, w1T: ", w1V, w2V, w1T)
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
 eps = 0.0001 # Konvergensterske
 
@@ -41,12 +41,11 @@ Ms_single, Cs_single, Ks_single = _eigVal.structural_matrices(m1V, m1T, f1V, f1T
 # two
 
 phi_two, x_two = mode_shape_two()
-print("phi_two shape: ", phi_two.shape)
-print("phi_two[0]: ", phi_two[0])
+
 Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
 
-#  BUFFETING
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_updated_stat_coeff.npy"
+#  STATIC
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_stat_coeff.npy"
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
@@ -55,7 +54,6 @@ Cae_Single_gen = matrices["Cae_Single"]
 
 Kae_1D_gen = matrices["Kae_1D"]
 Cae_1D_gen = matrices["Cae_1D"]
-print("Kae_1D_gen", 37.6*37.6*Kae_1D_gen)
 
 Kae_2D_gen = matrices["Kae_2D"]
 Cae_2D_gen = matrices["Cae_2D"]
@@ -131,263 +129,212 @@ else:
 
 
 
-##########################################################################
-######################################################################################
-######################################################################################
-
-#AD
-
+#########################################################################################################################################
+#########################################################################################################################################
+#########################################################################################################################################
+#%%
+#UNSTEADY
+alphas = 0.7
 #%%
 #Single deck
 
 #Solve for eigenvalues and eigenvectors
-V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, alphas, dist="Single deck",  single = True, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax =_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
+fig, ax =_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, alphas, dist="Single deck", single = True)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
+
+
+fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
-
-
-# fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 
 
 #%%
 #Double deck 1D
 
-V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=True)
+V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=True)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
 
-#%%
+
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D, dist="two deck 1D",  single = False, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D, alphas, dist="two deck 1D",  single = False, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_1D, omega_list_two_1D, dist="two deck 1D", single = False)
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_1D, omega_list_two_1D,  alphas,dist="two deck 1D", single = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%%
 #Double deck 2D
-V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,   verbose=False)
+V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,   verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D, eigvecs_list_two_2D, V_list_two_2D, dist="two deck 2D",  single = False, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D, eigvecs_list_two_2D, V_list_two_2D, alphas, dist="two deck 2D",  single = False, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D, dist="two deck 2D", single = False)
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D,  alphas,dist="two deck 2D", single = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 #%%
 #Double deck 3D
-V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D, V_list_two_3D, dist="two deck 3D",  single = False, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D, V_list_two_3D,  alphas,dist="two deck 3D",  single = False, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D, dist="two deck 3D", single = False)
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D,  alphas,dist="two deck 3D", single = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%%
 #Double deck 4D
-V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D, eigvecs_list_two_4D, V_list_two_4D, dist="two deck 4D",  single = False, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D, eigvecs_list_two_4D, V_list_two_4D,  alphas,dist="two deck 4D",  single = False, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D, dist="two deck 4D", single = False)
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D,  alphas,dist="two deck 4D", single = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 #%%
 #Double deck 5D
-V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
 
 #Plotting
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D, eigvecs_list_two_5D, V_list_two_5D, dist="two deck 5D",  single = False, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D, eigvecs_list_two_5D, V_list_two_5D, alphas, dist="two deck 5D",  single = False, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_damp" + ".png"), dpi=300)
 
-fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D, dist="two deck 5D", single = False)
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D,  alphas,dist="two deck 5D", single = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_frek" + ".png"), dpi=300)
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
+
+fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_dof" + ".png"), dpi=300)
 
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_dof" + ".png"), dpi=300)
-
-######################################################################################
-######################################################################################
-######################################################################################
-
-# BUFFETING
-
+##########################################################################################################################################################################
+##########################################################################################################################################################################
+##########################################################################################################################################################################
+#%%
+# QUASI-STATIC
+alphas = 0.5
 #%%
 #Single deck
 
 #Solve for eigenvalues and eigenvectors
-V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, buffeting = True, Cae_star_gen_BUFF=Cae_Single_gen, Kae_star_gen_BUFF=Kae_Single_gen,  verbose=False)
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, static_quasi = True, Cae_star_gen_STAT=Cae_Single_gen, Kae_star_gen_STAT=Kae_Single_gen,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, dist="Single deck",  single = True, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, alphas, dist="Single deck",  single = True, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_single_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_single_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax =_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, dist="Single deck", single = True)
+fig, ax =_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, alphas, dist="Single deck", single = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_single_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_single_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
+fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_single_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_single_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_single_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%%
 #Double deck 1D
 
-V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_1D_gen, Kae_star_gen_BUFF=Kae_1D_gen,  verbose=True)
+V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_1D_gen, Kae_star_gen_STAT=Kae_1D_gen,  verbose=True)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D, dist="two deck 1D",  single = False, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D,  alphas,dist="two deck 1D",  single = False, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_1D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_1D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_1D, omega_list_two_1D, dist="two deck 1D", single = False)
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_1D, omega_list_two_1D, alphas, dist="two deck 1D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_1D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_1D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
+fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_1D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_1D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 #%%
 #Double deck 2D
-V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,buffeting = True,  Cae_star_gen_BUFF=Cae_2D_gen, Kae_star_gen_BUFF=Kae_2D_gen,   verbose=False)
+V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,static_quasi = True,  Cae_star_gen_STAT=Cae_2D_gen, Kae_star_gen_STAT=Kae_2D_gen,   verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
@@ -395,26 +342,22 @@ print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
 #Plotting
 
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D,eigvecs_list_two_2D,V_list_two_2D, dist="two deck 2D",  single = False, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D,eigvecs_list_two_2D,V_list_two_2D,  alphas,dist="two deck 2D",  single = False, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_2D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D, dist="two deck 2D", single = False)
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D,  alphas,dist="two deck 2D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_2D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
+fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_2D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 #%%
 #Double deck 3D
-V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_3D_gen, Kae_star_gen_BUFF=Kae_3D_gen,  verbose=False)
+V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_3D_gen, Kae_star_gen_STAT=Kae_3D_gen,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
@@ -422,27 +365,23 @@ print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
 #Plotting
 
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D,V_list_two_3D, dist="two deck 3D",  single = False, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D,V_list_two_3D,  alphas,dist="two deck 3D",  single = False, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_3D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_3D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D, dist="two deck 3D", single = False)
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D,  alphas,dist="two deck 3D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_3D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_3D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
+fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_3D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_3D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%%
 #Double deck 4D
-V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_4D_gen, Kae_star_gen_BUFF=Kae_4D_gen,  verbose=False)
+V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_4D_gen, Kae_star_gen_STAT=Kae_4D_gen,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
@@ -450,58 +389,48 @@ print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
 #Plotting
 
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D,eigvecs_list_two_4D,V_list_two_4D, dist="two deck 4D",  single = False, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D,eigvecs_list_two_4D,V_list_two_4D, alphas, dist="two deck 4D",  single = False, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_4D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_4D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D, dist="two deck 4D", single = False)
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D,  alphas,dist="two deck 4D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_4D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_4D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
+fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_4D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_4D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 #%%
 #Double deck 5D
-V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, buffeting = True,  Cae_star_gen_BUFF=Cae_5D_gen, Kae_star_gen_BUFF=Kae_5D_gen,  verbose=False)
+V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_5D_gen, Kae_star_gen_STAT=Kae_5D_gen,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D,eigvecs_list_two_5D,V_list_two_5D, dist="two deck 5D",  single = False, buffeting = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D,eigvecs_list_two_5D,V_list_two_5D,  alphas,dist="two deck 5D",  single = False, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_5D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_5D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
-fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D, dist="two deck 5D", single = False)
+fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D,  alphas,dist="two deck 5D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_5D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_5D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-
-fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
+fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_5D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
-fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_5D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 # %%
-############################################################################################################
-######################################################################################
-######################################################################################
+###########################################################################################################################################################################
+##########################################################################################################################################################################
+##########################################################################################################################################################################
 
 #%%
-# Plotte AD mot tilsvarende buffeting
-
-#  BUFFETING
+# Plotte unsteady vs quasi-static
+#  quasi-static
 file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_as_AD.npy"
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
@@ -509,20 +438,20 @@ matrices = np.load(file_path, allow_pickle=True).item()
 Single_k = matrices["Kae_Single"]
 Single_c = matrices["Cae_Single"]
 
-Buff_1D_k = matrices["Kae_1D"]
-Buff_1D_c = matrices["Cae_1D"]
+Static_1D_k = matrices["Kae_1D"]
+Static_1D_c = matrices["Cae_1D"]
 
-Buff_2D_k = matrices["Kae_2D"]
-Buff_2D_c = matrices["Cae_2D"]
+Static_2D_k = matrices["Kae_2D"]
+Static_2D_c = matrices["Cae_2D"]
 
-Buff_3D_k = matrices["Kae_3D"]
-Buff_3D_c = matrices["Cae_3D"]
+Static_3D_k = matrices["Kae_3D"]
+Static_3D_c = matrices["Cae_3D"]
 
-Buff_4D_k = matrices["Kae_4D"]
-Buff_4D_c = matrices["Cae_4D"]
+Static_4D_k = matrices["Kae_4D"]
+Static_4D_c = matrices["Cae_4D"]
 
-Buff_5D_k = matrices["Kae_5D"]
-Buff_5D_c = matrices["Cae_5D"]
+Static_5D_k = matrices["Kae_5D"]
+Static_5D_c = matrices["Cae_5D"]
 #Cae_5D_gen, Kae_5D_gen = _eigVal.generalize_C_K(Cae_5D, Kae_5D, phi_two, x_two, single=False)
 
 def from_poly_k(poly_k, k_range, vred, damping_ad = True):
@@ -630,390 +559,783 @@ def AD_single(poly_coeff, k_range, Vred_global,  B):
 from scipy.interpolate import interp1d
 #%%
 # Single 
-
-k = np.linspace(k_range_single[0,0], k_range_single[0,1], 10)
+v = np.linspace(0, 4, 100)
 
 i = 0
-AD_single_damping = np.zeros((10, 2, 2))
-AD_single_stiffness = np.zeros((10, 2, 2))
-for ki in k:
-    AD_single_damping[i], AD_single_stiffness[i] = AD_single(poly_coeff_single,k_range_single,  1/ki, B)
+AD_single_damping = np.zeros((100, 2, 2))
+AD_single_stiffness = np.zeros((100, 2, 2))
+for vi in v:
+    AD_single_damping[i], AD_single_stiffness[i] = AD_single(poly_coeff_single,k_range_single,  vi, B)
     i += 1
 
 Vcr = 84.724853515625 # m/s, critical wind speed
 omega_cr = 1.452509128159339 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
-# y-verdier for kurven du har plottet
-y_vals_c = k * AD_single_damping[:,1,1]
-f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
-y_K_c = f_interp(K)
+y_vals_c2 = 1/v * AD_single_damping[:,1,1]
+f_interp2 = interp1d(1/v, y_vals_c2, kind='linear', fill_value="extrapolate")
+y_K_c2 = f_interp2(K)
 
-y_vals_k = k**2 * AD_single_stiffness[:,0,0]
-f_interp = interp1d(k, y_vals_k, kind='linear', fill_value="extrapolate")
-y_K_k = f_interp(K)
+y_vals_c1 = 1/v * AD_single_damping[:,1,0]
+f_interp1 = interp1d(1/v, y_vals_c1, kind='linear', fill_value="extrapolate")
+y_K_c1 = f_interp1(K)
 
-plt.figure(figsize=(10, 6))
-plt.title(" Single Damping")
-# plt.plot(k, k*AD_single_damping[:,0,0],  label=r"$H_1*$ Unsteady")
-plt.plot(k, k*AD_single_damping[:,1,1],  label=r"$A_2^*$ Unsteady")
-# plt.plot(k, np.full_like(k, Single_c[0,0]), linestyle = "-.",label=r"$H_1*$ Quasi-static", alpha = 0.8)
-plt.plot(k,np.full_like(k,Single_c[1,1]), linestyle = "-.",label=r"$A_2^*$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K, y_K_c, 'ro', color='black')
-plt.plot(K,Single_c[1,1], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$ K*AD$", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
+y_vals_ka = (1/v)**2 * AD_single_stiffness[:,0,1]
+f_interpa = interp1d(1/v, y_vals_ka, kind='linear', fill_value="extrapolate")
+y_K_ka = f_interpa(K)
+
+y_vals_kh = (1/v)**2 * AD_single_stiffness[:,1,1]
+f_interph = interp1d(1/v, y_vals_kh, kind='linear', fill_value="extrapolate")
+y_K_kh = f_interph(K)
+
+
+# Single order: H_1*, H_2*, H_3*, H_4*, A_1*, A_2*, A_3*, A_4*
+
+fig, axs = plt.subplots(2, 2, figsize=(8, 4))  
+axs[0,0].plot(v, 1/v*AD_single_damping[:,1,0], label=r"Unsteady")
+axs[0,0].plot(v, np.full_like(1/v, Single_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Kcr")
+axs[0,0].plot(1/K, y_K_c1, 'ro', color='#d62728',  markersize=4)
+axs[0,0].plot(1/K, Single_c[1,1], 'ro', color='#d62728', markersize=4)
+axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,0].set_ylabel(r"$K \cdot A_1^*$", fontsize=14)
+axs[0,0].tick_params(labelsize=14)
+
+axs[0,1].plot(v, 1/v*AD_single_damping[:,1,1])
+axs[0,1].plot(v, np.full_like(1/v, Single_c[1,1]), alpha=0.8)
+axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].plot(1/K, y_K_c2, 'ro', color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Single_c[1,1], 'ro', color='#d62728',  markersize=4)
+axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,1].set_ylabel(r"$K \cdot A_2^*$", fontsize=14)
+axs[0,1].tick_params(labelsize=14)
+
+axs[1,0].plot(v, (1/v)**2*AD_single_stiffness[:,0,1])
+axs[1,0].plot(v, np.full_like(1/v, Single_k[0,1]), alpha=0.8)
+axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
+axs[1,0].plot(1/K, Single_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,0].set_ylabel(r"$K^2 \cdot H_3^*$", fontsize=14)
+axs[1,0].tick_params(labelsize=14)
+
+axs[1,1].plot(v, (1/v)**2*AD_single_stiffness[:,1,1])
+axs[1,1].plot(v, np.full_like((1/v), Single_k[1,1]), alpha=0.8)
+axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Single_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,1].set_ylabel(r"$K^2 \cdot A_3^*$", fontsize=14)
+axs[1,1].tick_params(labelsize=14)
+
+handles, labels = axs[0,0].get_legend_handles_labels()
+fig.legend(handles, labels,
+           loc='lower center',
+           ncol=3,              
+           fontsize=14,
+           frameon=False,
+           bbox_to_anchor=(0.5, -0.1))  
+plt.subplots_adjust(bottom=0.15)
+
+plt.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "fitte_single.png"), dpi=300, bbox_inches='tight')
+
+
 plt.show()
 
-plt.figure(figsize=(10, 6))
-plt.title(" Single Stiffness")
-plt.plot(k, k**2*AD_single_stiffness[:,0,0],label=r"$H_4^*$ Unsteady")
-# plt.plot(k, k**2*AD_single_stiffness[:,1,1], label=r"$A_3*$ Unsteady")
-plt.plot(k, np.full_like(k,Single_k[0,0]),linestyle = "-.", label=r"$H_4^*$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Single_k[1,1]), linestyle = "-.",label=r"$A_3*$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K,y_K_k, 'ro', color='black')
-plt.plot(K,Single_k[0,0], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$K^2 * AD", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
-plt.show()
 
 
 #%%
 # 1D
 
-k = np.linspace(k_range_1D[0,0], k_range_1D[0,1], 10)
-
-i = 0
-AD_1D_damping = np.zeros((10, 4, 4))
-AD_1D_stiffness = np.zeros((10, 4, 4))
-for ki in k:
-    AD_1D_damping[i], AD_1D_stiffness[i] = AD_two(poly_coeff_1D,k_range_1D,  1/ki, B)
-    i += 1
-
+# Tandem order: c_z1z1*, c_z1θ1*, c_z1z2*, c_z1θ2*, c_θ1z1*, c_θ1θ1*, c_θ1z2*, c_θ1θ2*, 
+#               c_z2z1*, c_z2θ1*, c_z2z2*, c_z2θ2*, c_θ2z1*, c_θ2θ1*, c_θ2z2*, c_θ2θ2*, 
+#               k_z1z1*, k_z1θ1*, k_z1z2*, k_z1θ2*, k_θ1z1*, k_θ1θ1*, k_θ1z2*, k_θ1θ2*, 
+#               k_z2z1*, k_z2θ1*, k_z2z2*, k_z2θ2*, k_θ2z1*, k_θ2θ1*, k_θ2z2*, k_θ2θ2*
+ 
 Vcr = 31.890869140625# m/s, critical wind speed
 omega_cr = 2.154673716266362 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
-# y-verdier for kurven du har plottet
-y_vals_c = k * AD_1D_damping[:,3,3]
-f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
-y_K_c = f_interp(K)
+v = np.linspace(0, 4, 100)
 
-y_vals_k = k**2 * AD_1D_stiffness[:,2,2]
-f_interp = interp1d(k, y_vals_k, kind='cubic', fill_value="extrapolate")
-y_K_k = f_interp(K)
 
-plt.figure(figsize=(10, 6))
-plt.title(" 1D Damping")
-# plt.plot(k, k*AD_1D_damping[:,0,0],  label=r"$c_{z1z1}$ Unsteady")
-# plt.plot(k, k*AD_1D_damping[:,1,1],  label=r"r"$c_{z1z1}$ Unsteady")
-# plt.plot(k, k*AD_1D_damping[:,2,2],  label=r"$c_{z2z2}$ Unsteady")
-plt.plot(k, k*AD_1D_damping[:,3,3],  label=r"$c_{θ2θ2}$ Unsteady")
-# plt.plot(k, np.full_like(k, Buff_1D_c[0,0]), linestyle = "-.",label=r"$c_{z1z1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Buff_1D_c[1,1]), linestyle = "-.",label=r"$c_{θ1θ1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Buff_1D_c[2,2]), linestyle = "--",label=r"$c_{z2z2}$ Quasi-static", alpha = 0.8)
-plt.plot(k,np.full_like(k,Buff_1D_c[3,3]),linestyle = "--", label=r"$c_{θ2θ2}$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K, y_K_c, 'ro', color='black')
-plt.plot(K,Buff_1D_c[3,3], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$ K*AD$", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
+i = 0
+AD_1D_damping = np.zeros((100, 4, 4))
+AD_1D_stiffness = np.zeros((100, 4, 4))
+for vi in v:
+    AD_1D_damping[i], AD_1D_stiffness[i] = AD_two(poly_coeff_1D,k_range_1D,  vi, B)
+    i += 1
+
+y_vals_c2 = 1/v * AD_1D_damping[:,1,1]
+f_interp2 = interp1d(1/v, y_vals_c2, kind='linear', fill_value="extrapolate")
+y_K_c2 = f_interp2(K)
+
+y_vals_c1 = 1/v * AD_1D_damping[:,1,0]
+f_interp1 = interp1d(1/v, y_vals_c1, kind='linear', fill_value="extrapolate")
+y_K_c1 = f_interp1(K)
+
+y_vals_c3 = 1/v * AD_1D_damping[:,3,3]
+f_interp3 = interp1d(1/v, y_vals_c3, kind='linear', fill_value="extrapolate")
+y_K_c3 = f_interp3(K)
+
+y_vals_c4 = 1/v * AD_1D_damping[:,3,2]
+f_interp4 = interp1d(1/v, y_vals_c4, kind='linear', fill_value="extrapolate")
+y_K_c4 = f_interp4(K)
+
+y_vals_ka = (1/v)**2 * AD_1D_stiffness[:,0,1]
+f_interpa = interp1d(1/v, y_vals_ka, kind='linear', fill_value="extrapolate")
+y_K_ka = f_interpa(K)
+
+y_vals_kh = (1/v)**2 * AD_1D_stiffness[:,1,1]
+f_interph = interp1d(1/v, y_vals_kh, kind='linear', fill_value="extrapolate")
+y_K_kh = f_interph(K)
+
+y_vals_ka1 = (1/v)**2 * AD_1D_stiffness[:,2,3]
+f_interpa1 = interp1d(1/v, y_vals_ka1, kind='linear', fill_value="extrapolate")
+y_K_ka1 = f_interpa1(K)
+
+y_vals_kh1 = (1/v)**2 * AD_1D_stiffness[:,3,3]
+f_interph1 = interp1d(1/v, y_vals_kh1, kind='linear', fill_value="extrapolate")
+y_K_kh1 = f_interph1(K)
+
+fig, axs = plt.subplots(4, 2, figsize=(8, 8))  
+axs[0,0].plot(v, 1/v*AD_1D_damping[:,1,0], label=r"Unsteady")
+axs[0,0].plot(v, np.full_like(1/v, Static_1D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].plot(1/K, y_K_c1, 'ro',color='#d62728',  markersize=4)
+axs[0,0].plot(1/K, Static_1D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14
+)
+axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14
+)
+axs[0,0].tick_params(labelsize=14)
+
+axs[1,0].plot(v, 1/v*AD_1D_damping[:,1,1])
+axs[1,0].plot(v, np.full_like(1/v, Static_1D_c[1,1]), alpha=0.8)
+axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].plot(1/K, y_K_c2, 'ro',color='#d62728',  markersize=4)
+axs[1,0].plot(1/K, Static_1D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,0].set_ylabel(r"$K \cdot c_{\theta 1\theta 1}^*$", fontsize=14)
+axs[1,0].tick_params(labelsize=14)
+
+axs[2,0].plot(v, 1/v*AD_1D_damping[:,3,2], label=r"Unsteady")
+axs[2,0].plot(v, np.full_like(1/v, Static_1D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[2,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,0].plot(1/K, y_K_c4, 'ro',color='#d62728',  markersize=4)
+axs[2,0].plot(1/K, Static_1D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[2,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[2,0].set_ylabel(r"$K \cdot c_{\theta 2 z2}^*$", fontsize=14)
+axs[2,0].tick_params(labelsize=14)
+
+axs[3,0].plot(v, 1/v*AD_1D_damping[:,3,3])
+axs[3,0].plot(v, np.full_like(1/v, Static_1D_c[1,1]), alpha=0.8)
+axs[3,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,0].plot(1/K, y_K_c3, 'ro',color='#d62728',  markersize=4)
+axs[3,0].plot(1/K, Static_1D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[3,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[3,0].set_ylabel(r"$K \cdot c_{\theta 2\theta 2}^*$", fontsize=14)
+axs[3,0].tick_params(labelsize=14)
+
+axs[0,1].plot(v, (1/v)**2*AD_1D_stiffness[:,0,1])
+axs[0,1].plot(v, np.full_like(1/v, Static_1D_k[0,1]), alpha=0.8)
+axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Static_1D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,1].set_ylabel(r"$K^2 \cdot k_{z1 \theta 1}^*$", fontsize=14)
+axs[0,1].tick_params(labelsize=14)
+
+axs[1,1].plot(v, (1/v)**2*AD_1D_stiffness[:,1,1])
+axs[1,1].plot(v, np.full_like((1/v), Static_1D_k[1,1]), alpha=0.8)
+axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Static_1D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,1].set_ylabel(r"$K^2 \cdot k_{\theta 1 \theta 1}^*$", fontsize=14)
+axs[1,1].tick_params(labelsize=14)
+
+axs[2,1].plot(v, (1/v)**2*AD_1D_stiffness[:,2,3])
+axs[2,1].plot(v, np.full_like(1/v, Static_1D_k[0,1]), alpha=0.8)
+axs[2,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,1].plot(1/K, y_K_ka1, 'ro',color='#d62728',  markersize=4)
+axs[2,1].plot(1/K, Static_1D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[2,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[2,1].set_ylabel(r"$K^2 \cdot k_{z2 \theta 2}^*$", fontsize=14)
+axs[2,1].tick_params(labelsize=14)
+
+axs[3,1].plot(v, (1/v)**2*AD_1D_stiffness[:,3,3])
+axs[3,1].plot(v, np.full_like((1/v), Static_1D_k[1,1]), alpha=0.8)
+axs[3,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,1].plot(1/K, y_K_kh1, 'ro',color='#d62728',  markersize=4)
+axs[3,1].plot(1/K, Static_1D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[3,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[3,1].set_ylabel(r"$K^2 \cdot k_{\theta 2 \theta 2}^*$", fontsize=14)
+axs[3,1].tick_params(labelsize=14)
+
+handles, labels = axs[0,0].get_legend_handles_labels()
+fig.legend(handles, labels,
+           loc='lower center',
+           ncol=3,              
+           fontsize=14,
+           frameon=False,
+           bbox_to_anchor=(0.5, -0.05))  
+plt.subplots_adjust(bottom=0.15)
+
+plt.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "fitte_1D.png"), dpi=300, bbox_inches='tight')
+
 plt.show()
-
-plt.figure(figsize=(10, 6))
-plt.title(" 1D Stiffness")
-# plt.plot(k, k**2*AD_1D_stiffness[:,0,0],label=r"$k_{z1z1}$ Unsteady")
-
-# plt.plot(k, k**2*AD_1D_stiffness[:,1,1],  label=r"$k_{z1z1}$ Unsteady")
-plt.plot(k, k**2*AD_1D_stiffness[:,2,2], label=r"$k_{z2z2}$ Unsteady")
-# plt.plot(k, k**2*AD_1D_stiffness[:,3,3], label=r"$k_{θ2θ2}$ Unsteady")
-# plt.plot(k, np.full_like(k,Buff_1D_k[0,0]),linestyle = "-.", label=r"$k_{z1z1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Buff_1D_k[1,1]), linestyle = "-.",label=r"$k_{θ1θ1}$ Quasi-static", alpha = 0.8)
-plt.plot(k, np.full_like(k,Buff_1D_k[2,2]), linestyle = "--",label=r"$k_{z2z2}$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Buff_1D_k[3,3]),linestyle = "--", label=r"$k_{θ2θ2}$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K,y_K_k, 'ro', color='black')
-plt.plot(K,Buff_1D_k[2,2], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$K^2 * AD", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
-plt.show()
-
-
 
 #%%
 # 2D
-
-k = np.linspace(k_range_2D[0,0], k_range_2D[0,1], 10)
-
-i = 0
-AD_2D_damping = np.zeros((10, 4, 4))
-AD_2D_stiffness = np.zeros((10, 4, 4))
-for ki in k:
-    AD_2D_damping[i], AD_2D_stiffness[i] = AD_two(poly_coeff_2D,k_range_2D,  1/ki, B)
-    i += 1
-
 Vcr = 40.43505859375# m/s, critical wind speed
 omega_cr = 2.0946407671740137  # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
-# y-verdier for kurven du har plottet
-y_vals_c = k * AD_2D_damping[:,3,3]
-f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
-y_K_c = f_interp(K)
 
-y_vals_k = k**2 * AD_2D_stiffness[:,2,2]
-f_interp = interp1d(k, y_vals_k, kind='cubic', fill_value="extrapolate")
-y_K_k = f_interp(K)
 
-plt.figure(figsize=(10, 6))
-plt.title(" 2D Damping")
-# plt.plot(k, k*AD_2D_damping[:,0,0],  label=r"$c_{z1z1}$ Unsteady")
-# plt.plot(k, k*AD_2D_damping[:,1,1],  label=r"r"$c_{z1z1}$ Unsteady")
-# plt.plot(k, k*AD_2D_damping[:,2,2],  label=r"$c_{z2z2}$ Unsteady")
-plt.plot(k, k*AD_2D_damping[:,3,3],  label=r"$c_{θ2θ2}$ Unsteady")
-# plt.plot(k, np.full_like(k, Buff_2D_c[0,0]), linestyle = "-.",label=r"$c_{z1z1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Buff_2D_c[1,1]), linestyle = "-.",label=r"$c_{θ1θ1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Buff_2D_c[2,2]), linestyle = "--",label=r"$c_{z2z2}$ Quasi-static", alpha = 0.8)
-plt.plot(k,np.full_like(k,Buff_2D_c[3,3]),linestyle = "--", label=r"$c_{θ2θ2}$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K, y_K_c, 'ro', color='black')
-plt.plot(K,Buff_2D_c[3,3], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$ K*AD$", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
-plt.show()
+v = np.linspace(0, 4, 100)
 
-plt.figure(figsize=(10, 6))
-plt.title(" 2D Stiffness")
-# plt.plot(k, k**2*AD_2D_stiffness[:,0,0],label=r"$k_{z1z1}$ Unsteady")
-# plt.plot(k, k**2*AD_2D_stiffness[:,1,1],  label=r"$k_{z1z1}$ Unsteady")
-plt.plot(k, k**2*AD_2D_stiffness[:,2,2], label=r"$k_{z2z2}$ Unsteady")
-# plt.plot(k, k**2*AD_2D_stiffness[:,3,3], label=r"$k_{θ2θ2}$ Unsteady")
-# plt.plot(k, np.full_like(k,Buff_2D_k[0,0]),linestyle = "-.", label=r"$k_{z1z1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Buff_2D_k[1,1]), linestyle = "-.",label=r"$k_{θ1θ1}$ Quasi-static", alpha = 0.8)
-plt.plot(k, np.full_like(k,Buff_2D_k[2,2]), linestyle = "--",label=r"$k_{z2z2}$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Buff_2D_k[3,3]),linestyle = "--", label=r"$k_{θ2θ2}$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K,y_K_k, 'ro', color='black')
-plt.plot(K,Buff_2D_k[2,2], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$K^2 * AD", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
-plt.show()
-#%%
-# 3D
 
-k = np.linspace(k_range_3D[0,0], k_range_3D[0,1], 10)
 i = 0
-AD_3D_damping = np.zeros((10, 4, 4))
-AD_3D_stiffness = np.zeros((10, 4, 4))
-for ki in k:
-    AD_3D_damping[i], AD_3D_stiffness[i] = AD_two(poly_coeff_3D,k_range_3D,  1/ki, B)
+AD_2D_damping = np.zeros((100, 4, 4))
+AD_2D_stiffness = np.zeros((100, 4, 4))
+for vi in v:
+    AD_2D_damping[i], AD_2D_stiffness[i] = AD_two(poly_coeff_2D,k_range_2D,  vi, B)
     i += 1
 
+y_vals_c2 = 1/v * AD_2D_damping[:,1,1]
+f_interp2 = interp1d(1/v, y_vals_c2, kind='linear', fill_value="extrapolate")
+y_K_c2 = f_interp2(K)
+
+y_vals_c1 = 1/v * AD_2D_damping[:,1,0]
+f_interp1 = interp1d(1/v, y_vals_c1, kind='linear', fill_value="extrapolate")
+y_K_c1 = f_interp1(K)
+
+y_vals_c3 = 1/v * AD_2D_damping[:,3,3]
+f_interp3 = interp1d(1/v, y_vals_c3, kind='linear', fill_value="extrapolate")
+y_K_c3 = f_interp3(K)
+
+y_vals_c4 = 1/v * AD_2D_damping[:,3,2]
+f_interp4 = interp1d(1/v, y_vals_c4, kind='linear', fill_value="extrapolate")
+y_K_c4 = f_interp4(K)
+
+y_vals_ka = (1/v)**2 * AD_2D_stiffness[:,0,1]
+f_interpa = interp1d(1/v, y_vals_ka, kind='linear', fill_value="extrapolate")
+y_K_ka = f_interpa(K)
+
+y_vals_kh = (1/v)**2 * AD_2D_stiffness[:,1,1]
+f_interph = interp1d(1/v, y_vals_kh, kind='linear', fill_value="extrapolate")
+y_K_kh = f_interph(K)
+
+y_vals_ka1 = (1/v)**2 * AD_2D_stiffness[:,2,3]
+f_interpa1 = interp1d(1/v, y_vals_ka1, kind='linear', fill_value="extrapolate")
+y_K_ka1 = f_interpa1(K)
+
+y_vals_kh1 = (1/v)**2 * AD_2D_stiffness[:,3,3]
+f_interph1 = interp1d(1/v, y_vals_kh1, kind='linear', fill_value="extrapolate")
+y_K_kh1 = f_interph1(K)
+
+fig, axs = plt.subplots(4, 2, figsize=(8, 8))  
+axs[0,0].plot(v, 1/v*AD_2D_damping[:,1,0], label=r"Unsteady")
+axs[0,0].plot(v, np.full_like(1/v, Static_2D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].plot(1/K, y_K_c1, 'ro',color='#d62728',  markersize=4)
+axs[0,0].plot(1/K, Static_2D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14)
+axs[0,0].tick_params(labelsize=14)
+
+axs[1,0].plot(v, 1/v*AD_2D_damping[:,1,1])
+axs[1,0].plot(v, np.full_like(1/v, Static_2D_c[1,1]), alpha=0.8)
+axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].plot(1/K, y_K_c2, 'ro',color='#d62728',  markersize=4)
+axs[1,0].plot(1/K, Static_2D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,0].set_ylabel(r"$K \cdot c_{\theta 1\theta 1}^*$", fontsize=14)
+axs[1,0].tick_params(labelsize=14)
+
+axs[2,0].plot(v, 1/v*AD_2D_damping[:,3,2], label=r"Unsteady")
+axs[2,0].plot(v, np.full_like(1/v, Static_2D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[2,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,0].plot(1/K, y_K_c4, 'ro',color='#d62728',  markersize=4)
+axs[2,0].plot(1/K, Static_2D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[2,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[2,0].set_ylabel(r"$K \cdot c_{\theta 2 z2}^*$", fontsize=14)
+axs[2,0].tick_params(labelsize=14)
+
+axs[3,0].plot(v, 1/v*AD_2D_damping[:,3,3])
+axs[3,0].plot(v, np.full_like(1/v, Static_2D_c[1,1]), alpha=0.8)
+axs[3,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,0].plot(1/K, y_K_c3, 'ro',color='#d62728',  markersize=4)
+axs[3,0].plot(1/K, Static_2D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[3,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[3,0].set_ylabel(r"$K \cdot c_{\theta 2\theta 2}^*$", fontsize=14)
+axs[3,0].tick_params(labelsize=14)
+
+axs[0,1].plot(v, (1/v)**2*AD_2D_stiffness[:,0,1])
+axs[0,1].plot(v, np.full_like(1/v, Static_2D_k[0,1]), alpha=0.8)
+axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Static_2D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,1].set_ylabel(r"$K^2 \cdot k_{z1 \theta 1}^*$", fontsize=14)
+axs[0,1].tick_params(labelsize=14)
+
+axs[1,1].plot(v, (1/v)**2*AD_2D_stiffness[:,1,1])
+axs[1,1].plot(v, np.full_like((1/v), Static_2D_k[1,1]), alpha=0.8)
+axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Static_2D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,1].set_ylabel(r"$K^2 \cdot k_{\theta 1 \theta 1}^*$", fontsize=14)
+axs[1,1].tick_params(labelsize=14)
+
+axs[2,1].plot(v, (1/v)**2*AD_2D_stiffness[:,2,3])
+axs[2,1].plot(v, np.full_like(1/v, Static_2D_k[0,1]), alpha=0.8)
+axs[2,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,1].plot(1/K, y_K_ka1, 'ro',color='#d62728',  markersize=4)
+axs[2,1].plot(1/K, Static_2D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[2,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[2,1].set_ylabel(r"$K^2 \cdot k_{z2 \theta 2}^*$", fontsize=14)
+axs[2,1].tick_params(labelsize=14)
+
+axs[3,1].plot(v, (1/v)**2*AD_2D_stiffness[:,3,3])
+axs[3,1].plot(v, np.full_like((1/v), Static_2D_k[1,1]), alpha=0.8)
+axs[3,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,1].plot(1/K, y_K_kh1, 'ro',color='#d62728',  markersize=4)
+axs[3,1].plot(1/K, Static_2D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[3,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[3,1].set_ylabel(r"$K^2 \cdot k_{\theta 2 \theta 2}^*$", fontsize=14)
+axs[3,1].tick_params(labelsize=14)
+
+handles, labels = axs[0,0].get_legend_handles_labels()
+fig.legend(handles, labels,
+           loc='lower center',
+           ncol=3,              
+           fontsize=14,
+           frameon=False,
+           bbox_to_anchor=(0.5, -0.05))  
+plt.subplots_adjust(bottom=0.15)
+
+plt.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "fitte_2D.png"), dpi=300, bbox_inches='tight')
+
+plt.show()
+
+#%%
+# 3D
 
 Vcr = 53.93597412109375# m/s, critical wind speed
 omega_cr = 1.9602677552302152 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
-# y-verdier for kurven du har plottet
-y_vals_c = k * AD_3D_damping[:,3,3]
-f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
-y_K_c = f_interp(K)
+v = np.linspace(0, 4, 100)
 
-y_vals_k = k**2 * AD_3D_stiffness[:,2,2]
-f_interp = interp1d(k, y_vals_k, kind='cubic', fill_value="extrapolate")
-y_K_k = f_interp(K)
 
-plt.figure(figsize=(10, 6))
-plt.title(" 3D Damping")
-# plt.plot(k, k*AD_3D_damping[:,0,0],  label=r"$c_{z1z1}$ Unsteady")
-# plt.plot(k, k*AD_3D_damping[:,1,1],  label=r"r"$c_{z1z1}$ Unsteady")
-# plt.plot(k, k*AD_3D_damping[:,2,2],  label=r"$c_{z2z2}$ Unsteady")
-plt.plot(k, k*AD_3D_damping[:,3,3],  label=r"$c_{θ2θ2}$ Unsteady")
-# plt.plot(k, np.full_like(k, Buff_3D_c[0,0]), linestyle = "-.",label=r"$c_{z1z1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Buff_3D_c[1,1]), linestyle = "-.",label=r"$c_{θ1θ1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Buff_3D_c[2,2]), linestyle = "--",label=r"$c_{z2z2}$ Quasi-static", alpha = 0.8)
-plt.plot(k,np.full_like(k,Buff_3D_c[3,3]),linestyle = "--", label=r"$c_{θ2θ2}$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K, y_K_c, 'ro', color='black')
-plt.plot(K,Buff_3D_c[3,3], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$ K*AD$", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
-plt.show()
+i = 0
+AD_3D_damping = np.zeros((100, 4, 4))
+AD_3D_stiffness = np.zeros((100, 4, 4))
+for vi in v:
+    AD_3D_damping[i], AD_3D_stiffness[i] = AD_two(poly_coeff_3D,k_range_3D,  vi, B)
+    i += 1
 
-plt.figure(figsize=(10, 6))
-plt.title(" 3D Stiffness")
-# plt.plot(k, k**2*AD_3D_stiffness[:,0,0],label=r"$k_{z1z1}$ Unsteady")
-# plt.plot(k, k**2*AD_3D_stiffness[:,1,1],  label=r"$k_{z1z1}$ Unsteady")
-plt.plot(k, k**2*AD_3D_stiffness[:,2,2], label=r"$k_{z2z2}$ Unsteady")
-# plt.plot(k, k**2*AD_3D_stiffness[:,3,3], label=r"$k_{θ2θ2}$ Unsteady")
-# plt.plot(k, np.full_like(k,Buff_3D_k[0,0]),linestyle = "-.", label=r"$k_{z1z1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Buff_3D_k[1,1]), linestyle = "-.",label=r"$k_{θ1θ1}$ Quasi-static", alpha = 0.8)
-plt.plot(k, np.full_like(k,Buff_3D_k[2,2]), linestyle = "--",label=r"$k_{z2z2}$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Buff_3D_k[3,3]),linestyle = "--", label=r"$k_{θ2θ2}$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K,y_K_k, 'ro', color='black')
-plt.plot(K,Buff_3D_k[2,2], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$K^2 * AD", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
+y_vals_c2 = 1/v * AD_3D_damping[:,1,1]
+f_interp2 = interp1d(1/v, y_vals_c2, kind='linear', fill_value="extrapolate")
+y_K_c2 = f_interp2(K)
+
+y_vals_c1 = 1/v * AD_3D_damping[:,1,0]
+f_interp1 = interp1d(1/v, y_vals_c1, kind='linear', fill_value="extrapolate")
+y_K_c1 = f_interp1(K)
+
+y_vals_c3 = 1/v * AD_3D_damping[:,3,3]
+f_interp3 = interp1d(1/v, y_vals_c3, kind='linear', fill_value="extrapolate")
+y_K_c3 = f_interp3(K)
+
+y_vals_c4 = 1/v * AD_3D_damping[:,3,2]
+f_interp4 = interp1d(1/v, y_vals_c4, kind='linear', fill_value="extrapolate")
+y_K_c4 = f_interp4(K)
+
+y_vals_ka = (1/v)**2 * AD_3D_stiffness[:,0,1]
+f_interpa = interp1d(1/v, y_vals_ka, kind='linear', fill_value="extrapolate")
+y_K_ka = f_interpa(K)
+
+y_vals_kh = (1/v)**2 * AD_3D_stiffness[:,1,1]
+f_interph = interp1d(1/v, y_vals_kh, kind='linear', fill_value="extrapolate")
+y_K_kh = f_interph(K)
+
+y_vals_ka1 = (1/v)**2 * AD_3D_stiffness[:,2,3]
+f_interpa1 = interp1d(1/v, y_vals_ka1, kind='linear', fill_value="extrapolate")
+y_K_ka1 = f_interpa1(K)
+
+y_vals_kh1 = (1/v)**2 * AD_3D_stiffness[:,3,3]
+f_interph1 = interp1d(1/v, y_vals_kh1, kind='linear', fill_value="extrapolate")
+y_K_kh1 = f_interph1(K)
+
+fig, axs = plt.subplots(4, 2, figsize=(8, 8))  
+axs[0,0].plot(v, 1/v*AD_3D_damping[:,1,0], label=r"Unsteady")
+axs[0,0].plot(v, np.full_like(1/v, Static_3D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].plot(1/K, y_K_c1, 'ro',color='#d62728',  markersize=4)
+axs[0,0].plot(1/K, Static_3D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14)
+axs[0,0].tick_params(labelsize=14)
+
+axs[1,0].plot(v, 1/v*AD_3D_damping[:,1,1])
+axs[1,0].plot(v, np.full_like(1/v, Static_3D_c[1,1]), alpha=0.8)
+axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].plot(1/K, y_K_c2, 'ro',color='#d62728',  markersize=4)
+axs[1,0].plot(1/K, Static_3D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,0].set_ylabel(r"$K \cdot c_{\theta 1\theta 1}^*$", fontsize=14)
+axs[1,0].tick_params(labelsize=14)
+
+axs[2,0].plot(v, 1/v*AD_3D_damping[:,3,2], label=r"Unsteady")
+axs[2,0].plot(v, np.full_like(1/v, Static_3D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[2,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,0].plot(1/K, y_K_c4, 'ro',color='#d62728',  markersize=4)
+axs[2,0].plot(1/K, Static_3D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[2,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[2,0].set_ylabel(r"$K \cdot c_{\theta 2 z2}^*$", fontsize=14)
+axs[2,0].tick_params(labelsize=14)
+
+axs[3,0].plot(v, 1/v*AD_3D_damping[:,3,3])
+axs[3,0].plot(v, np.full_like(1/v, Static_3D_c[1,1]), alpha=0.8)
+axs[3,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,0].plot(1/K, y_K_c3, 'ro',color='#d62728',  markersize=4)
+axs[3,0].plot(1/K, Static_3D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[3,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[3,0].set_ylabel(r"$K \cdot c_{\theta 2\theta 2}^*$", fontsize=14)
+axs[3,0].tick_params(labelsize=14)
+
+axs[0,1].plot(v, (1/v)**2*AD_3D_stiffness[:,0,1])
+axs[0,1].plot(v, np.full_like(1/v, Static_3D_k[0,1]), alpha=0.8)
+axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Static_3D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,1].set_ylabel(r"$K^2 \cdot k_{z1 \theta 1}^*$", fontsize=14)
+axs[0,1].tick_params(labelsize=14)
+
+axs[1,1].plot(v, (1/v)**2*AD_3D_stiffness[:,1,1])
+axs[1,1].plot(v, np.full_like((1/v), Static_3D_k[1,1]), alpha=0.8)
+axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Static_3D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,1].set_ylabel(r"$K^2 \cdot k_{\theta 1 \theta 1}^*$", fontsize=14)
+axs[1,1].tick_params(labelsize=14)
+
+axs[2,1].plot(v, (1/v)**2*AD_3D_stiffness[:,2,3])
+axs[2,1].plot(v, np.full_like(1/v, Static_3D_k[0,1]), alpha=0.8)
+axs[2,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,1].plot(1/K, y_K_ka1, 'ro',color='#d62728',  markersize=4)
+axs[2,1].plot(1/K, Static_3D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[2,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[2,1].set_ylabel(r"$K^2 \cdot k_{z2 \theta 2}^*$", fontsize=14)
+axs[2,1].tick_params(labelsize=14)
+
+axs[3,1].plot(v, (1/v)**2*AD_3D_stiffness[:,3,3])
+axs[3,1].plot(v, np.full_like((1/v), Static_3D_k[1,1]), alpha=0.8)
+axs[3,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,1].plot(1/K, y_K_kh1, 'ro',color='#d62728',  markersize=4)
+axs[3,1].plot(1/K, Static_3D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[3,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[3,1].set_ylabel(r"$K^2 \cdot k_{\theta 2 \theta 2}^*$", fontsize=14)
+axs[3,1].tick_params(labelsize=14)
+
+handles, labels = axs[0,0].get_legend_handles_labels()
+fig.legend(handles, labels,
+           loc='lower center',
+           ncol=3,              
+           fontsize=14,
+           frameon=False,
+           bbox_to_anchor=(0.5, -0.05))  
+plt.subplots_adjust(bottom=0.15)
+
+plt.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "fitte_3D.png"), dpi=300, bbox_inches='tight')
+
 plt.show()
 
 
 #%%
 # 4D
 
-k = np.linspace(k_range_4D[0,0], k_range_4D[0,1], 10)
-i = 0
-AD_4D_damping = np.zeros((10, 4, 4))
-AD_4D_stiffness = np.zeros((10, 4, 4))
-for ki in k:
-    AD_4D_damping[i], AD_4D_stiffness[i] = AD_two(poly_coeff_4D,k_range_4D,  1/ki, B)
-    i += 1
-
 
 Vcr = 55.8602294921875# m/s, critical wind speed
 omega_cr = 1.9493400472910092 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
-# y-verdier for kurven du har plottet
-y_vals_c = k * AD_4D_damping[:,3,3]
-f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
-y_K_c = f_interp(K)
+v = np.linspace(0, 4, 100)
 
-y_vals_k = k**2 * AD_4D_stiffness[:,2,2]
-f_interp = interp1d(k, y_vals_k, kind='cubic', fill_value="extrapolate")
-y_K_k = f_interp(K)
 
-plt.figure(figsize=(10, 6))
-plt.title(" 4D Damping")
-# plt.plot(k, k*AD_4D_damping[:,0,0],  label=r"$c_{z1z1}$ Unsteady")
-# plt.plot(k, k*AD_4D_damping[:,1,1],  label=r"r"$c_{z1z1}$ Unsteady")
-# plt.plot(k, k*AD_4D_damping[:,2,2],  label=r"$c_{z2z2}$ Unsteady")
-plt.plot(k, k*AD_4D_damping[:,3,3],  label=r"$c_{θ2θ2}$ Unsteady")
-# plt.plot(k, np.full_like(k, Buff_4D_c[0,0]), linestyle = "-.",label=r"$c_{z1z1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Buff_4D_c[1,1]), linestyle = "-.",label=r"$c_{θ1θ1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Buff_4D_c[2,2]), linestyle = "--",label=r"$c_{z2z2}$ Quasi-static", alpha = 0.8)
-plt.plot(k,np.full_like(k,Buff_4D_c[3,3]),linestyle = "--", label=r"$c_{θ2θ2}$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K, y_K_c, 'ro', color='black')
-plt.plot(K,Buff_4D_c[3,3], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$ K*AD$", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
-plt.show()
+i = 0
+AD_4D_damping = np.zeros((100, 4, 4))
+AD_4D_stiffness = np.zeros((100, 4, 4))
+for vi in v:
+    AD_4D_damping[i], AD_4D_stiffness[i] = AD_two(poly_coeff_4D,k_range_4D,  vi, B)
+    i += 1
 
-plt.figure(figsize=(10, 6))
-plt.title(" 4D Stiffness")
-# plt.plot(k, k**2*AD_4D_stiffness[:,0,0],label=r"$k_{z1z1}$ Unsteady")
-# plt.plot(k, k**2*AD_4D_stiffness[:,1,1],  label=r"$k_{z1z1}$ Unsteady")
-plt.plot(k, k**2*AD_4D_stiffness[:,2,2], label=r"$k_{z2z2}$ Unsteady")
-# plt.plot(k, k**2*AD_4D_stiffness[:,3,3], label=r"$k_{θ2θ2}$ Unsteady")
-# plt.plot(k, np.full_like(k,Buff_4D_k[0,0]),linestyle = "-.", label=r"$k_{z1z1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Buff_4D_k[1,1]), linestyle = "-.",label=r"$k_{θ1θ1}$ Quasi-static", alpha = 0.8)
-plt.plot(k, np.full_like(k,Buff_4D_k[2,2]), linestyle = "--",label=r"$k_{z2z2}$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Buff_4D_k[3,3]),linestyle = "--", label=r"$k_{θ2θ2}$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K,y_K_k, 'ro', color='black')
-plt.plot(K,Buff_4D_k[2,2], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$K^2 * AD", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
+y_vals_c2 = 1/v * AD_4D_damping[:,1,1]
+f_interp2 = interp1d(1/v, y_vals_c2, kind='linear', fill_value="extrapolate")
+y_K_c2 = f_interp2(K)
+
+y_vals_c1 = 1/v * AD_4D_damping[:,1,0]
+f_interp1 = interp1d(1/v, y_vals_c1, kind='linear', fill_value="extrapolate")
+y_K_c1 = f_interp1(K)
+
+y_vals_c3 = 1/v * AD_4D_damping[:,3,3]
+f_interp3 = interp1d(1/v, y_vals_c3, kind='linear', fill_value="extrapolate")
+y_K_c3 = f_interp3(K)
+
+y_vals_c4 = 1/v * AD_4D_damping[:,3,2]
+f_interp4 = interp1d(1/v, y_vals_c4, kind='linear', fill_value="extrapolate")
+y_K_c4 = f_interp4(K)
+
+y_vals_ka = (1/v)**2 * AD_4D_stiffness[:,0,1]
+f_interpa = interp1d(1/v, y_vals_ka, kind='linear', fill_value="extrapolate")
+y_K_ka = f_interpa(K)
+
+y_vals_kh = (1/v)**2 * AD_4D_stiffness[:,1,1]
+f_interph = interp1d(1/v, y_vals_kh, kind='linear', fill_value="extrapolate")
+y_K_kh = f_interph(K)
+
+y_vals_ka1 = (1/v)**2 * AD_4D_stiffness[:,2,3]
+f_interpa1 = interp1d(1/v, y_vals_ka1, kind='linear', fill_value="extrapolate")
+y_K_ka1 = f_interpa1(K)
+
+y_vals_kh1 = (1/v)**2 * AD_4D_stiffness[:,3,3]
+f_interph1 = interp1d(1/v, y_vals_kh1, kind='linear', fill_value="extrapolate")
+y_K_kh1 = f_interph1(K)
+
+fig, axs = plt.subplots(4, 2, figsize=(8, 8))  
+axs[0,0].plot(v, 1/v*AD_4D_damping[:,1,0], label=r"Unsteady")
+axs[0,0].plot(v, np.full_like(1/v, Static_4D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].plot(1/K, y_K_c1, 'ro',color='#d62728',  markersize=4)
+axs[0,0].plot(1/K, Static_4D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14)
+axs[0,0].tick_params(labelsize=14)
+
+axs[1,0].plot(v, 1/v*AD_4D_damping[:,1,1])
+axs[1,0].plot(v, np.full_like(1/v, Static_4D_c[1,1]), alpha=0.8)
+axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].plot(1/K, y_K_c2, 'ro',color='#d62728',  markersize=4)
+axs[1,0].plot(1/K, Static_4D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,0].set_ylabel(r"$K \cdot c_{\theta 1\theta 1}^*$", fontsize=14)
+axs[1,0].tick_params(labelsize=14)
+
+axs[2,0].plot(v, 1/v*AD_4D_damping[:,3,2], label=r"Unsteady")
+axs[2,0].plot(v, np.full_like(1/v, Static_4D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[2,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,0].plot(1/K, y_K_c4, 'ro',color='#d62728',  markersize=4)
+axs[2,0].plot(1/K, Static_4D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[2,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[2,0].set_ylabel(r"$K \cdot c_{\theta 2 z2}^*$", fontsize=14)
+axs[2,0].tick_params(labelsize=14)
+
+axs[3,0].plot(v, 1/v*AD_4D_damping[:,3,3])
+axs[3,0].plot(v, np.full_like(1/v, Static_4D_c[1,1]), alpha=0.8)
+axs[3,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,0].plot(1/K, y_K_c3, 'ro',color='#d62728',  markersize=4)
+axs[3,0].plot(1/K, Static_4D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[3,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[3,0].set_ylabel(r"$K \cdot c_{\theta 2\theta 2}^*$", fontsize=14)
+axs[3,0].tick_params(labelsize=14)
+
+axs[0,1].plot(v, (1/v)**2*AD_4D_stiffness[:,0,1])
+axs[0,1].plot(v, np.full_like(1/v, Static_4D_k[0,1]), alpha=0.8)
+axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Static_4D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,1].set_ylabel(r"$K^2 \cdot k_{z1 \theta 1}^*$", fontsize=14)
+axs[0,1].tick_params(labelsize=14)
+
+axs[1,1].plot(v, (1/v)**2*AD_4D_stiffness[:,1,1])
+axs[1,1].plot(v, np.full_like((1/v), Static_4D_k[1,1]), alpha=0.8)
+axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Static_4D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,1].set_ylabel(r"$K^2 \cdot k_{\theta 1 \theta 1}^*$", fontsize=14)
+axs[1,1].tick_params(labelsize=14)
+
+axs[2,1].plot(v, (1/v)**2*AD_4D_stiffness[:,2,3])
+axs[2,1].plot(v, np.full_like(1/v, Static_4D_k[0,1]), alpha=0.8)
+axs[2,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,1].plot(1/K, y_K_ka1, 'ro',color='#d62728',  markersize=4)
+axs[2,1].plot(1/K, Static_4D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[2,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[2,1].set_ylabel(r"$K^2 \cdot k_{z2 \theta 2}^*$", fontsize=14)
+axs[2,1].tick_params(labelsize=14)
+
+axs[3,1].plot(v, (1/v)**2*AD_4D_stiffness[:,3,3])
+axs[3,1].plot(v, np.full_like((1/v), Static_4D_k[1,1]), alpha=0.8)
+axs[3,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,1].plot(1/K, y_K_kh1, 'ro',color='#d62728',  markersize=4)
+axs[3,1].plot(1/K, Static_4D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[3,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[3,1].set_ylabel(r"$K^2 \cdot k_{\theta 2 \theta 2}^*$", fontsize=14)
+axs[3,1].tick_params(labelsize=14)
+
+handles, labels = axs[0,0].get_legend_handles_labels()
+fig.legend(handles, labels,
+           loc='lower center',
+           ncol=3,              
+           fontsize=14,
+           frameon=False,
+           bbox_to_anchor=(0.5, -0.05))  
+plt.subplots_adjust(bottom=0.15)
+
+plt.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "fitte_4D.png"), dpi=300, bbox_inches='tight')
+
 plt.show()
 
 
 #%%
 # 5D
 
-k = np.linspace(k_range_5D[0,0], k_range_5D[0,1], 10)
-i = 0
-AD_5D_damping = np.zeros((10, 4, 4))
-AD_5D_stiffness = np.zeros((10, 4, 4))
-for ki in k:
-    AD_5D_damping[i], AD_5D_stiffness[i] = AD_two(poly_coeff_5D,k_range_5D,  1/ki, B)
-    i += 1
-
-
 Vcr = 62.259796142578125# m/s, critical wind speed
 omega_cr = 1.7808098966420758 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
-# y-verdier for kurven du har plottet
-y_vals_c = k * AD_5D_damping[:,3,3]
-f_interp = interp1d(k, y_vals_c, kind='linear', fill_value="extrapolate")
-y_K_c = f_interp(K)
+v = np.linspace(0, 4, 100)
 
-y_vals_k = k**2 * AD_5D_stiffness[:,2,2]
-f_interp = interp1d(k, y_vals_k, kind='cubic', fill_value="extrapolate")
-y_K_k = f_interp(K)
 
-plt.figure(figsize=(10, 6))
-plt.title(" 5D Damping")
-# plt.plot(k, k*AD_5D_damping[:,0,0],  label=r"$c_{z1z1}$ Unsteady")
-# plt.plot(k, k*AD_5D_damping[:,1,1],  label=r"r"$c_{z1z1}$ Unsteady")
-# plt.plot(k, k*AD_5D_damping[:,2,2],  label=r"$c_{z2z2}$ Unsteady")
-plt.plot(k, k*AD_5D_damping[:,3,3],  label=r"$c_{θ2θ2}$ Unsteady")
-# plt.plot(k, np.full_like(k, Buff_5D_c[0,0]), linestyle = "-.",label=r"$c_{z1z1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Buff_5D_c[1,1]), linestyle = "-.",label=r"$c_{θ1θ1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k,np.full_like(k,Buff_5D_c[2,2]), linestyle = "--",label=r"$c_{z2z2}$ Quasi-static", alpha = 0.8)
-plt.plot(k,np.full_like(k,Buff_5D_c[3,3]),linestyle = "--", label=r"$c_{θ2θ2}$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K, y_K_c, 'ro', color='black')
-plt.plot(K,Buff_5D_c[3,3], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$: K*AD$", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
+i = 0
+AD_5D_damping = np.zeros((100, 4, 4))
+AD_5D_stiffness = np.zeros((100, 4, 4))
+for vi in v:
+    AD_5D_damping[i], AD_5D_stiffness[i] = AD_two(poly_coeff_5D,k_range_5D,  vi, B)
+    i += 1
+
+y_vals_c2 = 1/v * AD_5D_damping[:,1,1]
+f_interp2 = interp1d(1/v, y_vals_c2, kind='linear', fill_value="extrapolate")
+y_K_c2 = f_interp2(K)
+
+y_vals_c1 = 1/v * AD_5D_damping[:,1,0]
+f_interp1 = interp1d(1/v, y_vals_c1, kind='linear', fill_value="extrapolate")
+y_K_c1 = f_interp1(K)
+
+y_vals_c3 = 1/v * AD_5D_damping[:,3,3]
+f_interp3 = interp1d(1/v, y_vals_c3, kind='linear', fill_value="extrapolate")
+y_K_c3 = f_interp3(K)
+
+y_vals_c4 = 1/v * AD_5D_damping[:,3,2]
+f_interp4 = interp1d(1/v, y_vals_c4, kind='linear', fill_value="extrapolate")
+y_K_c4 = f_interp4(K)
+
+y_vals_ka = (1/v)**2 * AD_5D_stiffness[:,0,1]
+f_interpa = interp1d(1/v, y_vals_ka, kind='linear', fill_value="extrapolate")
+y_K_ka = f_interpa(K)
+
+y_vals_kh = (1/v)**2 * AD_5D_stiffness[:,1,1]
+f_interph = interp1d(1/v, y_vals_kh, kind='linear', fill_value="extrapolate")
+y_K_kh = f_interph(K)
+
+y_vals_ka1 = (1/v)**2 * AD_5D_stiffness[:,2,3]
+f_interpa1 = interp1d(1/v, y_vals_ka1, kind='linear', fill_value="extrapolate")
+y_K_ka1 = f_interpa1(K)
+
+y_vals_kh1 = (1/v)**2 * AD_5D_stiffness[:,3,3]
+f_interph1 = interp1d(1/v, y_vals_kh1, kind='linear', fill_value="extrapolate")
+y_K_kh1 = f_interph1(K)
+
+fig, axs = plt.subplots(4, 2, figsize=(8, 8))  
+axs[0,0].plot(v, 1/v*AD_5D_damping[:,1,0], label=r"Unsteady")
+axs[0,0].plot(v, np.full_like(1/v, Static_5D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].plot(1/K, y_K_c1, 'ro',color='#d62728',  markersize=4)
+axs[0,0].plot(1/K, Static_5D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14)
+axs[0,0].tick_params(labelsize=14)
+
+axs[1,0].plot(v, 1/v*AD_5D_damping[:,1,1])
+axs[1,0].plot(v, np.full_like(1/v, Static_5D_c[1,1]), alpha=0.8)
+axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].plot(1/K, y_K_c2, 'ro',color='#d62728',  markersize=4)
+axs[1,0].plot(1/K, Static_5D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,0].set_ylabel(r"$K \cdot c_{\theta 1\theta 1}^*$", fontsize=14)
+axs[1,0].tick_params(labelsize=14)
+
+axs[2,0].plot(v, 1/v*AD_5D_damping[:,3,2], label=r"Unsteady")
+axs[2,0].plot(v, np.full_like(1/v, Static_5D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
+axs[2,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,0].plot(1/K, y_K_c4, 'ro',color='#d62728',  markersize=4)
+axs[2,0].plot(1/K, Static_5D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[2,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[2,0].set_ylabel(r"$K \cdot c_{\theta 2 z2}^*$", fontsize=14)
+axs[2,0].tick_params(labelsize=14)
+
+axs[3,0].plot(v, 1/v*AD_5D_damping[:,3,3])
+axs[3,0].plot(v, np.full_like(1/v, Static_5D_c[1,1]), alpha=0.8)
+axs[3,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,0].plot(1/K, y_K_c3, 'ro',color='#d62728',  markersize=4)
+axs[3,0].plot(1/K, Static_5D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[3,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[3,0].set_ylabel(r"$K \cdot c_{\theta 2\theta 2}^*$", fontsize=14)
+axs[3,0].tick_params(labelsize=14)
+
+axs[0,1].plot(v, (1/v)**2*AD_5D_stiffness[:,0,1])
+axs[0,1].plot(v, np.full_like(1/v, Static_5D_k[0,1]), alpha=0.8)
+axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Static_5D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,1].set_ylabel(r"$K^2 \cdot k_{z1 \theta 1}^*$", fontsize=14)
+axs[0,1].tick_params(labelsize=14)
+
+axs[1,1].plot(v, (1/v)**2*AD_5D_stiffness[:,1,1])
+axs[1,1].plot(v, np.full_like((1/v), Static_5D_k[1,1]), alpha=0.8)
+axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Static_5D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[1,1].set_ylabel(r"$K^2 \cdot k_{\theta 1 \theta 1}^*$", fontsize=14)
+axs[1,1].tick_params(labelsize=14)
+
+axs[2,1].plot(v, (1/v)**2*AD_5D_stiffness[:,2,3])
+axs[2,1].plot(v, np.full_like(1/v, Static_5D_k[0,1]), alpha=0.8)
+axs[2,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,1].plot(1/K, y_K_ka1, 'ro',color='#d62728',  markersize=4)
+axs[2,1].plot(1/K, Static_5D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[2,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[2,1].set_ylabel(r"$K^2 \cdot k_{z2 \theta 2}^*$", fontsize=14)
+axs[2,1].tick_params(labelsize=14)
+
+axs[3,1].plot(v, (1/v)**2*AD_5D_stiffness[:,3,3])
+axs[3,1].plot(v, np.full_like((1/v), Static_5D_k[1,1]), alpha=0.8)
+axs[3,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,1].plot(1/K, y_K_kh1, 'ro',color='#d62728',  markersize=4)
+axs[3,1].plot(1/K, Static_5D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[3,1].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[3,1].set_ylabel(r"$K^2 \cdot k_{\theta 2 \theta 2}^*$", fontsize=14)
+axs[3,1].tick_params(labelsize=14)
+
+handles, labels = axs[0,0].get_legend_handles_labels()
+fig.legend(handles, labels,
+           loc='lower center',
+           ncol=3,              
+           fontsize=14,
+           frameon=False,
+           bbox_to_anchor=(0.5, -0.05))  
+plt.subplots_adjust(bottom=0.15)
+
+plt.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "fitte_5D.png"), dpi=300, bbox_inches='tight')
+
 plt.show()
 
-plt.figure(figsize=(10, 6))
-plt.title(" 5D Stiffness")
-# plt.plot(k, k**2*AD_5D_stiffness[:,0,0],label=r"$k_{z1z1}$ Unsteady")
-# plt.plot(k, k**2*AD_5D_stiffness[:,1,1],  label=r"$k_{z1z1}$ Unsteady")
-plt.plot(k, k**2*AD_5D_stiffness[:,2,2], label=r"$k_{z2z2}$ Unsteady")
-# plt.plot(k, k**2*AD_5D_stiffness[:,3,3], label=r"$k_{θ2θ2}$ Unsteady")
-# plt.plot(k, np.full_like(k,Buff_5D_k[0,0]),linestyle = "-.", label=r"$k_{z1z1}$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Buff_5D_k[1,1]), linestyle = "-.",label=r"$k_{θ1θ1}$ Quasi-static", alpha = 0.8)
-plt.plot(k, np.full_like(k,Buff_5D_k[2,2]), linestyle = "--",label=r"$k_{z2z2}$ Quasi-static", alpha = 0.8)
-# plt.plot(k, np.full_like(k,Buff_5D_k[3,3]),linestyle = "--", label=r"$k_{θ2θ2}$ Quasi-static", alpha = 0.8)
-plt.axvline(x=K, color='black', linestyle='--', linewidth=1, label="Kcr")
-plt.plot(K,y_K_k, 'ro', color='black')
-plt.plot(K,Buff_5D_k[2,2], 'ro', color='black')
-plt.xlabel(r"$K$", fontsize=16)
-plt.ylabel(r"$K^2 * AD", fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.legend(fontsize=14)
-plt.show()
 
 ######################################################################################
 ######################################################################################

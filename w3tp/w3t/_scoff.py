@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
 """
+Created on Mon Feb 3 08:15:00 2025
+
+@author: Smetoch, Rosland
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Mon Jan 24 22:18:50 2022
-Edited 2025
-@author: oiseth, linehro, alicjaas
+
+@author: oiseth
 """
 
 # -*- coding: utf-8 -*-
