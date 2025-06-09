@@ -1,4 +1,9 @@
- 
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Feb 3 08:15:00 2025
+Editited spring 2025
+@author: Smetoch, Rosland
+"""
 #%%
 import numpy as np
 import sys
@@ -45,7 +50,7 @@ phi_two, x_two = mode_shape_two()
 Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
 
 #  STATIC
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_stat_coeff.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives.npy"
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
