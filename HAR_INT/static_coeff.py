@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
 """
+Created on Mon Feb 3 08:15:00 2025
+Editited spring 2025
+
+@author: Smetoch, Rosland
+"""
+# -*- coding: utf-8 -*-
+"""
 Created on Thu Nov 17 11:47:47 2022
 Edited 2025
-@author: oiseth, linehro
+@author: oiseth
 """
 #%% !!!
 import numpy as np
