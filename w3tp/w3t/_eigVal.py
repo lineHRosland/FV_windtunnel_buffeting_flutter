@@ -50,6 +50,7 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
         Corresponding right eigenvectors, shape (2 * n_dof, 2 * n_dof)
     """
     # Effective system matrices
+  
     C = C_struc - C_aero
     K = K_struc - K_aero
 
@@ -349,7 +350,7 @@ def cae_kae_two(poly_coeff, k_range, Vred_global, B):
 
 def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps, 
                 Phi, x, single = True, static_quasi = False, 
-                Cae_star_gen_STAT = None, Kae_star_gen_STAT=None, verbose=True):
+                Cae_star_STAT = None, Kae_star_STAT=None, verbose=True):
     """
     Solves the aeroelastic eigenvalue problem to determine flutter onset by iterating
     over wind speed and frequency for either a single-deck (2 DOF) or two-deck (4 DOF) bridge.
@@ -382,9 +383,9 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
         True for single-deck analysis (2 DOF). False for two-deck (4 DOF). Default is True.
     static_quasi : bool, optional
         If True, uses precomputed quasi-static matrices instead of aerodynamic derivatives.
-    Cae_star_gen_STAT : np.ndarray
+    Cae_star_STAT : np.ndarray
         Precomputed generalized aerodynamic damping matrix for quasi-static.
-    Kae_star_gen_STAT : np.ndarray
+    Kae_star_STAT : np.ndarray
         Precomputed generalized aerodynamic stiffness matrix for quasi-static.
     verbose : bool, optional
         If True, prints convergence info and dominant DOF tracking.
@@ -420,7 +421,7 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
         n_modes = 4 # 4 modes for two deck
         omega_old = np.array([2*np.pi*f1, 2*np.pi*f2, 2*np.pi*f1, 2*np.pi*f2]) 
     
-    if static_quasi and (Cae_star_gen_STAT is None or Kae_star_gen_STAT is None):
+    if static_quasi and (Cae_star_STAT is None or Kae_star_STAT is None):
         raise ValueError("Quasi-static analysis selected but aerodynamic matrices are not provided.")
 
    
@@ -488,18 +489,21 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                     Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) 
 
                 if static_quasi:
-                    Cae_star_gen_STAT, Kae_star_gen_STAT = generalize_C_K(Cae_star_gen_STAT, Kae_star_gen_STAT, Phi, x)
+                    Cae_star_gen_STAT,Kae_star_gen_STAT = generalize_C_K(Cae_star_STAT, Kae_star_STAT, Phi, x)
 
-                    Cae_gen = V* Cae_star_gen_STAT
-                    Kae_gen = V**2* Kae_star_gen_STAT
-       
+                    Cae_gen = V* Cae_star_STAT
+                    Kae_gen = V**2* Kae_star_STAT
+
                 else:      
                     Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen_AD
                     Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen_AD
 
                 if np.isclose(V, 10):
-                    print(Cae_gen)
-                    print(Kae_gen)
+                    print("NaNs i generalisert Cae (3D):", np.isnan(Cae_gen).any())
+                    print("Infs i generalisert Cae (3D):", np.isinf(Cae_gen).any())
+
+                    print("NaNs i generalisert Kae (3D):", np.isnan(Kae_gen).any())
+                    print("Infs i generalisert Kae (3D):", np.isinf(Kae_gen).any())
 
                 eigvalsV, eigvecsV = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 

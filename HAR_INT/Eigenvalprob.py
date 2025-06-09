@@ -52,38 +52,32 @@ Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, s
 #  STATIC
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_stat_coeff.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives.npy"
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_not_gen.npy"
+#file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_not_gen.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D.npy"
 
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
-Kae_Single_gen = matrices["Kae_Single"]
-Cae_Single_gen = matrices["Cae_Single"]
+Kae_Single = matrices["Kae_Single"]
+Cae_Single = matrices["Cae_Single"]
 
-Kae_1D_gen = matrices["Kae_1D"]
-Cae_1D_gen = matrices["Cae_1D"]
+Kae_1D = matrices["Kae_1D"]
+Cae_1D = matrices["Cae_1D"]
 
-Kae_2D_gen = matrices["Kae_2D"]
-Cae_2D_gen = matrices["Cae_2D"]
+Kae_2D = matrices["Kae_2D"]
+Cae_2D = matrices["Cae_2D"]
 
-Kae_3D_gen = matrices["Kae_3D"]
-Cae_3D_gen = matrices["Cae_3D"]
+Kae_3D = matrices["Kae_3D"]
+Cae_3D = matrices["Cae_3D"]
 
-Kae_4D_gen = matrices["Kae_4D"]
-Cae_4D_gen = matrices["Cae_4D"]
+Kae_4D = matrices["Kae_4D"]
+Cae_4D = matrices["Cae_4D"]
 
-Kae_5D_gen = matrices["Kae_5D"]
-Cae_5D_gen = matrices["Cae_5D"]
+Kae_5D = matrices["Kae_5D"]
+Cae_5D = matrices["Cae_5D"]
 
-print("Cae_2_gen :", Cae_2D_gen)
-print("Cae_3_gen :", Cae_3D_gen)
-print("Cae_4_gen :", Cae_4D_gen)
 
-print("kae_2_gen :", Kae_2D_gen)
-print("kae_3_gen :", Kae_3D_gen)
-print("kae_4_gen :", Kae_4D_gen)
-# print
-#Cae_5D_gen, Kae_5D_gen = _eigVal.generalize_C_K(Cae_5D, Kae_5D, phi_two, x_two, single=False)
+
 
 #  AD
 file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Arrays_AD_k"
@@ -156,7 +150,7 @@ alphas = 0.7
 #Single deck
 
 #Solve for eigenvalues and eigenvectors
-V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, static_quasi = False,  Cae_star_STAT=None, Kae_star_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
@@ -183,7 +177,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 #%%
 #Double deck 1D
 
-V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=True)
+V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_STAT=None, Kae_star_STAT=None,  verbose=True)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
@@ -208,7 +202,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 2D
-V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,   verbose=False)
+V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,static_quasi = False,  Cae_star_STAT=None, Kae_star_STAT=None,   verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
@@ -230,7 +224,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 3D
-V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
+V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_STAT=None, Kae_star_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
@@ -253,7 +247,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 4D
-V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
+V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_STAT=None, Kae_star_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
@@ -275,7 +269,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 5D
-V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
+V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_STAT=None, Kae_star_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
@@ -304,7 +298,7 @@ alphas = 0.5
 #Single deck
 
 #Solve for eigenvalues and eigenvectors
-V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, static_quasi = True, Cae_star_gen_STAT=Cae_Single_gen, Kae_star_gen_STAT=Kae_Single_gen,  verbose=False)
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, static_quasi = True, Cae_star_STAT=Cae_Single, Kae_star_STAT=Kae_Single,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
@@ -328,7 +322,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 #%%
 #Double deck 1D
 
-V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_1D_gen, Kae_star_gen_STAT=Kae_1D_gen,  verbose=True)
+V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_STAT=Cae_1D, Kae_star_STAT=Kae_1D,  verbose=True)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
@@ -351,7 +345,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 2D
-V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,static_quasi = True,  Cae_star_gen_STAT=Cae_2D_gen, Kae_star_gen_STAT=Kae_2D_gen,   verbose=False)
+V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,static_quasi = True,  Cae_star_STAT=Cae_2D, Kae_star_STAT=Kae_2D,   verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
@@ -374,7 +368,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 3D
-V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_3D_gen, Kae_star_gen_STAT=Kae_3D_gen,  verbose=False)
+V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_STAT=Cae_3D, Kae_star_STAT=Kae_3D,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
@@ -398,7 +392,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 4D
-V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_4D_gen, Kae_star_gen_STAT=Kae_4D_gen,  verbose=False)
+V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_STAT=Cae_4D, Kae_star_STAT=Kae_4D,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
@@ -421,7 +415,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 5D
-V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_5D_gen, Kae_star_gen_STAT=Kae_5D_gen,  verbose=False)
+V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_STAT=Cae_5D, Kae_star_STAT=Kae_5D,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
@@ -591,6 +585,10 @@ Vcr = 84.724853515625 # m/s, critical wind speed
 omega_cr = 1.452509128159339 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
+Vcr_stat = 43.10009765625 # m/s, critical wind speed
+omega_cr_stat = 2.050794355848397 # rad/s, critical frequency
+K_stat = omega_cr_stat * B / Vcr_stat
+
 y_vals_c2 = 1/v * AD_single_damping[:,1,1]
 f_interp2 = interp1d(1/v, y_vals_c2, kind='linear', fill_value="extrapolate")
 y_K_c2 = f_interp2(K)
@@ -613,16 +611,18 @@ y_K_kh = f_interph(K)
 fig, axs = plt.subplots(2, 2, figsize=(8, 4))  
 axs[0,0].plot(v, 1/v*AD_single_damping[:,1,0], label=r"Unsteady")
 axs[0,0].plot(v, np.full_like(1/v, Single_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Unsteady}$")
+axs[0,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,0].plot(1/K, y_K_c1, 'ro', color='#d62728',  markersize=4)
-axs[0,0].plot(1/K, Single_c[1,1], 'ro', color='#d62728', markersize=4)
+axs[0,0].plot(1/K, Single_c[1,0], 'ro', color='#d62728', markersize=4)
 axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[0,0].set_ylabel(r"$K \cdot A_1^*$", fontsize=14)
 axs[0,0].tick_params(labelsize=14)
 
 axs[0,1].plot(v, 1/v*AD_single_damping[:,1,1])
 axs[0,1].plot(v, np.full_like(1/v, Single_c[1,1]), alpha=0.8)
-axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,1].plot(1/K, y_K_c2, 'ro', color='#d62728',  markersize=4)
 axs[0,1].plot(1/K, Single_c[1,1], 'ro', color='#d62728',  markersize=4)
 axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
@@ -631,18 +631,20 @@ axs[0,1].tick_params(labelsize=14)
 
 axs[1,0].plot(v, (1/v)**2*AD_single_stiffness[:,0,1])
 axs[1,0].plot(v, np.full_like(1/v, Single_k[0,1]), alpha=0.8)
-axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,0].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
-axs[1,0].plot(1/K, Single_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,0].plot(1/K, Single_k[0,1], 'ro',color='#d62728',  markersize=4)
 axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[1,0].set_ylabel(r"$K^2 \cdot H_3^*$", fontsize=14)
 axs[1,0].tick_params(labelsize=14)
 
 axs[1,1].plot(v, (1/v)**2*AD_single_stiffness[:,1,1])
 axs[1,1].plot(v, np.full_like((1/v), Single_k[1,1]), alpha=0.8)
-axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
-axs[1,1].plot(1/K, Single_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Single_k[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[1,1].set_ylabel(r"$K^2 \cdot A_3^*$", fontsize=14)
 axs[1,1].tick_params(labelsize=14)
@@ -650,10 +652,10 @@ axs[1,1].tick_params(labelsize=14)
 handles, labels = axs[0,0].get_legend_handles_labels()
 fig.legend(handles, labels,
            loc='lower center',
-           ncol=3,              
+           ncol=4,              
            fontsize=14,
            frameon=False,
-           bbox_to_anchor=(0.5, -0.1))  
+           bbox_to_anchor=(0.5, -0.12))  
 plt.subplots_adjust(bottom=0.15)
 
 plt.tight_layout()
@@ -675,6 +677,10 @@ plt.show()
 Vcr = 31.890869140625# m/s, critical wind speed
 omega_cr = 2.154673716266362 # rad/s, critical frequency
 K = omega_cr * B / Vcr
+
+Vcr_stat = 19.041748046875 # m/s, critical wind speed
+omega_cr_stat = 2.2339399441074597 # rad/s, critical frequency
+K_stat = omega_cr_stat * B / Vcr_stat
 
 v = np.linspace(0, 4, 100)
 
@@ -721,18 +727,18 @@ y_K_kh1 = f_interph1(K)
 fig, axs = plt.subplots(4, 2, figsize=(8, 8))  
 axs[0,0].plot(v, 1/v*AD_1D_damping[:,1,0], label=r"Unsteady")
 axs[0,0].plot(v, np.full_like(1/v, Static_1D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Unsteady}$")
+axs[0,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,0].plot(1/K, y_K_c1, 'ro',color='#d62728',  markersize=4)
-axs[0,0].plot(1/K, Static_1D_c[1,1], 'ro',color='#d62728',  markersize=4)
-axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14
-)
-axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14
-)
+axs[0,0].plot(1/K, Static_1D_c[1,0], 'ro',color='#d62728',  markersize=4)
+axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
+axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14)
 axs[0,0].tick_params(labelsize=14)
 
 axs[1,0].plot(v, 1/v*AD_1D_damping[:,1,1])
 axs[1,0].plot(v, np.full_like(1/v, Static_1D_c[1,1]), alpha=0.8)
-axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,0].plot(1/K, y_K_c2, 'ro',color='#d62728',  markersize=4)
 axs[1,0].plot(1/K, Static_1D_c[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
@@ -740,55 +746,61 @@ axs[1,0].set_ylabel(r"$K \cdot c_{\theta 1\theta 1}^*$", fontsize=14)
 axs[1,0].tick_params(labelsize=14)
 
 axs[2,0].plot(v, 1/v*AD_1D_damping[:,3,2], label=r"Unsteady")
-axs[2,0].plot(v, np.full_like(1/v, Static_1D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[2,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,0].plot(v, np.full_like(1/v, Static_1D_c[3,2]),  label=r"Quasi-static", alpha=0.8)
+axs[2,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[2,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[2,0].plot(1/K, y_K_c4, 'ro',color='#d62728',  markersize=4)
-axs[2,0].plot(1/K, Static_1D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[2,0].plot(1/K, Static_1D_c[3,2], 'ro',color='#d62728',  markersize=4)
 axs[2,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[2,0].set_ylabel(r"$K \cdot c_{\theta 2 z2}^*$", fontsize=14)
 axs[2,0].tick_params(labelsize=14)
 
 axs[3,0].plot(v, 1/v*AD_1D_damping[:,3,3])
-axs[3,0].plot(v, np.full_like(1/v, Static_1D_c[1,1]), alpha=0.8)
-axs[3,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,0].plot(v, np.full_like(1/v, Static_1D_c[3,3]), alpha=0.8)
+axs[3,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[3,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[3,0].plot(1/K, y_K_c3, 'ro',color='#d62728',  markersize=4)
-axs[3,0].plot(1/K, Static_1D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[3,0].plot(1/K, Static_1D_c[3,3], 'ro',color='#d62728',  markersize=4)
 axs[3,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[3,0].set_ylabel(r"$K \cdot c_{\theta 2\theta 2}^*$", fontsize=14)
 axs[3,0].tick_params(labelsize=14)
 
 axs[0,1].plot(v, (1/v)**2*AD_1D_stiffness[:,0,1])
 axs[0,1].plot(v, np.full_like(1/v, Static_1D_k[0,1]), alpha=0.8)
-axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,1].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
-axs[0,1].plot(1/K, Static_1D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Static_1D_k[0,1], 'ro',color='#d62728',  markersize=4)
 axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[0,1].set_ylabel(r"$K^2 \cdot k_{z1 \theta 1}^*$", fontsize=14)
 axs[0,1].tick_params(labelsize=14)
 
 axs[1,1].plot(v, (1/v)**2*AD_1D_stiffness[:,1,1])
 axs[1,1].plot(v, np.full_like((1/v), Static_1D_k[1,1]), alpha=0.8)
-axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
-axs[1,1].plot(1/K, Static_1D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Static_1D_k[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[1,1].set_ylabel(r"$K^2 \cdot k_{\theta 1 \theta 1}^*$", fontsize=14)
 axs[1,1].tick_params(labelsize=14)
 
 axs[2,1].plot(v, (1/v)**2*AD_1D_stiffness[:,2,3])
-axs[2,1].plot(v, np.full_like(1/v, Static_1D_k[0,1]), alpha=0.8)
-axs[2,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,1].plot(v, np.full_like(1/v, Static_1D_k[2,3]), alpha=0.8)
+axs[2,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[2,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[2,1].plot(1/K, y_K_ka1, 'ro',color='#d62728',  markersize=4)
-axs[2,1].plot(1/K, Static_1D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[2,1].plot(1/K, Static_1D_k[2,3], 'ro',color='#d62728',  markersize=4)
 axs[2,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[2,1].set_ylabel(r"$K^2 \cdot k_{z2 \theta 2}^*$", fontsize=14)
 axs[2,1].tick_params(labelsize=14)
 
 axs[3,1].plot(v, (1/v)**2*AD_1D_stiffness[:,3,3])
-axs[3,1].plot(v, np.full_like((1/v), Static_1D_k[1,1]), alpha=0.8)
-axs[3,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,1].plot(v, np.full_like((1/v), Static_1D_k[3,3]), alpha=0.8)
+axs[3,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[3,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[3,1].plot(1/K, y_K_kh1, 'ro',color='#d62728',  markersize=4)
-axs[3,1].plot(1/K, Static_1D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[3,1].plot(1/K, Static_1D_k[3,3], 'ro',color='#d62728',  markersize=4)
 axs[3,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[3,1].set_ylabel(r"$K^2 \cdot k_{\theta 2 \theta 2}^*$", fontsize=14)
 axs[3,1].tick_params(labelsize=14)
@@ -796,10 +808,10 @@ axs[3,1].tick_params(labelsize=14)
 handles, labels = axs[0,0].get_legend_handles_labels()
 fig.legend(handles, labels,
            loc='lower center',
-           ncol=3,              
+           ncol=4,              
            fontsize=14,
            frameon=False,
-           bbox_to_anchor=(0.5, -0.05))  
+           bbox_to_anchor=(0.5, -0.12))
 plt.subplots_adjust(bottom=0.15)
 
 plt.tight_layout()
@@ -813,7 +825,9 @@ Vcr = 40.43505859375# m/s, critical wind speed
 omega_cr = 2.0946407671740137  # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
-
+Vcr_stat = 20.2255859375 # m/s, critical wind speed
+omega_cr_stat = 2.227335127287594 # rad/s, critical frequency
+K_stat = omega_cr_stat * B / Vcr_stat
 
 v = np.linspace(0, 4, 100)
 
@@ -860,16 +874,18 @@ y_K_kh1 = f_interph1(K)
 fig, axs = plt.subplots(4, 2, figsize=(8, 8))  
 axs[0,0].plot(v, 1/v*AD_2D_damping[:,1,0], label=r"Unsteady")
 axs[0,0].plot(v, np.full_like(1/v, Static_2D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Unsteady}$")
+axs[0,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,0].plot(1/K, y_K_c1, 'ro',color='#d62728',  markersize=4)
-axs[0,0].plot(1/K, Static_2D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[0,0].plot(1/K, Static_2D_c[1,0], 'ro',color='#d62728',  markersize=4)
 axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14)
 axs[0,0].tick_params(labelsize=14)
 
 axs[1,0].plot(v, 1/v*AD_2D_damping[:,1,1])
 axs[1,0].plot(v, np.full_like(1/v, Static_2D_c[1,1]), alpha=0.8)
-axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,0].plot(1/K, y_K_c2, 'ro',color='#d62728',  markersize=4)
 axs[1,0].plot(1/K, Static_2D_c[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
@@ -877,55 +893,61 @@ axs[1,0].set_ylabel(r"$K \cdot c_{\theta 1\theta 1}^*$", fontsize=14)
 axs[1,0].tick_params(labelsize=14)
 
 axs[2,0].plot(v, 1/v*AD_2D_damping[:,3,2], label=r"Unsteady")
-axs[2,0].plot(v, np.full_like(1/v, Static_2D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[2,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,0].plot(v, np.full_like(1/v, Static_2D_c[3,2]),  label=r"Quasi-static", alpha=0.8)
+axs[2,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[2,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[2,0].plot(1/K, y_K_c4, 'ro',color='#d62728',  markersize=4)
-axs[2,0].plot(1/K, Static_2D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[2,0].plot(1/K, Static_2D_c[3,2], 'ro',color='#d62728',  markersize=4)
 axs[2,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[2,0].set_ylabel(r"$K \cdot c_{\theta 2 z2}^*$", fontsize=14)
 axs[2,0].tick_params(labelsize=14)
 
 axs[3,0].plot(v, 1/v*AD_2D_damping[:,3,3])
-axs[3,0].plot(v, np.full_like(1/v, Static_2D_c[1,1]), alpha=0.8)
-axs[3,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,0].plot(v, np.full_like(1/v, Static_2D_c[3,3]), alpha=0.8)
+axs[3,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[3,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[3,0].plot(1/K, y_K_c3, 'ro',color='#d62728',  markersize=4)
-axs[3,0].plot(1/K, Static_2D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[3,0].plot(1/K, Static_2D_c[3,3], 'ro',color='#d62728',  markersize=4)
 axs[3,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[3,0].set_ylabel(r"$K \cdot c_{\theta 2\theta 2}^*$", fontsize=14)
 axs[3,0].tick_params(labelsize=14)
 
 axs[0,1].plot(v, (1/v)**2*AD_2D_stiffness[:,0,1])
 axs[0,1].plot(v, np.full_like(1/v, Static_2D_k[0,1]), alpha=0.8)
-axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,1].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
-axs[0,1].plot(1/K, Static_2D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Static_2D_k[0,1], 'ro',color='#d62728',  markersize=4)
 axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[0,1].set_ylabel(r"$K^2 \cdot k_{z1 \theta 1}^*$", fontsize=14)
 axs[0,1].tick_params(labelsize=14)
 
 axs[1,1].plot(v, (1/v)**2*AD_2D_stiffness[:,1,1])
 axs[1,1].plot(v, np.full_like((1/v), Static_2D_k[1,1]), alpha=0.8)
-axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
-axs[1,1].plot(1/K, Static_2D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Static_2D_k[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[1,1].set_ylabel(r"$K^2 \cdot k_{\theta 1 \theta 1}^*$", fontsize=14)
 axs[1,1].tick_params(labelsize=14)
 
 axs[2,1].plot(v, (1/v)**2*AD_2D_stiffness[:,2,3])
-axs[2,1].plot(v, np.full_like(1/v, Static_2D_k[0,1]), alpha=0.8)
-axs[2,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,1].plot(v, np.full_like(1/v, Static_2D_k[2,3]), alpha=0.8)
+axs[2,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[2,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[2,1].plot(1/K, y_K_ka1, 'ro',color='#d62728',  markersize=4)
-axs[2,1].plot(1/K, Static_2D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[2,1].plot(1/K, Static_2D_k[2,3], 'ro',color='#d62728',  markersize=4)
 axs[2,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[2,1].set_ylabel(r"$K^2 \cdot k_{z2 \theta 2}^*$", fontsize=14)
 axs[2,1].tick_params(labelsize=14)
 
 axs[3,1].plot(v, (1/v)**2*AD_2D_stiffness[:,3,3])
-axs[3,1].plot(v, np.full_like((1/v), Static_2D_k[1,1]), alpha=0.8)
-axs[3,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,1].plot(v, np.full_like((1/v), Static_2D_k[3,3]), alpha=0.8)
+axs[3,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[3,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[3,1].plot(1/K, y_K_kh1, 'ro',color='#d62728',  markersize=4)
-axs[3,1].plot(1/K, Static_2D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[3,1].plot(1/K, Static_2D_k[3,3], 'ro',color='#d62728',  markersize=4)
 axs[3,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[3,1].set_ylabel(r"$K^2 \cdot k_{\theta 2 \theta 2}^*$", fontsize=14)
 axs[3,1].tick_params(labelsize=14)
@@ -933,10 +955,10 @@ axs[3,1].tick_params(labelsize=14)
 handles, labels = axs[0,0].get_legend_handles_labels()
 fig.legend(handles, labels,
            loc='lower center',
-           ncol=3,              
+           ncol=4,              
            fontsize=14,
            frameon=False,
-           bbox_to_anchor=(0.5, -0.05))  
+           bbox_to_anchor=(0.5, -0.12))
 plt.subplots_adjust(bottom=0.15)
 
 plt.tight_layout()
@@ -950,6 +972,10 @@ plt.show()
 Vcr = 53.93597412109375# m/s, critical wind speed
 omega_cr = 1.9602677552302152 # rad/s, critical frequency
 K = omega_cr * B / Vcr
+
+Vcr_stat = 98.39474487304688 # m/s, critical wind speed
+omega_cr_stat = 1.2075518902025422 # rad/s, critical frequency
+K_stat = omega_cr_stat * B / Vcr_stat
 
 v = np.linspace(0, 4, 100)
 
@@ -996,16 +1022,18 @@ y_K_kh1 = f_interph1(K)
 fig, axs = plt.subplots(4, 2, figsize=(8, 8))  
 axs[0,0].plot(v, 1/v*AD_3D_damping[:,1,0], label=r"Unsteady")
 axs[0,0].plot(v, np.full_like(1/v, Static_3D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Unsteady}$")
+axs[0,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,0].plot(1/K, y_K_c1, 'ro',color='#d62728',  markersize=4)
-axs[0,0].plot(1/K, Static_3D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[0,0].plot(1/K, Static_3D_c[1,0], 'ro',color='#d62728',  markersize=4)
 axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14)
 axs[0,0].tick_params(labelsize=14)
 
 axs[1,0].plot(v, 1/v*AD_3D_damping[:,1,1])
 axs[1,0].plot(v, np.full_like(1/v, Static_3D_c[1,1]), alpha=0.8)
-axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,0].plot(1/K, y_K_c2, 'ro',color='#d62728',  markersize=4)
 axs[1,0].plot(1/K, Static_3D_c[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
@@ -1013,55 +1041,61 @@ axs[1,0].set_ylabel(r"$K \cdot c_{\theta 1\theta 1}^*$", fontsize=14)
 axs[1,0].tick_params(labelsize=14)
 
 axs[2,0].plot(v, 1/v*AD_3D_damping[:,3,2], label=r"Unsteady")
-axs[2,0].plot(v, np.full_like(1/v, Static_3D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[2,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,0].plot(v, np.full_like(1/v, Static_3D_c[3,2]),  label=r"Quasi-static", alpha=0.8)
+axs[2,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[2,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[2,0].plot(1/K, y_K_c4, 'ro',color='#d62728',  markersize=4)
-axs[2,0].plot(1/K, Static_3D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[2,0].plot(1/K, Static_3D_c[3,2], 'ro',color='#d62728',  markersize=4)
 axs[2,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[2,0].set_ylabel(r"$K \cdot c_{\theta 2 z2}^*$", fontsize=14)
 axs[2,0].tick_params(labelsize=14)
 
 axs[3,0].plot(v, 1/v*AD_3D_damping[:,3,3])
-axs[3,0].plot(v, np.full_like(1/v, Static_3D_c[1,1]), alpha=0.8)
-axs[3,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,0].plot(v, np.full_like(1/v, Static_3D_c[3,3]), alpha=0.8)
+axs[3,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[3,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[3,0].plot(1/K, y_K_c3, 'ro',color='#d62728',  markersize=4)
-axs[3,0].plot(1/K, Static_3D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[3,0].plot(1/K, Static_3D_c[3,3], 'ro',color='#d62728',  markersize=4)
 axs[3,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[3,0].set_ylabel(r"$K \cdot c_{\theta 2\theta 2}^*$", fontsize=14)
 axs[3,0].tick_params(labelsize=14)
 
 axs[0,1].plot(v, (1/v)**2*AD_3D_stiffness[:,0,1])
 axs[0,1].plot(v, np.full_like(1/v, Static_3D_k[0,1]), alpha=0.8)
-axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,1].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
-axs[0,1].plot(1/K, Static_3D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Static_3D_k[0,1], 'ro',color='#d62728',  markersize=4)
 axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[0,1].set_ylabel(r"$K^2 \cdot k_{z1 \theta 1}^*$", fontsize=14)
 axs[0,1].tick_params(labelsize=14)
 
 axs[1,1].plot(v, (1/v)**2*AD_3D_stiffness[:,1,1])
 axs[1,1].plot(v, np.full_like((1/v), Static_3D_k[1,1]), alpha=0.8)
-axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
-axs[1,1].plot(1/K, Static_3D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Static_3D_k[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[1,1].set_ylabel(r"$K^2 \cdot k_{\theta 1 \theta 1}^*$", fontsize=14)
 axs[1,1].tick_params(labelsize=14)
 
 axs[2,1].plot(v, (1/v)**2*AD_3D_stiffness[:,2,3])
-axs[2,1].plot(v, np.full_like(1/v, Static_3D_k[0,1]), alpha=0.8)
-axs[2,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,1].plot(v, np.full_like(1/v, Static_3D_k[2,3]), alpha=0.8)
+axs[2,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[2,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[2,1].plot(1/K, y_K_ka1, 'ro',color='#d62728',  markersize=4)
-axs[2,1].plot(1/K, Static_3D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[2,1].plot(1/K, Static_3D_k[2,3], 'ro',color='#d62728',  markersize=4)
 axs[2,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[2,1].set_ylabel(r"$K^2 \cdot k_{z2 \theta 2}^*$", fontsize=14)
 axs[2,1].tick_params(labelsize=14)
 
 axs[3,1].plot(v, (1/v)**2*AD_3D_stiffness[:,3,3])
-axs[3,1].plot(v, np.full_like((1/v), Static_3D_k[1,1]), alpha=0.8)
-axs[3,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,1].plot(v, np.full_like((1/v), Static_3D_k[3,3]), alpha=0.8)
+axs[3,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[3,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[3,1].plot(1/K, y_K_kh1, 'ro',color='#d62728',  markersize=4)
-axs[3,1].plot(1/K, Static_3D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[3,1].plot(1/K, Static_3D_k[3,3], 'ro',color='#d62728',  markersize=4)
 axs[3,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[3,1].set_ylabel(r"$K^2 \cdot k_{\theta 2 \theta 2}^*$", fontsize=14)
 axs[3,1].tick_params(labelsize=14)
@@ -1069,10 +1103,10 @@ axs[3,1].tick_params(labelsize=14)
 handles, labels = axs[0,0].get_legend_handles_labels()
 fig.legend(handles, labels,
            loc='lower center',
-           ncol=3,              
+           ncol=4,              
            fontsize=14,
            frameon=False,
-           bbox_to_anchor=(0.5, -0.05))  
+           bbox_to_anchor=(0.5, -0.12))
 plt.subplots_adjust(bottom=0.15)
 
 plt.tight_layout()
@@ -1088,6 +1122,11 @@ plt.show()
 Vcr = 55.8602294921875# m/s, critical wind speed
 omega_cr = 1.9493400472910092 # rad/s, critical frequency
 K = omega_cr * B / Vcr
+
+Vcr_stat = 22.5260009765625 # m/s, critical wind speed
+omega_cr_stat = 2.213303371134488 # rad/s, critical frequency
+K_stat = omega_cr_stat * B / Vcr_stat
+
 
 v = np.linspace(0, 4, 100)
 
@@ -1134,16 +1173,18 @@ y_K_kh1 = f_interph1(K)
 fig, axs = plt.subplots(4, 2, figsize=(8, 8))  
 axs[0,0].plot(v, 1/v*AD_4D_damping[:,1,0], label=r"Unsteady")
 axs[0,0].plot(v, np.full_like(1/v, Static_4D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Unsteady}$")
+axs[0,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,0].plot(1/K, y_K_c1, 'ro',color='#d62728',  markersize=4)
-axs[0,0].plot(1/K, Static_4D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[0,0].plot(1/K, Static_4D_c[1,0], 'ro',color='#d62728',  markersize=4)
 axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14)
 axs[0,0].tick_params(labelsize=14)
 
 axs[1,0].plot(v, 1/v*AD_4D_damping[:,1,1])
 axs[1,0].plot(v, np.full_like(1/v, Static_4D_c[1,1]), alpha=0.8)
-axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,0].plot(1/K, y_K_c2, 'ro',color='#d62728',  markersize=4)
 axs[1,0].plot(1/K, Static_4D_c[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
@@ -1151,55 +1192,61 @@ axs[1,0].set_ylabel(r"$K \cdot c_{\theta 1\theta 1}^*$", fontsize=14)
 axs[1,0].tick_params(labelsize=14)
 
 axs[2,0].plot(v, 1/v*AD_4D_damping[:,3,2], label=r"Unsteady")
-axs[2,0].plot(v, np.full_like(1/v, Static_4D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[2,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,0].plot(v, np.full_like(1/v, Static_4D_c[3,2]),  label=r"Quasi-static", alpha=0.8)
+axs[2,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[2,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[2,0].plot(1/K, y_K_c4, 'ro',color='#d62728',  markersize=4)
-axs[2,0].plot(1/K, Static_4D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[2,0].plot(1/K, Static_4D_c[3,2], 'ro',color='#d62728',  markersize=4)
 axs[2,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[2,0].set_ylabel(r"$K \cdot c_{\theta 2 z2}^*$", fontsize=14)
 axs[2,0].tick_params(labelsize=14)
 
 axs[3,0].plot(v, 1/v*AD_4D_damping[:,3,3])
-axs[3,0].plot(v, np.full_like(1/v, Static_4D_c[1,1]), alpha=0.8)
-axs[3,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,0].plot(v, np.full_like(1/v, Static_4D_c[3,3]), alpha=0.8)
+axs[3,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[3,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[3,0].plot(1/K, y_K_c3, 'ro',color='#d62728',  markersize=4)
-axs[3,0].plot(1/K, Static_4D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[3,0].plot(1/K, Static_4D_c[3,3], 'ro',color='#d62728',  markersize=4)
 axs[3,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[3,0].set_ylabel(r"$K \cdot c_{\theta 2\theta 2}^*$", fontsize=14)
 axs[3,0].tick_params(labelsize=14)
 
 axs[0,1].plot(v, (1/v)**2*AD_4D_stiffness[:,0,1])
 axs[0,1].plot(v, np.full_like(1/v, Static_4D_k[0,1]), alpha=0.8)
-axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,1].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
-axs[0,1].plot(1/K, Static_4D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Static_4D_k[0,1], 'ro',color='#d62728',  markersize=4)
 axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[0,1].set_ylabel(r"$K^2 \cdot k_{z1 \theta 1}^*$", fontsize=14)
 axs[0,1].tick_params(labelsize=14)
 
 axs[1,1].plot(v, (1/v)**2*AD_4D_stiffness[:,1,1])
 axs[1,1].plot(v, np.full_like((1/v), Static_4D_k[1,1]), alpha=0.8)
-axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
-axs[1,1].plot(1/K, Static_4D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Static_4D_k[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[1,1].set_ylabel(r"$K^2 \cdot k_{\theta 1 \theta 1}^*$", fontsize=14)
 axs[1,1].tick_params(labelsize=14)
 
 axs[2,1].plot(v, (1/v)**2*AD_4D_stiffness[:,2,3])
-axs[2,1].plot(v, np.full_like(1/v, Static_4D_k[0,1]), alpha=0.8)
-axs[2,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,1].plot(v, np.full_like(1/v, Static_4D_k[2,3]), alpha=0.8)
+axs[2,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[2,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[2,1].plot(1/K, y_K_ka1, 'ro',color='#d62728',  markersize=4)
-axs[2,1].plot(1/K, Static_4D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[2,1].plot(1/K, Static_4D_k[2,3], 'ro',color='#d62728',  markersize=4)
 axs[2,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[2,1].set_ylabel(r"$K^2 \cdot k_{z2 \theta 2}^*$", fontsize=14)
 axs[2,1].tick_params(labelsize=14)
 
 axs[3,1].plot(v, (1/v)**2*AD_4D_stiffness[:,3,3])
-axs[3,1].plot(v, np.full_like((1/v), Static_4D_k[1,1]), alpha=0.8)
-axs[3,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,1].plot(v, np.full_like((1/v), Static_4D_k[3,3]), alpha=0.8)
+axs[3,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[3,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[3,1].plot(1/K, y_K_kh1, 'ro',color='#d62728',  markersize=4)
-axs[3,1].plot(1/K, Static_4D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[3,1].plot(1/K, Static_4D_k[3,3], 'ro',color='#d62728',  markersize=4)
 axs[3,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[3,1].set_ylabel(r"$K^2 \cdot k_{\theta 2 \theta 2}^*$", fontsize=14)
 axs[3,1].tick_params(labelsize=14)
@@ -1207,10 +1254,10 @@ axs[3,1].tick_params(labelsize=14)
 handles, labels = axs[0,0].get_legend_handles_labels()
 fig.legend(handles, labels,
            loc='lower center',
-           ncol=3,              
+           ncol=4,              
            fontsize=14,
            frameon=False,
-           bbox_to_anchor=(0.5, -0.05))  
+           bbox_to_anchor=(0.5, -0.12))
 plt.subplots_adjust(bottom=0.15)
 
 plt.tight_layout()
@@ -1225,6 +1272,11 @@ plt.show()
 Vcr = 62.259796142578125# m/s, critical wind speed
 omega_cr = 1.7808098966420758 # rad/s, critical frequency
 K = omega_cr * B / Vcr
+
+Vcr_stat = 22.895751953125 # m/s, critical wind speed
+omega_cr_stat = 2.2096457477328757 # rad/s, critical frequency
+K_stat = omega_cr_stat * B / Vcr_stat
+
 
 v = np.linspace(0, 4, 100)
 
@@ -1271,16 +1323,18 @@ y_K_kh1 = f_interph1(K)
 fig, axs = plt.subplots(4, 2, figsize=(8, 8))  
 axs[0,0].plot(v, 1/v*AD_5D_damping[:,1,0], label=r"Unsteady")
 axs[0,0].plot(v, np.full_like(1/v, Static_5D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
+axs[0,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Unsteady}$")
+axs[0,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,0].plot(1/K, y_K_c1, 'ro',color='#d62728',  markersize=4)
-axs[0,0].plot(1/K, Static_5D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[0,0].plot(1/K, Static_5D_c[1,0], 'ro',color='#d62728',  markersize=4)
 axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[0,0].set_ylabel(r"$K \cdot c_{\theta 1 z1}^*$", fontsize=14)
 axs[0,0].tick_params(labelsize=14)
 
 axs[1,0].plot(v, 1/v*AD_5D_damping[:,1,1])
 axs[1,0].plot(v, np.full_like(1/v, Static_5D_c[1,1]), alpha=0.8)
-axs[1,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,0].plot(1/K, y_K_c2, 'ro',color='#d62728',  markersize=4)
 axs[1,0].plot(1/K, Static_5D_c[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,0].set_xlabel(r"$V_{red}$", fontsize=14)
@@ -1288,55 +1342,61 @@ axs[1,0].set_ylabel(r"$K \cdot c_{\theta 1\theta 1}^*$", fontsize=14)
 axs[1,0].tick_params(labelsize=14)
 
 axs[2,0].plot(v, 1/v*AD_5D_damping[:,3,2], label=r"Unsteady")
-axs[2,0].plot(v, np.full_like(1/v, Static_5D_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[2,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,0].plot(v, np.full_like(1/v, Static_5D_c[3,2]),  label=r"Quasi-static", alpha=0.8)
+axs[2,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[2,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[2,0].plot(1/K, y_K_c4, 'ro',color='#d62728',  markersize=4)
-axs[2,0].plot(1/K, Static_5D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[2,0].plot(1/K, Static_5D_c[3,2], 'ro',color='#d62728',  markersize=4)
 axs[2,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[2,0].set_ylabel(r"$K \cdot c_{\theta 2 z2}^*$", fontsize=14)
 axs[2,0].tick_params(labelsize=14)
 
 axs[3,0].plot(v, 1/v*AD_5D_damping[:,3,3])
-axs[3,0].plot(v, np.full_like(1/v, Static_5D_c[1,1]), alpha=0.8)
-axs[3,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,0].plot(v, np.full_like(1/v, Static_5D_c[3,3]), alpha=0.8)
+axs[3,0].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[3,0].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[3,0].plot(1/K, y_K_c3, 'ro',color='#d62728',  markersize=4)
-axs[3,0].plot(1/K, Static_5D_c[1,1], 'ro',color='#d62728',  markersize=4)
+axs[3,0].plot(1/K, Static_5D_c[3,3], 'ro',color='#d62728',  markersize=4)
 axs[3,0].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[3,0].set_ylabel(r"$K \cdot c_{\theta 2\theta 2}^*$", fontsize=14)
 axs[3,0].tick_params(labelsize=14)
 
 axs[0,1].plot(v, (1/v)**2*AD_5D_stiffness[:,0,1])
 axs[0,1].plot(v, np.full_like(1/v, Static_5D_k[0,1]), alpha=0.8)
-axs[0,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[0,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[0,1].plot(1/K, y_K_ka, 'ro',color='#d62728',  markersize=4)
-axs[0,1].plot(1/K, Static_5D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[0,1].plot(1/K, Static_5D_k[0,1], 'ro',color='#d62728',  markersize=4)
 axs[0,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[0,1].set_ylabel(r"$K^2 \cdot k_{z1 \theta 1}^*$", fontsize=14)
 axs[0,1].tick_params(labelsize=14)
 
 axs[1,1].plot(v, (1/v)**2*AD_5D_stiffness[:,1,1])
 axs[1,1].plot(v, np.full_like((1/v), Static_5D_k[1,1]), alpha=0.8)
-axs[1,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[1,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[1,1].plot(1/K, y_K_kh, 'ro',color='#d62728',  markersize=4)
-axs[1,1].plot(1/K, Static_5D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[1,1].plot(1/K, Static_5D_k[1,1], 'ro',color='#d62728',  markersize=4)
 axs[1,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[1,1].set_ylabel(r"$K^2 \cdot k_{\theta 1 \theta 1}^*$", fontsize=14)
 axs[1,1].tick_params(labelsize=14)
 
 axs[2,1].plot(v, (1/v)**2*AD_5D_stiffness[:,2,3])
-axs[2,1].plot(v, np.full_like(1/v, Static_5D_k[0,1]), alpha=0.8)
-axs[2,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[2,1].plot(v, np.full_like(1/v, Static_5D_k[2,3]), alpha=0.8)
+axs[2,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
 axs[2,1].plot(1/K, y_K_ka1, 'ro',color='#d62728',  markersize=4)
-axs[2,1].plot(1/K, Static_5D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[2,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
+axs[2,1].plot(1/K, Static_5D_k[2,3], 'ro',color='#d62728',  markersize=4)
 axs[2,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[2,1].set_ylabel(r"$K^2 \cdot k_{z2 \theta 2}^*$", fontsize=14)
 axs[2,1].tick_params(labelsize=14)
 
 axs[3,1].plot(v, (1/v)**2*AD_5D_stiffness[:,3,3])
-axs[3,1].plot(v, np.full_like((1/v), Static_5D_k[1,1]), alpha=0.8)
-axs[3,1].axvline(x=1/K, color='black', linestyle='--', linewidth=1)
+axs[3,1].plot(v, np.full_like((1/v), Static_5D_k[3,3]), alpha=0.8)
+axs[3,1].axvline(x=1/K, color='#d62728', linestyle='--', linewidth=1)
+axs[3,1].axvline(x=1/K_stat, color='black', linestyle='--', linewidth=1, label=r"$V_{cr,red}^{Quasi-static}$")
 axs[3,1].plot(1/K, y_K_kh1, 'ro',color='#d62728',  markersize=4)
-axs[3,1].plot(1/K, Static_5D_k[0,0], 'ro',color='#d62728',  markersize=4)
+axs[3,1].plot(1/K, Static_5D_k[3,3], 'ro',color='#d62728',  markersize=4)
 axs[3,1].set_xlabel(r"$V_{red}$", fontsize=14)
 axs[3,1].set_ylabel(r"$K^2 \cdot k_{\theta 2 \theta 2}^*$", fontsize=14)
 axs[3,1].tick_params(labelsize=14)
@@ -1344,10 +1404,10 @@ axs[3,1].tick_params(labelsize=14)
 handles, labels = axs[0,0].get_legend_handles_labels()
 fig.legend(handles, labels,
            loc='lower center',
-           ncol=3,              
+           ncol=4,              
            fontsize=14,
            frameon=False,
-           bbox_to_anchor=(0.5, -0.05))  
+           bbox_to_anchor=(0.5, -0.12))
 plt.subplots_adjust(bottom=0.15)
 
 plt.tight_layout()
