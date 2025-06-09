@@ -17,6 +17,8 @@ import time
 import pandas as pd
 import matplotlib as mpl
 from matplotlib import rc
+from scipy.signal import welch
+
 import copy
 
 # # Computer Modern Roman without latex
@@ -171,6 +173,7 @@ section_length_on_wall = 2.66 #m
 
 h5_input_path = r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Python\Ole_sin_kode\HAR_INT\H5F\\"
 
+
 #%% !!!
 # Load single deck
 section_name = "Single_Static"
@@ -215,7 +218,93 @@ static_coeff_single_9 = w3t.StaticCoeff.fromWTT(exp0_single, exp1_single_9, sect
 plot_static_coeff_summary(static_coeff_single_6, section_name, 6, mode="single", upwind_in_rig=True)
 plot_static_coeff_summary(static_coeff_single_9, section_name, 9, mode="single", upwind_in_rig=True)
 
+#%%
+#WELCH: # welchs method: calculating auto, and cross-spectral density, with one recording of the respons.
+u = exp1_single_6.wind_speed  # Vindhastighet [m/s]
+t = exp1_single_6.time        # Tid [s]
+dt = np.mean(np.diff(t))   # Samplingintervall
+fs = 1 / dt                # Samplingfrekvens
 
+
+# Fjern middel, isoler fluktuasjoner
+u_fluct = u - np.mean(u)
+
+# Del inn i passende segmenter
+ndivisions = 3
+nwindow = int(np.ceil(len(t)/ndivisions))
+noverlap = int(np.ceil(nwindow/2))
+nfft_pow2 = 2**int(np.ceil(np.log2(nwindow)))  # Effektiv FFT-lengde
+
+# Beregn PSD
+f, Pxx_low = welch(
+    u_fluct, fs=fs, window='hann', 
+    nperseg=nwindow, noverlap=noverlap, 
+    nfft=nfft_pow2, detrend='constant', 
+    return_onesided=True, scaling='density'
+)
+
+# Plot
+plt.figure(figsize=(7, 4))
+plt.semilogy(f, Pxx_low)
+plt.xlabel("Frekvens [Hz]")
+plt.ylabel("PSD [(m/s)^2/Hz]")
+plt.title("Welch-spektrum av vindhastighet")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+#%%
+#WELCH: # welchs method: calculating auto, and cross-spectral density, with one recording of the respons.
+u = exp1_single_9.wind_speed  # Vindhastighet [m/s]
+t = exp1_single_9.time        # Tid [s]
+dt = np.mean(np.diff(t))   # Samplingintervall
+fs = 1 / dt                # Samplingfrekvens
+
+
+# Fjern middel, isoler fluktuasjoner
+u_fluct = u - np.mean(u)
+
+# Del inn i passende segmenter
+ndivisions = 10
+nwindow = int(np.ceil(len(t)/ndivisions))
+noverlap = int(np.ceil(nwindow/2))
+nfft_pow2 = 2**int(np.ceil(np.log2(nwindow)))  # Effektiv FFT-lengde
+
+# Beregn PSD
+f, Pxx_high = welch(
+    u_fluct, fs=fs, window='hann', 
+    nperseg=nwindow, noverlap=noverlap, 
+    nfft=nfft_pow2, detrend='constant', 
+    return_onesided=True, scaling='density'
+)
+
+# Plot
+plt.figure(figsize=(7, 4))
+plt.semilogy(f, Pxx_high)
+plt.xlabel("Frekvens [Hz]")
+plt.ylabel("PSD [(m/s)^2/Hz]")
+plt.title("Welch-spektrum av vindhastighet")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+#%%
+#Sammenligne
+
+# Plot
+plt.figure(figsize=(7, 4))
+plt.semilogy(f, Pxx_low, label='6 m/s')
+plt.semilogy(f, Pxx_high, label='9 m/s')
+plt.xlabel("Frekvens [Hz]")
+plt.ylabel("PSD [(m/s)^2/Hz]")
+plt.title("Welch-spektrum av vindhastighet")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+#%%
 # filter regression
 print("reg")
 section_name = "Single_Static_reg"
@@ -476,57 +565,150 @@ plot_static_coeff_summary(static_coeff_MDS_1D_10, section_name, 10, mode="decks"
 
 #%%
 
-def plot_three_subplots_with_shared_legend(save_path="three_plots.pdf"):
-    # Dummy data
-    x = np.linspace(-4, 4, 100)
-    y1 = np.sin(x)
-    y2 = np.cos(x)
-    y3 = np.tanh(x)
+# def plot_three_subplots_with_shared_legend(save_path="three_plots.pdf"):
+#     # Dummy data
+#     x = np.linspace(-4, 4, 100)
+#     y1 = np.sin(x)
+#     y2 = np.cos(x)
+#     y3 = np.tanh(x)
 
-    # Create figure and axes for 3 subplots horizontally
-    fig, axes = plt.subplots(1, 3, figsize=(6, 3), sharey=False)
+#     # Create figure and axes for 3 subplots horizontally
+#     fig, axes = plt.subplots(1, 3, figsize=(6, 3), sharey=False)
 
-    # Labels and colors
-    labels = ["Single deck", "Upstream deck", "Downstream deck"]
-    colors = ["#1f77b4", "#ff7f0e", "#2ca02c"]
+#     # Labels and colors
+#     labels = ["Single deck", "Upstream deck", "Downstream deck"]
+#     colors = ["#1f77b4", "#ff7f0e", "#2ca02c"]
 
-    for ax in axes:
-        ax.plot(x, y1, label=labels[0], color=colors[0])
-        ax.plot(x, y2, label=labels[1], color=colors[1])
-        ax.plot(x, y3, label=labels[2], color=colors[2])
-        ax.set_xticks([])
-        ax.set_yticks([])
+#     for ax in axes:
+#         ax.plot(x, y1, label=labels[0], color=colors[0])
+#         ax.plot(x, y2, label=labels[1], color=colors[1])
+#         ax.plot(x, y3, label=labels[2], color=colors[2])
+#         ax.set_xticks([])
+#         ax.set_yticks([])
 
-    # Shared legend
-    fig.legend(labels, loc="lower center", ncol=3, fontsize=10, frameon=False,
-               bbox_to_anchor=(0.5, 0))
+#     # Shared legend
+#     fig.legend(labels, loc="lower center", ncol=3, fontsize=10, frameon=False,
+#                bbox_to_anchor=(0.5, 0))
 
-    # Adjust layout
-    fig.tight_layout(pad=0.8)
-    fig.subplots_adjust(bottom=0.25)
+#     # Adjust layout
+#     fig.tight_layout(pad=0.8)
+#     fig.subplots_adjust(bottom=0.25)
 
-    # Save figure
-    return fig, ax
+#     # Save figure
+#     return fig, ax
 
-fig, ax = plot_three_subplots_with_shared_legend("three_plots_with_legend.pdf")
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "label_stat_coeff" + ".png"), dpi=300)
+# fig, ax = plot_three_subplots_with_shared_legend("three_plots_with_legend.pdf")
+# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "label_stat_coeff" + ".png"), dpi=300)
+
+
+#%%
+#WELCH: # welchs method: calculating auto, and cross-spectral density, with one recording of the respons.
+u = exp1_MDS_1D_6.wind_speed  # Vindhastighet [m/s]
+t = exp1_MDS_1D_6.time        # Tid [s]
+dt = np.mean(np.diff(t))   # Samplingintervall
+fs = 1 / dt                # Samplingfrekvens
+
+
+# Fjern middel, isoler fluktuasjoner
+u_fluct = u - np.mean(u)
+
+# Del inn i passende segmenter
+ndivisions = 10
+nwindow = int(np.ceil(len(t)/ndivisions))
+noverlap = int(np.ceil(nwindow/2))
+nfft_pow2 = 2**int(np.ceil(np.log2(nwindow)))  # Effektiv FFT-lengde
+
+# Beregn PSD
+f, Pxx_low = welch(
+    u_fluct, fs=fs, window='hann', 
+    nperseg=nwindow, noverlap=noverlap, 
+    nfft=nfft_pow2, detrend='constant', 
+    return_onesided=True, scaling='density'
+)
+
+# Plot
+plt.figure(figsize=(7, 4))
+plt.semilogy(f, Pxx_low)
+plt.xlabel("Frekvens [Hz]")
+plt.ylabel("PSD [(m/s)^2/Hz]")
+plt.title("Welch-spektrum av vindhastighet")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+#%%
+#WELCH: # welchs method: calculating auto, and cross-spectral density, with one recording of the respons.
+u = exp1_MDS_1D_10.wind_speed  # Vindhastighet [m/s]
+t = exp1_MDS_1D_10.time        # Tid [s]
+dt = np.mean(np.diff(t))   # Samplingintervall
+fs = 1 / dt                # Samplingfrekvens
+
+
+# Fjern middel, isoler fluktuasjoner
+u_fluct = u - np.mean(u)
+
+# Del inn i passende segmenter
+ndivisions = 10
+nwindow = int(np.ceil(len(t)/ndivisions))
+noverlap = int(np.ceil(nwindow/2))
+nfft_pow2 = 2**int(np.ceil(np.log2(nwindow)))  # Effektiv FFT-lengde
+
+# Beregn PSD
+f, Pxx_high = welch(
+    u_fluct, fs=fs, window='hann', 
+    nperseg=nwindow, noverlap=noverlap, 
+    nfft=nfft_pow2, detrend='constant', 
+    return_onesided=True, scaling='density'
+)
+
+# Plot
+plt.figure(figsize=(7, 4))
+plt.semilogy(f, Pxx_high)
+plt.xlabel("Frekvens [Hz]")
+plt.ylabel("PSD [(m/s)^2/Hz]")
+plt.title("Welch-spektrum av vindhastighet")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+#%%
+#Sammenligne
+
+# Plot
+plt.figure(figsize=(7, 4))
+plt.semilogy(f, Pxx_low, label='6 m/s')
+plt.semilogy(f, Pxx_high, label='9 m/s')
+plt.xlabel("Frekvens [Hz]")
+plt.ylabel("PSD [(m/s)^2/Hz]")
+plt.title("Welch-spektrum av vindhastighet")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
 
 #%%NILS
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_1D_6, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_low_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_1D_6, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_low_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_1D_6, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_low_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_1D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_high_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_1D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_high_cl" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_high_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_1D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_high_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_1D_high_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%%
@@ -758,18 +940,24 @@ plot_static_coeff_summary(static_coeff_MUS_1D_10, section_name, 10, mode="decks"
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_low_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_low_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_1D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_low_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_1D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_high_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_1D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_high_cl" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_high_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_1D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_high_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_1D_high_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 
 
@@ -1369,18 +1557,24 @@ plot_static_coeff_summary(static_coeff_MDS_2D_10, section_name, 10, mode="decks"
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_2D_6, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_low_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_2D_6, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_low_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_2D_6, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_low_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_2D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_high_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_2D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_high_cl" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_high_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_2D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_high_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_2D_high_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%%
@@ -1597,18 +1791,24 @@ plot_static_coeff_summary(static_coeff_MUS_2D_10, section_name, 10, mode="decks"
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_2D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_low_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_2D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_low_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_2D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_low_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_2D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_high_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_2D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_high_cl" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_high_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_2D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_high_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_2D_high_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 
 
@@ -2225,18 +2425,24 @@ plot_static_coeff_summary(static_coeff_MDS_3D_10, section_name, 10, mode="decks"
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_3D_6, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_low_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_3D_6, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_low_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_3D_6, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_low_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_3D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_high_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_3D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_high_cl" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_high_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_3D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_high_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_3D_high_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 
 
@@ -2635,18 +2841,24 @@ plot_static_coeff_summary(static_coeff_MUS_3D_10, section_name, 10, mode="decks"
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_low_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_low_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_3D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_low_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_3D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_high_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_3D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_high_cl" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_high_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_3D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_high_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_3D_high_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%%
@@ -3316,18 +3528,24 @@ plot_static_coeff_summary(static_coeff_MDS_4D_10, section_name, 10, mode="decks"
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_4D_55, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_low_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_4D_55, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_low_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_4D_55, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_low_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_4D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_high_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_4D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_high_cl" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_high_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_4D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_high_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_4D_high_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 #%% 
 # Filter and plot ALT 1
@@ -3551,18 +3769,24 @@ plot_static_coeff_summary(static_coeff_MUS_4D_10, section_name, 10, mode="decks"
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_low_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_low_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_4D_5, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_low_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_high_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_high_cl" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_high_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_4D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_high_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_4D_high_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 
 
@@ -4167,18 +4391,24 @@ plot_static_coeff_summary(static_coeff_MDS_5D_10, section_name, 10, mode="decks"
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MDS_5D_55, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_low_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MDS_5D_55, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_low_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MDS_5D_55, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_low_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MDS_5D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_high_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MDS_5D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_high_cl" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_high_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax =w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MDS_5D_10, upwind_in_rig=False, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_high_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMDS_5D_high_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 #%% !!!!!
 #fjerne hakk
@@ -4449,18 +4679,24 @@ plot_static_coeff_summary(static_coeff_MUS_5D_10, section_name, 10, mode="decks"
 
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_low_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_low_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_low_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_6, static_coeff_MUS_5D_45, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_low_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_low_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = w3t._scoff.plot_compare_drag_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_high_cd" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_high_cd" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_lift_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_high_cl" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_high_cl" + ".png"), dpi=300, bbox_inches='tight')
 fig, ax = w3t._scoff.plot_compare_pitch_only_single(static_coeff_single_9, static_coeff_MUS_5D_10, upwind_in_rig=True, ax=None)
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_high_cm" + ".png"), dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "_nilsMUS_5D_high_cm" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%% !!!
