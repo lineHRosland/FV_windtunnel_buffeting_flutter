@@ -44,8 +44,8 @@ phi_two, x_two = mode_shape_two()
 
 Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
 
-#  BUFFETING
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_updated_stat_coeff.npy"
+#  STATIC
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_stat_coeff.npy"
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
@@ -139,14 +139,14 @@ alphas = 0.7
 #Single deck
 
 #Solve for eigenvalues and eigenvectors
-V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, static = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, alphas, dist="Single deck",  single = True, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, alphas, dist="Single deck",  single = True, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -155,14 +155,6 @@ fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
@@ -174,7 +166,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 #%%
 #Double deck 1D
 
-V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=True)
+V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=True)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
@@ -182,7 +174,7 @@ print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D, alphas, dist="two deck 1D",  single = False, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D, alphas, dist="two deck 1D",  single = False, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -191,13 +183,6 @@ fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
 fig.tight_layout()
@@ -206,14 +191,14 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 2D
-V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,static = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,   verbose=False)
+V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,   verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D, eigvecs_list_two_2D, V_list_two_2D, alphas, dist="two deck 2D",  single = False, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D, eigvecs_list_two_2D, V_list_two_2D, alphas, dist="two deck 2D",  single = False, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -221,13 +206,6 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D,
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
 fig.tight_layout()
@@ -235,14 +213,14 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 3D
-V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D, V_list_two_3D,  alphas,dist="two deck 3D",  single = False, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D, V_list_two_3D,  alphas,dist="two deck 3D",  single = False, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -250,13 +228,6 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D,
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
 fig.tight_layout()
@@ -265,14 +236,14 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 4D
-V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D, eigvecs_list_two_4D, V_list_two_4D,  alphas,dist="two deck 4D",  single = False, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D, eigvecs_list_two_4D, V_list_two_4D,  alphas,dist="two deck 4D",  single = False, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
@@ -280,13 +251,6 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D,
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
 fig.tight_layout()
@@ -294,13 +258,13 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 #%%
 #Double deck 5D
-V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static = False,  Cae_star_gen_BUFF=None, Kae_star_gen_BUFF=None,  verbose=False)
+V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = False,  Cae_star_gen_STAT=None, Kae_star_gen_STAT=None,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
 
 #Plotting
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D, eigvecs_list_two_5D, V_list_two_5D, alphas, dist="two deck 5D",  single = False, static = False)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D, eigvecs_list_two_5D, V_list_two_5D, alphas, dist="two deck 5D",  single = False, static_quasi = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_damp" + ".png"), dpi=300)
 
@@ -308,13 +272,6 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D,
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_frek" + ".png"), dpi=300)
 
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 fig.tight_layout()
@@ -330,71 +287,54 @@ alphas = 0.5
 #Single deck
 
 #Solve for eigenvalues and eigenvectors
-V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, static = True, Cae_star_gen_BUFF=Cae_Single_gen, Kae_star_gen_BUFF=Kae_Single_gen,  verbose=False)
+V_list_single, omega_list_single, damping_list_single, eigvecs_list_single, eigvals_list_single, omegacritical_single, Vcritical_single = _eigVal.solve_flutter(poly_coeff_single, k_range_single, Ms_single, Cs_single, Ks_single, f1V, f1T, B, rho, eps, phi_single, x_single, single = True, static_quasi = True, Cae_star_gen_STAT=Cae_Single_gen, Kae_star_gen_STAT=Kae_Single_gen,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_single, Vcritical_single)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, alphas, dist="Single deck",  single = True, static = True)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, alphas, dist="Single deck",  single = True, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_single_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_single_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, alphas, dist="Single deck", single = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_single_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_single_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_single_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_single_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_single_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_single_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%%
 #Double deck 1D
 
-V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static = True,  Cae_star_gen_BUFF=Cae_1D_gen, Kae_star_gen_BUFF=Kae_1D_gen,  verbose=True)
+V_list_two_1D, omega_list_two_1D, damping_list_two_1D, eigvecs_list_two_1D, eigvals_list_two_1D, omegacritical_two_1D, Vcritical_two_1D = _eigVal.solve_flutter(poly_coeff_1D,k_range_1D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_1D_gen, Kae_star_gen_STAT=Kae_1D_gen,  verbose=True)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_1D, Vcritical_two_1D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D,  alphas,dist="two deck 1D",  single = False, static = True)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_1D,eigvecs_list_two_1D,V_list_two_1D,  alphas,dist="two deck 1D",  single = False, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_1D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_1D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_1D, omega_list_two_1D, alphas, dist="two deck 1D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_1D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_1D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_1D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_1D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_1D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_1D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%%
 #Double deck 2D
-V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,static = True,  Cae_star_gen_BUFF=Cae_2D_gen, Kae_star_gen_BUFF=Kae_2D_gen,   verbose=False)
+V_list_two_2D, omega_list_two_2D, damping_list_two_2D, eigvecs_list_two_2D, eigvals_list_two_2D,omegacritical_two_2D, Vcritical_two_2D = _eigVal.solve_flutter(poly_coeff_2D,k_range_2D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False,static_quasi = True,  Cae_star_gen_STAT=Cae_2D_gen, Kae_star_gen_STAT=Kae_2D_gen,   verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
@@ -402,30 +342,22 @@ print("Omega_cr, V_cr: ",omegacritical_two_2D, Vcritical_two_2D)
 #Plotting
 
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D,eigvecs_list_two_2D,V_list_two_2D,  alphas,dist="two deck 2D",  single = False, static = True)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_2D,eigvecs_list_two_2D,V_list_two_2D,  alphas,dist="two deck 2D",  single = False, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_2D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D,  alphas,dist="two deck 2D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_2D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_2D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_2D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 #%%
 #Double deck 3D
-V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static = True,  Cae_star_gen_BUFF=Cae_3D_gen, Kae_star_gen_BUFF=Kae_3D_gen,  verbose=False)
+V_list_two_3D, omega_list_two_3D, damping_list_two_3D, eigvecs_list_two_3D,eigvals_list_two_3D, omegacritical_two_3D, Vcritical_two_3D = _eigVal.solve_flutter(poly_coeff_3D, k_range_3D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_3D_gen, Kae_star_gen_STAT=Kae_3D_gen,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
@@ -433,31 +365,23 @@ print("Omega_cr, V_cr: ",omegacritical_two_3D, Vcritical_two_3D)
 #Plotting
 
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D,V_list_two_3D,  alphas,dist="two deck 3D",  single = False, static = True)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_3D,eigvecs_list_two_3D,V_list_two_3D,  alphas,dist="two deck 3D",  single = False, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_3D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_3D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D,  alphas,dist="two deck 3D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_3D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_3D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_3D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_3D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_3D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_3D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 
 #%%
 #Double deck 4D
-V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static = True,  Cae_star_gen_BUFF=Cae_4D_gen, Kae_star_gen_BUFF=Kae_4D_gen,  verbose=False)
+V_list_two_4D, omega_list_two_4D, damping_list_two_4D, eigvecs_list_two_4D, eigvals_list_two_4D,omegacritical_two_4D, Vcritical_two_4D = _eigVal.solve_flutter(poly_coeff_4D, k_range_4D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_4D_gen, Kae_star_gen_STAT=Kae_4D_gen,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
@@ -465,56 +389,39 @@ print("Omega_cr, V_cr: ",omegacritical_two_4D, Vcritical_two_4D)
 #Plotting
 
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D,eigvecs_list_two_4D,V_list_two_4D, alphas, dist="two deck 4D",  single = False, static = True)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_4D,eigvecs_list_two_4D,V_list_two_4D, alphas, dist="two deck 4D",  single = False, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_4D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_4D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D,  alphas,dist="two deck 4D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_4D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_4D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_4D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_4D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_4D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_4D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 #%%
 #Double deck 5D
-V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static = True,  Cae_star_gen_BUFF=Cae_5D_gen, Kae_star_gen_BUFF=Kae_5D_gen,  verbose=False)
+V_list_two_5D, omega_list_two_5D, damping_list_two_5D, eigvecs_list_two_5D,eigvals_list_two_5D,omegacritical_two_5D, Vcritical_two_5D = _eigVal.solve_flutter(poly_coeff_5D, k_range_5D, Ms_two, Cs_two, Ks_two, f1V, f1T, B, rho, eps, phi_two, x_two, single = False, static_quasi = True,  Cae_star_gen_STAT=Cae_5D_gen, Kae_star_gen_STAT=Kae_5D_gen,  verbose=False)
 
 #Flutter
 print("Omega_cr, V_cr: ",omegacritical_two_5D, Vcritical_two_5D)
 
 #Plotting
 
-fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D,eigvecs_list_two_5D,V_list_two_5D,  alphas,dist="two deck 5D",  single = False, static = True)
+fig, ax = _eigVal.plot_damping_vs_wind_speed(damping_list_two_5D,eigvecs_list_two_5D,V_list_two_5D,  alphas,dist="two deck 5D",  single = False, static_quasi = True)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_5D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_5D_flutter_damp" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D,  alphas,dist="two deck 5D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_5D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
-
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_top(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_5D_flutter_dof_top" + ".png"), dpi=300, bbox_inches='tight')
-
-# fig, ax =_eigVal.plot_flutter_mode_shape_bunn(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
-# fig.tight_layout()
-# fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_5D_flutter_dof_bunn" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_5D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 fig.tight_layout()
-fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "Buff_5D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_5D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
 
 # %%
 ###########################################################################################################################################################################
