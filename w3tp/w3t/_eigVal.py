@@ -495,6 +495,9 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                     Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen_AD
                     Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen_AD
 
+                if np.isclose(V, 10):
+                    print(Cae_gen)
+                    print(Kae_gen)
 
                 eigvalsV, eigvecsV = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 

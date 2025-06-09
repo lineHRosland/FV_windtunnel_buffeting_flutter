@@ -50,7 +50,7 @@ phi_two, x_two = mode_shape_two()
 Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
 
 #  STATIC
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_stat_coeff.npy"
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
@@ -71,6 +71,15 @@ Cae_4D_gen = matrices["Cae_4D"]
 
 Kae_5D_gen = matrices["Kae_5D"]
 Cae_5D_gen = matrices["Cae_5D"]
+
+print("Cae_2_gen :", Cae_2D_gen)
+print("Cae_3_gen :", Cae_3D_gen)
+print("Cae_4_gen :", Cae_4D_gen)
+
+print("kae_2_gen :", Kae_2D_gen)
+print("kae_3_gen :", Kae_3D_gen)
+print("kae_4_gen :", Kae_4D_gen)
+# print
 #Cae_5D_gen, Kae_5D_gen = _eigVal.generalize_C_K(Cae_5D, Kae_5D, phi_two, x_two, single=False)
 
 #  AD
