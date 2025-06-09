@@ -488,6 +488,8 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                     Cae_star_gen_AD, Kae_star_gen_AD = generalize_C_K(Cae_star_AD, Kae_star_AD, Phi, x) 
 
                 if static_quasi:
+                    Cae_star_gen_STAT, Kae_star_gen_STAT = generalize_C_K(Cae_star_gen_STAT, Kae_star_gen_STAT, Phi, x)
+
                     Cae_gen = V* Cae_star_gen_STAT
                     Kae_gen = V**2* Kae_star_gen_STAT
        

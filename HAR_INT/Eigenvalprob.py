@@ -50,7 +50,10 @@ phi_two, x_two = mode_shape_two()
 Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
 
 #  STATIC
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_stat_coeff.npy"
+#file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_stat_coeff.npy"
+#file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_not_gen.npy"
+
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
@@ -445,7 +448,9 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 #%%
 # Plotte unsteady vs quasi-static
 #  quasi-static
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_as_AD.npy"
+#file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_as_AD.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_updated_derivatives_AD.npy"
+
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
@@ -608,7 +613,7 @@ y_K_kh = f_interph(K)
 fig, axs = plt.subplots(2, 2, figsize=(8, 4))  
 axs[0,0].plot(v, 1/v*AD_single_damping[:,1,0], label=r"Unsteady")
 axs[0,0].plot(v, np.full_like(1/v, Single_c[1,0]),  label=r"Quasi-static", alpha=0.8)
-axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Kcr")
+axs[0,0].axvline(x=1/K, color='black', linestyle='--', linewidth=1, label="Vcr")
 axs[0,0].plot(1/K, y_K_c1, 'ro', color='#d62728',  markersize=4)
 axs[0,0].plot(1/K, Single_c[1,1], 'ro', color='#d62728', markersize=4)
 axs[0,0].set_xlabel(r"$V_{red}$", fontsize=14)
