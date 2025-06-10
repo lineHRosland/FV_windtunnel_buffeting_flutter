@@ -50,10 +50,13 @@ phi_two, x_two = mode_shape_two()
 Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, single = False)
 
 #  STATIC
+# Testing different versions of Cae and Kae (Obs: some are generalized, some are not)
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_stat_coeff.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_not_gen.npy"
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D.npy"
+#file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_lessfake3D.npy"
+
 
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
@@ -75,8 +78,6 @@ Cae_4D = matrices["Cae_4D"]
 
 Kae_5D = matrices["Kae_5D"]
 Cae_5D = matrices["Cae_5D"]
-
-
 
 
 #  AD
@@ -443,8 +444,9 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 # Plotte unsteady vs quasi-static
 #  quasi-static
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_as_AD.npy"
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_updated_derivatives_AD.npy"
-
+#file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_updated_derivatives_AD.npy"
+#file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D_AD.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_lessfake3D_AD.npy"
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
@@ -973,8 +975,8 @@ Vcr = 53.93597412109375# m/s, critical wind speed
 omega_cr = 1.9602677552302152 # rad/s, critical frequency
 K = omega_cr * B / Vcr
 
-Vcr_stat = 98.39474487304688 # m/s, critical wind speed
-omega_cr_stat = 1.2075518902025422 # rad/s, critical frequency
+Vcr_stat = 20.67529296875 # m/s, critical wind speed
+omega_cr_stat = 2.2220665212835153 # rad/s, critical frequency
 K_stat = omega_cr_stat * B / Vcr_stat
 
 v = np.linspace(0, 4, 100)

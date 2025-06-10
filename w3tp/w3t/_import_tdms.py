@@ -1,5 +1,13 @@
-
-
+# -*- coding: utf-8 -*-
+"""
+Editited spring 2025
+@author: Smetoch, Rosland
+"""
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Dec 16 22:09:00 2021
+@author: oiseth
+"""
 __all__ = ["tdms2h5_4loadcells", ]
 
 def tdms2h5_4loadcells(h5file,tdmsfile,ex1,ex2,wrong_side = False,load_cell_3_and_4_fixed=False):

@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 """
+Editited spring 2025
+@author: Smetoch, Rosland
+"""
+# -*- coding: utf-8 -*-
+"""
 Created on Mon Jan 24 22:24:00 2022
 
 @author: oiseth
 """
 import numpy as np
 from scipy import signal as spsp
-
-
 
 
 __all__ = ["group_motions", "align_experiments", ]

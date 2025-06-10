@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Feb 3 08:15:00 2025
 Editited spring 2025
-
 @author: Smetoch, Rosland
 """
 # -*- coding: utf-8 -*-
