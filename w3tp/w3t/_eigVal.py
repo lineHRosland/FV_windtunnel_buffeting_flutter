@@ -54,6 +54,8 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     C = C_struc - C_aero
     K = K_struc - K_aero
 
+    print(C,K)
+
     # Construct state-space system matrix A
     A = np.block([
         [np.zeros_like(M_struc), np.eye(M_struc.shape[0])],
@@ -498,13 +500,6 @@ def solve_flutter(poly_coeff,k_range, Ms, Cs, Ks,  f1, f2, B, rho, eps,
                     Cae_gen = 0.5 * rho * B**2 * omega_old[j] * Cae_star_gen_AD
                     Kae_gen = 0.5 * rho * B**2 * omega_old[j]**2 * Kae_star_gen_AD
 
-                if np.isclose(V, 10):
-                    print("NaNs i generalisert Cae (3D):", np.isnan(Cae_gen).any())
-                    print("Infs i generalisert Cae (3D):", np.isinf(Cae_gen).any())
-
-                    print("NaNs i generalisert Kae (3D):", np.isnan(Kae_gen).any())
-                    print("Infs i generalisert Kae (3D):", np.isinf(Kae_gen).any())
-
                 eigvalsV, eigvecsV = solve_eigvalprob(Ms, Cs, Ks, Cae_gen, Kae_gen)
 
 
@@ -800,7 +795,7 @@ def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegac
 
     for i in range(n_modes):
 
-        if abs(magnitudes[i]) > 1e-2 and abs(magnitudes[i]) < 1: 
+        if abs(magnitudes[i]) > 1e-2: 
             ax[0].text(i, magnitudes[i] + 0.02, f"{magnitudes[i]:.2f}", ha='center', fontsize=14)
         if abs(phases[i]) > 1:
             va = 'bottom' if phases[i] > 0 else 'top'
