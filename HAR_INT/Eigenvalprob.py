@@ -55,7 +55,7 @@ Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, s
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_not_gen.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D.npy"
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_lessfake3D.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_lesslessfake3D.npy"
 
 
 # Load the saved dictionary
@@ -446,7 +446,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_as_AD.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\Buffeting\Cae_Kae_updated_derivatives_AD.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D_AD.npy"
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_lessfake3D_AD.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_lesslessfake3D_AD.npy"
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
 
@@ -665,6 +665,15 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 
 plt.show()
+
+print("A1_AD", y_K_c1)
+print("A2_AD", y_K_c2)
+print("H3_AD", y_K_ka)
+print("A3_AD", y_K_kh)
+print("A1", Single_c[1,0])
+print("A2", Single_c[1,1])
+print("H3", Single_k[0,1])
+print("A3", Single_k[1,1])
 
 
 
