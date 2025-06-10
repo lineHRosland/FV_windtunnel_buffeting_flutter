@@ -55,8 +55,9 @@ Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, s
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_not_gen.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D.npy"
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_lesslessfake3D.npy"
-
+#file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_lesslessfake3D.npy"
+# Less conservative drag coeff:
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D_CDslopeat0.npy"
 
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
@@ -830,6 +831,24 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 plt.show()
 
+print(r"$c_{\theta 1 z1} AD$", y_K_c1)
+print(r"$c_{\theta 1 \theta 1} AD$", y_K_c2)
+print(r"$c_{\theta 2 z2} AD$", y_K_c4)
+print(r"$c_{\theta 2 \theta 2} AD$", y_K_c3)
+print(r"$k_{z1 \theta 1} AD$", y_K_ka)
+print(r"$k_{\theta 1 \theta 1} AD$", y_K_kh)
+print(r"$k_{z2 \theta 2} AD$", y_K_ka1)
+print(r"$k_{\theta 2 \theta 2} AD$", y_K_kh1)
+print(r"$c_{\theta 1 z1} AD$", Static_1D_c[1,0])
+print(r"$c_{\theta 1 \theta 1} AD$", Static_1D_c[1,1])
+print(r"$c_{\theta 2 z2} AD$", Static_1D_c[3,2])
+print(r"$c_{\theta 2 \theta 2} AD$", Static_1D_c[3,3])
+print(r"$k_{z1 \theta 1} AD$", Static_1D_k[0,1])
+print(r"$k_{\theta 1 \theta 1} AD$", Static_1D_k[1,1])
+print(r"$k_{z2 \theta 2} AD$", Static_1D_k[2,3])
+print(r"$k_{\theta 2 \theta 2} AD$", Static_1D_k[3,3])
+
+
 #%%
 # 2D
 Vcr = 40.43505859375# m/s, critical wind speed
@@ -976,6 +995,23 @@ plt.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "fitte_2D.png"), dpi=300, bbox_inches='tight')
 
 plt.show()
+
+print(r"$c_{\theta 1 z1} AD$", y_K_c1)
+print(r"$c_{\theta 1 \theta 1} AD$", y_K_c2)
+print(r"$c_{\theta 2 z2} AD$", y_K_c4)
+print(r"$c_{\theta 2 \theta 2} AD$", y_K_c3)
+print(r"$k_{z1 \theta 1} AD$", y_K_ka)
+print(r"$k_{\theta 1 \theta 1} AD$", y_K_kh)
+print(r"$k_{z2 \theta 2} AD$", y_K_ka1)
+print(r"$k_{\theta 2 \theta 2} AD$", y_K_kh1)
+print(r"$c_{\theta 1 z1} AD$", Static_2D_c[1,0])
+print(r"$c_{\theta 1 \theta 1} AD$", Static_2D_c[1,1])
+print(r"$c_{\theta 2 z2} AD$", Static_2D_c[3,2])
+print(r"$c_{\theta 2 \theta 2} AD$", Static_2D_c[3,3])
+print(r"$k_{z1 \theta 1} AD$", Static_2D_k[0,1])
+print(r"$k_{\theta 1 \theta 1} AD$", Static_2D_k[1,1])
+print(r"$k_{z2 \theta 2} AD$", Static_2D_k[2,3])
+print(r"$k_{\theta 2 \theta 2} AD$", Static_2D_k[3,3])
 
 #%%
 # 3D
@@ -1125,6 +1161,22 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 plt.show()
 
+print(r"$c_{\theta 1 z1} AD$", y_K_c1)
+print(r"$c_{\theta 1 \theta 1} AD$", y_K_c2)
+print(r"$c_{\theta 2 z2} AD$", y_K_c4)
+print(r"$c_{\theta 2 \theta 2} AD$", y_K_c3)
+print(r"$k_{z1 \theta 1} AD$", y_K_ka)
+print(r"$k_{\theta 1 \theta 1} AD$", y_K_kh)
+print(r"$k_{z2 \theta 2} AD$", y_K_ka1)
+print(r"$k_{\theta 2 \theta 2} AD$", y_K_kh1)
+print(r"$c_{\theta 1 z1} AD$", Static_3D_c[1,0])
+print(r"$c_{\theta 1 \theta 1} AD$", Static_3D_c[1,1])
+print(r"$c_{\theta 2 z2} AD$", Static_3D_c[3,2])
+print(r"$c_{\theta 2 \theta 2} AD$", Static_3D_c[3,3])
+print(r"$k_{z1 \theta 1} AD$", Static_3D_k[0,1])
+print(r"$k_{\theta 1 \theta 1} AD$", Static_3D_k[1,1])
+print(r"$k_{z2 \theta 2} AD$", Static_3D_k[2,3])
+print(r"$k_{\theta 2 \theta 2} AD$", Static_3D_k[3,3])
 
 #%%
 # 4D
@@ -1276,7 +1328,22 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 plt.show()
 
-
+print(r"$c_{\theta 1 z1} AD$", y_K_c1)
+print(r"$c_{\theta 1 \theta 1} AD$", y_K_c2)
+print(r"$c_{\theta 2 z2} AD$", y_K_c4)
+print(r"$c_{\theta 2 \theta 2} AD$", y_K_c3)
+print(r"$k_{z1 \theta 1} AD$", y_K_ka)
+print(r"$k_{\theta 1 \theta 1} AD$", y_K_kh)
+print(r"$k_{z2 \theta 2} AD$", y_K_ka1)
+print(r"$k_{\theta 2 \theta 2} AD$", y_K_kh1)
+print(r"$c_{\theta 1 z1} AD$", Static_4D_c[1,0])
+print(r"$c_{\theta 1 \theta 1} AD$", Static_4D_c[1,1])
+print(r"$c_{\theta 2 z2} AD$", Static_4D_c[3,2])
+print(r"$c_{\theta 2 \theta 2} AD$", Static_4D_c[3,3])
+print(r"$k_{z1 \theta 1} AD$", Static_4D_k[0,1])
+print(r"$k_{\theta 1 \theta 1} AD$", Static_4D_k[1,1])
+print(r"$k_{z2 \theta 2} AD$", Static_4D_k[2,3])
+print(r"$k_{\theta 2 \theta 2} AD$", Static_4D_k[3,3])
 #%%
 # 5D
 
@@ -1426,6 +1493,22 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 plt.show()
 
+print(r"$c_{\theta 1 z1} AD$", y_K_c1)
+print(r"$c_{\theta 1 \theta 1} AD$", y_K_c2)
+print(r"$c_{\theta 2 z2} AD$", y_K_c4)
+print(r"$c_{\theta 2 \theta 2} AD$", y_K_c3)
+print(r"$k_{z1 \theta 1} AD$", y_K_ka)
+print(r"$k_{\theta 1 \theta 1} AD$", y_K_kh)
+print(r"$k_{z2 \theta 2} AD$", y_K_ka1)
+print(r"$k_{\theta 2 \theta 2} AD$", y_K_kh1)
+print(r"$c_{\theta 1 z1} AD$", Static_5D_c[1,0])
+print(r"$c_{\theta 1 \theta 1} AD$", Static_5D_c[1,1])
+print(r"$c_{\theta 2 z2} AD$", Static_5D_c[3,2])
+print(r"$c_{\theta 2 \theta 2} AD$", Static_5D_c[3,3])
+print(r"$k_{z1 \theta 1} AD$", Static_5D_k[0,1])
+print(r"$k_{\theta 1 \theta 1} AD$", Static_5D_k[1,1])
+print(r"$k_{z2 \theta 2} AD$", Static_5D_k[2,3])
+print(r"$k_{\theta 2 \theta 2} AD$", Static_5D_k[3,3])
 
 ######################################################################################
 ######################################################################################
