@@ -25,15 +25,17 @@ rho = 1.25 # kg/m^3, air density
 
 # Values from FEM-model (Pure structural modes in still air)
 m1V = 4440631 #kg, vertical 
-m2V = 6683762 #kg, vertical 
+m1V = 6683762 #kg, vertical 
 m1T = 5582542 #kg m^2, torsion 
 f1V = 0.14066587 #Hz, vertical 
-f2V = 0.19722386 #Hz, vertical  
+f1V = 0.19722386 #Hz, vertical  
 f1T = 0.35948062 #Hz, torsion
 
-w1V = 2*np.pi*f1V # rad/s, vertical FØRSTE ITERASJON
-w2V = 2*np.pi*f2V # rad/s, vertical FØRSTE ITERASJON
-w1T = 2*np.pi*f1T # rad/s, torsion FØRSTE ITERASJON
+# w1V = 2*np.pi*f1V # rad/s, vertical FØRSTE ITERASJON
+# w2V = 2*np.pi*f2V # rad/s, vertical FØRSTE ITERASJON
+# w1T = 2*np.pi*f1T # rad/s, torsion FØRSTE ITERASJON
+
+#print(w1V, w2V, w1T)
 
 #ITERATIVE BIMODAL EIGENVALUE APPROACH
 eps = 0.0001 # Konvergensterske
@@ -55,9 +57,9 @@ Ms_two, Cs_two, Ks_two = _eigVal.structural_matrices(m1V, m1T, f1V, f1T, zeta, s
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_not_gen.npy"
 #file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D.npy"
-#file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_lesslessfake3D.npy"
+file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_lesslessfake3D.npy"
 # Less conservative drag coeff:
-file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D_CDslopeat0.npy"
+#file_path = r"C:\Users\liner\Documents\Github\Masteroppgave\HAR_INT\buffeting\Cae_Kae_updated_derivatives_fake3D_CDslopeat0.npy"
 
 # Load the saved dictionary
 matrices = np.load(file_path, allow_pickle=True).item()
@@ -169,6 +171,10 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 
 
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_single, eigvecs_list_single, V_list_single, omega_list_single, alphas,dist="Single deck", single=True, static_quasi=False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_single_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
+
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
 fig.tight_layout()
@@ -195,6 +201,10 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_1D, omega_list_two_1D,
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_two_1D, eigvecs_list_two_1D, V_list_two_1D, omega_list_two_1D, alphas,dist="two deck 1D", single=False, static_quasi=False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_1D_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
+
 
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
@@ -218,6 +228,9 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D,  alphas,dist="two deck 2D", single = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_two_2D, eigvecs_list_two_2D, V_list_two_2D, omega_list_two_2D, alphas,dist="two deck 2D", single=False, static_quasi=False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_2D_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
 
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
@@ -241,6 +254,9 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D,
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_two_3D, eigvecs_list_two_3D, V_list_two_3D, omega_list_two_3D, alphas,dist="two deck 3D", single=False, static_quasi=False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_3D_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
 fig.tight_layout()
@@ -264,6 +280,9 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D,
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_two_4D, eigvecs_list_two_4D, V_list_two_4D, omega_list_two_4D, alphas,dist="two deck 4D", single=False, static_quasi=False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_4D_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
 fig.tight_layout()
@@ -285,6 +304,10 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D,
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_frek" + ".png"), dpi=300)
 
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_two_5D, eigvecs_list_two_5D, V_list_two_5D, omega_list_two_5D, alphas,dist="two deck 5D", single=False, static_quasi=False)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "AD_5D_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
+
 
 fig, ax = _eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 fig.tight_layout()
@@ -295,7 +318,7 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 ##########################################################################################################################################################################
 #%%
 # QUASI-STATIC
-alphas = 0.5
+alphas = 0.7
 #%%
 #Single deck
 
@@ -314,6 +337,10 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 fig, ax =_eigVal.plot_frequency_vs_wind_speed(V_list_single, omega_list_single, alphas, dist="Single deck", single = True)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_single_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_single, eigvals_list_single, V_list_single, omega_list_single, alphas,dist="Single deck", single=True, static_quasi=True)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_single_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
 
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_single, damping_list_single, V_list_single, Vcritical_single, omegacritical_single, dist="Single deck", single = True)
@@ -340,6 +367,11 @@ fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_1D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
 
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_two_1D, eigvecs_list_two_1D, V_list_two_1D, omega_list_two_1D, alphas,dist="two deck 1D", single=False, static_quasi=True)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_1D_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
+
+
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_1D, damping_list_two_1D, V_list_two_1D, Vcritical_two_1D, omegacritical_two_1D, dist="two deck 1D", single = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_1D_flutter_dof" + ".png"), dpi=300, bbox_inches='tight')
@@ -363,6 +395,10 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_2D, omega_list_two_2D,
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_2D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_two_2D, eigvecs_list_two_2D, V_list_two_2D, omega_list_two_2D, alphas,dist="two deck 2D", single=False, static_quasi=True)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_2D_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
+
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_2D, damping_list_two_2D, V_list_two_2D, Vcritical_two_2D, omegacritical_two_2D, dist="two deck 2D", single = False)
 fig.tight_layout()
@@ -385,6 +421,10 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_3D, omega_list_two_3D,  alphas,dist="two deck 3D", single = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_3D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_two_3D, eigvecs_list_two_3D, V_list_two_3D, omega_list_two_3D, alphas,dist="two deck 3D", single=False, static_quasi=True)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_3D_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
 
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_3D, damping_list_two_3D, V_list_two_3D, Vcritical_two_3D, omegacritical_two_3D, dist="two deck 3D", single = False)
@@ -410,6 +450,11 @@ fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_4D, omega_list_two_4D,
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_4D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
 
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_two_4D, eigvecs_list_two_4D, V_list_two_4D, omega_list_two_4D, alphas,dist="two deck 4D", single=False, static_quasi=True)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_4D_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
+
+
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_4D, damping_list_two_4D, V_list_two_4D, Vcritical_two_4D, omegacritical_two_4D, dist="two deck 4D", single = False)
 fig.tight_layout()
@@ -431,6 +476,11 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 fig, ax = _eigVal.plot_frequency_vs_wind_speed(V_list_two_5D, omega_list_two_5D,  alphas,dist="two deck 5D", single = False)
 fig.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_5D_flutter_frek" + ".png"), dpi=300, bbox_inches='tight')
+
+fig, ax = _eigVal.plot_damping__freq_vs_wind_speed(damping_list_two_5D, eigvecs_list_two_5D, V_list_two_5D, omega_list_two_5D, alphas,dist="two deck 5D", single=False, static_quasi=True)
+fig.tight_layout()
+fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "STAT_5D_flutter_damp_freq" + ".png"), dpi=300, bbox_inches='tight')
+
 
 fig, ax =_eigVal.plot_flutter_mode_shape(eigvecs_list_two_5D, damping_list_two_5D, V_list_two_5D, Vcritical_two_5D, omegacritical_two_5D, dist="two deck 5D", single = False)
 fig.tight_layout()
@@ -667,14 +717,12 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 plt.show()
 
-print("A1_AD", y_K_c1)
-print("A2_AD", y_K_c2)
-print("H3_AD", y_K_ka)
-print("A3_AD", y_K_kh)
-print("A1", Single_c[1,0])
-print("A2", Single_c[1,1])
-print("H3", Single_k[0,1])
-print("A3", Single_k[1,1])
+
+print("A1", (Single_c[1,0]-y_K_c1)/y_K_c1*100)
+print("A2", (Single_c[1,1]-y_K_c2)/y_K_c2*100)
+print("H3", (Single_k[0,1]-y_K_ka)/y_K_ka*100)
+print("A3", (Single_k[1,1]-y_K_kh)/y_K_kh*100)
+
 
 
 
@@ -693,6 +741,8 @@ K = omega_cr * B / Vcr
 Vcr_stat = 19.041748046875 # m/s, critical wind speed
 omega_cr_stat = 2.2339399441074597 # rad/s, critical frequency
 K_stat = omega_cr_stat * B / Vcr_stat
+
+print("V_red", 1/K)
 
 v = np.linspace(0, 4, 100)
 
@@ -831,22 +881,14 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 plt.show()
 
-print(r"$c_{\theta 1 z1} AD$", y_K_c1)
-print(r"$c_{\theta 1 \theta 1} AD$", y_K_c2)
-print(r"$c_{\theta 2 z2} AD$", y_K_c4)
-print(r"$c_{\theta 2 \theta 2} AD$", y_K_c3)
-print(r"$k_{z1 \theta 1} AD$", y_K_ka)
-print(r"$k_{\theta 1 \theta 1} AD$", y_K_kh)
-print(r"$k_{z2 \theta 2} AD$", y_K_ka1)
-print(r"$k_{\theta 2 \theta 2} AD$", y_K_kh1)
-print(r"$c_{\theta 1 z1} AD$", Static_1D_c[1,0])
-print(r"$c_{\theta 1 \theta 1} AD$", Static_1D_c[1,1])
-print(r"$c_{\theta 2 z2} AD$", Static_1D_c[3,2])
-print(r"$c_{\theta 2 \theta 2} AD$", Static_1D_c[3,3])
-print(r"$k_{z1 \theta 1} AD$", Static_1D_k[0,1])
-print(r"$k_{\theta 1 \theta 1} AD$", Static_1D_k[1,1])
-print(r"$k_{z2 \theta 2} AD$", Static_1D_k[2,3])
-print(r"$k_{\theta 2 \theta 2} AD$", Static_1D_k[3,3])
+print(r"$c_{\theta 1 z1} $", (Static_1D_c[1,0]-y_K_c1)/y_K_c1*100)
+print(r"$c_{\theta 1 \theta 1} $", (Static_1D_c[1,1]-y_K_c2)/y_K_c2*100)
+print(r"$c_{\theta 2 z2} $", (Static_1D_c[3,2]-y_K_c4)/y_K_c4*100)
+print(r"$c_{\theta 2 \theta 2} $", (Static_1D_c[3,3]-y_K_c3)/y_K_c3*100)
+print(r"$k_{z1 \theta 1} $", (Static_1D_k[0,1]-y_K_ka)/y_K_ka*100)
+print(r"$k_{\theta 1 \theta 1} $", (Static_1D_k[1,1]-y_K_kh)/y_K_kh*100)
+print(r"$k_{z2 \theta 2} $", (Static_1D_k[2,3]-y_K_ka1)/y_K_ka1*100)
+print(r"$k_{\theta 2 \theta 2} $", (Static_1D_k[3,3]-y_K_kh1)/y_K_kh1*100)
 
 
 #%%
@@ -861,6 +903,7 @@ K_stat = omega_cr_stat * B / Vcr_stat
 
 v = np.linspace(0, 4, 100)
 
+print("V_red", 1/K)
 
 i = 0
 AD_2D_damping = np.zeros((100, 4, 4))
@@ -996,22 +1039,15 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 plt.show()
 
-print(r"$c_{\theta 1 z1} AD$", y_K_c1)
-print(r"$c_{\theta 1 \theta 1} AD$", y_K_c2)
-print(r"$c_{\theta 2 z2} AD$", y_K_c4)
-print(r"$c_{\theta 2 \theta 2} AD$", y_K_c3)
-print(r"$k_{z1 \theta 1} AD$", y_K_ka)
-print(r"$k_{\theta 1 \theta 1} AD$", y_K_kh)
-print(r"$k_{z2 \theta 2} AD$", y_K_ka1)
-print(r"$k_{\theta 2 \theta 2} AD$", y_K_kh1)
-print(r"$c_{\theta 1 z1} AD$", Static_2D_c[1,0])
-print(r"$c_{\theta 1 \theta 1} AD$", Static_2D_c[1,1])
-print(r"$c_{\theta 2 z2} AD$", Static_2D_c[3,2])
-print(r"$c_{\theta 2 \theta 2} AD$", Static_2D_c[3,3])
-print(r"$k_{z1 \theta 1} AD$", Static_2D_k[0,1])
-print(r"$k_{\theta 1 \theta 1} AD$", Static_2D_k[1,1])
-print(r"$k_{z2 \theta 2} AD$", Static_2D_k[2,3])
-print(r"$k_{\theta 2 \theta 2} AD$", Static_2D_k[3,3])
+print(r"$c_{\theta 1 z1} $", (Static_2D_c[1,0]-y_K_c1)/y_K_c1*100)
+print(r"$c_{\theta 1 \theta 1} $", (Static_2D_c[1,1]-y_K_c2)/y_K_c2*100)
+print(r"$c_{\theta 2 z2} $", (Static_2D_c[3,2]-y_K_c4)/y_K_c4*100)
+print(r"$c_{\theta 2 \theta 2} $", (Static_2D_c[3,3]-y_K_c3)/y_K_c3*100)
+print(r"$k_{z1 \theta 1} $", (Static_2D_k[0,1]-y_K_ka)/y_K_ka*100)
+print(r"$k_{\theta 1 \theta 1} $", (Static_2D_k[1,1]-y_K_kh)/y_K_kh*100)
+print(r"$k_{z2 \theta 2} $", (Static_2D_k[2,3]-y_K_ka1)/y_K_ka1*100)
+print(r"$k_{\theta 2 \theta 2} $", (Static_2D_k[3,3]-y_K_kh1)/y_K_kh1*100)
+
 
 #%%
 # 3D
@@ -1160,23 +1196,15 @@ plt.tight_layout()
 fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\Masteroppgave", "fitte_3D.png"), dpi=300, bbox_inches='tight')
 
 plt.show()
+print(r"$c_{\theta 1 z1} $", (Static_3D_c[1,0]-y_K_c1)/y_K_c1*100)
+print(r"$c_{\theta 1 \theta 1} $", (Static_3D_c[1,1]-y_K_c2)/y_K_c2*100)
+print(r"$c_{\theta 2 z2} $", (Static_3D_c[3,2]-y_K_c4)/y_K_c4*100)
+print(r"$c_{\theta 2 \theta 2} $", (Static_3D_c[3,3]-y_K_c3)/y_K_c3*100)
+print(r"$k_{z1 \theta 1} $", (Static_3D_k[0,1]-y_K_ka)/y_K_ka*100)
+print(r"$k_{\theta 1 \theta 1} $", (Static_3D_k[1,1]-y_K_kh)/y_K_kh*100)
+print(r"$k_{z2 \theta 2} $", (Static_3D_k[2,3]-y_K_ka1)/y_K_ka1*100)
+print(r"$k_{\theta 2 \theta 2} $", (Static_3D_k[3,3]-y_K_kh1)/y_K_kh1*100)
 
-print(r"$c_{\theta 1 z1} AD$", y_K_c1)
-print(r"$c_{\theta 1 \theta 1} AD$", y_K_c2)
-print(r"$c_{\theta 2 z2} AD$", y_K_c4)
-print(r"$c_{\theta 2 \theta 2} AD$", y_K_c3)
-print(r"$k_{z1 \theta 1} AD$", y_K_ka)
-print(r"$k_{\theta 1 \theta 1} AD$", y_K_kh)
-print(r"$k_{z2 \theta 2} AD$", y_K_ka1)
-print(r"$k_{\theta 2 \theta 2} AD$", y_K_kh1)
-print(r"$c_{\theta 1 z1} AD$", Static_3D_c[1,0])
-print(r"$c_{\theta 1 \theta 1} AD$", Static_3D_c[1,1])
-print(r"$c_{\theta 2 z2} AD$", Static_3D_c[3,2])
-print(r"$c_{\theta 2 \theta 2} AD$", Static_3D_c[3,3])
-print(r"$k_{z1 \theta 1} AD$", Static_3D_k[0,1])
-print(r"$k_{\theta 1 \theta 1} AD$", Static_3D_k[1,1])
-print(r"$k_{z2 \theta 2} AD$", Static_3D_k[2,3])
-print(r"$k_{\theta 2 \theta 2} AD$", Static_3D_k[3,3])
 
 #%%
 # 4D
@@ -1328,22 +1356,15 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 plt.show()
 
-print(r"$c_{\theta 1 z1} AD$", y_K_c1)
-print(r"$c_{\theta 1 \theta 1} AD$", y_K_c2)
-print(r"$c_{\theta 2 z2} AD$", y_K_c4)
-print(r"$c_{\theta 2 \theta 2} AD$", y_K_c3)
-print(r"$k_{z1 \theta 1} AD$", y_K_ka)
-print(r"$k_{\theta 1 \theta 1} AD$", y_K_kh)
-print(r"$k_{z2 \theta 2} AD$", y_K_ka1)
-print(r"$k_{\theta 2 \theta 2} AD$", y_K_kh1)
-print(r"$c_{\theta 1 z1} AD$", Static_4D_c[1,0])
-print(r"$c_{\theta 1 \theta 1} AD$", Static_4D_c[1,1])
-print(r"$c_{\theta 2 z2} AD$", Static_4D_c[3,2])
-print(r"$c_{\theta 2 \theta 2} AD$", Static_4D_c[3,3])
-print(r"$k_{z1 \theta 1} AD$", Static_4D_k[0,1])
-print(r"$k_{\theta 1 \theta 1} AD$", Static_4D_k[1,1])
-print(r"$k_{z2 \theta 2} AD$", Static_4D_k[2,3])
-print(r"$k_{\theta 2 \theta 2} AD$", Static_4D_k[3,3])
+print(r"$c_{\theta 1 z1} $", (Static_4D_c[1,0]-y_K_c1)/y_K_c1*100)
+print(r"$c_{\theta 1 \theta 1} $", (Static_4D_c[1,1]-y_K_c2)/y_K_c2*100)
+print(r"$c_{\theta 2 z2} $", (Static_4D_c[3,2]-y_K_c4)/y_K_c4*100)
+print(r"$c_{\theta 2 \theta 2} $", (Static_4D_c[3,3]-y_K_c3)/y_K_c3*100)
+print(r"$k_{z1 \theta 1} $", (Static_4D_k[0,1]-y_K_ka)/y_K_ka*100)
+print(r"$k_{\theta 1 \theta 1} $", (Static_4D_k[1,1]-y_K_kh)/y_K_kh*100)
+print(r"$k_{z2 \theta 2} $", (Static_4D_k[2,3]-y_K_ka1)/y_K_ka1*100)
+print(r"$k_{\theta 2 \theta 2} $", (Static_4D_k[3,3]-y_K_kh1)/y_K_kh1*100)
+
 #%%
 # 5D
 
@@ -1493,22 +1514,15 @@ fig.savefig(os.path.join(r"C:\Users\liner\OneDrive - NTNU\NTNU\12 semester\Plot\
 
 plt.show()
 
-print(r"$c_{\theta 1 z1} AD$", y_K_c1)
-print(r"$c_{\theta 1 \theta 1} AD$", y_K_c2)
-print(r"$c_{\theta 2 z2} AD$", y_K_c4)
-print(r"$c_{\theta 2 \theta 2} AD$", y_K_c3)
-print(r"$k_{z1 \theta 1} AD$", y_K_ka)
-print(r"$k_{\theta 1 \theta 1} AD$", y_K_kh)
-print(r"$k_{z2 \theta 2} AD$", y_K_ka1)
-print(r"$k_{\theta 2 \theta 2} AD$", y_K_kh1)
-print(r"$c_{\theta 1 z1} AD$", Static_5D_c[1,0])
-print(r"$c_{\theta 1 \theta 1} AD$", Static_5D_c[1,1])
-print(r"$c_{\theta 2 z2} AD$", Static_5D_c[3,2])
-print(r"$c_{\theta 2 \theta 2} AD$", Static_5D_c[3,3])
-print(r"$k_{z1 \theta 1} AD$", Static_5D_k[0,1])
-print(r"$k_{\theta 1 \theta 1} AD$", Static_5D_k[1,1])
-print(r"$k_{z2 \theta 2} AD$", Static_5D_k[2,3])
-print(r"$k_{\theta 2 \theta 2} AD$", Static_5D_k[3,3])
+print(r"$c_{\theta 1 z1} $", (Static_5D_c[1,0]-y_K_c1)/y_K_c1*100)
+print(r"$c_{\theta 1 \theta 1} $", (Static_5D_c[1,1]-y_K_c2)/y_K_c2*100)
+print(r"$c_{\theta 2 z2} $", (Static_5D_c[3,2]-y_K_c4)/y_K_c4*100)
+print(r"$c_{\theta 2 \theta 2} $", (Static_5D_c[3,3]-y_K_c3)/y_K_c3*100)
+print(r"$k_{z1 \theta 1} $", (Static_5D_k[0,1]-y_K_ka)/y_K_ka*100)
+print(r"$k_{\theta 1 \theta 1} $", (Static_5D_k[1,1]-y_K_kh)/y_K_kh*100)
+print(r"$k_{z2 \theta 2} $", (Static_5D_k[2,3]-y_K_ka1)/y_K_ka1*100)
+print(r"$k_{\theta 2 \theta 2} $", (Static_5D_k[3,3]-y_K_kh1)/y_K_kh1*100)
+
 
 ######################################################################################
 ######################################################################################

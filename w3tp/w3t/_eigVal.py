@@ -655,7 +655,7 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, alphas,
         If True, the y-axis is constrained for quasi-static  (very low damping).
     """
 
-    mode_labels = [r"$\Phi_1$", r"$\Phi_2$", r"$\Phi_3$", r"$\Phi_4$"]
+    mode_labels = [r"$\Phi_{z1}$", r"$\Phi_{\theta1}$", r"$\Phi_{z2}$", r"$\Phi_{\theta2}$"]
     n_modes = 2 if single else 4
 
     fig, ax = plt.subplots(figsize=(5, 3))
@@ -697,6 +697,66 @@ def plot_damping_vs_wind_speed(damping_ratios, eigvecs_all, V_list, alphas,
     return fig, ax
 
 
+def plot_damping__freq_vs_wind_speed(damping_ratios, eigvecs_all, V_list, omega_list, alphas,
+             dist="Fill in dist", single=True, static_quasi=False):
+    
+    mode_labels = [r"$\Phi_{z}$", r"$\Phi_{\theta}$", r"$\Phi_{z2}$", r"$\Phi_{\theta2}$"]
+    n_modes = 2 if single else 4
+
+    fig, ax = plt.subplots(2, 1, figsize=(5,6), sharex=True)
+
+    # Plot each mode's damping ratio at each wind speed
+    for j in range(n_modes):
+        V_mode = []
+        ζ_mode = []
+        for i in range(len(V_list)):
+            φj = eigvecs_all[i, j]
+            if φj is None or np.isnan(φj).any():
+                continue
+            dominant_dof_idx = np.argmax(np.abs(φj))
+            V_mode.append(V_list[i])
+            ζ_mode.append(damping_ratios[i, j])
+        ax[0].plot(
+                V_mode,
+                ζ_mode, alpha=alphas, label=mode_labels[j]
+            )
+
+    ax[0].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+
+    
+
+    # Visuals and annotation
+    # ax.set_xlabel(r"$V$ [m/s]", fontsize=16)
+    ax[0].set_ylabel(r"$\zeta$ [-]", fontsize=16)
+    #ax.set_title(f"Damping ratio vs wind speed — {dist}", fontsize=18)
+    ax[0].set_ylim(-0.01,)
+    ax[0].legend(fontsize=14, loc='upper left')
+
+    omega_array = np.array(omega_list)
+    frequencies = omega_array / (2 * np.pi)  
+
+    for j in range(n_modes):
+        ax[1].plot(
+            V_list,
+            frequencies[:, j],
+            alpha = alphas, label=mode_labels[j]
+        )
+
+    ax[1].set_xlabel(r"$V$ [m/s]", fontsize=16)
+    ax[1].set_ylabel(r"$f$ [Hz]", fontsize=16)
+    ax[1].legend(fontsize=14,loc='center left')
+    ax[1].set_xlim(0, V_list[-1])
+
+    ax[0].grid(True, linestyle='--', linewidth=0.5)
+    ax[1].grid(True, linestyle='--', linewidth=0.5)
+
+    plt.xticks(fontsize=14)
+    ax[0].tick_params(labelsize=14)
+    ax[1].tick_params(labelsize=14)
+    plt.show()
+    return fig, ax
+
+
 def plot_frequency_vs_wind_speed(V_list, omega_list, alphas, dist="Fill in dist", single=True):
     """
     Plots the damped natural frequencies as a function of wind speed.
@@ -714,7 +774,7 @@ def plot_frequency_vs_wind_speed(V_list, omega_list, alphas, dist="Fill in dist"
     """
 
 
-    labels = [r"$\Phi_1$", r"$\Phi_2$", r"$\Phi_3$", r"$\Phi_4$"]
+    labels = [r"$\Phi_{z1}$", r"$\Phi_{\theta1}$", r"$\Phi_{z2}$", r"$\Phi_{\theta2}$"]
     n_modes = 2 if single else 4
     title = f"Natural frequencies vs wind speed - {dist}"
 
@@ -752,10 +812,10 @@ def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegac
 
     if single:
         n_modes = 2
-        dofs = [r"$z1$", r"$\theta1$"]
+        dofs = [r"$\phi_{z}$", r"$\phi_{\theta}$"]
     else:
         n_modes = 4
-        dofs = [r"$z1$", r"$\theta1$", r"$z2$", r"$\theta2$"]
+        dofs = [r"$\phi_{z1}$", r"$\phi_{\theta1}$", r"$\phi_{z2}$", r"$\phi_{\theta2}$"]
     
 
     last_damping = np.array(damping_list[-1])  
@@ -782,16 +842,18 @@ def plot_flutter_mode_shape(eigvecs_all, damping_list, V_list, Vcritical, omegac
     ax[0].bar(dofs, magnitudes, width=0.4, color =colors)
     ax[1].bar(dofs, phases, width=0.4, color = colors)
 
-    ax[0].set_ylabel(r"|$\Phi$| [-]",fontsize=16)
+    ax[0].set_ylabel(r"|$\Phi_{\theta}$| [-]",fontsize=16)
     ax[0].set_ylim(0, 1.1)
-    ax[1].set_ylabel(r"$\angle \Phi$ [deg]",fontsize=16)
+    ax[1].set_ylabel(r"$\angle \Phi_{\theta}$ [deg]",fontsize=16)
     ax[1].set_ylim(-230, 230)
+    
     ax[1].axhline(0, color='k', linestyle='--', linewidth=0.5)
     ax[0].grid(True, linestyle='--', linewidth=0.5)
     ax[1].grid(True, linestyle='--', linewidth=0.5)
 
     #ax[0].set_title(f"Magnitude and phase of normalized eigenvector at flutter wind speed - {dist}", fontsize=14)
     ax[1].set_xlabel("DOFs",fontsize=16)
+
 
     for i in range(n_modes):
 
