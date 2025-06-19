@@ -1397,7 +1397,7 @@ class AerodynamicDerivatives4x4:
         fig_damping.tight_layout()
         fig_stiffness.tight_layout()
 
-    def plot_to_compare2(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly_only_ny', orders=np.ones(32, dtype=int)*2, label=''):
+    def plot_to_compare_ny(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly_only_ny', orders=np.ones(32, dtype=int)*2, label=''):
         if not bool(fig_damping):
             fig_damping = plt.figure()
             for k in range(16):
@@ -1653,7 +1653,7 @@ def plot_with_points(AD_fit, AD_points, single=False):
         for k in range(4):
             fig_stiffness.add_subplot(2, 2, k + 1)    
 
-        AD_fit.plot_to_compare3(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='Fit', mode = 'total2')
+        AD_fit.plot_to_compare2(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='Fit', mode = 'total2')
         AD_points.plot_to_compare_with_points(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='Raw data')
     else:
         # Create figure with 4x4 subplots for damping terms
@@ -1747,6 +1747,12 @@ def plot_with_points(AD_fit, AD_points, single=False):
     plt.show()
     return fig_damping, fig_stiffness
 
+
+
+
+
+
+
 def plot_compare(AD_single, AD_1D, AD_2D, AD_3D, AD_4D, AD_5D):
     """
     Compares aerodynamic derivative polynomial fits across different gap distances (1D to 5D and single).
@@ -1811,7 +1817,52 @@ def plot_compare(AD_single, AD_1D, AD_2D, AD_3D, AD_4D, AD_5D):
     return fig_damping, fig_stiffness
 
 
-def plot_compare2(AD_single, AD_1D, AD_2D, AD_3D, AD_4D, AD_5D):
+def plot_compare_ny_(AD_single, AD_1D, AD_2D, AD_3D, AD_4D, AD_5D):
+    """
+    Compares aerodynamic derivative polynomial fits across different gap distances (1D to 5D and single).
+    """
+
+    # Consistent 4x4 figure size (same as plot_with_points)
+    fig_damping = plt.figure(figsize=(8.4, 7.6))
+    for k in range(16):
+        fig_damping.add_subplot(4, 4, k + 1)
+
+    fig_stiffness = plt.figure(figsize=(8.4, 7.6))
+    for k in range(16):
+        fig_stiffness.add_subplot(4, 4, k + 1)
+
+    # Plot polynomial fits with proper labels
+    AD_1D.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='1D', mode='total3')
+    AD_2D.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='2D', mode='total3')
+    AD_3D.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='3D', mode='total3')
+    AD_4D.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='4D', mode='total3')
+    AD_5D.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='5D', mode='total3')
+    AD_single.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='Single', mode='total2')
+
+    # Extract legend from first axis
+    handles, labels = fig_damping.axes[0].get_legend_handles_labels()
+
+    # Remove all individual subplot legends
+    for ax in fig_damping.get_axes():
+        ax.legend().remove()
+    for ax in fig_stiffness.get_axes():
+        ax.legend().remove()
+
+    # Shared legend above figure
+    fig_damping.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, 1.02),
+                       ncol=6, frameon=False)
+    fig_stiffness.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, 1.02),
+                         ncol=6, frameon=False)
+
+    # Use tight layout to preserve label space
+    fig_damping.tight_layout(rect=[0, 0, 1, 0.95], pad=1.2)
+    fig_stiffness.tight_layout(rect=[0, 0, 1, 0.95], pad=1.2)
+
+    plt.show()
+    return fig_damping, fig_stiffness
+
+
+def plot_compare_ny(AD_single, AD_1D, AD_2D, AD_3D, AD_4D, AD_5D):
     """
     Compares aerodynamic derivative polynomial fits across different gap distances (1D to 5D and single).
 
@@ -1843,12 +1894,12 @@ def plot_compare2(AD_single, AD_1D, AD_2D, AD_3D, AD_4D, AD_5D):
         fig_stiffness.add_subplot(4, 4, k + 1)
 
     # Plot polynomial fits for each model (1D to 5D and single) into the same axes for comparison
-    AD_1D.plot_to_compare2(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='1D')
-    AD_2D.plot_to_compare2(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='2D')
-    AD_3D.plot_to_compare2(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='3D')
-    AD_4D.plot_to_compare2(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='4D')
-    AD_5D.plot_to_compare2(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='5D')
-    AD_single.plot_to_compare2(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='Single')
+    AD_1D.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='1D')
+    AD_2D.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='2D')
+    AD_3D.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='3D')
+    AD_4D.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='4D')
+    AD_5D.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='5D')
+    AD_single.plot_to_compare_ny(fig_damping=fig_damping, fig_stiffness=fig_stiffness, label='Single')
 
     # Extract legend handles and labels from the first subplot in the damping figure
     handles, labels = fig_damping.axes[0].get_legend_handles_labels()
