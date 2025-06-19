@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Editited spring 2025
+Warning: MUS/MDS from Excel means the oposite than what is used Master's thesis.
 
 @author: Smetoch, Rosland
 """
@@ -108,7 +109,6 @@ class StaticCoeff:
         filter_order = 6
         cutoff_frequency = 1.0
         sampling_frequency = 1/(experiment_in_still_air.time[1]-experiment_in_still_air.time[0])
-        print(sampling_frequency)
         
         sos = spsp.butter(filter_order,cutoff_frequency, fs=sampling_frequency, output="sos") #butterworth filtering of wind speed
         
@@ -254,7 +254,6 @@ class StaticCoeff:
         alpha = np.round(self.pitch_motion * 360 / (2 * np.pi), 1)
         unique_alphas = np.unique(alpha)
 
-        # Beregn middelverdi per alpha
         C_D_upwind = np.array([np.nanmean(self.drag_coeff[:,0][alpha == val]) + np.nanmean(self.drag_coeff[:,1][alpha == val]) for val in unique_alphas])
         C_D_downwind = np.array([np.nanmean(self.drag_coeff[:,2][alpha == val]) + np.nanmean(self.drag_coeff[:,3][alpha == val]) for val in unique_alphas])
         C_L_upwind = np.array([np.nanmean(self.lift_coeff[:,0][alpha == val]) + np.nanmean(self.lift_coeff[:,1][alpha == val]) for val in unique_alphas])

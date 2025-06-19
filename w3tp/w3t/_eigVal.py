@@ -7,12 +7,8 @@ Editited spring 2025
 import numpy as np
 from scipy import linalg as spla
 import matplotlib.pyplot as plt
-import time
-from mode_shapes import mode_shape_single
-from mode_shapes import mode_shape_two
 from matplotlib import rcParams
 from matplotlib.ticker import FormatStrFormatter
-from matplotlib.ticker import FuncFormatter
 
 rcParams['font.family'] = 'sans-serif'
 rcParams['font.sans-serif'] = ['Verdana']
@@ -54,7 +50,6 @@ def solve_eigvalprob(M_struc, C_struc, K_struc, C_aero, K_aero):
     C = C_struc - C_aero
     K = K_struc - K_aero
 
-    print(C,K)
 
     # Construct state-space system matrix A
     A = np.block([

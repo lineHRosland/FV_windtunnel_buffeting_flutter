@@ -1,4 +1,8 @@
-
+# -*- coding: utf-8 -*-
+"""
+Created spring 2025
+@author: Smetoch, Rosland
+"""
 import numpy as np
 
 data4 = np.load('mode4_data.npz')
