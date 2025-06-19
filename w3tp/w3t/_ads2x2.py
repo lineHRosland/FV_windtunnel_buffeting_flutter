@@ -1127,7 +1127,7 @@ class AerodynamicDerivatives2x2:
         fig_stiffness.tight_layout()
 
 
-    def plot_to_compare_ny(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly_only_ny', orders=np.ones(8, dtype=int)*2, label='Single'):
+    def plot_to_compare2(self, fig_damping=[], fig_stiffness=[], conv='normal', mode='poly_only_ny', orders=np.ones(8, dtype=int)*2, label='Single'):
         """
         Plots aerodynamic derivatives for comparison purposes using polynomial fits only (4x4 layout).
         """
@@ -1241,7 +1241,7 @@ class AerodynamicDerivatives2x2:
         fig_stiffness.tight_layout()
 
 
-    def plot_to_compare2(self, fig_damping=None, fig_stiffness=None,
+    def plot_to_compare3(self, fig_damping=None, fig_stiffness=None,
                         conv='normal', mode='total2',
                         orders=np.ones(8, dtype=int)*2, label=''):
         created_fig_damping = fig_damping is None
